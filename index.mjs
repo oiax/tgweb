@@ -1,3 +1,3 @@
-const tgoff = require("./lib/tgoff.mjs")
+import tgoff from "./lib/tgoff.mjs"
 
 export default tgoff
