@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/tgoff.mjs --bundle --outfile=lib/tgoff.mjs"
   },
   "author": "Coregenik Inc.",
   "license": "MIT",
+  "main": "index.mjs",
   "dependencies": {
     "express": "^4.18.2",
     "glob": "^8.0.3",
@@ -17,5 +19,8 @@
   },
   "devDependencies": {
     "esbuild": "^0.17.0"
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }
