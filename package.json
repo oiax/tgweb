@@ -1,5 +1,6 @@
 {
   "name": "tgoff",
+  "type": "module",
   "version": "0.0.1",
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
@@ -18,5 +19,8 @@
   },
   "files": [
     "lib"
-  ]
+  ],
+  "engines": {
+    "node": ">=14.16"
+  }
 }
