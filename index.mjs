@@ -1,3 +1,3 @@
-import tgoff from "./lib/tgoff.mjs"
+import tgweb from "./lib/tgweb.mjs"
 
-export default tgoff
+export default tgweb

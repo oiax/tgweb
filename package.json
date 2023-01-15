@@ -1,5 +1,5 @@
 {
-  "name": "tgoff",
+  "name": "tgweb",
   "type": "module",
   "version": "0.0.1",
   "description": "Teamgenik Website Builder Offline Tool",
@@ -18,7 +18,7 @@
     "tailwindcss": "^3.2.4"
   },
   "bin": {
-    "tgoff-server": "lib/server.mjs"
+    "tgweb-server": "lib/server.mjs"
   },
   "files": [
     "lib"
