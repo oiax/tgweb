@@ -18,10 +18,12 @@
     "tailwindcss": "^3.2.4"
   },
   "bin": {
+    "tgweb-init": "lib/init.mjs",
     "tgweb-server": "lib/server.mjs"
   },
   "files": [
-    "lib"
+    "lib",
+    "stubs"
   ],
   "engines": {
     "node": ">=14.16"
