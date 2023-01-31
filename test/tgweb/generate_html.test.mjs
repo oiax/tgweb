@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import getSiteData from "../../lib/tgweb/get_site_data.mjs"
+import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import generateHTML from "../../lib/tgweb/generate_html.mjs"
 import { JSDOM } from "jsdom"
 import { fileURLToPath } from "url";
@@ -53,5 +53,8 @@ describe("generateHTML", () => {
     const span102 = p10.children[2]
     assert.equal(span102.textContent, "computer")
     assert.equal(span102.attributes.getNamedItem("tg-text"), null)
+
+    const div2 = grid.children[2]
+    assert.equal(div2.attributes.getNamedItem("tg-layout"), null)
   })
 })
