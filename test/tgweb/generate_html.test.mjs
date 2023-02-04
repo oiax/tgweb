@@ -67,5 +67,19 @@ describe("generateHTML", () => {
 
     const div2 = grid.children[2]
     assert.equal(div2.attributes.getNamedItem("tg-layout"), null)
+
+    const main = div2.children[2]
+    assert.equal(main.children.length, 3)
+
+    const tech = main.children[0]
+    assert.equal(tech.attributes.getNamedItem("tg-layout"), null)
+
+    const tech1 = main.children[1]
+    assert.equal(tech1.attributes.getNamedItem("tg-layout"), null)
+    assert.equal(tech1.attributes.getNamedItem("tg-tag"), null)
+    assert.equal(tech1.children[0].textContent, "A")
+
+    const tech2 = main.children[2]
+    assert.equal(tech2.children[0].textContent, "C")
   })
 })
