@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
-    "test": "mocha test/**/*.test.mjs"
+    "test": "mocha test/*.test.mjs test/**/*.test.mjs"
   },
   "author": "Coregenik Inc.",
   "license": "MIT",
