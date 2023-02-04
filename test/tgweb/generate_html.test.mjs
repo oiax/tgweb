@@ -17,11 +17,18 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const head = dom.window.document.head
+
+    const title = head.querySelector("title")
+    assert.equal(title.textContent, "Home")
+
     const script = head.querySelector("script")
     assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
     assert.equal(script.attributes.getNamedItem("defer").value, "")
 
     const body = dom.window.document.body
+    const div0 = body.children[0]
+    assert.equal(div0.attributes.length, 1)
+
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "Greeting")
   })
@@ -35,6 +42,10 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const head = dom.window.document.head
+
+    const title = head.querySelector("title")
+    assert.equal(title.textContent, "FizzBuzz")
+
     const script = head.querySelector("script")
     assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
     assert.equal(script.attributes.getNamedItem("defer").value, "")
@@ -56,5 +67,19 @@ describe("generateHTML", () => {
 
     const div2 = grid.children[2]
     assert.equal(div2.attributes.getNamedItem("tg-layout"), null)
+
+    const main = div2.children[2]
+    assert.equal(main.children.length, 3)
+
+    const tech = main.children[0]
+    assert.equal(tech.attributes.getNamedItem("tg-layout"), null)
+
+    const tech1 = main.children[1]
+    assert.equal(tech1.attributes.getNamedItem("tg-layout"), null)
+    assert.equal(tech1.attributes.getNamedItem("tg-tag"), null)
+    assert.equal(tech1.children[0].textContent, "C")
+
+    const tech2 = main.children[2]
+    assert.equal(tech2.children[0].textContent, "A")
   })
 })
