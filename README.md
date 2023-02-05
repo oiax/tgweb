@@ -1,5 +1,10 @@
 # tgweb - Teamgenik Website Builder Offline Tool
 
+## Requirements
+
+* Node.js: 16.12 or higher
+* npm: 8.0 or higher
+
 ## Getting Started
 
 ### Installation
