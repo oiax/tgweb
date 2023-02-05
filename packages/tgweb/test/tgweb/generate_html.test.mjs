@@ -85,4 +85,24 @@ describe("generateHTML", () => {
     const tech3 = main.children[3]
     assert.equal(tech3.children[0].textContent, "A")
   })
+
+  it("should generate a link list", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    assert.equal(siteData.pages.length, 1)
+
+    const html = generateHTML("src/articles/technology.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const list = body.querySelector("nav > ul")
+
+    assert.equal(list.children.length, 3)
+
+    const link0 = list.children[0].children[0]
+
+    assert.equal(link0.href, "blog/a.html")
+    assert.equal(link0.textContent, "A")
+    assert.equal(link0.attributes.getNamedItem("tg-text"), null)
+  })
 })
