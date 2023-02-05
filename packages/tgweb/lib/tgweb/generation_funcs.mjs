@@ -173,6 +173,8 @@ const embedArticleLists = function(node, siteData) {
               if (j) {
                 if (i.value > j.value) return -1
                 if (i.value < j.value) return 1
+                if (i.path > j.path) return -1
+                if (i.path < j.path) return 1
                 return 0
               }
               else {
