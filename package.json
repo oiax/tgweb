@@ -1,38 +1,22 @@
 {
-  "name": "tgweb",
-  "type": "module",
-  "version": "0.0.1",
-  "description": "Teamgenik Website Builder Offline Tool",
-  "scripts": {
-    "test": "mocha --slow 500 test/*.test.mjs test/**/*.test.mjs"
+  "name": "tgweb-root",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/create-tgweb",
+    "packages/tgweb"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oiax/tgweb.git"
   },
   "author": "Coregenik Inc.",
   "license": "MIT",
-  "main": "index.mjs",
-  "dependencies": {
-    "chokidar": "^3.5.3",
-    "concurrently": "^7.6.0",
-    "express": "^4.18.2",
-    "glob": "^8.0.3",
-    "jsdom": "^21.0.0",
-    "minimatch": "^6.1.6",
-    "pretty": "^2.0.0",
-    "reload": "^3.2.1",
-    "tailwindcss": "^3.2.4"
-  },
-  "bin": {
-    "tgweb-init": "lib/init.mjs",
-    "tgweb-server": "lib/server.mjs"
-  },
-  "files": [
-    "lib",
-    "resources",
-    "stubs"
-  ],
-  "engines": {
-    "node": ">=14.16"
-  },
-  "devDependencies": {
-    "mocha": "^10.2.0"
+  "bugs": {
+    "url": "https://github.com/oiax/tgweb/issues"
   }
 }
