@@ -1,33 +1,79 @@
 #! /usr/bin/env node
 
+import * as PATH from "path"
+import fs from "fs"
 import express from "express"
 import http from "http"
 import reload from "reload"
 import chokidar from "chokidar"
-import router from "./server/router.mjs"
+import { spawn } from "child_process"
+import { getRouter } from "./server/router.mjs"
 import tgweb from "./tgweb.mjs"
 
-const app = express()
+const run = () => {
+  const targetDirName = process.argv[2]
 
-app.set("port", process.env.PORT || 3000)
-app.use(router)
+  if (targetDirName == undefined) {
+    console.log("Usage: npx tgweb-server <site-name>")
+    return
+  }
 
-const server = http.createServer(app)
+  const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
 
-reload(app).then(function (reloadReturned) {
-  chokidar.watch("./dist").on("all", (_event, _path) => {
-    reloadReturned.reload()
+  if (!fs.existsSync(targetDirPath)) {
+    console.log(`A directory named "sites/${targetDirName}" does not exist.`)
+    return
+  }
+
+  process.chdir(targetDirPath)
+
+  const app = express()
+  const router = getRouter()
+
+  app.set("port", process.env.PORT || 3000)
+  app.use(router)
+
+  const server = http.createServer(app)
+
+  reload(app).then(function (reloadReturned) {
+    chokidar.watch("./dist").on("all", (_event, _path) => {
+      reloadReturned.reload()
+    })
+
+    server.listen(app.get("port"), function () {
+      console.log(`Web server is listening on port ${app.get("port")}.`)
+    })
+  }).catch(function (err) {
+    console.error("Could not start a web server.", err)
   })
 
-  server.listen(app.get("port"), function () {
-    console.log("Web server listening on port " + app.get("port"))
+  const siteData = tgweb.getSiteData(process.cwd())
+
+  chokidar.watch("./src")
+    .on("add", path => tgweb.create(path, siteData))
+    .on("change", path => tgweb.update(path, siteData))
+
+  const childProcess = spawn("npx", [
+    "tailwindcss",
+    "-i",
+    "./tailwind.css",
+    "-o",
+    "./dist/css/tailwind.css",
+    "--watch",
+  ])
+
+  console.log("tailwindcss began to monitor the HTML files for changes.")
+
+  const regex = /Rebuilding\.\.\.\s*/g
+
+  childProcess.stderr.on("data", data => {
+    const message = data.toString().trim().replaceAll(regex, "")
+    if (message !== "") console.error("Rebuilding... " + message)
   })
-}).catch(function (err) {
-  console.error("Could not start a web server.", err)
-})
 
-const siteData = tgweb.getSiteData(process.cwd())
+  childProcess.on("close", code => {
+    console.error(`tailwind stopped. (code: ${code})`)
+  })
+}
 
-chokidar.watch("./src")
-  .on("add", path => tgweb.create(path, siteData))
-  .on("change", path => tgweb.update(path, siteData))
+run()

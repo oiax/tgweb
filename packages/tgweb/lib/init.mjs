@@ -1,19 +1,39 @@
 #! /usr/bin/env node
 
-import path from "path"
+import * as PATH from "path"
+import glob from "glob"
 import fs from "fs"
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const targetDir = process.cwd()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-const filenames = ["tailwind.config.js", "tailwind.css"]
+const run = () => {
+  const src = PATH.resolve(__dirname, "../stubs")
+  const targetDirName = process.argv[2]
 
-filenames.forEach(filename => {
-  const src = path.resolve(__dirname, "../stubs/", filename)
-  const dest = path.resolve(targetDir, filename)
+  if (targetDirName == undefined) {
+    console.log("Usage: npx tgweb-init <site-name>")
+    return
+  }
 
-  if (!fs.existsSync(dest)) fs.copyFileSync(src, dest)
-})
+  const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
+
+  if (fs.existsSync(targetDirPath)) {
+    console.log(`A directory named "sites/${targetDirName}" already exists.`)
+    return
+  }
+
+  fs.mkdirSync(targetDirPath, { recursive: true })
+
+  glob.sync(`${src}/*`).map(path => {
+    const filename = PATH.basename(path)
+    const dest = PATH.resolve(targetDirPath, `./${filename}`)
+    fs.copyFileSync(path, dest)
+  })
+
+  console.log(`A site named "${targetDirName}" was created successfully.`)
+}
+
+run()
