@@ -9,7 +9,6 @@ const __dirname = PATH.dirname(__filename);
 const targetDir = process.cwd()
 
 const run = () => {
-  console.log("RUN")
   const src = PATH.resolve(__dirname, "./templates")
 
   glob.sync(`${src}/*`).map(path => {

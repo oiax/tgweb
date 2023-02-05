@@ -6,7 +6,6 @@
   "scripts": {},
   "author": "Coregenik Inc.",
   "license": "MIT",
-  "main": "index.mjs",
   "dependencies": {
     "glob": "^8.0.3"
   },
