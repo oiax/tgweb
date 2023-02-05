@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "tgweb": "^0.0.1"
+  },
+  "scripts": {
+    "dev": "cd $INIT_CWD && concurrently 'npm run tgweb' 'npm run tailwind'",
+    "tgweb": "cd $INIT_CWD && npx tgweb-server",
+    "tailwind": "cd $INIT_CWD && npx tailwindcss -i ./tailwind.css -o ./dist/css/tailwind.css --watch"
+  }
+}
