@@ -2,6 +2,12 @@
   "name": "create-tgweb",
   "type": "module",
   "version": "0.0.2",
+  "keywords": [
+    "teamgenik",
+    "blog",
+    "website",
+    "generator"
+  ],
   "description": "Preparing the working environment for tgweb",
   "scripts": {},
   "author": "Coregenik Inc.",
