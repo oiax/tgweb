@@ -189,10 +189,10 @@ const filterArticles = function(articles, pattern, tag) {
       if (minimatch(article.path, pattern)) {
         if (tag) {
           const articleRoot = article.dom.window.document.body.children[0]
-          const tgTagAttr = articleRoot.attributes.getNamedItem("tg-tag")
+          const tgTagsAttr = articleRoot.attributes.getNamedItem("tg-tags")
 
-          if (tgTagAttr) {
-            return tgTagAttr.value == tag
+          if (tgTagsAttr) {
+            return tgTagsAttr.value.split(",").includes(tag)
           }
         }
         else {
