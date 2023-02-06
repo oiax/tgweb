@@ -2,6 +2,7 @@ import * as PATH from "path"
 import pretty from "pretty"
 import { JSDOM } from "jsdom"
 import { minimatch } from "minimatch"
+import { getTgAttributes } from "./get_tg_attributes.mjs"
 
 const generationFuncs = {}
 
@@ -49,31 +50,95 @@ generationFuncs["article"] = function(path, siteData) {
 
   if (article) {
     const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-    const tgLayoutAttr = articleRoot.attributes.getNamedItem("tg-layout")
-    const headAttrs = { title: getTitle(articleRoot) }
+    const tgAttrs = getTgAttributes(articleRoot)
 
-    removeSpecialAttributes(articleRoot)
-    embedComponents(articleRoot, siteData)
-    embedLinksToArticles(articleRoot, siteData, path)
+    const tgComponentAttr = articleRoot.attributes.getNamedItem("tg-component")
 
-    if (tgLayoutAttr) {
-      const layoutName = tgLayoutAttr.value
+    if (tgComponentAttr) {
+      const componentName = tgComponentAttr.value
+      const args = {}
 
-      const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
+      const names = ["title", "description", "index", "date"]
 
-      if (layout) {
-        const layoutRoot = layout.dom.window.document.body.cloneNode(true)
-        embedComponents(layoutRoot, siteData)
+      names.forEach(name => {
+        if (tgAttrs[name]) args[name] = tgAttrs[name]
+      })
 
-        const target = layoutRoot.querySelector("[tg-content]")
+      for (let i = 0; i < articleRoot.attributes.length; i++) {
+        const attr = articleRoot.attributes.item(i)
+        const parts = attr.name.split("-")
 
-        if (target) target.replaceWith(articleRoot)
+        if (parts.length == 3 && parts[0] == "tg" && parts[1] == "data") {
+          args[parts[2]] = attr.value
+        }
+      }
 
-        return renderHTML(layoutRoot, siteData, headAttrs)
+      const component =
+        siteData.components.find(component => component.path == componentName + ".html")
+
+      if (component) {
+        const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
+
+        const tgLayoutAttr = componentRoot.attributes.getNamedItem("tg-layout")
+
+        embedArgs(componentRoot, args)
+
+        const headAttrs = { title: getTitle(componentRoot) }
+
+        removeSpecialAttributes(componentRoot)
+        embedLinksToArticles(componentRoot, siteData, path)
+
+        if (tgLayoutAttr) {
+          const layoutName = tgLayoutAttr.value
+
+          const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
+
+          if (layout) {
+            const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+            embedComponents(layoutRoot, siteData)
+
+            const target = layoutRoot.querySelector("[tg-content]")
+
+            if (target) target.replaceWith(componentRoot)
+
+            return renderHTML(layoutRoot, siteData, headAttrs)
+          }
+        }
+        else {
+          return renderHTML(componentRoot, siteData, headAttrs)
+        }
+      }
+      else {
+        return ""
       }
     }
     else {
-      return renderHTML(articleRoot, siteData, headAttrs)
+      const tgLayoutAttr = articleRoot.attributes.getNamedItem("tg-layout")
+      const headAttrs = { title: getTitle(articleRoot) }
+
+      removeSpecialAttributes(articleRoot)
+      embedComponents(articleRoot, siteData)
+      embedLinksToArticles(articleRoot, siteData, path)
+
+      if (tgLayoutAttr) {
+        const layoutName = tgLayoutAttr.value
+
+        const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
+
+        if (layout) {
+          const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+          embedComponents(layoutRoot, siteData)
+
+          const target = layoutRoot.querySelector("[tg-content]")
+
+          if (target) target.replaceWith(articleRoot)
+
+          return renderHTML(layoutRoot, siteData, headAttrs)
+        }
+      }
+      else {
+        return renderHTML(articleRoot, siteData, headAttrs)
+      }
     }
   }
 
