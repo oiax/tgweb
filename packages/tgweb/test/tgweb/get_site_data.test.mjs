@@ -10,7 +10,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 5)
+    assert.equal(siteData.articles.length, 6)
   })
 
   it("should return the site data with dependencies", () => {

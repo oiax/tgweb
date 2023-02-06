@@ -18,6 +18,7 @@ generationFuncs["page"] = function(path, siteData) {
     embedComponents(pageRoot, siteData)
     embedArticles(pageRoot, siteData)
     embedArticleLists(pageRoot, siteData)
+    embedLinksToArticles(pageRoot, siteData, path)
 
     if (tgLayoutAttr) {
       const layoutName = tgLayoutAttr.value
@@ -53,6 +54,7 @@ generationFuncs["article"] = function(path, siteData) {
 
     removeSpecialAttributes(articleRoot)
     embedComponents(articleRoot, siteData)
+    embedLinksToArticles(articleRoot, siteData, path)
 
     if (tgLayoutAttr) {
       const layoutName = tgLayoutAttr.value
@@ -129,70 +131,12 @@ const embedArticleLists = function(node, siteData) {
 
   targets.forEach(target => {
     const pattern = target.attributes.getNamedItem("tg-articles").value
-    const tgFilterAttr = target.attributes.getNamedItem("tg-filter")
+    const tag = getTag(target)
     const tgOrderByAttr = target.attributes.getNamedItem("tg-order-by")
-    let tag
 
-    if (tgFilterAttr) {
-      const re = /^(tag):(.+)$/
-      const md = re.exec(tgFilterAttr.value)
-      if (md) tag = md[2]
-    }
+    const articles = filterArticles(siteData.articles, pattern, tag)
 
-    let articles =
-      siteData.articles.filter(article => {
-        if (minimatch(article.path, pattern)) {
-          if (tag) {
-            const articleRoot = article.dom.window.document.body.children[0]
-            const tgTagAttr = articleRoot.attributes.getNamedItem("tg-tag")
-
-            if (tgTagAttr) {
-              return tgTagAttr.value == tag
-            }
-          }
-          else {
-            return true
-          }
-        }
-      })
-
-    if (tgOrderByAttr) {
-      const re = /^(index):(asc|desc)$/
-      const md = re.exec(tgOrderByAttr.value)
-
-      if (md) {
-        articles.sort((a, b) => {
-          const c = a.dom.window.document.body.children[0]
-          const d = b.dom.window.document.body.children[0]
-
-          if (c && d) {
-            const i = c.attributes.getNamedItem("tg-index")
-            const j = d.attributes.getNamedItem("tg-index")
-
-            if (i) {
-              if (j) {
-                if (i.value > j.value) return -1
-                if (i.value < j.value) return 1
-                return 0
-              }
-              else {
-                return 1
-              }
-            }
-            else {
-              if (j) return -1
-              else return 1
-            }
-          }
-          else if (c) {
-            return 1
-          }
-          else return -1
-        })
-
-        if (md[2] == "desc") articles.reverse()
-      }
-    }
+    if (tgOrderByAttr) sortArticles(articles, tgOrderByAttr.value)
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
@@ -202,6 +146,102 @@ const embedArticleLists = function(node, siteData) {
 
     target.remove()
   })
+}
+
+const embedLinksToArticles = function(node, siteData, path) {
+  const targets = node.querySelectorAll("[tg-links]")
+
+  targets.forEach(target => {
+    const pattern = target.attributes.getNamedItem("tg-links").value
+    const tag = getTag(target)
+    const tgOrderByAttr = target.attributes.getNamedItem("tg-order-by")
+
+    const articles = filterArticles(siteData.articles, pattern, tag)
+
+    if (tgOrderByAttr) sortArticles(articles, tgOrderByAttr.value)
+
+    articles.forEach(article => {
+      const articleRoot = article.dom.window.document.body.children[0]
+      const copy = target.cloneNode(true)
+
+      const href = PATH.relative(PATH.dirname(path), PATH.join("src/articles", article.path))
+      copy.querySelectorAll("a[href='#']").forEach(anchor => anchor.href = href)
+
+      const args = {
+        "title": getTitle(articleRoot),
+        "date": getDate(articleRoot)
+      }
+
+      embedArgs(copy, args)
+
+      removeSpecialAttributes(copy)
+
+      target.before(copy)
+    })
+
+    target.remove()
+  })
+}
+
+const filterArticles = function(articles, pattern, tag) {
+  articles =
+    articles.filter(article => {
+      if (minimatch(article.path, pattern)) {
+        if (tag) {
+          const articleRoot = article.dom.window.document.body.children[0]
+          const tgTagAttr = articleRoot.attributes.getNamedItem("tg-tag")
+
+          if (tgTagAttr) {
+            return tgTagAttr.value == tag
+          }
+        }
+        else {
+          return true
+        }
+      }
+    })
+
+  return articles
+}
+
+const sortArticles = function(articles, orderBy) {
+  const re = /^(index):(asc|desc)$/
+  const md = re.exec(orderBy)
+
+  if (md) {
+    articles.sort((a, b) => {
+      const c = a.dom.window.document.body.children[0]
+      const d = b.dom.window.document.body.children[0]
+
+      if (c && d) {
+        const i = c.attributes.getNamedItem("tg-index")
+        const j = d.attributes.getNamedItem("tg-index")
+
+        if (i) {
+          if (j) {
+            if (i.value > j.value) return -1
+            if (i.value < j.value) return 1
+            if (i.path > j.path) return -1
+            if (i.path < j.path) return 1
+            return 0
+          }
+          else {
+            return 1
+          }
+        }
+        else {
+          if (j) return -1
+          else return 1
+        }
+      }
+      else if (c) {
+        return 1
+      }
+      else return -1
+    })
+
+    if (md[2] == "desc") articles.reverse()
+  }
 }
 
 const embedArgs = function(node, args) {
@@ -265,6 +305,21 @@ const getTitle = function(element) {
 
   const h6 = element.querySelector("h6")
   if (h6) return h6.textContent
+}
+
+const getDate = function(element) {
+  const dateAttr = element.attributes.getNamedItem("tg-date")
+  if (dateAttr) return dateAttr.value
+}
+
+const getTag = function(element) {
+  const tgFilterAttr = element.attributes.getNamedItem("tg-filter")
+
+  if (tgFilterAttr) {
+    const re = /^(tag):(.+)$/
+    const md = re.exec(tgFilterAttr.value)
+    if (md) return md[2]
+  }
 }
 
 export default generationFuncs

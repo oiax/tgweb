@@ -69,7 +69,7 @@ describe("generateHTML", () => {
     assert.equal(div2.attributes.getNamedItem("tg-layout"), null)
 
     const main = div2.children[2]
-    assert.equal(main.children.length, 3)
+    assert.equal(main.children.length, 4)
 
     const tech = main.children[0]
     assert.equal(tech.attributes.getNamedItem("tg-layout"), null)
@@ -77,9 +77,32 @@ describe("generateHTML", () => {
     const tech1 = main.children[1]
     assert.equal(tech1.attributes.getNamedItem("tg-layout"), null)
     assert.equal(tech1.attributes.getNamedItem("tg-tag"), null)
-    assert.equal(tech1.children[0].textContent, "C")
+    assert.equal(tech1.children[0].textContent, "D")
 
     const tech2 = main.children[2]
-    assert.equal(tech2.children[0].textContent, "A")
+    assert.equal(tech2.children[0].textContent, "C")
+
+    const tech3 = main.children[3]
+    assert.equal(tech3.children[0].textContent, "A")
+  })
+
+  it("should generate a link list", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    assert.equal(siteData.pages.length, 1)
+
+    const html = generateHTML("src/articles/technology.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const list = body.querySelector("nav > ul")
+
+    assert.equal(list.children.length, 3)
+
+    const link0 = list.children[0].children[0]
+
+    assert.equal(link0.href, "blog/a.html")
+    assert.equal(link0.textContent, "A")
+    assert.equal(link0.attributes.getNamedItem("tg-text"), null)
   })
 })
