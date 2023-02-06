@@ -36,7 +36,7 @@ const run = () => {
   const server = http.createServer(app)
 
   reload(app).then(function (reloadReturned) {
-    chokidar.watch("./dist").on("all", (_event, _path) => {
+    chokidar.watch("./dist").on("all", () => {
       reloadReturned.reload()
     })
 

@@ -1,0 +1,29 @@
+{
+  "extends": "eslint:recommended",
+  "env": {
+    "node": true,
+    "es2022": true,
+    "mocha": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 13
+  },
+  "rules": {
+    "arrow-body-style": "error",
+    "arrow-spacing": "error",
+    "generator-star-spacing": "error",
+    "no-duplicate-imports": "error",
+    "no-useless-computed-key": "error",
+    "no-useless-constructor": "error",
+    "no-useless-rename": "error",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-const": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "rest-spread-spacing": "error",
+    "template-curly-spacing": "error",
+    "yield-star-spacing": "error"
+  }
+}
