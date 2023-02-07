@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import getType from "./get_type.mjs"
 
-const getSiteData = function(directory) {
+const getSiteData = directory => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const cwd = process.cwd()
@@ -50,7 +50,7 @@ const getSiteData = function(directory) {
   return siteData
 }
 
-const updateSiteData = function(siteData, path) {
+const updateSiteData = (siteData, path) => {
   const type = getType(PATH.dirname(path))
 
   if (type == "component") {
@@ -87,7 +87,7 @@ const updateSiteData = function(siteData, path) {
   }
 }
 
-const setDependencies = function(object, siteData) {
+const setDependencies = (object, siteData) => {
   const body = object.dom.window.document.body
   const componentRefs = body.querySelectorAll("[tg-component]")
   const layoutRef = body.querySelector("[tg-layout]")
@@ -108,7 +108,7 @@ const setDependencies = function(object, siteData) {
   }
 }
 
-const getDom = function(path) {
+const getDom = path => {
   const html = fs.readFileSync(path)
   const dom = new JSDOM(html)
 

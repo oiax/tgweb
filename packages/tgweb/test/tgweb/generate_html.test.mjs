@@ -105,4 +105,19 @@ describe("generateHTML", () => {
     assert.equal(link0.textContent, "A")
     assert.equal(link0.attributes.getNamedItem("tg-text"), null)
   })
+
+  it("should merge attributes of article and component", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/articles/blog/b.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const h3 = body.querySelector("h3")
+
+    assert.equal(h3.textContent, "B")
+
+    const dateDiv = body.children[1].children[1]
+    assert.equal(dateDiv.textContent, "2023-01-01")
+  })
 })

@@ -1,7 +1,7 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "keywords": [
     "teamgenik",
     "blog",
@@ -10,7 +10,8 @@
   ],
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
-    "test": "mocha --slow 500 test/*.test.mjs test/**/*.test.mjs"
+    "test": "mocha --slow 500 test/*.test.mjs test/**/*.test.mjs",
+    "lint-eslint": "eslint . --ext mjs --max-warnings=0 --config .eslintrc.json --no-eslintrc"
   },
   "author": "Coregenik Inc.",
   "license": "MIT",
@@ -39,6 +40,8 @@
     "node": ">=16.12.0"
   },
   "devDependencies": {
+    "eslint": "^8.33.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "mocha": "^10.2.0"
   }
 }
