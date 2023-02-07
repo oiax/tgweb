@@ -35,15 +35,15 @@ const run = () => {
 
   const server = http.createServer(app)
 
-  reload(app).then(function (reloadReturned) {
+  reload(app).then(reloadReturned => {
     chokidar.watch("./dist").on("all", () => {
       reloadReturned.reload()
     })
 
-    server.listen(app.get("port"), function () {
+    server.listen(app.get("port"), () => {
       console.log(`Web server is listening on port ${app.get("port")}.`)
     })
-  }).catch(function (err) {
+  }).catch(err => {
     console.error("Could not start a web server.", err)
   })
 

@@ -2,7 +2,7 @@ import * as PATH from "path"
 import fs from "fs"
 import generateHTML from "./generate_html.mjs"
 
-const createHTML = function(path, siteData) {
+const createHTML = (path, siteData) => {
   const html = generateHTML(path, siteData)
 
   if (html !== undefined) {

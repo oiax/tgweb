@@ -4,7 +4,7 @@ import { updateSiteData } from "./get_site_data.mjs"
 import getType from "./get_type.mjs"
 import generateHTML from "./generate_html.mjs"
 
-const update = function(path, siteData) {
+const update = (path, siteData) => {
   updateSiteData(siteData, path)
 
   const type = getType(PATH.dirname(path))
@@ -25,7 +25,7 @@ const update = function(path, siteData) {
   }
 }
 
-const updateHTML = function(path, siteData) {
+const updateHTML = (path, siteData) => {
   const html = generateHTML(path, siteData)
 
   if (html !== undefined) {

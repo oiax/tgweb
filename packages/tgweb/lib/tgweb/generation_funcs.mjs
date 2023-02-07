@@ -7,7 +7,7 @@ import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
 
-generationFuncs["page"] = function(path, siteData) {
+generationFuncs["page"] = (path, siteData) => {
   const filename = PATH.basename(path)
   const page = siteData.pages.find(page => page.path == filename)
 
@@ -29,7 +29,7 @@ generationFuncs["page"] = function(path, siteData) {
   return pretty(siteData.documentTemplate.serialize())
 }
 
-generationFuncs["article"] = function(path, siteData) {
+generationFuncs["article"] = (path, siteData) => {
   const article = siteData.articles.find(article => "src/articles/" + article.path == path)
 
   if (article) {
@@ -75,7 +75,7 @@ const applyLayout = (element, siteData) => {
   return layoutRoot
 }
 
-const embedComponents = function(node, siteData) {
+const embedComponents = (node, siteData) => {
   const targets = node.querySelectorAll("[tg-component]")
 
   targets.forEach(target => {
@@ -112,7 +112,7 @@ const getArgs = element => {
   return args
 }
 
-const embedArticles = function(node, siteData) {
+const embedArticles = (node, siteData) => {
   const targets = node.querySelectorAll("[tg-article]")
 
   targets.forEach(target => {
@@ -129,7 +129,7 @@ const embedArticles = function(node, siteData) {
   })
 }
 
-const embedArticleLists = function(node, siteData) {
+const embedArticleLists = (node, siteData) => {
   const targets = node.querySelectorAll("[tg-articles]")
 
   targets.forEach(target => {
@@ -150,7 +150,7 @@ const embedArticleLists = function(node, siteData) {
   })
 }
 
-const embedLinksToArticles = function(node, siteData, path) {
+const embedLinksToArticles = (node, siteData, path) => {
   const targets = node.querySelectorAll("[tg-links]")
 
   targets.forEach(target => {
@@ -184,7 +184,7 @@ const embedLinksToArticles = function(node, siteData, path) {
   })
 }
 
-const filterArticles = function(articles, pattern, tag) {
+const filterArticles = (articles, pattern, tag) => {
   articles =
     articles.filter(article => {
       if (minimatch(article.path, pattern)) {
@@ -205,7 +205,7 @@ const filterArticles = function(articles, pattern, tag) {
   return articles
 }
 
-const sortArticles = function(articles, orderBy) {
+const sortArticles = (articles, orderBy) => {
   const re = /^(index):(asc|desc)$/
   const md = re.exec(orderBy)
 
@@ -247,7 +247,7 @@ const sortArticles = function(articles, orderBy) {
   }
 }
 
-const embedArgs = function(node, args) {
+const embedArgs = (node, args) => {
   const targets = node.querySelectorAll("[tg-text]")
 
   targets.forEach(target => {
@@ -264,7 +264,7 @@ const embedArgs = function(node, args) {
   })
 }
 
-const renderHTML = function(root, siteData, headAttrs) {
+const renderHTML = (root, siteData, headAttrs) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
   removeTgAttributes(root)
   dom.window.document.body.replaceWith(root)
@@ -275,7 +275,7 @@ const renderHTML = function(root, siteData, headAttrs) {
   return pretty(dom.serialize())
 }
 
-const getTitle = function(element) {
+const getTitle = element => {
   if (element.tgAttrs["title"]) return element.tgAttrs["title"]
 
   const h1 = element.querySelector("h1")
@@ -297,7 +297,7 @@ const getTitle = function(element) {
   if (h6) return h6.textContent
 }
 
-const getTag = function(element) {
+const getTag = element => {
   element.tgAttrs["filter"]
 
   if (element.tgAttrs["filter"]) {

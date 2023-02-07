@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "eslint": "^8.33.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "mocha": "^10.2.0"
   }
 }

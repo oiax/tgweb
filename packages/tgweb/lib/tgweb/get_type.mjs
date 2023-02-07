@@ -1,4 +1,4 @@
-const getType = function(dirname) {
+const getType = dirname => {
   if (dirname === "src/components") return "component"
   else if (dirname === "src/layouts") return "layout"
   else if (dirname === "src/articles") return "article"
