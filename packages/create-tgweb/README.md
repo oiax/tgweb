@@ -3,21 +3,18 @@
 ## Scaffolding for tgweb
 
 ```bash
-npm create tgweb@latest
+npm -y create tgweb@latest example
 ```
 
-This command creates a directory named `tgweb` in the _current_ directory.
+This command creates a directory named `example` in the _current_ directory and
+place `package.json` there.
 
-If you want to create a directory with another name, specify it as an argument as follows:
-
-```bash
-npm create tgweb@latest our_web
-```
+If you omit the directory name, `tgweb` is used.
 
 ## Installation of tgweb
 
 ```
-cd tgweb
+cd example
 npm install
 ```
 
