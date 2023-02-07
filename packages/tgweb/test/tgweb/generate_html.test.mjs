@@ -11,7 +11,25 @@ describe("generateHTML", () => {
   it("should embed the given page into the document template", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
-    assert.equal(siteData.pages.length, 1)
+    assert.equal(siteData.pages.length, 2)
+
+    const html = generateHTML("src/about.html", siteData)
+    const dom = new JSDOM(html)
+
+    const head = dom.window.document.head
+
+    const title = head.querySelector("title")
+    assert.equal(title.textContent, "About")
+
+    const script = head.querySelector("script")
+    assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
+    assert.equal(script.attributes.getNamedItem("defer").value, "")
+  })
+
+  it("should embed the given page into the specified layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+    assert.equal(siteData.pages.length, 2)
 
     const html = generateHTML("src/index.html", siteData)
     const dom = new JSDOM(html)
@@ -20,10 +38,6 @@ describe("generateHTML", () => {
 
     const title = head.querySelector("title")
     assert.equal(title.textContent, "Home")
-
-    const script = head.querySelector("script")
-    assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
-    assert.equal(script.attributes.getNamedItem("defer").value, "")
 
     const body = dom.window.document.body
     const div0 = body.children[0]

@@ -14,16 +14,34 @@ generationFuncs["page"] = (path, siteData) => {
   if (page) {
     const pageRoot = page.dom.window.document.body.children[0].cloneNode(true)
     setTgAttrs(pageRoot)
-    const headAttrs = { title: getTitle(pageRoot) }
 
-    embedComponents(pageRoot, siteData)
-    embedArticles(pageRoot, siteData)
-    embedArticleLists(pageRoot, siteData)
-    embedLinksToArticles(pageRoot, siteData, path)
+    if (pageRoot.tgAttrs["layout"]) {
+      const headAttrs = { title: getTitle(pageRoot) }
 
-    const layoutRoot = applyLayout(pageRoot, siteData)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
-    else return renderHTML(pageRoot, siteData, headAttrs)
+      embedComponents(pageRoot, siteData)
+      embedArticles(pageRoot, siteData)
+      embedArticleLists(pageRoot, siteData)
+      embedLinksToArticles(pageRoot, siteData, path)
+
+      const layoutRoot = applyLayout(pageRoot, siteData)
+      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
+      else return renderHTML(pageRoot, siteData, headAttrs)
+    }
+    else {
+      const body = page.dom.window.document.body.cloneNode(true)
+      setTgAttrs(body)
+
+      const headAttrs = { title: getTitle(body) }
+
+      embedComponents(body, siteData)
+      embedArticles(body, siteData)
+      embedArticleLists(body, siteData)
+      embedLinksToArticles(body, siteData, path)
+
+      const layoutRoot = applyLayout(body, siteData)
+      if (layoutRoot) return renderHTML(body, siteData, headAttrs)
+      else return renderHTML(body, siteData, headAttrs)
+    }
   }
 
   return pretty(siteData.documentTemplate.serialize())
