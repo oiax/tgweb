@@ -108,10 +108,10 @@ picture frame.
 
 Layouts are HTML files placed in the `src/layouts` subdirectory under the working directory.
 
-A layout must satisfy the following two conditions: 1:
+A layout must satisfy the following two conditions:
 
-1. Tts root element is the body element.
-2. Only one descendant element of the root element has the `tg-content` attribute.
+1. Its root element is the body element.
+2. The root element has only one `<tg-content>` element.
 
 The element with the tg-content attribute indicates where in the layout the page will be inserted.
 
@@ -125,7 +125,7 @@ The element with the tg-content attribute indicates where in the layout the page
     <div>Example</div>
   </header>
   <main>
-    <div tg-layout></div>
+    <tg-content />
   </main>
   <footer>&copy; Example Inc. 2023</footer>
 </body>
@@ -222,7 +222,7 @@ attribute of the element at the location where you want to place it.
 </p>
 ```
 
-### Passing data to a component
+### Embeddeing content to a component
 
 ### Slots
 

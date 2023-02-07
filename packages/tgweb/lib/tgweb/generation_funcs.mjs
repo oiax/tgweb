@@ -86,7 +86,7 @@ const applyLayout = (element, siteData) => {
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
   embedComponents(layoutRoot, siteData)
 
-  const target = layoutRoot.querySelector("[tg-content]")
+  const target = layoutRoot.querySelector("tg-content")
 
   if (target) target.replaceWith(element)
 
