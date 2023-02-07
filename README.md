@@ -106,7 +106,7 @@ picture frame.
 
 ### Adding a layout
 
-Layouts are HTML files placed in the `src/layouts` directory under the working directory.
+Layouts are HTML files placed in the `src/layouts` subdirectory under the working directory.
 
 A layout must satisfy the following two conditions: 1:
 
@@ -180,6 +180,51 @@ the following HTML document is generated:
   </body>
 </html>
 ```
+
+## Components
+
+### Comonent files
+
+_Components_ are named HTML elements that can be placed in pages, articles and layouts.
+Their files are live in the `src/components` subdirectory of the working directory.
+
+A component must have only one root element. The following is an example of a correct component:
+
+`src/components/smile.html`
+
+```html
+<span class="inline-block border-solid border-2 border-black rounded p-2">
+  <i class="fas fa-smile"></i>
+</span>
+```
+
+The following example is incorrect for a component because it has multiple root elements:
+
+`src/components/rgb.html`
+
+```html
+<span class="text-red-500">R</span>
+<span class="text-green-500">G</span>
+<span class="text-bluer-500">B</span>
+```
+
+### Placement of components
+
+To place a component in a page, article, or layout, specify its name in the `tg-component`
+attribute of the element at the location where you want to place it.
+
+#### Example
+
+```html
+<p>
+  <span tg-component="smile"></span>
+  How are you?
+</p>
+```
+
+### Passing data to a component
+
+### Slots
 
 ## Managing the contents of the `<head>` element
 
