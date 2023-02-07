@@ -17,17 +17,21 @@ npm install tgweb
 
 ### Create a site
 
-To create a website named `foobar`, run the following command:
+To create a website named `example`, run the following command:
 
 ```bash
-npx tgweb-init foobar
+npx tgweb-init example
 ```
 
-This command creates `foobar` directory in the `sites` directory.
+This command creates `example` directory in the `sites` directory.
+
+Henceforth we will refer to this directory as the _working directory_.
+
+In addition, this command creates `src` and `dist` directory under the woking directory.
 
 ### Add content
 
-Create `index.html` under the foobar directory with the following content:
+Create `index.html` in the `src` directory with the following content:
 
 ```html
 <body>
@@ -44,10 +48,28 @@ Note that the `body` element should not be surrounded by `<html>` and `</html>`.
 To start the tgweb server, run the following command:
 
 ```bash
-npx tgweb-server foobar
+npx tgweb-server example
 ```
 
 Then, open `http://localhost:3000` with your browser.
+
+Make sure that the text "Hello, world!" appears in the red background area.
+
+The class tokens `bg-red-300` and `p-4` specified in the `class` attribute of the `<div>`
+element are provided by [Tailwind CSS](https://tailwindcss.com/).
+
+The token `bg-red-300` specifies light red as the background color of `<div>` element,
+and the token `p-4` sets a padding of 16 pixels to it.
+
+Also verify that a file named `index.html` has been created in the `dist` directory.
+The contents of that file should be a complete HTML document that contains
+the `<html>` and `<head>` elements.
+
+In addition, **tgweb** generates a file named `tailwind.css` under the `dist/css` directory
+with the help of Tailwind CSS.
+
+You may have noticed that the content of the `<title>` element of `index.html` is "No Title".
+How to deal with this problem is described later.
 
 ### Modify content
 
@@ -67,6 +89,97 @@ Confirm that the browser screen is automatically redrawn and the background colo
 ### Stop the tgweb server
 
 Presse `Ctrl + C` to stop the tgweb server.
+
+## Layouts
+
+### What is a layout
+
+Layout is the "shell," so to speak, that surrounds your pages.
+Layouts allow you to manage your website efficiently.
+
+Typically, the pages of a website have a set of areas that share most of the same content:
+headers, sidebars, footers, etc.
+We call this set of areas a _layout_.
+
+The relationship between page and layout is similar to that between a work of fine art and a
+picture frame.
+
+### Adding a layout
+
+Layouts are HTML files placed in the `src/layouts` directory under the working directory.
+
+A layout must satisfy the following two conditions: 1:
+
+1. Tts root element is the body element.
+2. Only one descendant element of the root element has the `tg-content` attribute.
+
+The element with the tg-content attribute indicates where in the layout the page will be inserted.
+
+#### Example
+
+`src/layouts/common.html`
+
+```html
+<body>
+  <header>
+    <div>Example</div>
+  </header>
+  <main>
+    <div tg-layout></div>
+  </main>
+  <footer>&copy; Example Inc. 2023</footer>
+</body>
+```
+
+### Applying this layout to a page
+
+To apply this layout to a page, specify the name of the layout in the `tg-layout` attribute of the
+root element of the page.
+
+The name of the layout is the file name of the layout minus its extension (`.html`).
+In this case, `common` is the name of the layout.
+
+The root element of the page to which the layout is applied must be an element that can be placed
+within the `<body>` element, such as the `<div>` element and `<article>` element,
+rather than the `<body>` element.
+
+#### Example
+
+`src/index.html`
+
+```html
+<article tg-layout="common">
+  <h1>Welcome!</h1>
+  <div class="bg-green-300 p-4">
+    <p>Hello, world!</p>
+  </div>
+</article>
+```
+
+When the layout `common` shown in the previous example is applied to this page file,
+the following HTML document is generated:
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    <header>
+      <div>Example</div>
+    </header>
+    <main>
+      <article>
+        <h1>Welcome!</h1>
+        <div class="bg-green-300 p-4">
+          <p>Hello, world!</p>
+        </div>
+      </article>
+    </main>
+    <footer>&copy; Example Inc. 2023</footer>
+  </body>
+</html>
+```
 
 ## Managing the contents of the `<head>` element
 
