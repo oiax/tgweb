@@ -183,6 +183,72 @@ the following HTML document is generated:
 </html>
 ```
 
+### Embedding contents into slots within a layout
+
+The `<tg-slot>` element is a place holder inside a layout that you can fill with a content
+specified within a page.
+A `name` attribute must be specified for the `<tg-slot>` element.
+
+To insert content into a slot in a layout, place an element with the `tg-slot` attribute on the
+page where the layout is to be applied.
+
+The tag name of the element with the `tg-slot` attribute is meaningless and can be anything,
+but `<div>` or `<span>` is recommended.
+
+If you specify the name of the slot as the value of the `tg-slot` attribute,
+the slot will be replaced with the element's content.
+
+When page content is inserted into a `<tg-content>` element in a layout,
+all elements with the `tg-slot` attribute are removed from the page content.
+
+#### Example
+
+`src/layouts/product.html`
+
+```html
+<body class="p-2">
+  <tg-content></tg-content>
+  <div class="border-2 border-black border-solid p-2">
+    <tg-slot name="remarks"></tg-slot>
+  </div>
+  <div><tg-slot name="badges"></tg-slot></div>
+</body>
+```
+
+`src/product1.html`
+
+```html
+<div tg-layout="product" tg-title="Product 1">
+  <div>
+    <h1>Product 1</h1>
+    <p>Description</p>
+  </div>
+  <span tg-slot="remarks">This product is very fragile.</span>
+  <span tg-slot="badges"><span>A</span><span>B</span></span>
+</div>
+```
+
+When the layout `production` is applied to the page `product1.html`,
+the following HTML document is generated:
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body class="p-2">
+    <div>
+      <h1>Product 1</h1>
+      <p>Description</p>
+    </div>
+    <div class="border-2 border-black border-solid p-2">
+      This product is very fragile.
+    </div>
+    <div><span>A</span><span>B</span></div>
+  </body>
+</html>
+```
+
 ## Components
 
 ### Comonent files
