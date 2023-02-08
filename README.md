@@ -125,11 +125,13 @@ The element with the tg-content attribute indicates where in the layout the page
     <div>Example</div>
   </header>
   <main>
-    <tg-content />
+    <tg-content></tg-content>
   </main>
   <footer>&copy; Example Inc. 2023</footer>
 </body>
 ```
+
+Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-content>`.
 
 ### Applying this layout to a page
 

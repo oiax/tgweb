@@ -11,7 +11,6 @@ describe("generateHTML", () => {
   it("should embed the given page into the document template", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
-    assert.equal(siteData.pages.length, 2)
 
     const html = generateHTML("src/about.html", siteData)
     const dom = new JSDOM(html)
@@ -29,7 +28,6 @@ describe("generateHTML", () => {
   it("should embed the given page into the specified layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
-    assert.equal(siteData.pages.length, 2)
 
     const html = generateHTML("src/index.html", siteData)
     const dom = new JSDOM(html)
@@ -45,6 +43,23 @@ describe("generateHTML", () => {
 
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "Greeting")
+  })
+
+  it("should embed contents into slots within layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/product1.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const div1 = body.children[1]
+    assert.equal(div1.textContent.trim(), "This product is very fragile.")
+
+    const div2 = body.children[2]
+    assert.equal(div2.children[0].tagName, "SPAN")
+    assert.equal(div2.children[0].textContent, "A")
+    assert.equal(div2.children[1].textContent, "B")
   })
 
   it("should merge a layout, a page and components", () => {

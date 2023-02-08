@@ -78,12 +78,15 @@ const renderArticle = (articleRoot, siteData, path) => {
 const applyLayout = (element, siteData) => {
   if (element.tgAttrs["layout"] === undefined) return
 
+  const slotContents = extractSlotContents(element)
+
   const layout =
     siteData.layouts.find(layout => layout.path == element.tgAttrs["layout"] + ".html")
 
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+  embedSlotContents(layoutRoot, slotContents)
   embedComponents(layoutRoot, siteData)
 
   const target = layoutRoot.querySelector("tg-content")
@@ -91,6 +94,27 @@ const applyLayout = (element, siteData) => {
   if (target) target.replaceWith(element)
 
   return layoutRoot
+}
+
+const extractSlotContents = element => {
+  const slotContents =
+    Array.from(element.querySelectorAll("[tg-slot]")).map(elem => {
+      const copy = elem.cloneNode(true)
+      setTgAttrs(copy)
+      return copy
+    })
+
+  element.querySelectorAll("[tg-slot]").forEach(elem => elem.remove())
+
+  return slotContents
+}
+
+const embedSlotContents = (element, slotContents) => {
+  element.querySelectorAll("tg-slot").forEach(slot => {
+    const content = slotContents.find(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+    if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
+    slot.remove()
+  })
 }
 
 const embedComponents = (node, siteData) => {
