@@ -110,9 +110,20 @@ const extractSlotContents = element => {
 }
 
 const embedSlotContents = (element, slotContents) => {
+  element.querySelectorAll("[tg-if-complete]").forEach(wrapper => {
+    const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot =>
+      slotContents.some(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+    )
+
+    if (complete === false) wrapper.remove()
+  })
+
   element.querySelectorAll("tg-slot").forEach(slot => {
     const content = slotContents.find(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+
     if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
+    else Array.from(slot.childNodes).forEach(child => slot.before(child))
+
     slot.remove()
   })
 }

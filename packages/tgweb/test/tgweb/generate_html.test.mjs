@@ -62,6 +62,20 @@ describe("generateHTML", () => {
     assert.equal(div2.children[1].textContent, "B")
   })
 
+  it("should omit an element with tg-if-complete attribute", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/product2.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    assert.equal(body.children.length, 2)
+
+    const div1 = body.children[1]
+    assert.equal(div1.textContent, "*")
+  })
+
   it("should merge a layout, a page and components", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)

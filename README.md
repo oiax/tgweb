@@ -228,7 +228,7 @@ all elements with the `tg-slot` attribute are removed from the page content.
 </div>
 ```
 
-When the layout `production` is applied to the page `product1.html`,
+When the layout `product` is applied to the page `product1.html`,
 the following HTML document is generated:
 
 ```html
@@ -245,6 +245,90 @@ the following HTML document is generated:
       This product is very fragile.
     </div>
     <div><span>A</span><span>B</span></div>
+  </body>
+</html>
+```
+
+### Fallback content of slot
+
+If the content to be inserted into the slot is not defined, the content of the `<tg-slot>` element
+is used as a fallback content.
+
+#### Example
+
+`src/layouts/message.html`
+
+```html
+<body class="p-2">
+  <tg-content></tg-content>
+  <div><tg-slot name="message">No message.</tg-slot></div>
+</body>
+```
+
+`src/home.html`
+
+```html
+<div tg-layout="message" tg-title="Home">
+  <h1>Home</h1>
+</div>
+```
+
+When the layout `message` is applied to the page `home.html`,
+the following HTML document is generated:
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body class="p-2">
+    <h1>Home</h1>
+    <div>No message.</div>
+  </body>
+</html>
+```
+
+### `tg-if-complete` attribute
+
+When an element in a layout has the `tg-if-complete` attribute, it is deleted unless the content
+to be inserted is defined for all slots in that element.
+
+If no single slot exists in an element with the `tg-if-complete` attribute, the element is
+retained.
+
+#### Example
+
+`src/layouts/message.html`
+
+```html
+<body class="p-2">
+  <tg-content></tg-content>
+  <div tg-if-complete>
+    <div>To: <tg-slot name="name"></tg-slot></div>
+    <div><tg-slot name="message"></tg-slot></div>
+  </div>
+</body>
+```
+
+`src/home.html`
+
+```html
+<div tg-layout="message" tg-title="Home">
+  <h1>Home</h1>
+  <span tg-slot="name">Alice</span>
+</div>
+```
+
+When the layout `message` is applied to the page `home.html`,
+the following HTML document is generated:
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body class="p-2">
+    <h1>Home</h1>
   </body>
 </html>
 ```
