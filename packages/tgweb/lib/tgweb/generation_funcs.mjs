@@ -14,16 +14,34 @@ generationFuncs["page"] = (path, siteData) => {
   if (page) {
     const pageRoot = page.dom.window.document.body.children[0].cloneNode(true)
     setTgAttrs(pageRoot)
-    const headAttrs = { title: getTitle(pageRoot) }
 
-    embedComponents(pageRoot, siteData)
-    embedArticles(pageRoot, siteData)
-    embedArticleLists(pageRoot, siteData)
-    embedLinksToArticles(pageRoot, siteData, path)
+    if (pageRoot.tgAttrs["layout"]) {
+      const headAttrs = { title: getTitle(pageRoot) }
 
-    const layoutRoot = applyLayout(pageRoot, siteData)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
-    else return renderHTML(pageRoot, siteData, headAttrs)
+      embedComponents(pageRoot, siteData)
+      embedArticles(pageRoot, siteData)
+      embedArticleLists(pageRoot, siteData)
+      embedLinksToArticles(pageRoot, siteData, path)
+
+      const layoutRoot = applyLayout(pageRoot, siteData)
+      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
+      else return renderHTML(pageRoot, siteData, headAttrs)
+    }
+    else {
+      const body = page.dom.window.document.body.cloneNode(true)
+      setTgAttrs(body)
+
+      const headAttrs = { title: getTitle(body) }
+
+      embedComponents(body, siteData)
+      embedArticles(body, siteData)
+      embedArticleLists(body, siteData)
+      embedLinksToArticles(body, siteData, path)
+
+      const layoutRoot = applyLayout(body, siteData)
+      if (layoutRoot) return renderHTML(body, siteData, headAttrs)
+      else return renderHTML(body, siteData, headAttrs)
+    }
   }
 
   return pretty(siteData.documentTemplate.serialize())
@@ -60,19 +78,43 @@ const renderArticle = (articleRoot, siteData, path) => {
 const applyLayout = (element, siteData) => {
   if (element.tgAttrs["layout"] === undefined) return
 
+  const slotContents = extractSlotContents(element)
+
   const layout =
     siteData.layouts.find(layout => layout.path == element.tgAttrs["layout"] + ".html")
 
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+  embedSlotContents(layoutRoot, slotContents)
   embedComponents(layoutRoot, siteData)
 
-  const target = layoutRoot.querySelector("[tg-content]")
+  const target = layoutRoot.querySelector("tg-content")
 
   if (target) target.replaceWith(element)
 
   return layoutRoot
+}
+
+const extractSlotContents = element => {
+  const slotContents =
+    Array.from(element.querySelectorAll("[tg-slot]")).map(elem => {
+      const copy = elem.cloneNode(true)
+      setTgAttrs(copy)
+      return copy
+    })
+
+  element.querySelectorAll("[tg-slot]").forEach(elem => elem.remove())
+
+  return slotContents
+}
+
+const embedSlotContents = (element, slotContents) => {
+  element.querySelectorAll("tg-slot").forEach(slot => {
+    const content = slotContents.find(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+    if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
+    slot.remove()
+  })
 }
 
 const embedComponents = (node, siteData) => {

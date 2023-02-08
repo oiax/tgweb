@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.0.5
+
+* db5b589 Embed contents into slots within layout
+* 9e11940 Use `<tg-content></tg-content>` instead of `<div tg-content></div>`
+
 ## 0.0.4
 
 * d4f1cd4 Use `tg-tags` instead of `tg-tag` attribute
