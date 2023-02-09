@@ -374,9 +374,40 @@ attribute of the element at the location where you want to place it.
 </p>
 ```
 
-### Embeddeing content to a component
-
 ### Slots
+
+Like layouts, slots can be placed inside components. The method of embedding content in the slots
+within a component is similar to that of a layout.
+
+#### Example
+
+`src/components/blog_item.html`
+
+```html
+<div class="py-2">
+  <h3 class="font-bold text-lg m-2">
+    <tg-slot name="title"></tg-slot>
+  </h3>
+  <div>
+    <tg-slot name="body"></tg-slot>
+  </div>
+  <div tg-if-complete class="text-right">
+    <tg-slot name="date"></tg-slot>
+  </div>
+</div>
+```
+
+`src/hello.html`
+
+```html
+<div tg-layout="home" tg-component="blog_item" class="bg-gray-100 py-2">
+  <span tg-slot="title">Greeting</span>
+  <span tg-slot="body">
+    <p>Hello.</p>
+  </span>
+  <span tg-slot="date">2022-12-31</span>
+</div>
+```
 
 ## Managing the contents of the `<head>` element
 
