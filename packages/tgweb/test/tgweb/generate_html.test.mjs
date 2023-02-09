@@ -12,7 +12,7 @@ describe("generateHTML", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
-    const html = generateHTML("src/about.html", siteData)
+    const html = generateHTML("src/pages/about.html", siteData)
     const dom = new JSDOM(html)
 
     const head = dom.window.document.head
@@ -29,7 +29,7 @@ describe("generateHTML", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
-    const html = generateHTML("src/index.html", siteData)
+    const html = generateHTML("src/pages/index.html", siteData)
     const dom = new JSDOM(html)
 
     const head = dom.window.document.head
@@ -49,7 +49,7 @@ describe("generateHTML", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
-    const html = generateHTML("src/product1.html", siteData)
+    const html = generateHTML("src/pages/product1.html", siteData)
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
@@ -66,7 +66,7 @@ describe("generateHTML", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
-    const html = generateHTML("src/product2.html", siteData)
+    const html = generateHTML("src/pages/product2.html", siteData)
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
@@ -81,7 +81,7 @@ describe("generateHTML", () => {
     const siteData = getSiteData(wd)
     assert.equal(siteData.pages.length, 1)
 
-    const html = generateHTML("src/index.html", siteData)
+    const html = generateHTML("src/pages/index.html", siteData)
     const dom = new JSDOM(html)
 
     const head = dom.window.document.head

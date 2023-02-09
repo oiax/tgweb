@@ -17,7 +17,7 @@ const update = (path, siteData) => {
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
-      .forEach(page => updateHTML("src/" + page.path, siteData))
+      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(name))
@@ -29,7 +29,7 @@ const updateHTML = (path, siteData) => {
   const html = generateHTML(path, siteData)
 
   if (html !== undefined) {
-    const targetPath = path.replace(/^src\//, "dist/")
+    const targetPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
     const targetDir = PATH.dirname(targetPath)
 
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })

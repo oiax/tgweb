@@ -39,9 +39,9 @@ const getSiteData = directory => {
     siteData.articles.map(article => setDependencies(article, siteData))
   }
 
-  if (fs.existsSync(directory + "/src")) {
-    process.chdir(directory + "/src")
-    siteData.pages = glob.sync("*.html").map(getDom)
+  if (fs.existsSync(directory + "/src/pages")) {
+    process.chdir(directory + "/src/pages")
+    siteData.pages = glob.sync("**/*.html").map(getDom)
     siteData.pages.map(page => setDependencies(page, siteData))
   }
 
@@ -79,7 +79,7 @@ const updateSiteData = (siteData, path) => {
   }
   else if (type == "page") {
     siteData.pages.forEach(page => {
-      if ("src/" + page.path == path) {
+      if ("src/pages/" + page.path == path) {
         const html = fs.readFileSync(path)
         page.dom = new JSDOM(html)
       }

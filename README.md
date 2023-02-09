@@ -31,7 +31,7 @@ In addition, this command creates `src` and `dist` directory under the woking di
 
 ### Add content
 
-Create `index.html` in the `src` directory with the following content:
+Create `index.html` in the `src/pages` subdirectory with the following content:
 
 ```html
 <body>
@@ -149,7 +149,7 @@ rather than the `<body>` element.
 
 #### Example
 
-`src/index.html`
+`src/pages/index.html`
 
 ```html
 <article tg-layout="common">
@@ -217,7 +217,7 @@ all elements with the `tg-slot` attribute are removed from the page content.
 </body>
 ```
 
-`src/product1.html`
+`src/pages/product1.html`
 
 ```html
 <div tg-layout="product" tg-title="Product 1">
@@ -267,7 +267,7 @@ is used as a fallback content.
 </body>
 ```
 
-`src/home.html`
+`src/pages/home.html`
 
 ```html
 <div tg-layout="message" tg-title="Home">
@@ -312,7 +312,7 @@ retained.
 </body>
 ```
 
-`src/home.html`
+`src/pages/home.html`
 
 ```html
 <div tg-layout="message" tg-title="Home">
@@ -399,7 +399,7 @@ within a component is similar to that of a layout.
 </div>
 ```
 
-`src/hello.html`
+`src/pages/hello.html`
 
 ```html
 <div tg-layout="home" tg-component="blog_item" class="bg-gray-100 py-2">
