@@ -104,9 +104,7 @@ describe("generateHTML", () => {
 
     const div1 = grid.children[1]
     const p10 = div1.children[0]
-    const span102 = p10.children[2]
-    assert.equal(span102.textContent, "computer")
-    assert.equal(span102.attributes.getNamedItem("tg-text"), null)
+    assert.equal(p10.textContent, "I am a computer.")
 
     const div2 = grid.children[2]
     assert.equal(div2.attributes.getNamedItem("tg-layout"), null)

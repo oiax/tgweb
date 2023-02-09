@@ -134,7 +134,12 @@ const embedComponents = (node, siteData) => {
   targets.forEach(target => {
     setTgAttrs(target)
     const componentRoot = getComponentRoot(target, siteData)
-    if (componentRoot) target.replaceWith(componentRoot)
+
+    if (componentRoot) {
+      const slotContents = extractSlotContents(target)
+      embedSlotContents(componentRoot, slotContents)
+      target.replaceWith(componentRoot)
+    }
   })
 }
 
