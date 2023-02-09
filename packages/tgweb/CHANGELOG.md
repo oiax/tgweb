@@ -4,6 +4,7 @@
 
 * 4bafb1b Make `tg-article`, `tg-articles` and `tg-links` accept slots
 * 14baa67 Allow slots to be placed in components
+* e1b497c Place pages in the `src/pages` directory
 
 ## 0.0.6
 
