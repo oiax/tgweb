@@ -116,15 +116,16 @@ describe("generateHTML", () => {
     assert.equal(tech.attributes.getNamedItem("tg-layout"), null)
 
     const tech1 = main.children[1]
+
     assert.equal(tech1.attributes.getNamedItem("tg-layout"), null)
     assert.equal(tech1.attributes.getNamedItem("tg-tag"), null)
-    assert.equal(tech1.children[0].textContent, "D")
+    assert.equal(tech1.children[0].textContent.trim(), "A")
 
     const tech2 = main.children[2]
-    assert.equal(tech2.children[0].textContent, "C")
+    assert.equal(tech2.children[0].textContent.trim(), "D")
 
     const tech3 = main.children[3]
-    assert.equal(tech3.children[0].textContent, "A")
+    assert.equal(tech3.children[0].textContent.trim(), "C")
   })
 
   it("should generate a link list", () => {
@@ -156,7 +157,7 @@ describe("generateHTML", () => {
     const body = dom.window.document.body
     const h3 = body.querySelector("h3")
 
-    assert.equal(h3.textContent, "B")
+    assert.equal(h3.textContent.trim(), "B")
 
     const dateDiv = body.children[1].children[1]
     assert.equal(dateDiv.textContent, "2023-01-01")

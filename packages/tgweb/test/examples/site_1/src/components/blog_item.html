@@ -1,4 +1,6 @@
 <div tg-layout="blog_article" class="bg-gray-100 py-2">
-  <h3 class="font-bold text-lg ml-2" tg-text="%{title}"></h3>
-  <div tg-text="%{date}"></div>
+  <h3 class="font-bold text-lg ml-2">
+    <tg-slot name="title"></tg-slot>
+  </h3>
+  <div><tg-slot name="date"></tg-slot></div>
 </div>
