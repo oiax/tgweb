@@ -90,6 +90,8 @@ Confirm that the browser screen is automatically redrawn and the background colo
 
 Presse `Ctrl + C` to stop the tgweb server.
 
+## Pages
+
 ## Layouts
 
 ### What is a layout
@@ -408,6 +410,10 @@ within a component is similar to that of a layout.
   <span tg-slot="date">2022-12-31</span>
 </div>
 ```
+
+## Articles
+
+## Tags
 
 ## Managing the contents of the `<head>` element
 
