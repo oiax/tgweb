@@ -151,6 +151,74 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 ## Images
 
+Image files are placed in the `src/images` subdirectory under the working directory.
+
+There are two ways to embed images in a page.
+One is to use the `<img>` element, and the other is to set it as the background of an element.
+
+### `<img>` element
+
+If the `src` attribute of the `<img>` tag contains the relative path of the image file,
+the image will be embedded in the page.
+
+```html
+<img src="../images/smile.png" alt="Smile face">
+```
+
+You do not need to write the width and height attributes in the img tag,
+because Teamgenik will automatically specify them for you.
+
+Note that the value of the `src` attribute is a relative path from the page file to the image file.
+When you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
+you must specify `../../images/smile.png` in the `src` attribute of the `<img>` element.
+
+#### Hints
+
+If you want to resize an image to fit the size of the image container, use the following class
+tokens provided by Tailwind CSS:
+
+* `object-cover`: resizes an image to cover its container
+* `object-contain`: resizes an image to stay contained within its container
+* `object-fill`: stretches an image to fit its container
+* `object-scale-down`: display an image at its original size but scale it down to fit its
+  container if necessary
+
+For more information, see [Object Fit](https://tailwindcss.com/docs/object-fit) subsection of
+the Tailwind CSS Documentation.
+
+### Background images
+
+You can embed `images/smile.png` as a background image for a `<div>` element by writing like this:
+
+```html
+<div class="bg-[url(../images/smile.png)]"></div>
+```
+
+Tailwind CSS will detect this `class` attribute and write the appropriate CSS fragment to
+`dist/css/tailwind.css`.
+
+Note that inside the parentheses is the relative path from `css/tailwind.css` to the image file.
+Even if you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
+specify `../images/smile.png` instead of `../../images/smile.png` inside the parentheses
+if you embed it as a background image.
+
+#### Hints
+
+If you want to adjust the rendering of a background image, use the following class
+tokens provided by Tailwind CSS:
+
+* `bg-center`: centers the background image on the background layer
+* `bg-repeat`: repeats the background image both vertically and horizontally
+* `bg-repeat-x`: repeats the background image horizontally
+* `bg-repeat-y`: repeats the background image vertically
+* `bg-cover`: scales the background image until it fills the background layer
+* `bg-contain`: scales the background image to the outer edges without cropping or stretching
+
+For more information, see [Background Position](https://tailwindcss.com/docs/background-position),
+[Background Repeat](https://tailwindcss.com/docs/background-repeat) and
+[Background Size](https://tailwindcss.com/docs/background-size) subsections of
+the Tailwind CSS Documentation.
+
 ## Audios
 
 ## Layouts
