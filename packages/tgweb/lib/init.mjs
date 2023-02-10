@@ -29,7 +29,8 @@ const run = () => {
   fs.mkdirSync(`${targetDirPath}/src`)
   fs.mkdirSync(`${targetDirPath}/dist`)
 
-  const subdirectories = ["pages", "layouts", "components", "articles", "tags"]
+  const subdirectories =
+    ["pages", "layouts", "components", "articles", "tags", "images", "audios"]
 
   subdirectories.forEach(subdir => fs.mkdirSync(`${targetDirPath}/src/${subdir}`))
 

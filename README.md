@@ -92,11 +92,45 @@ Presse `Ctrl + C` to stop the tgweb server.
 
 ## Pages
 
+### What is a page
+
+In **tgweb**, the template files used to generate web pages are called "pages".
+Pages are placed in the `src/pages` subdirectory under the working directory.
+
+Every website must have a page named `index.html`.
+From this page, the _home page_ of the website is generated.
+
+### Adding a simple page
+
+Pages to which a layout (described in the next section) is not applied are called "simple pages".
+
+The following is an example of a simple page:
+
+```html
+<body>
+  <h1 class="text-2xl font-bold">Greeting</h1>
+  <div class="bg-green-300 p-4">
+    <p>Hello, world!</p>
+  </div>
+</body>
+```
+
+Note that the root element (the outermost element) of a page is the `<body>` element.
+The root element of a normal HTML page is the `<html>` element, under which are
+the `<head>` element and the `<body>` element.
+
+In **tgweb**, the content of the `<head>` element is automatically generated.
+See [below](#managing-the-contents-of-the-head-element) for details.
+
+## Images
+
+## Audios
+
 ## Layouts
 
 ### What is a layout
 
-Layout is the "shell," so to speak, that surrounds your pages.
+Layout is the "outer frame," so to speak, that surrounds your pages.
 Layouts allow you to manage your website efficiently.
 
 Typically, the pages of a website have a set of areas that share most of the same content:
@@ -143,7 +177,7 @@ root element of the page.
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The root element of the page to which the layout is applied must be an element that can be placed
+The root element of the page to which a layout is applied must be an element that can be placed
 within the `<body>` element, such as the `<div>` element and `<article>` element,
 rather than the `<body>` element.
 
@@ -414,6 +448,10 @@ within a component is similar to that of a layout.
 ## Articles
 
 ## Tags
+
+## Tailwind CSS
+
+## Alpine.js
 
 ## Managing the contents of the `<head>` element
 
