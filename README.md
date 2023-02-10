@@ -156,9 +156,18 @@ Image files are placed in the `src/images` subdirectory under the working direct
 There are two ways to embed images in a page.
 One is to use the `<img>` element, and the other is to set it as the background of an element.
 
+Teamgenik supports image files in the following formats:
+
+* AVIF ('.avif')
+* BMP ('.bmp')
+* GIF ('.gif')
+* JPEG ('.jpg', '.jpeg')
+* PNG ('.png')
+* WEBP ('.webp')
+
 ### `<img>` element
 
-If the `src` attribute of the `<img>` tag contains the relative path of the image file,
+If the `src` attribute of the `<img>` element contains the relative path of the image file,
 the image will be embedded in the page.
 
 ```html
@@ -220,6 +229,44 @@ For more information, see [Background Position](https://tailwindcss.com/docs/bac
 the Tailwind CSS Documentation.
 
 ## Audios
+
+Audio files are placed in the `src/audio` subdirectory under the working directory.
+
+Teamgenik supports audio files in the following formats:
+
+* AAC ('.m4a')
+* MP3 ('.mp3')
+* Ogg Vorbis (`.ogg`)
+* WAV (`.wav`)
+
+### `<audio>` element
+
+You can embed a UI object to play an audio content with the `<audio>` element.
+
+There are two ways to construct the `<audio>` element.
+
+One is to specify the relative path to the audio file in the `src` attribute of the `<audio>`
+element itself.
+
+```html
+<audio controls src="../audio/theme.mp3">
+  <a href="../audio/theme.mp3">Download</a>
+</audio>
+```
+
+The content of the `<audio>` element will be shown when thw browser does not support the `<audio>`
+element.
+
+The other is to place one or more `<source>` elements inside the `<audio>` element and specify
+the relative path to the audio file in their `src` attribute.
+
+```html
+<audio controls>
+  <source src="./audio/theme.ogg" type="audio/ogg">
+  <source src="./audio/theme.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+```
 
 ## Layouts
 
