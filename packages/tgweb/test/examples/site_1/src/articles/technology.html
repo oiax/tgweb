@@ -3,8 +3,8 @@
   <nav>
     <ul>
       <li tg-links="blog/*" tg-filter="tag:technology">
-        <a href="#" tg-text="%{title}" tg-class-for-current-page="active"></a>
-        (<span tg-text="%{date}"></span>)
+        <a href="#" tg-class-for-current-page="active"><tg-slot name="title"></tg-slot></a>
+        (<span><tg-slot name="date"></tg-slot></span>)
       </li>
     </ul>
   </nav>

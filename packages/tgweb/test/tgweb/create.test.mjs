@@ -15,7 +15,7 @@ describe("create", () => {
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
 
-    create("src/index.html", siteData)
+    create("src/pages/index.html", siteData)
 
     assert.equal(fs.existsSync(wd + "/dist/index.html"), true)
 

@@ -57,6 +57,7 @@ generationFuncs["article"] = (path, siteData) => {
     if (articleRoot.tgAttrs["component"]) {
       const componentRoot = getComponentRoot(articleRoot, siteData)
       setTgAttrs(componentRoot)
+      embedSlotContents(componentRoot, articleRoot)
       return renderArticle(componentRoot, siteData, path)
     }
     else {
@@ -78,15 +79,13 @@ const renderArticle = (articleRoot, siteData, path) => {
 const applyLayout = (element, siteData) => {
   if (element.tgAttrs["layout"] === undefined) return
 
-  const slotContents = extractSlotContents(element)
-
   const layout =
     siteData.layouts.find(layout => layout.path == element.tgAttrs["layout"] + ".html")
 
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
-  embedSlotContents(layoutRoot, slotContents)
+  embedSlotContents(layoutRoot, element)
   embedComponents(layoutRoot, siteData)
 
   const target = layoutRoot.querySelector("tg-content")
@@ -109,7 +108,9 @@ const extractSlotContents = element => {
   return slotContents
 }
 
-const embedSlotContents = (element, slotContents) => {
+const embedSlotContents = (element, provider) => {
+  const slotContents = extractSlotContents(provider)
+
   element.querySelectorAll("[tg-if-complete]").forEach(wrapper => {
     const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot =>
       slotContents.some(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
@@ -134,7 +135,11 @@ const embedComponents = (node, siteData) => {
   targets.forEach(target => {
     setTgAttrs(target)
     const componentRoot = getComponentRoot(target, siteData)
-    if (componentRoot) target.replaceWith(componentRoot)
+
+    if (componentRoot) {
+      embedSlotContents(componentRoot, target)
+      target.replaceWith(componentRoot)
+    }
   })
 }
 
@@ -145,24 +150,8 @@ const getComponentRoot = (element, siteData) => {
     siteData.components.find(component => component.path == componentName + ".html")
 
   if (component) {
-    const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
-    const args = getArgs(element)
-    embedArgs(componentRoot, args)
-    return componentRoot
+    return component.dom.window.document.body.children[0].cloneNode(true)
   }
-}
-
-const getArgs = element => {
-  const args = {}
-  const names = ["title", "description", "index", "date"]
-
-  names.forEach(name => {
-    if (element.tgAttrs[name]) args[name] = element.tgAttrs[name]
-  })
-
-  for (const key in element.tgAttrs.data) args[key] = element.tgAttrs.data[key]
-
-  return args
 }
 
 const embedArticles = (node, siteData) => {
@@ -177,7 +166,17 @@ const embedArticles = (node, siteData) => {
     if (article) {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setTgAttrs(articleRoot)
-      target.replaceWith(articleRoot)
+
+      if (articleRoot.tgAttrs["component"]) {
+        const componentRoot = getComponentRoot(articleRoot, siteData)
+        setTgAttrs(componentRoot)
+        embedSlotContents(componentRoot, articleRoot)
+        target.replaceWith(componentRoot)
+      }
+      else {
+        embedComponents(articleRoot, siteData)
+        target.replaceWith(articleRoot)
+      }
     }
   })
 }
@@ -196,7 +195,17 @@ const embedArticleLists = (node, siteData) => {
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setTgAttrs(articleRoot)
-      target.before(articleRoot)
+
+      if (articleRoot.tgAttrs["component"]) {
+        const componentRoot = getComponentRoot(articleRoot, siteData)
+        setTgAttrs(componentRoot)
+        embedSlotContents(componentRoot, articleRoot)
+        target.before(componentRoot)
+      }
+      else {
+        embedComponents(articleRoot, siteData)
+        target.before(articleRoot)
+      }
     })
 
     target.remove()
@@ -216,19 +225,14 @@ const embedLinksToArticles = (node, siteData, path) => {
     if (target.tgAttrs["order-by"]) sortArticles(articles, target.tgAttrs["order-by"])
 
     articles.forEach(article => {
-      const articleRoot = article.dom.window.document.body.children[0]
+      const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setTgAttrs(articleRoot)
+
       const copy = target.cloneNode(true)
+      embedSlotContents(copy, articleRoot)
 
       const href = PATH.relative(PATH.dirname(path), PATH.join("src/articles", article.path))
       copy.querySelectorAll("a[href='#']").forEach(anchor => anchor.href = href)
-
-      const args = {
-        "title": getTitle(articleRoot),
-        "date": articleRoot.tgAttrs["date"]
-      }
-
-      embedArgs(copy, args)
 
       target.before(copy)
     })
@@ -242,7 +246,7 @@ const filterArticles = (articles, pattern, tag) => {
     articles.filter(article => {
       if (minimatch(article.path, pattern)) {
         if (tag) {
-          const articleRoot = article.dom.window.document.body.children[0]
+          const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
           setTgAttrs(articleRoot)
 
           if (articleRoot.tgAttrs["tags"]) {
@@ -275,10 +279,10 @@ const sortArticles = (articles, orderBy) => {
 
         if (i) {
           if (j) {
-            if (i > j) return -1
-            if (i < j) return 1
-            if (a.path > b.path) return -1
-            if (a.path < b.path) return 1
+            if (i > j) return 1
+            if (i < j) return -1
+            if (a.path > b.path) return 1
+            if (a.path < b.path) return -1
             return 0
           }
           else {
@@ -298,23 +302,6 @@ const sortArticles = (articles, orderBy) => {
 
     if (md[2] == "desc") articles.reverse()
   }
-}
-
-const embedArgs = (node, args) => {
-  const targets = node.querySelectorAll("[tg-text]")
-
-  targets.forEach(target => {
-    setTgAttrs(target)
-    const text = target.tgAttrs["text"]
-
-    if (text.substring(0, 2) == "%{" && text.substring(text.length - 1) == "}") {
-      const paramName = text.substring(2, text.length - 1)
-
-      if (paramName in args) {
-        target.innerHTML = args[paramName]
-      }
-    }
-  })
 }
 
 const renderHTML = (root, siteData, headAttrs) => {

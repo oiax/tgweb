@@ -15,7 +15,7 @@ describe("update", () => {
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
 
-    update("src/index.html", siteData)
+    update("src/pages/index.html", siteData)
 
     assert.equal(fs.existsSync(wd + "/dist/index.html"), true)
 
@@ -29,7 +29,7 @@ describe("update", () => {
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
-    update("src/index.html", siteData)
+    update("src/pages/index.html", siteData)
     process.chdir(wd + "a")
 
     update("src/layouts/home.html", siteData)
@@ -46,7 +46,7 @@ describe("update", () => {
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
-    update("src/index.html", siteData)
+    update("src/pages/index.html", siteData)
     process.chdir(wd + "a")
 
     update("src/components/hello.html", siteData)

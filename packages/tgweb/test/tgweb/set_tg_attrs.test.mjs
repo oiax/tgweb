@@ -5,7 +5,7 @@ import { JSDOM } from "jsdom"
 describe("setTgAttrs", () => {
   it("should set a hash to tgAttrs attribute", () => {
     const html =
-      "<div tg-component='button' tg-data-label='abc'><span tg-text='%{title}'></span></div>"
+      "<div tg-component='button'><span tg-slot='label'>Push</span></div>"
 
     const dom = new JSDOM(html)
     const div = dom.window.document.body.children[0]
@@ -13,9 +13,12 @@ describe("setTgAttrs", () => {
     setTgAttrs(div)
 
     assert.equal(div.tgAttrs["component"], "button")
-    assert.equal(div.tgAttrs.data["label"], "abc")
-    assert.equal(div.attributes.getNamedItem("tg-component"), null)
-    assert.equal(div.attributes.getNamedItem("tg-data-label"), null)
+
+    const span = div.children[0]
+
+    setTgAttrs(span)
+
+    assert.equal(span.tgAttrs["slot"], "label")
   })
 
   it("should handle 'tg-order-by' correctly", () => {

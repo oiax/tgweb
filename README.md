@@ -31,7 +31,7 @@ In addition, this command creates `src` and `dist` directory under the woking di
 
 ### Add content
 
-Create `index.html` in the `src` directory with the following content:
+Create `index.html` in the `src/pages` subdirectory with the following content:
 
 ```html
 <body>
@@ -90,11 +90,74 @@ Confirm that the browser screen is automatically redrawn and the background colo
 
 Presse `Ctrl + C` to stop the tgweb server.
 
+## Directory structure
+
+Running `npx tgweb-init example` from the command line creates a directory structure with the
+following elements:
+
+```plain
+example/
+├── dist
+├── src
+│   ├── articles
+│   ├── audios
+│   ├── components
+│   ├── images
+│   ├── layouts
+│   ├── pages
+│   └── tags
+├── tailwind.config.js
+└── tailwind.css
+```
+
+Please note the following:
+
+* **tgweb** scans the contents of the `src` directory, generates HTML files, CSS files, etc., and
+  writes them into the `dist` directory.
+* It makes no sense for the user to rewrite the contents of the `dist` directory.
+* Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
+
+## Pages
+
+### What is a page
+
+In **tgweb**, the template files used to generate web pages are called "pages".
+Pages are placed in the `src/pages` subdirectory under the working directory.
+
+Every website must have a page named `index.html`.
+From this page, the _home page_ of the website is generated.
+
+### Adding a simple page
+
+Pages to which a layout (described in the next section) is not applied are called "simple pages".
+
+The following is an example of a simple page:
+
+```html
+<body>
+  <h1 class="text-2xl font-bold">Greeting</h1>
+  <div class="bg-green-300 p-4">
+    <p>Hello, world!</p>
+  </div>
+</body>
+```
+
+Note that the root element (the outermost element) of a page is the `<body>` element.
+The root element of a normal HTML page is the `<html>` element, under which are
+the `<head>` element and the `<body>` element.
+
+In **tgweb**, the content of the `<head>` element is automatically generated.
+See [below](#managing-the-contents-of-the-head-element) for details.
+
+## Images
+
+## Audios
+
 ## Layouts
 
 ### What is a layout
 
-Layout is the "shell," so to speak, that surrounds your pages.
+Layout is the "outer frame," so to speak, that surrounds your pages.
 Layouts allow you to manage your website efficiently.
 
 Typically, the pages of a website have a set of areas that share most of the same content:
@@ -141,13 +204,13 @@ root element of the page.
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The root element of the page to which the layout is applied must be an element that can be placed
+The root element of the page to which a layout is applied must be an element that can be placed
 within the `<body>` element, such as the `<div>` element and `<article>` element,
 rather than the `<body>` element.
 
 #### Example
 
-`src/index.html`
+`src/pages/index.html`
 
 ```html
 <article tg-layout="common">
@@ -215,7 +278,7 @@ all elements with the `tg-slot` attribute are removed from the page content.
 </body>
 ```
 
-`src/product1.html`
+`src/pages/product1.html`
 
 ```html
 <div tg-layout="product" tg-title="Product 1">
@@ -265,7 +328,7 @@ is used as a fallback content.
 </body>
 ```
 
-`src/home.html`
+`src/pages/home.html`
 
 ```html
 <div tg-layout="message" tg-title="Home">
@@ -310,7 +373,7 @@ retained.
 </body>
 ```
 
-`src/home.html`
+`src/pages/home.html`
 
 ```html
 <div tg-layout="message" tg-title="Home">
@@ -374,9 +437,48 @@ attribute of the element at the location where you want to place it.
 </p>
 ```
 
-### Embeddeing content to a component
-
 ### Slots
+
+Like layouts, slots can be placed inside components. The method of embedding content in the slots
+within a component is similar to that of a layout.
+
+#### Example
+
+`src/components/blog_item.html`
+
+```html
+<div class="py-2">
+  <h3 class="font-bold text-lg m-2">
+    <tg-slot name="title"></tg-slot>
+  </h3>
+  <div>
+    <tg-slot name="body"></tg-slot>
+  </div>
+  <div tg-if-complete class="text-right">
+    <tg-slot name="date"></tg-slot>
+  </div>
+</div>
+```
+
+`src/pages/hello.html`
+
+```html
+<div tg-layout="home" tg-component="blog_item" class="bg-gray-100 py-2">
+  <span tg-slot="title">Greeting</span>
+  <span tg-slot="body">
+    <p>Hello.</p>
+  </span>
+  <span tg-slot="date">2022-12-31</span>
+</div>
+```
+
+## Articles
+
+## Tags
+
+## Tailwind CSS
+
+## Alpine.js
 
 ## Managing the contents of the `<head>` element
 
