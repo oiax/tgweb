@@ -90,6 +90,33 @@ Confirm that the browser screen is automatically redrawn and the background colo
 
 Presse `Ctrl + C` to stop the tgweb server.
 
+## Directory structure
+
+Running `npx tgweb-init example` from the command line creates a directory structure with the
+following elements:
+
+```plain
+example/
+├── dist
+├── src
+│   ├── articles
+│   ├── audios
+│   ├── components
+│   ├── images
+│   ├── layouts
+│   ├── pages
+│   └── tags
+├── tailwind.config.js
+└── tailwind.css
+```
+
+Please note the following:
+
+* **tgweb** scans the contents of the `src` directory, generates HTML files, CSS files, etc., and
+  writes them into the `dist` directory.
+* It makes no sense for the user to rewrite the contents of the `dist` directory.
+* Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
+
 ## Pages
 
 ### What is a page
