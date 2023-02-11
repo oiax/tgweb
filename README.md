@@ -1,5 +1,24 @@
 # tgweb - Teamgenik Website Builder Offline Tool
 
+## Table of Contents
+
+* [Requirements](#requirements)
+* [Getting Started](#getting-started)
+* [Directory Structure](#directory-structure)
+* [Pages](#pages)
+* [Images](#images)
+* [Audios](#audios)
+* [Layouts](#layouts)
+* [Components](#components)
+* [Articles](#articles)
+* [Tags](#tags)
+* [Tailwind CSS](#tailwind-css)
+* [Alpine.js](#alpinejs)
+* [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [License](#license)
+
+## Directory structure
+
 ## Requirements
 
 * Node.js: 16.12 or higher
@@ -90,7 +109,7 @@ Confirm that the browser screen is automatically redrawn and the background colo
 
 Presse `Ctrl + C` to stop the tgweb server.
 
-## Directory structure
+## Directory Structure
 
 Running `npx tgweb-init example` from the command line creates a directory structure with the
 following elements:
@@ -592,9 +611,9 @@ within a component is similar to that of a layout.
 
 ## Alpine.js
 
-## Managing the contents of the `<head>` element
+## Managing the Contents of the `<head>` Element
 
-### `<title>`
+### `<title>` element
 
 The content of the `<title>` element is determined by the following rules:
 
@@ -650,11 +669,11 @@ the title text is extracted from that component's template.
 However, if the `tg-title` attribute is set on the root element of the page template,
 that value takes precedence.
 
-### `<meta>`
+### `<meta>` elements
 
 Not yet implemented.
 
-### `<link>`
+### `<link>` elements
 
 Not yet implemented.
 
@@ -668,9 +687,13 @@ The following link element are always inserted within the head element.
 
 A link element that refers to another stylesheet cannot be inserted within the head element.
 
-### `<script>`
+### `<script>` elements
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
 
 Users can use [Alpine.js](https://alpinejs.dev/) to dynamically change HTML documents.
+
+## License
+
+**tgweb** is [MIT licensed](./LICENSE).
