@@ -135,6 +135,8 @@ Please note the following:
   writes them into the `dist` directory.
 * It makes no sense for the user to rewrite the contents of the `dist` directory.
 * Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
+* Users are not allowed to add their own CSS files to the website.
+* Users are not allowed to add their own javascript files to the website.
 
 ## Pages
 
@@ -143,12 +145,23 @@ Please note the following:
 In **tgweb**, the template files used to generate web pages are called "pages".
 Pages are placed in the `src/pages` subdirectory under the working directory.
 
+It is possible to create a subdirectory under the `src/pages` directory and place pages under it.
+
+However, it is not possible to create a subdirectory directly under the `src/pages` directory with
+the following names:
+
+* `articles`
+* `audios`
+* `images`
+* `tags`
+* `videos`
+
 Every website must have a page named `index.html`.
 From this page, the _home page_ of the website is generated.
 
 ### Adding a simple page
 
-Pages to which a layout (described in the next section) is not applied are called "simple pages".
+Pages to which a [layout](#Layouts) is not applied are called "simple pages".
 
 The following is an example of a simple page:
 
@@ -161,11 +174,16 @@ The following is an example of a simple page:
 </body>
 ```
 
-Note that the root element (the outermost element) of a page is the `<body>` element.
-The root element of a normal HTML page is the `<html>` element, under which are
+Note that the top-level element of a page is the `<body>` element.
+The top-level element of a normal HTML page is the `<html>` element, under which are
 the `<head>` element and the `<body>` element.
 
-In **tgweb**, the content of the `<head>` element is automatically generated.
+The pages will be converted into a complete HTML document and written to the `dist` directory.
+
+For example, `src/pages/index.html` is converted to `dist/index.html` and
+`src/pages/shops/new_york.html` is converted to `dist/shops/new_york.html`.
+
+The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
 
 ## Images
@@ -199,6 +217,8 @@ because Teamgenik will automatically specify them for you.
 Note that the value of the `src` attribute is a relative path from the page file to the image file.
 When you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
 you must specify `../../images/smile.png` in the `src` attribute of the `<img>` element.
+
+Note also that Teamgenik does not allow the `<img>` element to reference an external URL.
 
 #### Hints
 
@@ -286,6 +306,9 @@ the relative path to the audio file in their `src` attribute.
   Your browser does not support the audio element.
 </audio>
 ```
+
+Note that Teamgenik does not allow the `<audio>` and `<source>` elements to reference an external
+URL.
 
 ## Layouts
 
