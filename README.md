@@ -272,26 +272,23 @@ the relative path to the audio file in their `src` attribute.
 
 ### What is a layout
 
-Layout is the "outer frame," so to speak, that surrounds your pages.
-Layouts allow you to manage your website efficiently.
-
 Typically, the pages of a website have a set of areas that share most of the same content:
-headers, sidebars, footers, etc.
-We call this set of areas a _layout_.
+header, sidebar, footer, etc.
 
-The relationship between page and layout is similar to that between a work of fine art and a
-picture frame.
+Separating this set of areas from the page as a single template makes the website easier to manage.
+We call this separated template a "layout".
 
 ### Adding a layout
 
 Layouts are HTML files placed in the `src/layouts` subdirectory under the working directory.
 
-A layout must satisfy the following two conditions:
+A layout must satisfy the following three conditions:
 
-1. Its root element is the body element.
-2. The root element has only one `<tg-content>` element.
+1. There is only one top-level element.
+2. The top-level element is a `<body>` element.
+3. The top-level element contains only one `<tg-content>` element within its descendant elements.
 
-The element with the tg-content attribute indicates where in the layout the page will be inserted.
+The `<tg-content>` element indicates where in the layout the page will be inserted.
 
 #### Example
 
@@ -314,13 +311,13 @@ Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-conte
 ### Applying this layout to a page
 
 To apply this layout to a page, specify the name of the layout in the `tg-layout` attribute of the
-root element of the page.
+top-level element of the page.
 
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The root element of the page to which a layout is applied must be an element that can be placed
-within the `<body>` element, such as the `<div>` element and `<article>` element,
+The top-level element of the page to which a layout is applied must be an element that can be
+placed within the `<body>` element, such as the `<div>` element and `<article>` element,
 rather than the `<body>` element.
 
 #### Example
