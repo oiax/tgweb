@@ -1,5 +1,24 @@
 # tgweb - Teamgenik Website Builder Offline Tool
 
+## Table of Contents
+
+* [Requirements](#requirements)
+* [Getting Started](#getting-started)
+* [Directory Structure](#directory-structure)
+* [Pages](#pages)
+* [Images](#images)
+* [Audios](#audios)
+* [Layouts](#layouts)
+* [Components](#components)
+* [Articles](#articles)
+* [Tags](#tags)
+* [Tailwind CSS](#tailwind-css)
+* [Alpine.js](#alpinejs)
+* [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [License](#license)
+
+## Directory structure
+
 ## Requirements
 
 * Node.js: 16.12 or higher
@@ -90,7 +109,7 @@ Confirm that the browser screen is automatically redrawn and the background colo
 
 Presse `Ctrl + C` to stop the tgweb server.
 
-## Directory structure
+## Directory Structure
 
 Running `npx tgweb-init example` from the command line creates a directory structure with the
 following elements:
@@ -151,32 +170,144 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 ## Images
 
+Image files are placed in the `src/images` subdirectory under the working directory.
+
+There are two ways to embed images in a page.
+One is to use the `<img>` element, and the other is to set it as the background of an element.
+
+Teamgenik supports image files in the following formats:
+
+* AVIF ('.avif')
+* BMP ('.bmp')
+* GIF ('.gif')
+* JPEG ('.jpg', '.jpeg')
+* PNG ('.png')
+* WEBP ('.webp')
+
+### `<img>` element
+
+If the `src` attribute of the `<img>` element contains the relative path of the image file,
+the image will be embedded in the page.
+
+```html
+<img src="../images/smile.png" alt="Smile face">
+```
+
+You do not need to write the width and height attributes in the img tag,
+because Teamgenik will automatically specify them for you.
+
+Note that the value of the `src` attribute is a relative path from the page file to the image file.
+When you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
+you must specify `../../images/smile.png` in the `src` attribute of the `<img>` element.
+
+#### Hints
+
+If you want to resize an image to fit the size of the image container, use the following class
+tokens provided by Tailwind CSS:
+
+* `object-cover`: resizes an image to cover its container
+* `object-contain`: resizes an image to stay contained within its container
+* `object-fill`: stretches an image to fit its container
+* `object-scale-down`: display an image at its original size but scale it down to fit its
+  container if necessary
+
+For more information, see [Object Fit](https://tailwindcss.com/docs/object-fit) subsection of
+the Tailwind CSS Documentation.
+
+### Background images
+
+You can embed `images/smile.png` as a background image for a `<div>` element by writing like this:
+
+```html
+<div class="bg-[url(../images/smile.png)]"></div>
+```
+
+Tailwind CSS will detect this `class` attribute and write the appropriate CSS fragment to
+`dist/css/tailwind.css`.
+
+Note that inside the parentheses is the relative path from `css/tailwind.css` to the image file.
+Even if you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
+specify `../images/smile.png` instead of `../../images/smile.png` inside the parentheses
+if you embed it as a background image.
+
+#### Hints
+
+If you want to adjust the rendering of a background image, use the following class
+tokens provided by Tailwind CSS:
+
+* `bg-center`: centers the background image on the background layer
+* `bg-repeat`: repeats the background image both vertically and horizontally
+* `bg-repeat-x`: repeats the background image horizontally
+* `bg-repeat-y`: repeats the background image vertically
+* `bg-cover`: scales the background image until it fills the background layer
+* `bg-contain`: scales the background image to the outer edges without cropping or stretching
+
+For more information, see [Background Position](https://tailwindcss.com/docs/background-position),
+[Background Repeat](https://tailwindcss.com/docs/background-repeat) and
+[Background Size](https://tailwindcss.com/docs/background-size) subsections of
+the Tailwind CSS Documentation.
+
 ## Audios
+
+Audio files are placed in the `src/audio` subdirectory under the working directory.
+
+Teamgenik supports audio files in the following formats:
+
+* AAC ('.m4a')
+* MP3 ('.mp3')
+* Ogg Vorbis (`.ogg`)
+* WAV (`.wav`)
+
+### `<audio>` element
+
+You can embed a UI object to play an audio content with the `<audio>` element.
+
+There are two ways to construct the `<audio>` element.
+
+One is to specify the relative path to the audio file in the `src` attribute of the `<audio>`
+element itself.
+
+```html
+<audio controls src="../audio/theme.mp3">
+  <a href="../audio/theme.mp3">Download</a>
+</audio>
+```
+
+The content of the `<audio>` element will be shown when thw browser does not support the `<audio>`
+element.
+
+The other is to place one or more `<source>` elements inside the `<audio>` element and specify
+the relative path to the audio file in their `src` attribute.
+
+```html
+<audio controls>
+  <source src="./audio/theme.ogg" type="audio/ogg">
+  <source src="./audio/theme.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+```
 
 ## Layouts
 
 ### What is a layout
 
-Layout is the "outer frame," so to speak, that surrounds your pages.
-Layouts allow you to manage your website efficiently.
-
 Typically, the pages of a website have a set of areas that share most of the same content:
-headers, sidebars, footers, etc.
-We call this set of areas a _layout_.
+header, sidebar, footer, etc.
 
-The relationship between page and layout is similar to that between a work of fine art and a
-picture frame.
+Separating this set of areas from the page as a single template makes the website easier to manage.
+We call this separated template a "layout".
 
 ### Adding a layout
 
 Layouts are HTML files placed in the `src/layouts` subdirectory under the working directory.
 
-A layout must satisfy the following two conditions:
+A layout must satisfy the following three conditions:
 
-1. Its root element is the body element.
-2. The root element has only one `<tg-content>` element.
+1. There is only one top-level element.
+2. The top-level element is a `<body>` element.
+3. The top-level element contains only one `<tg-content>` element within its descendant elements.
 
-The element with the tg-content attribute indicates where in the layout the page will be inserted.
+The `<tg-content>` element indicates where in the layout the page will be inserted.
 
 #### Example
 
@@ -199,13 +330,13 @@ Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-conte
 ### Applying this layout to a page
 
 To apply this layout to a page, specify the name of the layout in the `tg-layout` attribute of the
-root element of the page.
+top-level element of the page.
 
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The root element of the page to which a layout is applied must be an element that can be placed
-within the `<body>` element, such as the `<div>` element and `<article>` element,
+The top-level element of the page to which a layout is applied must be an element that can be
+placed within the `<body>` element, such as the `<div>` element and `<article>` element,
 rather than the `<body>` element.
 
 #### Example
@@ -480,9 +611,9 @@ within a component is similar to that of a layout.
 
 ## Alpine.js
 
-## Managing the contents of the `<head>` element
+## Managing the Contents of the `<head>` Element
 
-### `<title>`
+### `<title>` element
 
 The content of the `<title>` element is determined by the following rules:
 
@@ -538,11 +669,11 @@ the title text is extracted from that component's template.
 However, if the `tg-title` attribute is set on the root element of the page template,
 that value takes precedence.
 
-### `<meta>`
+### `<meta>` elements
 
 Not yet implemented.
 
-### `<link>`
+### `<link>` elements
 
 Not yet implemented.
 
@@ -556,9 +687,13 @@ The following link element are always inserted within the head element.
 
 A link element that refers to another stylesheet cannot be inserted within the head element.
 
-### `<script>`
+### `<script>` elements
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
 
 Users can use [Alpine.js](https://alpinejs.dev/) to dynamically change HTML documents.
+
+## License
+
+**tgweb** is [MIT licensed](./LICENSE).

@@ -42,4 +42,26 @@ describe("create", () => {
 
     assert.match(body.innerHTML, /computer/)
   })
+
+  it("should copy the specified image file to dist directory", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/images/red_square.png", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/images/red_square.png"), true)
+  })
+
+  it("should copy the specified audio file to dist directory", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/audios/dummy.mp3", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/audios/dummy.mp3"), true)
+  })
 })
