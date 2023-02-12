@@ -12,6 +12,7 @@
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
+* [Links](#links)
 * [Tailwind CSS](#tailwind-css)
 * [Alpine.js](#alpinejs)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
@@ -819,6 +820,23 @@ Note that you cannot assign tags to a page.
 ### Generating tag pages
 
 TODO: Implement this functionality.
+
+## Links
+
+### Links within the website
+
+When linking to a page within your website using the `<a>` element, specify the _absolute_ path to
+the page in its `href` attribute:
+
+```html
+<nav>
+  <a href="/articles/goal">Our Goal</a>
+  <a href="/articles/about">About Us</a>
+</nav>
+```
+
+When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
+elements in it will be converted appropriately.
 
 ## Tailwind CSS
 
