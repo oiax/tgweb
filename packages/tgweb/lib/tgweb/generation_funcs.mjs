@@ -24,8 +24,8 @@ generationFuncs["page"] = (path, siteData) => {
       embedLinksToArticles(pageRoot, siteData, path)
 
       const layoutRoot = applyLayout(pageRoot, siteData)
-      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
-      else return renderHTML(pageRoot, siteData, headAttrs)
+      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+      else return renderHTML(pageRoot, siteData, headAttrs, path)
     }
     else {
       const body = page.dom.window.document.body.cloneNode(true)
@@ -39,8 +39,8 @@ generationFuncs["page"] = (path, siteData) => {
       embedLinksToArticles(body, siteData, path)
 
       const layoutRoot = applyLayout(body, siteData)
-      if (layoutRoot) return renderHTML(body, siteData, headAttrs)
-      else return renderHTML(body, siteData, headAttrs)
+      if (layoutRoot) return renderHTML(body, siteData, headAttrs, path)
+      else return renderHTML(body, siteData, headAttrs, path)
     }
   }
 
@@ -74,7 +74,7 @@ const renderArticle = (articleRoot, siteData, path) => {
   const headAttrs = { title: getTitle(articleRoot) }
   embedLinksToArticles(articleRoot, siteData, path)
   const layoutRoot = applyLayout(articleRoot, siteData)
-  if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs)
+  if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
 }
 
 const applyLayout = (element, siteData) => {
@@ -320,8 +320,9 @@ const sortArticles = (articles, orderBy) => {
   }
 }
 
-const renderHTML = (root, siteData, headAttrs) => {
+const renderHTML = (root, siteData, headAttrs, path) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
+  processTgLinks(root, siteData, path)
   removeTgAttributes(root)
   dom.window.document.body.replaceWith(root)
 
@@ -329,6 +330,46 @@ const renderHTML = (root, siteData, headAttrs) => {
     dom.window.document.head.querySelector("title").textContent = headAttrs["title"]
 
   return pretty(dom.serialize())
+}
+
+const processTgLinks = (root, siteData, path) => {
+  const currentPath = path.replace(/^src\//, "").replace(/^pages\//, "")
+
+  Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => {
+    const href = link.getAttribute("href")
+    const label = link.getAttribute("label") || ""
+
+    const componentName = link.getAttribute("component")
+
+    if (componentName) {
+      const component =
+        siteData.components.find(component => component.path == componentName + ".html")
+
+      if (component) {
+        link.innerHTML = ""
+
+        Array.from(component.dom.window.document.body.children).forEach(child => {
+          link.appendChild(child.cloneNode(true))
+        })
+      }
+    }
+
+    Array.from(link.querySelectorAll("tg-label")).forEach(e => e.replaceWith(label))
+
+    if (href === `/${currentPath}`) {
+      const fallback = link.querySelector("[tg-if-current]")
+      if (fallback) link.before(fallback)
+    }
+    else {
+      const fallback = link.querySelector("[tg-if-current]")
+      if (fallback) fallback.remove()
+      const adjusted = href.replace(/\/index.html$/, "/")
+      Array.from(link.querySelectorAll("a[href='#']")).forEach(a => a.href = adjusted)
+      Array.from(link.children).forEach(child => link.before(child))
+    }
+  })
+
+   Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => link.remove())
 }
 
 const getTitle = element => {

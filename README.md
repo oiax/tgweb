@@ -769,6 +769,10 @@ Then, combine the `tg-order-by` attribute with the `tg-links` attribute.
     </li>
 ```
 
+### `tg-if-current` attribute
+
+Not yet implemented.
+
 ## Tags
 
 ### Filtering articles by tags
@@ -805,7 +809,7 @@ You can also filter the list of links to articles using the `tg-filter` attribut
   <main>
     <h1>Articles (tag:travel)</h1>
     <ul>
-      <li tg-articles="/blog/*" tg-filter="tag:travel">
+      <li tg-links="/blog/*" tg-filter="tag:travel">
         <a href="#">
           <tg-slot name="title">No name</tg-slot>
         </a>
@@ -837,6 +841,39 @@ the page in its `href` attribute:
 
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
+
+## `<tg-link>` elements
+
+`src/components/nav.html`
+
+```html
+<nav>
+  <tg-link href="/articles/goal.html" label="Our Goal">
+    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+    <span class="font-bold" tg-if-current><tg-label></tg-label></span>
+  </tg-link>
+  <tg-link href="/articles/about.html" label="About Us">
+    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+    <span class="font-bold" tg-if-current><tg-label></tg-label></span>
+  </tg-link>
+</nav>
+```
+
+`src/components/nav_link.html`
+
+```html
+<a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+<span class="font-bold" tg-if-current><tg-label></tg-label></span>
+```
+
+`src/components/nav.html`
+
+```html
+<nav>
+  <tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
+  <tg-link component="nav_link" href="/articles/about.html" label="About Us"></tg-link>
+</nav>
+```
 
 ## Tailwind CSS
 

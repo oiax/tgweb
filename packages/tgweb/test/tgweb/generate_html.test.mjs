@@ -98,7 +98,7 @@ describe("generateHTML", () => {
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
 
-    const grid = body.children[0]
+    const grid = body.children[1]
     const div0 = grid.children[0]
     const p01 = div0.children[0]
     assert.equal(p01.textContent, "Hello, world!")
@@ -167,5 +167,47 @@ describe("generateHTML", () => {
 
     const dateDiv = body.children[1].children[2]
     assert.equal(dateDiv.textContent, "2023-01-01")
+  })
+
+  it("should render <tg-link> correctly when href is not current", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const nav = body.querySelector("nav")
+
+    assert.equal(nav.children.length, 2)
+
+    const span = nav.children[0]
+    assert.equal(span.tagName, "SPAN")
+    assert.equal(span.textContent, "Home")
+
+    const link = nav.children[1]
+    assert.equal(link.tagName, "A")
+    assert.equal(link.href, "/articles/about.html")
+    assert.equal(link.textContent, "About Us")
+  })
+
+  it("should render <tg-link> correctly when href is current", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/articles/about.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const nav = body.querySelector("nav")
+
+    assert.equal(nav.children.length, 2)
+
+    const link = nav.children[0]
+    assert.equal(link.tagName, "A")
+    assert.equal(link.href, "/")
+    assert.equal(link.textContent, "Home")
+
+    const span = nav.children[1]
+    assert.equal(span.tagName, "SPAN")
+    assert.equal(span.textContent, "About Us")
   })
 })
