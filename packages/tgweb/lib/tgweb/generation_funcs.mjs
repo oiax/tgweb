@@ -57,6 +57,7 @@ generationFuncs["article"] = (path, siteData) => {
     if (articleRoot.tgAttrs["component"]) {
       const componentRoot = getComponentRoot(articleRoot, siteData)
       setTgAttrs(componentRoot)
+      embedContent(componentRoot, articleRoot)
       embedSlotContents(componentRoot, articleRoot)
       return renderArticle(componentRoot, siteData, path)
     }
@@ -85,6 +86,7 @@ const applyLayout = (element, siteData) => {
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+  embedContent(layoutRoot, element)
   embedSlotContents(layoutRoot, element)
   embedComponents(layoutRoot, siteData)
 
@@ -106,6 +108,17 @@ const extractSlotContents = element => {
   element.querySelectorAll("[tg-slot]").forEach(elem => elem.remove())
 
   return slotContents
+}
+
+const embedContent = (element, provider) => {
+  const target = element.querySelector("tg-content")
+
+  if (target) {
+    const copy = provider.cloneNode(true)
+    Array.from(copy.querySelectorAll("[tg-slot]")).map(elem => elem.remove())
+    Array.from(copy.children).forEach(elem => target.before(elem))
+    target.remove()
+  }
 }
 
 const embedSlotContents = (element, provider) => {
@@ -137,6 +150,7 @@ const embedComponents = (node, siteData) => {
     const componentRoot = getComponentRoot(target, siteData)
 
     if (componentRoot) {
+      embedContent(componentRoot, target)
       embedSlotContents(componentRoot, target)
       target.replaceWith(componentRoot)
     }
@@ -170,6 +184,7 @@ const embedArticles = (node, siteData) => {
       if (articleRoot.tgAttrs["component"]) {
         const componentRoot = getComponentRoot(articleRoot, siteData)
         setTgAttrs(componentRoot)
+        embedContent(componentRoot, articleRoot)
         embedSlotContents(componentRoot, articleRoot)
         target.replaceWith(componentRoot)
       }
@@ -199,6 +214,7 @@ const embedArticleLists = (node, siteData) => {
       if (articleRoot.tgAttrs["component"]) {
         const componentRoot = getComponentRoot(articleRoot, siteData)
         setTgAttrs(componentRoot)
+        embedContent(componentRoot, articleRoot)
         embedSlotContents(componentRoot, articleRoot)
         target.before(componentRoot)
       }

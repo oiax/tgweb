@@ -94,6 +94,7 @@ describe("generateHTML", () => {
     assert.equal(script.attributes.getNamedItem("defer").value, "")
 
     const body = dom.window.document.body
+
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
 
@@ -155,11 +156,16 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
+
     const h3 = body.querySelector("h3")
 
     assert.equal(h3.textContent.trim(), "B")
 
-    const dateDiv = body.children[1].children[1]
+    const p = body.children[1].children[1]
+    assert.equal(p.tagName, "P")
+    assert.equal(p.textContent, "This is B.")
+
+    const dateDiv = body.children[1].children[2]
     assert.equal(dateDiv.textContent, "2023-01-01")
   })
 })
