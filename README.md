@@ -358,8 +358,7 @@ top-level element of the page.
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The top-level element of the page to which a layout is applied must be an element that can be
-placed within the `<body>` element, such as the `<div>` element and `<article>` element,
+The top-level element of the page to which a layout is applied must be a `<tg-template>` element
 rather than the `<body>` element.
 
 #### Example
@@ -367,12 +366,12 @@ rather than the `<body>` element.
 `src/pages/index.html`
 
 ```html
-<article tg-layout="common">
+<tg-template tg-layout="common">
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
   </div>
-</article>
+</tg-template>
 ```
 
 When the layout `common` shown in the previous example is applied to this page file,
@@ -388,12 +387,10 @@ the following HTML document is generated:
       <div>Example</div>
     </header>
     <main>
-      <article>
-        <h1>Welcome!</h1>
-        <div class="bg-green-300 p-4">
-          <p>Hello, world!</p>
-        </div>
-      </article>
+      <h1>Welcome!</h1>
+      <div class="bg-green-300 p-4">
+        <p>Hello, world!</p>
+      </div>
     </main>
     <footer>&copy; Example Inc. 2023</footer>
   </body>
@@ -435,14 +432,14 @@ all elements with the `tg-slot` attribute are removed from the page content.
 `src/pages/product1.html`
 
 ```html
-<div tg-layout="product" tg-title="Product 1">
+<tg-template tg-layout="product" tg-title="Product 1">
   <div>
     <h1>Product 1</h1>
     <p>Description</p>
   </div>
   <span tg-slot="remarks">This product is very fragile.</span>
   <span tg-slot="badges"><span>A</span><span>B</span></span>
-</div>
+</tg-template>
 ```
 
 When the layout `product` is applied to the page `product1.html`,
@@ -485,9 +482,9 @@ is used as a fallback content.
 `src/pages/home.html`
 
 ```html
-<div tg-layout="message" tg-title="Home">
+<tg-template tg-layout="message" tg-title="Home">
   <h1>Home</h1>
-</div>
+</tg-template>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -530,10 +527,10 @@ retained.
 `src/pages/home.html`
 
 ```html
-<div tg-layout="message" tg-title="Home">
+<tg-template tg-layout="message" tg-title="Home">
   <h1>Home</h1>
   <span tg-slot="name">Alice</span>
-</div>
+</tg-template>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -658,11 +655,13 @@ Like components, articles can be embedded in pages.
 Place elements with the `tg-article` attribute where you want to embed articles as follows:
 
 ```html
-<main>
-  <h1>Our Recent Articles</h1>
-  <div tg-article="blog/got_a_new_gadget"></div>
-  <div tg-article="blog/happy_new_year"></div>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Our Recent Articles</h1>
+    <div tg-article="blog/got_a_new_gadget"></div>
+    <div tg-article="blog/happy_new_year"></div>
+  </main>
+</tg-template>
 ```
 
 The value of the `tg-article` attribute must be the name of the article file without the
@@ -676,10 +675,12 @@ Articles cannot be embedded in other articles or layouts.
 The `tg-articles` attribute can be used to embed multiple articles into a page.
 
 ```html
-<main>
-  <h1>Our Proposals</h1>
-  <div tg-articles="/proposals/*"></div>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <div tg-articles="/proposals/*"></div>
+  </main>
+</tg-template>
 ```
 
 The above example embeds all articles in the `src/articles/proposals` directory under the
@@ -697,10 +698,12 @@ To sort articles in any order, add a `tg-index` attribute to each article:
 Then, combine the `tg-order-by` attribute with the `tg-articles` attribute.
 
 ```html
-<main>
-  <h1>Our Proposals</h1>
-  <div tg-articles="/proposals/*" tg-order-by="index:asc"></div>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <div tg-articles="/proposals/*" tg-order-by="index:asc"></div>
+  </main>
+</tg-template>
 ```
 
 The value of the `tg-order-by` attribute is a string separated by a single colon.
@@ -720,19 +723,21 @@ The `tg-links` attribute can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
-<main>
-  <h1>Our Proposals</h1>
-  <ul>
-    <li tg-links="/proposals/*">
-      <a href="#">
-        <tg-slot name="title">No name</tg-slot>
-        <span class="text-sm" tg-if-complete>
-          (<tg-slot name="date"></tg-slot>)
-        </span>
-      </a>
-    </li>
-  </ul>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <ul>
+      <li tg-links="/proposals/*">
+        <a href="#">
+          <tg-slot name="title">No name</tg-slot>
+          <span class="text-sm" tg-if-complete>
+            (<tg-slot name="date"></tg-slot>)
+          </span>
+        </a>
+      </li>
+    </ul>
+  </main>
+</tg-template>
 ```
 
 The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
@@ -780,10 +785,12 @@ To attach tags to an article, specify their names in the `tg-tags` attribute, se
 You can use the `tg-filter` attribute to filter articles embedded on the page:
 
 ```html
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <div tg-articles="/blog/*" tg-filter="tag:travel"></div>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Articles (tag:travel)</h1>
+    <div tg-articles="/blog/*" tg-filter="tag:travel"></div>
+  </main>
+</tg-template>
 ```
 
 The value of the `tg-filter` attribute is a string separated by a single colon.
@@ -793,16 +800,18 @@ the right side of the colon is a tag name.
 You can also filter the list of links to articles using the `tg-filter` attribute:
 
 ```html
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <ul>
-    <li tg-articles="/blog/*" tg-filter="tag:travel">
-      <a href="#">
-        <tg-slot name="title">No name</tg-slot>
-      </a>
-    </li>
-  </ul>
-</main>
+<tg-template tg-layout="home">
+  <main>
+    <h1>Articles (tag:travel)</h1>
+    <ul>
+      <li tg-articles="/blog/*" tg-filter="tag:travel">
+        <a href="#">
+          <tg-slot name="title">No name</tg-slot>
+        </a>
+      </li>
+    </ul>
+  </main>
+</tg-template>
 ```
 
 Note that you cannot assign tags to a page.
