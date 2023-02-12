@@ -765,6 +765,52 @@ Then, combine the `tg-order-by` attribute with the `tg-links` attribute.
 
 ## Tags
 
+### Filtering articles by tags
+
+You may use _tags_ to categorize your articles.
+
+To attach tags to an article, specify their names in the `tg-tags` attribute, separated by commas.
+
+```html
+<article tg-tags="travel,europe">
+  ...
+</article>
+```
+
+You can use the `tg-filter` attribute to filter articles embedded on the page:
+
+```html
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <div tg-articles="/blog/*" tg-filter="tag:travel"></div>
+</main>
+```
+
+The value of the `tg-filter` attribute is a string separated by a single colon.
+In the current specification, the left side of the colon is always `"tag"` and
+the right side of the colon is a tag name.
+
+You can also filter the list of links to articles using the `tg-filter` attribute:
+
+```html
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <ul>
+    <li tg-articles="/blog/*" tg-filter="tag:travel">
+      <a href="#">
+        <tg-slot name="title">No name</tg-slot>
+      </a>
+    </li>
+  </ul>
+</main>
+```
+
+Note that you cannot assign tags to a page.
+
+### Generating tag pages
+
+TODO: Implement this functionality.
+
 ## Tailwind CSS
 
 ## Alpine.js
