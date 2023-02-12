@@ -142,11 +142,11 @@ Please note the following:
 
 ### What is a page
 
-In **tgweb**, the template files used to generate web pages are called "pages".
+In **tgweb**, the HTML documents that make up a website are generated from a combination of
+template files. A _page_ is a type of such template file.
 Pages are placed in the `src/pages` subdirectory under the working directory.
 
 It is possible to create a subdirectory under the `src/pages` directory and place pages under it.
-
 However, it is not possible to create a subdirectory directly under the `src/pages` directory with
 the following names:
 
@@ -552,12 +552,15 @@ the following HTML document is generated:
 
 ## Components
 
-### Comonent files
+### Component files
 
-_Components_ are named HTML elements that can be placed in pages, articles and layouts.
-Their files are live in the `src/components` subdirectory of the working directory.
+A _components_ is a template file that can be embedded in pages, articles and layouts.
+However, embedding a component in another is not allowed.
 
-A component must have only one root element. The following is an example of a correct component:
+Components are live in the `src/components` subdirectory of the working directory.
+
+A component must have only one top-level element. The following is an example of a correct
+component:
 
 `src/components/smile.html`
 
@@ -567,7 +570,7 @@ A component must have only one root element. The following is an example of a co
 </span>
 ```
 
-The following example is incorrect for a component because it has multiple root elements:
+The following example is incorrect for a component because it has multiple top-level elements:
 
 `src/components/rgb.html`
 
@@ -627,6 +630,138 @@ within a component is similar to that of a layout.
 ```
 
 ## Articles
+
+### What is an article
+
+Like a page, an _article_ is a template file used to generate an HTML document.
+
+Articles are placed in the `src/articles` subdirectory under the working directory.
+It is possible to create a subdirectory under the `src/articles` directory and place articles
+under it.
+
+The articles will be converted into complete HTML documents and written to the `dist/articles`
+directory.
+
+For example, `src/articles/tech.html` is converted to `dist/articles/tech.html` and
+`src/articles/blog/happy_new_year.html` is converted to `dist/articles/blog/happy_new_year.html`.
+
+Articles and pages have exactly the same characteristics in the following respects:
+
+* A layout can be applied to them.
+* Images and audios can be embedded in them.
+* The content of the `<head>` element is automatically generated in the manner described
+  [below](#managing-the-contents-of-the-head-element).
+
+### Embedding an article in a page
+
+Like components, articles can be embedded in pages.
+Place elements with the `tg-article` attribute where you want to embed articles as follows:
+
+```html
+<main>
+  <h1>Our Recent Articles</h1>
+  <div tg-article="blog/got_a_new_gadget"></div>
+  <div tg-article="blog/happy_new_year"></div>
+</main>
+```
+
+The value of the `tg-article` attribute must be the name of the article file without the
+extension (`.html`).
+
+Unlike components, articles can only be embedded into a page.
+Articles cannot be embedded in other articles or layouts.
+
+### Embedding articles in a page
+
+The `tg-articles` attribute can be used to embed multiple articles into a page.
+
+```html
+<main>
+  <h1>Our Proposals</h1>
+  <div tg-articles="/proposals/*"></div>
+</main>
+```
+
+The above example embeds all articles in the `src/articles/proposals` directory under the
+`<h1>` element.
+
+By default, articles are sorted in ascending (alphabetically) order by file name.
+To sort articles in any order, add a `tg-index` attribute to each article:
+
+```html
+<article tg-index="000">
+  ...
+</article>
+```
+
+Then, combine the `tg-order-by` attribute with the `tg-articles` attribute.
+
+```html
+<main>
+  <h1>Our Proposals</h1>
+  <div tg-articles="/proposals/*" tg-order-by="index:asc"></div>
+</main>
+```
+
+The value of the `tg-order-by` attribute is a string separated by a single colon.
+In the current specification, the left side of the colon is always `"index"`.
+The right side of the colon is always `"asc"` or `"desc"`, where `"asc"` means "ascending order"
+and `"desc"` means "descending order".
+
+Note that the value of the `tg-index` attribute is interpreted as a string;
+`"123"` is evaluated as a value greater than `"009"`, but
+`"123"` is evaluated as a value _less_ than `"9"`
+
+TODO: Add `tg-limit` and `tg-offset` attributes.
+
+### Generating a link list to articles
+
+The `tg-links` attribute can be used to embed links to articles in any template
+(page, layout, component, article).
+
+```html
+<main>
+  <h1>Our Proposals</h1>
+  <ul>
+    <li tg-links="/proposals/*">
+      <a href="#">
+        <tg-slot name="title">No name</tg-slot>
+        <span class="text-sm" tg-if-complete>
+          (<tg-slot name="date"></tg-slot>)
+        </span>
+      </a>
+    </li>
+  </ul>
+</main>
+```
+
+The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
+zero or more `<tg-slot>` elements.
+
+The `href` attribute of the `<a>` element is replaced by the URL of the article, and the
+`<tg-slot>` element is replaced by the content defined by the `tg-slot` attribute in the article.
+
+Inside elements with the `tg-links` attribute, the `tg-if-complete` attribute works the same way
+as inside components.
+That is, elements with the `tg-if-complete` attribute will be removed from the output
+unless content is provided for all `tg-slot` elements within it.
+
+By default, articles are sorted in ascending (alphabetically) order by file name.
+To sort articles in any order, add a `tg-index` attribute to each article:
+
+```html
+<article tg-index="000">
+  ...
+</article>
+```
+
+Then, combine the `tg-order-by` attribute with the `tg-links` attribute.
+
+```html
+    <li tg-links="/proposals/*" tg-order-by="index:asc">
+      ...
+    </li>
+```
 
 ## Tags
 
