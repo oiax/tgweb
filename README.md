@@ -367,7 +367,7 @@ rather than the `<body>` element.
 `src/pages/index.html`
 
 ```html
-<tg-template tg-layout="common">
+<tg-template layout="common">
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
@@ -433,13 +433,13 @@ all elements with the `tg-slot` attribute are removed from the page content.
 `src/pages/product1.html`
 
 ```html
-<tg-template tg-layout="product" tg-title="Product 1">
+<tg-template layout="product" title="Product 1">
   <div>
     <h1>Product 1</h1>
     <p>Description</p>
   </div>
-  <span tg-slot="remarks">This product is very fragile.</span>
-  <span tg-slot="badges"><span>A</span><span>B</span></span>
+  <tg-insert name="remarks">This product is very fragile.</tg-insert>
+  <tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
 </tg-template>
 ```
 
@@ -483,7 +483,7 @@ is used as a fallback content.
 `src/pages/home.html`
 
 ```html
-<tg-template tg-layout="message" tg-title="Home">
+<tg-template layout="message" title="Home">
   <h1>Home</h1>
 </tg-template>
 ```
@@ -528,9 +528,9 @@ retained.
 `src/pages/home.html`
 
 ```html
-<tg-template tg-layout="message" tg-title="Home">
+<tg-template layout="message" title="Home">
   <h1>Home</h1>
-  <span tg-slot="name">Alice</span>
+  <tg-insert name="name">Alice</tg-insert>
 </tg-template>
 ```
 
@@ -578,16 +578,16 @@ The following example is incorrect for a component because it has multiple top-l
 <span class="text-bluer-500">B</span>
 ```
 
-### Placement of components
+### Embedding components
 
-To place a component in a page, article, or layout, specify its name in the `tg-component`
-attribute of the element at the location where you want to place it.
+To embed a component into a page, article, or layout, add a `<tg-component>` element at the
+location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <p>
-  <span tg-component="smile"></span>
+  <tg-component name="smile"></tg-component>
   How are you?
 </p>
 ```
@@ -602,29 +602,31 @@ within a component is similar to that of a layout.
 `src/components/blog_item.html`
 
 ```html
-<div class="py-2">
-  <h3 class="font-bold text-lg m-2">
-    <tg-slot name="title"></tg-slot>
-  </h3>
-  <div>
-    <tg-slot name="body"></tg-slot>
-  </div>
-  <div tg-if-complete class="text-right">
-    <tg-slot name="date"></tg-slot>
-  </div>
+<h3 class="font-bold text-lg m-2">
+  <tg-slot name="title"></tg-slot>
+</h3>
+<div>
+  <tg-slot name="body"></tg-slot>
+</div>
+<div tg-if-complete class="text-right">
+  <tg-slot name="date"></tg-slot>
 </div>
 ```
 
 `src/pages/hello.html`
 
 ```html
-<div tg-layout="home" tg-component="blog_item" class="bg-gray-100 py-2">
-  <span tg-slot="title">Greeting</span>
-  <span tg-slot="body">
-    <p>Hello.</p>
-  </span>
-  <span tg-slot="date">2022-12-31</span>
-</div>
+<tg-template layout="home">
+  <main class="bg-gray-100 py-2">
+    <tg-component name="blog_item">
+      <tg-insert name="title">Greeting</tg-insert>
+      <tg-insert name="body">
+        <p>Hello.</p>
+      </tg-insert>
+      <tg-insert name="date">2022-12-31</tg-insert>
+    </tg-component>
+  </main>
+</tg-template>
 ```
 
 ## Articles
@@ -656,7 +658,7 @@ Like components, articles can be embedded in pages.
 Place elements with the `tg-article` attribute where you want to embed articles as follows:
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Our Recent Articles</h1>
     <div tg-article="blog/got_a_new_gadget"></div>
@@ -676,7 +678,7 @@ Articles cannot be embedded in other articles or layouts.
 The `tg-articles` attribute can be used to embed multiple articles into a page.
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Our Proposals</h1>
     <div tg-articles="/proposals/*"></div>
@@ -699,7 +701,7 @@ To sort articles in any order, add a `tg-index` attribute to each article:
 Then, combine the `tg-order-by` attribute with the `tg-articles` attribute.
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Our Proposals</h1>
     <div tg-articles="/proposals/*" tg-order-by="index:asc"></div>
@@ -724,7 +726,7 @@ The `tg-links` attribute can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Our Proposals</h1>
     <ul>
@@ -790,7 +792,7 @@ To attach tags to an article, specify their names in the `tg-tags` attribute, se
 You can use the `tg-filter` attribute to filter articles embedded on the page:
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Articles (tag:travel)</h1>
     <div tg-articles="/blog/*" tg-filter="tag:travel"></div>
@@ -805,7 +807,7 @@ the right side of the colon is a tag name.
 You can also filter the list of links to articles using the `tg-filter` attribute:
 
 ```html
-<tg-template tg-layout="home">
+<tg-template layout="home">
   <main>
     <h1>Articles (tag:travel)</h1>
     <ul>
@@ -885,7 +887,7 @@ elements in it will be converted appropriately.
 
 The content of the `<title>` element is determined by the following rules:
 
-1. The value of the `tg-title` attribute of the root element of the page template,
+1. The value of the `title` attribute of the top-level element of the page template,
    if one is specified.
 2. The text content of the first `<h1>` element, if the page template contains one.
 3. The text content of the first `<h2>` element, if the page template contains one.
@@ -900,7 +902,7 @@ The content of the `<title>` element is determined by the following rules:
 The title of the HTML document generated from the page template below will be "Greeting":
 
 ```html
-<body tg-title="Greeting">
+<body title="Greeting">
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
@@ -932,9 +934,9 @@ If the next page template is used, the page title will be "No Title":
 
 #### Note
 
-If the `tg-component` attribute is set on the root element of the page template,
+If the top-level element of the page template is a `<tg-component>` element,
 the title text is extracted from that component's template.
-However, if the `tg-title` attribute is set on the root element of the page template,
+However, if the `title` attribute is set on the top-level element of the page template,
 that value takes precedence.
 
 ### `<meta>` elements

@@ -1,11 +1,13 @@
-<div tg-layout="home" class="bg-gray-100 py-2">
-  <h3 class="font-bold text-lg ml-2">Technology</h3>
-  <nav>
-    <ul>
-      <li tg-links="blog/*" tg-filter="tag:technology">
-        <a href="#" tg-class-for-current-page="active"><tg-slot name="title"></tg-slot></a>
-        (<span><tg-slot name="date"></tg-slot></span>)
-      </li>
-    </ul>
-  </nav>
-</div>
+<tg-template layout="home">
+  <div class="bg-gray-100 py-2">
+    <h3 class="font-bold text-lg ml-2">Technology</h3>
+    <nav>
+      <ul>
+        <li tg-links="blog/*" tg-filter="tag:technology">
+          <a href="#" tg-class-for-current-page="active"><tg-slot name="title"></tg-slot></a>
+          (<span><tg-slot name="date"></tg-slot></span>)
+        </li>
+      </ul>
+    </nav>
+  </div>
+</tg-template>

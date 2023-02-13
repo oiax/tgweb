@@ -18,7 +18,7 @@ describe("generateHTML", () => {
     const head = dom.window.document.head
 
     const title = head.querySelector("title")
-    assert.equal(title.textContent, "About")
+    assert.equal(title.textContent, "About Us")
 
     const script = head.querySelector("script")
     assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
@@ -99,6 +99,7 @@ describe("generateHTML", () => {
     assert.equal(h3.textContent, "FizzBuzz")
 
     const grid = body.children[1]
+
     const div0 = grid.children[0]
     const p01 = div0.children[0]
     assert.equal(p01.textContent, "Hello, world!")
@@ -108,18 +109,14 @@ describe("generateHTML", () => {
     assert.equal(p10.textContent, "I am a computer.")
 
     const div2 = grid.children[2]
-    assert.equal(div2.attributes.getNamedItem("tg-layout"), null)
-
     const main = div2.children[2]
+
     assert.equal(main.children.length, 4)
 
     const tech = main.children[0]
-    assert.equal(tech.attributes.getNamedItem("tg-layout"), null)
+    assert.equal(tech.children[0].tagName, "H3")
 
     const tech1 = main.children[1]
-
-    assert.equal(tech1.attributes.getNamedItem("tg-layout"), null)
-    assert.equal(tech1.attributes.getNamedItem("tg-tag"), null)
     assert.equal(tech1.children[0].textContent.trim(), "A")
 
     const tech2 = main.children[2]
@@ -161,11 +158,11 @@ describe("generateHTML", () => {
 
     assert.equal(h3.textContent.trim(), "B")
 
-    const p = body.children[1].children[1]
+    const p = body.children[1].children[0].children[1]
     assert.equal(p.tagName, "P")
     assert.equal(p.textContent, "This is B.")
 
-    const dateDiv = body.children[1].children[2]
+    const dateDiv = body.children[1].children[0].children[2]
     assert.equal(dateDiv.textContent, "2023-01-01")
   })
 

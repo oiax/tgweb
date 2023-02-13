@@ -2,6 +2,7 @@ import * as PATH from "path"
 import pretty from "pretty"
 import { JSDOM } from "jsdom"
 import { minimatch } from "minimatch"
+import { setAttrs } from "./set_attrs.mjs"
 import { setTgAttrs } from "./set_tg_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
@@ -13,9 +14,9 @@ generationFuncs["page"] = (path, siteData) => {
 
   if (page) {
     const pageRoot = page.dom.window.document.body.children[0].cloneNode(true)
-    setTgAttrs(pageRoot)
+    setAttrs(pageRoot)
 
-    if (pageRoot.tgAttrs["layout"]) {
+    if (pageRoot.attrs["layout"]) {
       const headAttrs = { title: getTitle(pageRoot) }
 
       embedComponents(pageRoot, siteData)
@@ -29,7 +30,7 @@ generationFuncs["page"] = (path, siteData) => {
     }
     else {
       const body = page.dom.window.document.body.cloneNode(true)
-      setTgAttrs(body)
+      setAttrs(body)
 
       const headAttrs = { title: getTitle(body) }
 
@@ -52,19 +53,10 @@ generationFuncs["article"] = (path, siteData) => {
 
   if (article) {
     const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-    setTgAttrs(articleRoot)
+    setAttrs(articleRoot)
 
-    if (articleRoot.tgAttrs["component"]) {
-      const componentRoot = getComponentRoot(articleRoot, siteData)
-      setTgAttrs(componentRoot)
-      embedContent(componentRoot, articleRoot)
-      embedSlotContents(componentRoot, articleRoot)
-      return renderArticle(componentRoot, siteData, path)
-    }
-    else {
-      embedComponents(articleRoot, siteData)
-      return renderArticle(articleRoot, siteData, path)
-    }
+    embedComponents(articleRoot, siteData)
+    return renderArticle(articleRoot, siteData, path)
   }
 
   return pretty(siteData.documentTemplate.serialize())
@@ -78,10 +70,10 @@ const renderArticle = (articleRoot, siteData, path) => {
 }
 
 const applyLayout = (element, siteData) => {
-  if (element.tgAttrs["layout"] === undefined) return
+  if (element.attrs["layout"] === undefined) return
 
   const layout =
-    siteData.layouts.find(layout => layout.path == element.tgAttrs["layout"] + ".html")
+    siteData.layouts.find(layout => layout.path == element.attrs["layout"] + ".html")
 
   if (layout === undefined) return
 
@@ -90,22 +82,18 @@ const applyLayout = (element, siteData) => {
   embedSlotContents(layoutRoot, element)
   embedComponents(layoutRoot, siteData)
 
-  const target = layoutRoot.querySelector("tg-content")
-
-  if (target) target.replaceWith(element)
-
   return layoutRoot
 }
 
 const extractSlotContents = element => {
   const slotContents =
-    Array.from(element.querySelectorAll("[tg-slot]")).map(elem => {
+    Array.from(element.querySelectorAll("tg-insert")).map(elem => {
       const copy = elem.cloneNode(true)
       setTgAttrs(copy)
       return copy
     })
 
-  element.querySelectorAll("[tg-slot]").forEach(elem => elem.remove())
+  element.querySelectorAll("tg-insert").forEach(elem => elem.remove())
 
   return slotContents
 }
@@ -115,7 +103,7 @@ const embedContent = (element, provider) => {
 
   if (target) {
     const copy = provider.cloneNode(true)
-    Array.from(copy.querySelectorAll("[tg-slot]")).map(elem => elem.remove())
+    Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
     Array.from(copy.children).forEach(elem => target.before(elem))
     target.remove()
   }
@@ -126,14 +114,14 @@ const embedSlotContents = (element, provider) => {
 
   element.querySelectorAll("[tg-if-complete]").forEach(wrapper => {
     const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot =>
-      slotContents.some(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+      slotContents.some(c => c.getAttribute("name") == slot.getAttribute("name"))
     )
 
     if (complete === false) wrapper.remove()
   })
 
   element.querySelectorAll("tg-slot").forEach(slot => {
-    const content = slotContents.find(c => c.tgAttrs["slot"] == slot.getAttribute("name"))
+    const content = slotContents.find(c => c.getAttribute("name") == slot.getAttribute("name"))
 
     if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
     else Array.from(slot.childNodes).forEach(child => slot.before(child))
@@ -143,10 +131,10 @@ const embedSlotContents = (element, provider) => {
 }
 
 const embedComponents = (node, siteData) => {
-  const targets = node.querySelectorAll("[tg-component]")
+  const targets = node.querySelectorAll("tg-component")
 
   targets.forEach(target => {
-    setTgAttrs(target)
+    setAttrs(target)
     const componentRoot = getComponentRoot(target, siteData)
 
     if (componentRoot) {
@@ -158,7 +146,7 @@ const embedComponents = (node, siteData) => {
 }
 
 const getComponentRoot = (element, siteData) => {
-  const componentName = element.tgAttrs["component"]
+  const componentName = element.attrs["name"]
 
   const component =
     siteData.components.find(component => component.path == componentName + ".html")
@@ -179,21 +167,13 @@ const embedArticles = (node, siteData) => {
 
     if (article) {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setTgAttrs(articleRoot)
-
-      if (articleRoot.tgAttrs["component"]) {
-        const componentRoot = getComponentRoot(articleRoot, siteData)
-        setTgAttrs(componentRoot)
-        embedContent(componentRoot, articleRoot)
-        embedSlotContents(componentRoot, articleRoot)
-        target.replaceWith(componentRoot)
-      }
-      else {
-        embedComponents(articleRoot, siteData)
-        target.replaceWith(articleRoot)
-      }
+      setAttrs(articleRoot)
+      embedComponents(articleRoot, siteData)
+      Array.from(articleRoot.children).forEach(child => target.before(child))
     }
   })
+
+  Array.from(node.querySelectorAll("[tg-article]")).forEach(target => target.remove())
 }
 
 const embedArticleLists = (node, siteData) => {
@@ -211,21 +191,13 @@ const embedArticleLists = (node, siteData) => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setTgAttrs(articleRoot)
 
-      if (articleRoot.tgAttrs["component"]) {
-        const componentRoot = getComponentRoot(articleRoot, siteData)
-        setTgAttrs(componentRoot)
-        embedContent(componentRoot, articleRoot)
-        embedSlotContents(componentRoot, articleRoot)
-        target.before(componentRoot)
-      }
-      else {
-        embedComponents(articleRoot, siteData)
-        target.before(articleRoot)
-      }
-    })
+      embedComponents(articleRoot, siteData)
 
-    target.remove()
+      Array.from(articleRoot.children).forEach(child => target.before(child))
+    })
   })
+
+  Array.from(node.querySelectorAll("[tg-articles]")).forEach(target => target.remove())
 }
 
 const embedLinksToArticles = (node, siteData, path) => {
@@ -263,10 +235,10 @@ const filterArticles = (articles, pattern, tag) => {
       if (minimatch(article.path, pattern)) {
         if (tag) {
           const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-          setTgAttrs(articleRoot)
+          setAttrs(articleRoot)
 
-          if (articleRoot.tgAttrs["tags"]) {
-            return articleRoot.tgAttrs["tags"].split(",").includes(tag)
+          if (articleRoot.attrs["tags"]) {
+            return articleRoot.attrs["tags"].split(",").includes(tag)
           }
         }
         else {
@@ -288,10 +260,10 @@ const sortArticles = (articles, orderBy) => {
       const d = b.dom.window.document.body.children[0]
 
       if (c && d) {
-        setTgAttrs(c)
-        setTgAttrs(d)
-        const i = c.tgAttrs["index"]
-        const j = d.tgAttrs["index"]
+        setAttrs(c)
+        setAttrs(d)
+        const i = c.attrs["index"]
+        const j = d.attrs["index"]
 
         if (i) {
           if (j) {
@@ -373,7 +345,7 @@ const processTgLinks = (root, siteData, path) => {
 }
 
 const getTitle = element => {
-  if (element.tgAttrs["title"]) return element.tgAttrs["title"]
+  if (element.attrs["title"]) return element.attrs["title"]
 
   const h1 = element.querySelector("h1")
   if (h1) return h1.textContent
