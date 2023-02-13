@@ -3,7 +3,6 @@ import pretty from "pretty"
 import { JSDOM } from "jsdom"
 import { minimatch } from "minimatch"
 import { setAttrs } from "./set_attrs.mjs"
-import { setTgAttrs } from "./set_tg_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
@@ -89,7 +88,7 @@ const extractSlotContents = element => {
   const slotContents =
     Array.from(element.querySelectorAll("tg-insert")).map(elem => {
       const copy = elem.cloneNode(true)
-      setTgAttrs(copy)
+      setAttrs(copy)
       return copy
     })
 
@@ -157,13 +156,13 @@ const getComponentRoot = (element, siteData) => {
 }
 
 const embedArticles = (node, siteData) => {
-  const targets = node.querySelectorAll("[tg-article]")
+  const targets = node.querySelectorAll("tg-article")
 
   targets.forEach(target => {
-    setTgAttrs(target)
+    setAttrs(target)
 
     const article =
-      siteData.articles.find(article => article.path == target.tgAttrs["article"] + ".html")
+      siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
 
     if (article) {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
@@ -173,23 +172,23 @@ const embedArticles = (node, siteData) => {
     }
   })
 
-  Array.from(node.querySelectorAll("[tg-article]")).forEach(target => target.remove())
+  Array.from(node.querySelectorAll("tg-article")).forEach(target => target.remove())
 }
 
 const embedArticleLists = (node, siteData) => {
-  const targets = node.querySelectorAll("[tg-articles]")
+  const targets = node.querySelectorAll("tg-articles")
 
   targets.forEach(target => {
-    setTgAttrs(target)
-    const pattern = target.tgAttrs["articles"]
+    setAttrs(target)
+    const pattern = target.attrs["pattern"]
     const tag = getTag(target)
     const articles = filterArticles(siteData.articles, pattern, tag)
 
-    if (target.tgAttrs["order-by"]) sortArticles(articles, target.tgAttrs["order-by"])
+    if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setTgAttrs(articleRoot)
+      setAttrs(articleRoot)
 
       embedComponents(articleRoot, siteData)
 
@@ -197,24 +196,24 @@ const embedArticleLists = (node, siteData) => {
     })
   })
 
-  Array.from(node.querySelectorAll("[tg-articles]")).forEach(target => target.remove())
+  Array.from(node.querySelectorAll("tg-articles")).forEach(target => target.remove())
 }
 
 const embedLinksToArticles = (node, siteData, path) => {
-  const targets = node.querySelectorAll("[tg-links]")
+  const targets = node.querySelectorAll("tg-links")
 
   targets.forEach(target => {
-    setTgAttrs(target)
-    const pattern = target.tgAttrs["links"]
+    setAttrs(target)
+    const pattern = target.attrs["pattern"]
     const tag = getTag(target)
 
     const articles = filterArticles(siteData.articles, pattern, tag)
 
-    if (target.tgAttrs["order-by"]) sortArticles(articles, target.tgAttrs["order-by"])
+    if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setTgAttrs(articleRoot)
+      setAttrs(articleRoot)
 
       const copy = target.cloneNode(true)
       embedSlotContents(copy, articleRoot)
@@ -222,11 +221,11 @@ const embedLinksToArticles = (node, siteData, path) => {
       const href = PATH.relative(PATH.dirname(path), PATH.join("src/articles", article.path))
       copy.querySelectorAll("a[href='#']").forEach(anchor => anchor.href = href)
 
-      target.before(copy)
+      Array.from(copy.children).forEach(child => target.before(child))
     })
-
-    target.remove()
   })
+
+  Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
 
 const filterArticles = (articles, pattern, tag) => {
@@ -367,11 +366,11 @@ const getTitle = element => {
 }
 
 const getTag = element => {
-  element.tgAttrs["filter"]
+  element.attrs["filter"]
 
-  if (element.tgAttrs["filter"]) {
+  if (element.attrs["filter"]) {
     const re = /^(tag):(.+)$/
-    const md = re.exec(element.tgAttrs["filter"])
+    const md = re.exec(element.attrs["filter"])
     if (md) return md[2]
   }
 }

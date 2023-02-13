@@ -655,33 +655,33 @@ Articles and pages have exactly the same characteristics in the following respec
 ### Embedding an article in a page
 
 Like components, articles can be embedded in pages.
-Place elements with the `tg-article` attribute where you want to embed articles as follows:
+Place `<tg-article>` elements where you want to embed articles as follows:
 
 ```html
 <tg-template layout="home">
   <main>
     <h1>Our Recent Articles</h1>
-    <div tg-article="blog/got_a_new_gadget"></div>
-    <div tg-article="blog/happy_new_year"></div>
+    <tg-article name="blog/got_a_gadget"></tg-article>
+    <tg-article name="blog/happy_new_year"></tg-article>
   </main>
 </tg-template>
 ```
 
-The value of the `tg-article` attribute must be the name of the article file without the
-extension (`.html`).
+The value of the `name` attribute of the `<tg-article>` element must be the name of the
+article file without the extension (`.html`).
 
 Unlike components, articles can only be embedded into a page.
 Articles cannot be embedded in other articles or layouts.
 
 ### Embedding articles in a page
 
-The `tg-articles` attribute can be used to embed multiple articles into a page.
+The `<tg-articles>` element can be used to embed multiple articles into a page.
 
 ```html
 <tg-template layout="home">
   <main>
     <h1>Our Proposals</h1>
-    <div tg-articles="/proposals/*"></div>
+    <tg-articles pattern="/proposals/*"></tg-articles>
   </main>
 </tg-template>
 ```
@@ -690,31 +690,35 @@ The above example embeds all articles in the `src/articles/proposals` directory 
 `<h1>` element.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles in any order, add a `tg-index` attribute to each article:
+To sort articles in any order, add a `index` attribute to each article:
 
 ```html
-<article tg-index="000">
-  ...
-</article>
+<tg-template index="000">
+  <article>
+    ...
+  </article>
+</tg-template>
 ```
 
-Then, combine the `tg-order-by` attribute with the `tg-articles` attribute.
+Then, specify the `order-by` attribute of the `<tg-articles>` element.
 
 ```html
 <tg-template layout="home">
   <main>
     <h1>Our Proposals</h1>
-    <div tg-articles="/proposals/*" tg-order-by="index:asc"></div>
+    <tg-articles pattern="/proposals/*" order-by="index:asc"></tg-articles>
   </main>
 </tg-template>
 ```
 
-The value of the `tg-order-by` attribute is a string separated by a single colon.
+The value of the `order-by` attribute is a string separated by a single colon.
 In the current specification, the left side of the colon is always `"index"`.
 The right side of the colon is always `"asc"` or `"desc"`, where `"asc"` means "ascending order"
 and `"desc"` means "descending order".
 
-Note that the value of the `tg-index` attribute is interpreted as a string;
+TODO: Allow `"title"` as the left side value.
+
+Note that the value of the `index` attribute of `<tg-template>` element is interpreted as a string;
 `"123"` is evaluated as a value greater than `"009"`, but
 `"123"` is evaluated as a value _less_ than `"9"`
 
@@ -730,14 +734,16 @@ The `tg-links` attribute can be used to embed links to articles in any template
   <main>
     <h1>Our Proposals</h1>
     <ul>
-      <li tg-links="/proposals/*">
-        <a href="#">
-          <tg-slot name="title">No name</tg-slot>
-          <span class="text-sm" tg-if-complete>
-            (<tg-slot name="date"></tg-slot>)
-          </span>
-        </a>
-      </li>
+      <tg-links pattern="/proposals/*">
+        <li>
+          <a href="#">
+            <tg-slot name="title"></tg-slot>
+            <span class="text-sm" tg-if-complete>
+              (<tg-slot name="date"></tg-slot>)
+            </span>
+          </a>
+        </li>
+      </tg-links>
     </ul>
   </main>
 </tg-template>
@@ -758,64 +764,66 @@ By default, articles are sorted in ascending (alphabetically) order by file name
 To sort articles in any order, add a `tg-index` attribute to each article:
 
 ```html
-<article tg-index="000">
-  ...
-</article>
+<tg-template layout="home" index="000">
+  <article>
+    ...
+  </article>
+</tg-template>
 ```
 
-Then, combine the `tg-order-by` attribute with the `tg-links` attribute.
+Then, specify the `order-by` attribute of the `<tg-links>` element.
 
 ```html
-    <li tg-links="/proposals/*" tg-order-by="index:asc">
-      ...
-    </li>
+    <tg-links pattern="/proposals/*" order-by="index:asc">
+      <li>
+        ...
+      </li>
+    </tg-links>
 ```
-
-### `tg-if-current` attribute
-
-Not yet implemented.
-
-## Tags
 
 ### Filtering articles by tags
 
 You may use _tags_ to categorize your articles.
 
-To attach tags to an article, specify their names in the `tg-tags` attribute, separated by commas.
+To attach tags to an article, specify their names in the `tags` attribute, separated by commas.
 
 ```html
-<article tg-tags="travel,europe">
-  ...
-</article>
+<tg-template tags="travel,europe">
+  <article>
+    ...
+  </article>
+</tg-template>
 ```
 
-You can use the `tg-filter` attribute to filter articles embedded on the page:
+You can use the `filter` attribute to filter articles embedded on the page:
 
 ```html
 <tg-template layout="home">
   <main>
     <h1>Articles (tag:travel)</h1>
-    <div tg-articles="/blog/*" tg-filter="tag:travel"></div>
+    <tg-articles pattern="/blog/*" filter="tag:travel"></tg-articles>
   </main>
 </tg-template>
 ```
 
-The value of the `tg-filter` attribute is a string separated by a single colon.
+The value of the `filter` attribute is a string separated by a single colon.
 In the current specification, the left side of the colon is always `"tag"` and
 the right side of the colon is a tag name.
 
-You can also filter the list of links to articles using the `tg-filter` attribute:
+You can also filter the list of links to articles using the `filter` attribute:
 
 ```html
 <tg-template layout="home">
   <main>
     <h1>Articles (tag:travel)</h1>
     <ul>
-      <li tg-links="/blog/*" tg-filter="tag:travel">
-        <a href="#">
-          <tg-slot name="title">No name</tg-slot>
-        </a>
-      </li>
+      <tg-links pattern="/blog/*" filter="tag:travel">
+        <li>
+          <a href="#">
+            <tg-slot name="title"></tg-slot>
+          </a>
+        </li>
+      </tg-links>
     </ul>
   </main>
 </tg-template>
@@ -844,7 +852,7 @@ the page in its `href` attribute:
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
 
-## `<tg-link>` elements
+### `<tg-link>` elements
 
 `src/components/nav.html`
 
@@ -876,6 +884,28 @@ elements in it will be converted appropriately.
   <tg-link component="nav_link" href="/articles/about.html" label="About Us"></tg-link>
 </nav>
 ```
+
+### `<tg-link>` elements within the `<tg-links`> element
+
+The `<tg-link>` elements can be placed within the `<tg-links`> element:
+
+```html
+    <tg-links pattern="/proposals/*" order-by="index:asc">
+      <li>
+        <tg-link>
+          <a href="#" class="underline text-blue-500">
+            <tg-slot name="title"></tg-slot>
+          </a>
+          <span class="font-bold" tg-if-current>
+            <tg-slot name="title"></tg-slot>
+          </span>
+        </tg-link>
+      </li>
+    </tg-links>
+```
+
+In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
+You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
 
 ## Tailwind CSS
 
