@@ -3,6 +3,6 @@
     <h1>Product 1</h1>
     <p>Description</p>
   </div>
-  <span tg-slot="remarks">This product is very fragile.</span>
-  <span tg-slot="badges"><span>A</span><span>B</span></span>
+  <tg-insert name="remarks">This product is very fragile.</tg-insert>
+  <tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
 </tg-template>

@@ -6,6 +6,7 @@ import { setAttrs } from "./set_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
+// const document = new JSDOM("<html></html>").window.document
 
 generationFuncs["page"] = (path, siteData) => {
   const filename = PATH.basename(path)
@@ -98,35 +99,49 @@ const extractSlotContents = element => {
 }
 
 const embedContent = (element, provider) => {
-  const target = element.querySelector("tg-content")
+  element.childNodes.forEach(child => {
+    if (child.nodeType !== 1) return
 
-  if (target) {
-    const copy = provider.cloneNode(true)
-    Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
-    Array.from(copy.children).forEach(elem => target.before(elem))
-    target.remove()
-  }
+    if (child.nodeName == "TG-CONTENT") {
+      const copy = provider.cloneNode(true)
+      Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
+      Array.from(copy.childNodes).forEach(c => element.insertBefore(c, child))
+      element.removeChild(child)
+    }
+    else {
+      embedContent(child, provider)
+    }
+  })
 }
 
 const embedSlotContents = (element, provider) => {
   const slotContents = extractSlotContents(provider)
 
-  element.querySelectorAll("[tg-if-complete]").forEach(wrapper => {
-    const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot =>
-      slotContents.some(c => c.getAttribute("name") == slot.getAttribute("name"))
-    )
+  element.querySelectorAll("tg-if-complete").forEach(wrapper => {
+    const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot => {
+      setAttrs(slot)
 
-    if (complete === false) wrapper.remove()
+      return slotContents.some(c => {
+        setAttrs(c)
+        return c.attrs["name"] == slot.attrs["name"]
+      })
+    })
+
+    if (complete) {
+      wrapper.childNodes.forEach(child => element.insertBefore(child.cloneNode(true), wrapper))
+    }
   })
+
+  element.querySelectorAll("tg-if-complete").forEach(wrapper => wrapper.remove())
 
   element.querySelectorAll("tg-slot").forEach(slot => {
     const content = slotContents.find(c => c.getAttribute("name") == slot.getAttribute("name"))
 
     if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
     else Array.from(slot.childNodes).forEach(child => slot.before(child))
-
-    slot.remove()
   })
+
+  element.querySelectorAll("tg-slot").forEach(slot => slot.remove())
 }
 
 const embedComponents = (node, siteData) => {

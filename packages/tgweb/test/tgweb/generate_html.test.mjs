@@ -53,16 +53,19 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
+
     const div1 = body.children[1]
     assert.equal(div1.textContent.trim(), "This product is very fragile.")
 
     const div2 = body.children[2]
+
+    assert.equal(div2.tagName, "DIV")
     assert.equal(div2.children[0].tagName, "SPAN")
     assert.equal(div2.children[0].textContent, "A")
     assert.equal(div2.children[1].textContent, "B")
   })
 
-  it("should omit an element with tg-if-complete attribute", () => {
+  it("should omit a <tg-if-complete> element if all slots receives an insert", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 

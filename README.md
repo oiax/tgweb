@@ -503,13 +503,10 @@ the following HTML document is generated:
 </html>
 ```
 
-### `tg-if-complete` attribute
+### `<tg-if-complete>`
 
-When an element in a layout has the `tg-if-complete` attribute, it is deleted unless the content
-to be inserted is defined for all slots in that element.
-
-If no single slot exists in an element with the `tg-if-complete` attribute, the element is
-retained.
+The `<tg-if-complete>` element in a layout is simply replaced with its content. However, if any
+of the slots within the element have no insert defined, the entire element is deleted.
 
 #### Example
 
@@ -518,10 +515,11 @@ retained.
 ```html
 <body class="p-2">
   <tg-content></tg-content>
-  <div tg-if-complete>
-    <div>To: <tg-slot name="name"></tg-slot></div>
-    <div><tg-slot name="message"></tg-slot></div>
-  </div>
+  <tg-if-complete>
+    <hr class="h-px my-8 bg-gray-200 border-0">
+    <div class="bg-gray-800 text-white p-4">To: <tg-slot name="name"></tg-slot></div>
+    <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
+  </tg-if-complete>
 </body>
 ```
 
@@ -608,9 +606,11 @@ within a component is similar to that of a layout.
 <div>
   <tg-slot name="body"></tg-slot>
 </div>
-<div tg-if-complete class="text-right">
-  <tg-slot name="date"></tg-slot>
-</div>
+<tg-if-complete>
+  <divclass="text-right">
+    <tg-slot name="date"></tg-slot>
+  </div>
+</tg-if-complete>
 ```
 
 `src/pages/hello.html`
@@ -738,9 +738,11 @@ The `tg-links` attribute can be used to embed links to articles in any template
         <li>
           <a href="#">
             <tg-slot name="title"></tg-slot>
-            <span class="text-sm" tg-if-complete>
-              (<tg-slot name="date"></tg-slot>)
-            </span>
+            <tg-if-complete>
+              <span class="text-sm">
+                (<tg-slot name="date"></tg-slot>)
+              </span>
+            </tg-if-complete>
           </a>
         </li>
       </tg-links>
@@ -755,9 +757,9 @@ zero or more `<tg-slot>` elements.
 The `href` attribute of the `<a>` element is replaced by the URL of the article, and the
 `<tg-slot>` element is replaced by the content defined by the `tg-slot` attribute in the article.
 
-Inside elements with the `tg-links` attribute, the `tg-if-complete` attribute works the same way
+Inside the `<tg-links>` element, `<tg-if-complete>` elements work the same way
 as inside components.
-That is, elements with the `tg-if-complete` attribute will be removed from the output
+That is, a `<tg-if-complete>` element will be removed from the output
 unless content is provided for all `tg-slot` elements within it.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
@@ -852,7 +854,7 @@ the page in its `href` attribute:
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
 
-### `<tg-link>` elements
+### `<tg-link>`
 
 `src/components/nav.html`
 
@@ -969,11 +971,11 @@ the title text is extracted from that component's template.
 However, if the `title` attribute is set on the top-level element of the page template,
 that value takes precedence.
 
-### `<meta>` elements
+### `<meta>`
 
 Not yet implemented.
 
-### `<link>` elements
+### `<link>`
 
 Not yet implemented.
 
@@ -987,7 +989,7 @@ The following link element are always inserted within the head element.
 
 A link element that refers to another stylesheet cannot be inserted within the head element.
 
-### `<script>` elements
+### `<script>`
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
