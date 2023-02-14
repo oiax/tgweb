@@ -1,0 +1,15 @@
+<nav>
+  <ul>
+    <tg-links pattern="blog/*">
+      <li>
+        <tg-link>
+          <a href="#"><tg-slot name="title"></tg-slot></a>
+          <tg-if-current>
+            <span class="font-bold"><tg-slot name="title"></tg-slot></span>
+          </tg-if-current>
+        </tg-link>
+        (<span><tg-slot name="date"></tg-slot></span>)
+      </li>
+    </tg-links>
+  </ul>
+</nav>

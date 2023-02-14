@@ -6,7 +6,6 @@ import { setAttrs } from "./set_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
-// const document = new JSDOM("<html></html>").window.document
 
 generationFuncs["page"] = (path, siteData) => {
   const filename = PATH.basename(path)
@@ -19,12 +18,12 @@ generationFuncs["page"] = (path, siteData) => {
     if (pageRoot.attrs["layout"]) {
       const headAttrs = { title: getTitle(pageRoot) }
 
-      embedComponents(pageRoot, siteData)
-      embedArticles(pageRoot, siteData)
+      embedComponents(pageRoot, siteData, path)
+      embedArticles(pageRoot, siteData, path)
       embedArticleLists(pageRoot, siteData)
       embedLinksToArticles(pageRoot, siteData, path)
 
-      const layoutRoot = applyLayout(pageRoot, siteData)
+      const layoutRoot = applyLayout(pageRoot, siteData, path)
       if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
       else return renderHTML(pageRoot, siteData, headAttrs, path)
     }
@@ -34,12 +33,12 @@ generationFuncs["page"] = (path, siteData) => {
 
       const headAttrs = { title: getTitle(body) }
 
-      embedComponents(body, siteData)
-      embedArticles(body, siteData)
+      embedComponents(body, siteData, path)
+      embedArticles(body, siteData, path)
       embedArticleLists(body, siteData)
       embedLinksToArticles(body, siteData, path)
 
-      const layoutRoot = applyLayout(body, siteData)
+      const layoutRoot = applyLayout(body, siteData, path)
       if (layoutRoot) return renderHTML(body, siteData, headAttrs, path)
       else return renderHTML(body, siteData, headAttrs, path)
     }
@@ -55,7 +54,7 @@ generationFuncs["article"] = (path, siteData) => {
     const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
     setAttrs(articleRoot)
 
-    embedComponents(articleRoot, siteData)
+    embedComponents(articleRoot, siteData, path)
     return renderArticle(articleRoot, siteData, path)
   }
 
@@ -65,11 +64,11 @@ generationFuncs["article"] = (path, siteData) => {
 const renderArticle = (articleRoot, siteData, path) => {
   const headAttrs = { title: getTitle(articleRoot) }
   embedLinksToArticles(articleRoot, siteData, path)
-  const layoutRoot = applyLayout(articleRoot, siteData)
+  const layoutRoot = applyLayout(articleRoot, siteData, path)
   if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
 }
 
-const applyLayout = (element, siteData) => {
+const applyLayout = (element, siteData, path) => {
   if (element.attrs["layout"] === undefined) return
 
   const layout =
@@ -80,7 +79,7 @@ const applyLayout = (element, siteData) => {
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
   embedContent(layoutRoot, element)
   embedSlotContents(layoutRoot, element)
-  embedComponents(layoutRoot, siteData)
+  embedComponents(layoutRoot, siteData, path)
 
   return layoutRoot
 }
@@ -92,8 +91,6 @@ const extractSlotContents = element => {
       setAttrs(copy)
       return copy
     })
-
-  element.querySelectorAll("tg-insert").forEach(elem => elem.remove())
 
   return slotContents
 }
@@ -135,16 +132,17 @@ const embedSlotContents = (element, provider) => {
   element.querySelectorAll("tg-if-complete").forEach(wrapper => wrapper.remove())
 
   element.querySelectorAll("tg-slot").forEach(slot => {
-    const content = slotContents.find(c => c.getAttribute("name") == slot.getAttribute("name"))
+    setAttrs(slot)
+    const content = slotContents.find(c => c.attrs["name"] == slot.attrs["name"])
 
-    if (content) Array.from(content.childNodes).forEach(child => slot.before(child))
+    if (content) Array.from(content.cloneNode(true).childNodes).forEach(child => slot.before(child))
     else Array.from(slot.childNodes).forEach(child => slot.before(child))
   })
 
   element.querySelectorAll("tg-slot").forEach(slot => slot.remove())
 }
 
-const embedComponents = (node, siteData) => {
+const embedComponents = (node, siteData, path) => {
   const targets = node.querySelectorAll("tg-component")
 
   targets.forEach(target => {
@@ -153,6 +151,7 @@ const embedComponents = (node, siteData) => {
 
     if (componentRoot) {
       embedContent(componentRoot, target)
+      embedLinksToArticles(componentRoot, siteData, path)
       embedSlotContents(componentRoot, target)
       target.replaceWith(componentRoot)
     }
@@ -170,7 +169,7 @@ const getComponentRoot = (element, siteData) => {
   }
 }
 
-const embedArticles = (node, siteData) => {
+const embedArticles = (node, siteData, path) => {
   const targets = node.querySelectorAll("tg-article")
 
   targets.forEach(target => {
@@ -182,7 +181,7 @@ const embedArticles = (node, siteData) => {
     if (article) {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setAttrs(articleRoot)
-      embedComponents(articleRoot, siteData)
+      embedComponents(articleRoot, siteData, path)
       Array.from(articleRoot.children).forEach(child => target.before(child))
     }
   })
@@ -190,7 +189,7 @@ const embedArticles = (node, siteData) => {
   Array.from(node.querySelectorAll("tg-article")).forEach(target => target.remove())
 }
 
-const embedArticleLists = (node, siteData) => {
+const embedArticleLists = (node, siteData, path) => {
   const targets = node.querySelectorAll("tg-articles")
 
   targets.forEach(target => {
@@ -205,7 +204,7 @@ const embedArticleLists = (node, siteData) => {
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setAttrs(articleRoot)
 
-      embedComponents(articleRoot, siteData)
+      embedComponents(articleRoot, siteData, path)
 
       Array.from(articleRoot.children).forEach(child => target.before(child))
     })
@@ -227,16 +226,35 @@ const embedLinksToArticles = (node, siteData, path) => {
     if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
 
     articles.forEach(article => {
+      const href = `/articles/${article.path}`.replace(/\/index.html$/, "/")
+
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setAttrs(articleRoot)
 
       const copy = target.cloneNode(true)
+
       embedSlotContents(copy, articleRoot)
 
-      const href = PATH.relative(PATH.dirname(path), PATH.join("src/articles", article.path))
+      Array.from(copy.querySelectorAll("tg-link")).forEach(link => {
+        if (`src/articles/${article.path}` === path) {
+          const fallback = link.querySelector("tg-if-current")
+          if (fallback)  {
+            Array.from(fallback.childNodes).forEach(child => link.before(child))
+          }
+        }
+        else {
+          const fallback = link.querySelector("tg-if-current")
+          if (fallback) fallback.remove()
+          Array.from(link.querySelectorAll("a[href='#']")).forEach(a => a.href = href)
+          Array.from(link.childNodes).forEach(child => link.before(child))
+        }
+      })
+
+      Array.from(copy.querySelectorAll("tg-link")).forEach(link => link.remove())
+
       copy.querySelectorAll("a[href='#']").forEach(anchor => anchor.href = href)
 
-      Array.from(copy.children).forEach(child => target.before(child))
+      Array.from(copy.childNodes).forEach(child => target.before(child))
     })
   })
 
@@ -332,30 +350,33 @@ const processTgLinks = (root, siteData, path) => {
         siteData.components.find(component => component.path == componentName + ".html")
 
       if (component) {
+        const componentRoot = component.dom.window.document.body.childNodes[0]
         link.innerHTML = ""
-
-        Array.from(component.dom.window.document.body.children).forEach(child => {
-          link.appendChild(child.cloneNode(true))
-        })
+        Array.from(componentRoot.childNodes).forEach(child => link.appendChild(child))
       }
     }
 
     Array.from(link.querySelectorAll("tg-label")).forEach(e => e.replaceWith(label))
 
     if (href === `/${currentPath}`) {
-      const fallback = link.querySelector("[tg-if-current]")
-      if (fallback) link.before(fallback)
+      const fallback = link.querySelector("tg-if-current")
+
+      if (fallback) {
+        Array.from(fallback.childNodes).forEach(child => link.before(child))
+      }
     }
     else {
-      const fallback = link.querySelector("[tg-if-current]")
+      const fallback = link.querySelector("tg-if-current")
       if (fallback) fallback.remove()
       const adjusted = href.replace(/\/index.html$/, "/")
       Array.from(link.querySelectorAll("a[href='#']")).forEach(a => a.href = adjusted)
-      Array.from(link.children).forEach(child => link.before(child))
+      Array.from(link.childNodes).forEach(child => link.before(child))
     }
+
+    link.remove()
   })
 
-   Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => link.remove())
+  Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => link.remove())
 }
 
 const getTitle = element => {

@@ -854,7 +854,56 @@ the page in its `href` attribute:
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
 
-### `<tg-link>`
+### `<tg-link>`, `<tg-if-current>` and `<tg-label>`
+
+The `<tg-link>` is a special element used to conditionally cause the `<a>` element to appear.
+Basically, the content of this element is just rendered as it is.
+If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
+attribute of the `<tg-link>` element is set to the value of the `href` attribute of that `<a>`
+element.
+
+The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
+
+```html
+<tg-link href="/articles/goal.html">
+  <a href="#">Our Goal</a>
+</tg-link>
+```
+
+However, when an article with the path `/articles/goal.html` contains the above code, this part is
+removed from the generated HTML document.
+
+Zero or one `<tg-if-current>` element may be placed inside the `<tg-link>` element.
+The content of the `<tg-if-current>` element is only rendered if the value of the `href`
+attribute of the `<tg-link>` element matches the path of the HTML document that is being generated.
+
+The following code is rendered as `<span class="font-bold">Our Goal</span>` when it appears in
+an article with the path `/articles/goal.html`.
+
+```html
+<tg-link href="/articles/goal.html">
+  <a href="#">Our Goal</a>
+  <tg-if-current>
+    <span class="font-bold">Our Goal</span>
+  </tg-if-current>
+</tg-link>
+```
+
+The `<tg-label>` element can be used to remove duplication from the above code.
+
+```html
+<tg-link href="/articles/goal.html" label="Our Goal">
+  <a href="#"><tg-label></tg-label></a>
+  <tg-if-current>
+    <span class="font-bold"><tg-label></tg-label></span>
+  </tg-if-current>
+</tg-link>
+```
+
+This element is replaced by the value specified in the `label` attribute of the `<tg-link>`
+element.
+
+#### Example
 
 `src/components/nav.html`
 
@@ -862,21 +911,42 @@ elements in it will be converted appropriately.
 <nav>
   <tg-link href="/articles/goal.html" label="Our Goal">
     <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <span class="font-bold" tg-if-current><tg-label></tg-label></span>
+    <tg-if-current>
+      <span class="font-bold"><tg-label></tg-label></span>
+    </tg-if-current>
   </tg-link>
   <tg-link href="/articles/about.html" label="About Us">
     <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <span class="font-bold" tg-if-current><tg-label></tg-label></span>
+    <tg-if-current>
+      <span class="font-bold"><tg-label></tg-label></span>
+    </tg-if-current>
   </tg-link>
 </nav>
 ```
 
+### link components
+
+A component whose top-level element is the `<tg-link>` element is called a _link component_.
+
+Normal components are embedded by the `<tg-component>` element, while link components are
+embedded by the `<tg-link>` element with the `component` attribute.
+
+The following is an example of a link component.
+
 `src/components/nav_link.html`
 
 ```html
-<a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-<span class="font-bold" tg-if-current><tg-label></tg-label></span>
+<tg-link>
+  <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+  <tg-if-current>
+    <span class="font-bold"><tg-label></tg-label></span>
+  </tg-if-current>
+</tg-link>
 ```
+
+Note that the top-level `<tg-link>` element does not have `href` and `label` attributes.
+
+This link component can be embedded as follows:
 
 `src/components/nav.html`
 
@@ -886,6 +956,8 @@ elements in it will be converted appropriately.
   <tg-link component="nav_link" href="/articles/about.html" label="About Us"></tg-link>
 </nav>
 ```
+
+The values of `href` and `label` attributes are _passed_ to the link component.
 
 ### `<tg-link>` elements within the `<tg-links`> element
 
@@ -898,9 +970,11 @@ The `<tg-link>` elements can be placed within the `<tg-links`> element:
           <a href="#" class="underline text-blue-500">
             <tg-slot name="title"></tg-slot>
           </a>
-          <span class="font-bold" tg-if-current>
-            <tg-slot name="title"></tg-slot>
-          </span>
+          <tg-if-current>
+            <span class="font-bold">
+              <tg-slot name="title"></tg-slot>
+            </span>
+          </tg-if-current>
         </tg-link>
       </li>
     </tg-links>

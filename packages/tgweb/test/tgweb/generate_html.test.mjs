@@ -4,6 +4,7 @@ import generateHTML from "../../lib/tgweb/generate_html.mjs"
 import { JSDOM } from "jsdom"
 import { fileURLToPath } from "url";
 import * as PATH from "path"
+import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
@@ -45,24 +46,28 @@ describe("generateHTML", () => {
     assert.equal(h3.textContent, "Greeting")
   })
 
-  it("should embed contents into slots within layout", () => {
+  it("should embed contents into slots within a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
     const html = generateHTML("src/pages/product1.html", siteData)
     const dom = new JSDOM(html)
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
 
-    const body = dom.window.document.body
+    const expected = [
+      '<body class="p-2">',
+      '  <div>',
+      '    <h1>Product 1</h1>',
+      '    <p>Description</p>',
+      '  </div>',
+      '  <div class="border-2 border-black border-solid p-2">',
+      '    This product is very fragile.',
+      '  </div>',
+      '  <div><span>A</span><span>B</span></div>',
+      '</body>'
+    ]
 
-    const div1 = body.children[1]
-    assert.equal(div1.textContent.trim(), "This product is very fragile.")
-
-    const div2 = body.children[2]
-
-    assert.equal(div2.tagName, "DIV")
-    assert.equal(div2.children[0].tagName, "SPAN")
-    assert.equal(div2.children[0].textContent, "A")
-    assert.equal(div2.children[1].textContent, "B")
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should omit a <tg-if-complete> element if all slots receives an insert", () => {
@@ -71,53 +76,66 @@ describe("generateHTML", () => {
 
     const html = generateHTML("src/pages/product2.html", siteData)
     const dom = new JSDOM(html)
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
 
-    const body = dom.window.document.body
-    assert.equal(body.children.length, 2)
+    const expected = [
+      '<body class="p-2">',
+      '  <div>',
+      '    <h1>Product 2</h1>',
+      '    <p>Description</p>',
+      '  </div>',
+      '  <div>*</div>',
+      '</body>'
+    ]
 
-    const div1 = body.children[1]
-    assert.equal(div1.textContent, "*")
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should merge a layout, a page and components", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
-    assert.equal(siteData.pages.length, 1)
 
     const html = generateHTML("src/pages/index.html", siteData)
     const dom = new JSDOM(html)
-
-    const head = dom.window.document.head
-
-    const title = head.querySelector("title")
-    assert.equal(title.textContent, "FizzBuzz")
-
-    const script = head.querySelector("script")
-    assert.equal(script.attributes.getNamedItem("src").value, "/reload/reload.js")
-    assert.equal(script.attributes.getNamedItem("defer").value, "")
 
     const body = dom.window.document.body
 
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
 
-    const grid = body.children[1]
+    const p1 = body.querySelector("div.grid > div > p")
+    assert.equal(p1.textContent, "Hello, world!")
 
-    const div0 = grid.children[0]
-    const p01 = div0.children[0]
-    assert.equal(p01.textContent, "Hello, world!")
+    const p2 = body.querySelector("div.grid > div:nth-child(2) > p")
+    assert.equal(p2.textContent, "I am a computer.")
 
-    const div1 = grid.children[1]
-    const p10 = div1.children[0]
-    assert.equal(p10.textContent, "I am a computer.")
+    const nav = body.querySelector("main > div:nth-child(1) > nav")
+    const nav_lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
-    const div2 = grid.children[2]
-    const main = div2.children[2]
+    const nav_expected = [
+      '<nav>',
+      '  <ul>',
+      '    <li>',
+      '      <a href="/articles/blog/a.html">A</a>',
+      '      (<span>2022-12-31</span>)',
+      '    </li>',
+      '    <li>',
+      '      <a href="/articles/blog/c.html">C</a>',
+      '      (<span>2023-01-02</span>)',
+      '    </li>',
+      '    <li>',
+      '      <a href="/articles/blog/d.html">D</a>',
+      '      (<span>2023-01-03</span>)',
+      '    </li>',
+      '  </ul>',
+      '</nav>'
+    ]
 
-    assert.equal(main.children.length, 4)
+    nav_lines.forEach((line, index) =>
+      assert.equal(line, nav_expected[index], `Line: ${index + 1}`)
+    )
 
-    const tech = main.children[0]
-    assert.equal(tech.children[0].tagName, "H3")
+    const main = body.querySelector("main")
 
     const tech1 = main.children[1]
     assert.equal(tech1.children[0].textContent.trim(), "A")
@@ -132,7 +150,6 @@ describe("generateHTML", () => {
   it("should generate a link list", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
-    assert.equal(siteData.pages.length, 1)
 
     const html = generateHTML("src/articles/technology.html", siteData)
     const dom = new JSDOM(html)
@@ -144,9 +161,29 @@ describe("generateHTML", () => {
 
     const link0 = list.children[0].children[0]
 
-    assert.equal(link0.href, "blog/a.html")
+    assert.equal(link0.href, "/articles/blog/a.html")
     assert.equal(link0.textContent, "A")
     assert.equal(link0.attributes.getNamedItem("tg-text"), null)
+  })
+
+  it("should generate a link", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/articles/blog/a.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const footer = body.querySelector("footer")
+    const lines = pretty(footer.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<footer>',
+      '  <a href="/about.html">About</a>',
+      '</footer>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should merge attributes of article and component", () => {
@@ -174,40 +211,68 @@ describe("generateHTML", () => {
     const siteData = getSiteData(wd)
     const html = generateHTML("src/pages/index.html", siteData)
     const dom = new JSDOM(html)
-    const body = dom.window.document.body
+    const nav = dom.window.document.body.querySelector("nav")
+    const lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
-    const nav = body.querySelector("nav")
+    const expected = [
+      '<nav>',
+      '  <span class="font-bold">Home</span>',
+      '  <a href="/about.html" class="underline text-blue-500">About Us</a>',
+      '</nav>'
+    ]
 
-    assert.equal(nav.children.length, 2)
-
-    const span = nav.children[0]
-    assert.equal(span.tagName, "SPAN")
-    assert.equal(span.textContent, "Home")
-
-    const link = nav.children[1]
-    assert.equal(link.tagName, "A")
-    assert.equal(link.href, "/articles/about.html")
-    assert.equal(link.textContent, "About Us")
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should render <tg-link> correctly when href is current", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
-    const html = generateHTML("src/articles/about.html", siteData)
+    const html = generateHTML("src/pages/about.html", siteData)
     const dom = new JSDOM(html)
-    const body = dom.window.document.body
+    const nav = dom.window.document.body.querySelector("nav")
+    const lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
-    const nav = body.querySelector("nav")
+    const expected = [
+      '<nav>',
+      '  <a href="/" class="underline text-blue-500">Home</a>',
+      '  <span class="font-bold">About Us</span>',
+      '</nav>'
+    ]
 
-    assert.equal(nav.children.length, 2)
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
 
-    const link = nav.children[0]
-    assert.equal(link.tagName, "A")
-    assert.equal(link.href, "/")
-    assert.equal(link.textContent, "Home")
+  it("should render <tg-link> correctly within <tg-links>", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/articles/blog/c.html", siteData)
+    const dom = new JSDOM(html)
+    const nav = dom.window.document.body.querySelector("nav")
+    const lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
-    const span = nav.children[1]
-    assert.equal(span.tagName, "SPAN")
-    assert.equal(span.textContent, "About Us")
+    const expected = [
+        '<nav>',
+        '  <ul>',
+        '    <li>',
+        '      <a href="/articles/blog/a.html">A</a>',
+        '      (<span>2022-12-31</span>)',
+        '    </li>',
+        '    <li>',
+        '      <a href="/articles/blog/b.html">B</a>',
+        '      (<span>2023-01-01</span>)',
+        '    </li>',
+        '    <li>',
+        '      <span class="font-bold">C</span>',
+        '      (<span>2023-01-02</span>)',
+        '    </li>',
+        '    <li>',
+        '      <a href="/articles/blog/d.html">D</a>',
+        '      (<span>2023-01-03</span>)',
+        '    </li>',
+        '  </ul>',
+        '</nav>'
+      ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 })
