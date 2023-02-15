@@ -91,7 +91,7 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
-  it("should merge a layout, a page and components", () => {
+  it("should merge a layout, a wrapper, a page and components", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
@@ -99,6 +99,8 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
+
+    // console.log(pretty(body.outerHTML, {ocd: true}))
 
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
@@ -147,6 +149,61 @@ describe("generateHTML", () => {
     assert.equal(tech3.children[0].textContent.trim(), "C")
   })
 
+  it("should apply a wrapper to a page in a subdirectory", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/etc/about.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/">Index</a></nav>',
+      '  <main class="bg-gray-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">About us</h3>',
+      '    <p>We are ...</p>',
+      '    <p>Our goal is ...</p>',
+      '  </main>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
+  it("should apply a wrapper to an article in a subdirectory", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/articles/foo/bar/baz.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/">Index</a></nav>',
+      '  <main class="bg-green-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
+      '    <p>Baz baz baz ...</p>',
+      '  </main>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
   it("should generate a link list", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
@@ -166,7 +223,7 @@ describe("generateHTML", () => {
     assert.equal(link0.attributes.getNamedItem("tg-text"), null)
   })
 
-  it("should generate a link", () => {
+  it("should generate a single link", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 

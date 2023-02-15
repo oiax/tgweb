@@ -5,6 +5,8 @@ import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import { fileURLToPath } from "url";
 import fs from "fs"
 import * as PATH from "path"
+// import { JSDOM } from "jsdom"
+// import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
@@ -38,6 +40,10 @@ describe("update", () => {
 
     const html = fs.readFileSync(wd + "a/dist/index.html")
 
+    // const dom = new JSDOM(html)
+    // const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    // console.log(lines)
     assert.match(html.toString(), /\bp-4\b/)
   })
 
