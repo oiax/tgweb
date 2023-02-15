@@ -176,7 +176,7 @@ The following is an example of a simple page:
 ```
 
 Note that the top-level element of a page is the `<body>` element.
-The top-level element of a normal HTML page is the `<html>` element, under which are
+The top-level element of a normal HTML document is the `<html>` element, under which are
 the `<head>` element and the `<body>` element.
 
 The pages will be converted into a complete HTML document and written to the `dist` directory.
@@ -398,23 +398,20 @@ the following HTML document is generated:
 </html>
 ```
 
-### Embedding contents into slots within a layout
+### Slots and inserts
 
 The `<tg-slot>` element is a place holder inside a layout that you can fill with a content
 specified within a page.
 A `name` attribute must be specified for the `<tg-slot>` element.
 
-To insert content into a slot in a layout, place an element with the `tg-slot` attribute on the
-page where the layout is to be applied.
+To embed content into a slot in a layout, place a `<tg-insert>` element on the page where the
+layout is to be applied.
 
-The tag name of the element with the `tg-slot` attribute is meaningless and can be anything,
-but `<div>` or `<span>` is recommended.
-
-If you specify the name of the slot as the value of the `tg-slot` attribute,
+If you specify the name of the slot as the value of the `name` property of  `<tg-insert>` element,
 the slot will be replaced with the element's content.
 
 When page content is inserted into a `<tg-content>` element in a layout,
-all elements with the `tg-slot` attribute are removed from the page content.
+all `<tg-insert>` elements are removed from the page content.
 
 #### Example
 
@@ -991,21 +988,22 @@ You should use `<tg-slot`> elements to compose the content of the `<a>` and othe
 
 ### `<title>` element
 
-The content of the `<title>` element is determined by the following rules:
+The content of the `<title>` element is determined from the (page or article) template
+by the following rules:
 
-1. The value of the `title` attribute of the top-level element of the page template,
+1. The value of the `title` attribute of the top-level element of the template,
    if one is specified.
-2. The text content of the first `<h1>` element, if the page template contains one.
-3. The text content of the first `<h2>` element, if the page template contains one.
-4. The text content of the first `<h3>` element, if the page template contains one.
-5. The text content of the first `<h4>` element, if the page template contains one.
-6. The text content of the first `<h5>` element, if the page template contains one.
-7. The text content of the first `<h6>` element, if the page template contains one.
+2. The text content of the first `<h1>` element, if the template contains one.
+3. The text content of the first `<h2>` element, if the template contains one.
+4. The text content of the first `<h3>` element, if the template contains one.
+5. The text content of the first `<h4>` element, if the template contains one.
+6. The text content of the first `<h5>` element, if the template contains one.
+7. The text content of the first `<h6>` element, if the template contains one.
 8. `"No Title"`
 
 #### Examples
 
-The title of the HTML document generated from the page template below will be "Greeting":
+The title of the HTML document generated from the template below will be "Greeting":
 
 ```html
 <body title="Greeting">
@@ -1027,7 +1025,7 @@ The string "Welcome!" is extracted as the title from the following template:
 </body>
 ```
 
-If the next page template is used, the page title will be "No Title":
+If the next template is rendered as an HTML document, its title will be "No Title":
 
 ```html
 <body>
@@ -1037,13 +1035,6 @@ If the next page template is used, the page title will be "No Title":
   </div>
 </body>
 ```
-
-#### Note
-
-If the top-level element of the page template is a `<tg-component>` element,
-the title text is extracted from that component's template.
-However, if the `title` attribute is set on the top-level element of the page template,
-that value takes precedence.
 
 ### `<meta>`
 

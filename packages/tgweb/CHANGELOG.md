@@ -2,6 +2,7 @@
 
 ## 0.0.9
 
+* 0207b41 Introduce `<tg-template>` elements
 * ffbd295 Introduce `<tg-link>` elements
 * 5c9689d Introduce `<tg-component>` and `<tg-insert>` elements
 * e8ce67a Introduce `<tg-article>`, `<tg-articles>` and `<tg-links>` elements
