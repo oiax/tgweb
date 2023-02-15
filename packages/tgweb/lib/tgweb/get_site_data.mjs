@@ -5,6 +5,7 @@ import { JSDOM } from "jsdom"
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import getType from "./get_type.mjs"
+import { setAttrs } from "./set_attrs.mjs"
 
 const getSiteData = directory => {
   const __filename = fileURLToPath(import.meta.url);
@@ -89,18 +90,20 @@ const updateSiteData = (siteData, path) => {
 
 const setDependencies = (object, siteData) => {
   const body = object.dom.window.document.body
-  const componentRefs = body.querySelectorAll("[tg-component]")
-  const layoutRef = body.querySelector("[tg-layout]")
+  const componentRefs = body.querySelectorAll("tg-component")
+  const layoutRef = body.querySelector("[layout]")
 
   object.dependencies = []
 
   componentRefs.forEach(ref => {
-    const componentName = ref.getAttribute("tg-component")
+    setAttrs(ref)
+    const componentName = ref.attrs["name"]
     object.dependencies.push("components/" + componentName)
   })
 
   if (layoutRef) {
-    const layoutName = layoutRef.getAttribute("tg-layout")
+    setAttrs(layoutRef)
+    const layoutName = layoutRef.attrs["layout"]
     object.dependencies.push("layouts/" + layoutName)
 
     const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")

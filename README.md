@@ -12,6 +12,7 @@
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
+* [Links](#links)
 * [Tailwind CSS](#tailwind-css)
 * [Alpine.js](#alpinejs)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
@@ -135,20 +136,33 @@ Please note the following:
   writes them into the `dist` directory.
 * It makes no sense for the user to rewrite the contents of the `dist` directory.
 * Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
+* Users are not allowed to add their own CSS files to the website.
+* Users are not allowed to add their own javascript files to the website.
 
 ## Pages
 
 ### What is a page
 
-In **tgweb**, the template files used to generate web pages are called "pages".
+In **tgweb**, the HTML documents that make up a website are generated from a combination of
+template files. A _page_ is a type of such template file.
 Pages are placed in the `src/pages` subdirectory under the working directory.
+
+It is possible to create a subdirectory under the `src/pages` directory and place pages under it.
+However, it is not possible to create a subdirectory directly under the `src/pages` directory with
+the following names:
+
+* `articles`
+* `audios`
+* `images`
+* `tags`
+* `videos`
 
 Every website must have a page named `index.html`.
 From this page, the _home page_ of the website is generated.
 
 ### Adding a simple page
 
-Pages to which a layout (described in the next section) is not applied are called "simple pages".
+Pages to which a [layout](#Layouts) is not applied are called "simple pages".
 
 The following is an example of a simple page:
 
@@ -161,11 +175,16 @@ The following is an example of a simple page:
 </body>
 ```
 
-Note that the root element (the outermost element) of a page is the `<body>` element.
-The root element of a normal HTML page is the `<html>` element, under which are
+Note that the top-level element of a page is the `<body>` element.
+The top-level element of a normal HTML document is the `<html>` element, under which are
 the `<head>` element and the `<body>` element.
 
-In **tgweb**, the content of the `<head>` element is automatically generated.
+The pages will be converted into a complete HTML document and written to the `dist` directory.
+
+For example, `src/pages/index.html` is converted to `dist/index.html` and
+`src/pages/shops/new_york.html` is converted to `dist/shops/new_york.html`.
+
+The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
 
 ## Images
@@ -199,6 +218,8 @@ because Teamgenik will automatically specify them for you.
 Note that the value of the `src` attribute is a relative path from the page file to the image file.
 When you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
 you must specify `../../images/smile.png` in the `src` attribute of the `<img>` element.
+
+Note also that Teamgenik does not allow the `<img>` element to reference an external URL.
 
 #### Hints
 
@@ -287,6 +308,9 @@ the relative path to the audio file in their `src` attribute.
 </audio>
 ```
 
+Note that Teamgenik does not allow the `<audio>` and `<source>` elements to reference an external
+URL.
+
 ## Layouts
 
 ### What is a layout
@@ -335,8 +359,7 @@ top-level element of the page.
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
 
-The top-level element of the page to which a layout is applied must be an element that can be
-placed within the `<body>` element, such as the `<div>` element and `<article>` element,
+The top-level element of the page to which a layout is applied must be a `<tg-template>` element
 rather than the `<body>` element.
 
 #### Example
@@ -344,12 +367,12 @@ rather than the `<body>` element.
 `src/pages/index.html`
 
 ```html
-<article tg-layout="common">
+<tg-template layout="common">
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
   </div>
-</article>
+</tg-template>
 ```
 
 When the layout `common` shown in the previous example is applied to this page file,
@@ -365,35 +388,30 @@ the following HTML document is generated:
       <div>Example</div>
     </header>
     <main>
-      <article>
-        <h1>Welcome!</h1>
-        <div class="bg-green-300 p-4">
-          <p>Hello, world!</p>
-        </div>
-      </article>
+      <h1>Welcome!</h1>
+      <div class="bg-green-300 p-4">
+        <p>Hello, world!</p>
+      </div>
     </main>
     <footer>&copy; Example Inc. 2023</footer>
   </body>
 </html>
 ```
 
-### Embedding contents into slots within a layout
+### Slots and inserts
 
 The `<tg-slot>` element is a place holder inside a layout that you can fill with a content
 specified within a page.
 A `name` attribute must be specified for the `<tg-slot>` element.
 
-To insert content into a slot in a layout, place an element with the `tg-slot` attribute on the
-page where the layout is to be applied.
+To embed content into a slot in a layout, place a `<tg-insert>` element on the page where the
+layout is to be applied.
 
-The tag name of the element with the `tg-slot` attribute is meaningless and can be anything,
-but `<div>` or `<span>` is recommended.
-
-If you specify the name of the slot as the value of the `tg-slot` attribute,
+If you specify the name of the slot as the value of the `name` property of  `<tg-insert>` element,
 the slot will be replaced with the element's content.
 
 When page content is inserted into a `<tg-content>` element in a layout,
-all elements with the `tg-slot` attribute are removed from the page content.
+all `<tg-insert>` elements are removed from the page content.
 
 #### Example
 
@@ -412,14 +430,14 @@ all elements with the `tg-slot` attribute are removed from the page content.
 `src/pages/product1.html`
 
 ```html
-<div tg-layout="product" tg-title="Product 1">
+<tg-template layout="product" title="Product 1">
   <div>
     <h1>Product 1</h1>
     <p>Description</p>
   </div>
-  <span tg-slot="remarks">This product is very fragile.</span>
-  <span tg-slot="badges"><span>A</span><span>B</span></span>
-</div>
+  <tg-insert name="remarks">This product is very fragile.</tg-insert>
+  <tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
+</tg-template>
 ```
 
 When the layout `product` is applied to the page `product1.html`,
@@ -462,9 +480,9 @@ is used as a fallback content.
 `src/pages/home.html`
 
 ```html
-<div tg-layout="message" tg-title="Home">
+<tg-template layout="message" title="Home">
   <h1>Home</h1>
-</div>
+</tg-template>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -482,13 +500,10 @@ the following HTML document is generated:
 </html>
 ```
 
-### `tg-if-complete` attribute
+### `<tg-if-complete>`
 
-When an element in a layout has the `tg-if-complete` attribute, it is deleted unless the content
-to be inserted is defined for all slots in that element.
-
-If no single slot exists in an element with the `tg-if-complete` attribute, the element is
-retained.
+The `<tg-if-complete>` element in a layout is simply replaced with its content. However, if any
+of the slots within the element have no insert defined, the entire element is deleted.
 
 #### Example
 
@@ -497,20 +512,21 @@ retained.
 ```html
 <body class="p-2">
   <tg-content></tg-content>
-  <div tg-if-complete>
-    <div>To: <tg-slot name="name"></tg-slot></div>
-    <div><tg-slot name="message"></tg-slot></div>
-  </div>
+  <tg-if-complete>
+    <hr class="h-px my-8 bg-gray-200 border-0">
+    <div class="bg-gray-800 text-white p-4">To: <tg-slot name="name"></tg-slot></div>
+    <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
+  </tg-if-complete>
 </body>
 ```
 
 `src/pages/home.html`
 
 ```html
-<div tg-layout="message" tg-title="Home">
+<tg-template layout="message" title="Home">
   <h1>Home</h1>
-  <span tg-slot="name">Alice</span>
-</div>
+  <tg-insert name="name">Alice</tg-insert>
+</tg-template>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -529,12 +545,15 @@ the following HTML document is generated:
 
 ## Components
 
-### Comonent files
+### Component files
 
-_Components_ are named HTML elements that can be placed in pages, articles and layouts.
-Their files are live in the `src/components` subdirectory of the working directory.
+A _components_ is a template file that can be embedded in pages, articles and layouts.
+However, embedding a component in another is not allowed.
 
-A component must have only one root element. The following is an example of a correct component:
+Components are live in the `src/components` subdirectory of the working directory.
+
+A component must have only one top-level element. The following is an example of a correct
+component:
 
 `src/components/smile.html`
 
@@ -544,7 +563,7 @@ A component must have only one root element. The following is an example of a co
 </span>
 ```
 
-The following example is incorrect for a component because it has multiple root elements:
+The following example is incorrect for a component because it has multiple top-level elements:
 
 `src/components/rgb.html`
 
@@ -554,16 +573,16 @@ The following example is incorrect for a component because it has multiple root 
 <span class="text-bluer-500">B</span>
 ```
 
-### Placement of components
+### Embedding components
 
-To place a component in a page, article, or layout, specify its name in the `tg-component`
-attribute of the element at the location where you want to place it.
+To embed a component into a page, article, or layout, add a `<tg-component>` element at the
+location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <p>
-  <span tg-component="smile"></span>
+  <tg-component name="smile"></tg-component>
   How are you?
 </p>
 ```
@@ -578,34 +597,388 @@ within a component is similar to that of a layout.
 `src/components/blog_item.html`
 
 ```html
-<div class="py-2">
-  <h3 class="font-bold text-lg m-2">
-    <tg-slot name="title"></tg-slot>
-  </h3>
-  <div>
-    <tg-slot name="body"></tg-slot>
-  </div>
-  <div tg-if-complete class="text-right">
+<h3 class="font-bold text-lg m-2">
+  <tg-slot name="title"></tg-slot>
+</h3>
+<div>
+  <tg-slot name="body"></tg-slot>
+</div>
+<tg-if-complete>
+  <divclass="text-right">
     <tg-slot name="date"></tg-slot>
   </div>
-</div>
+</tg-if-complete>
 ```
 
 `src/pages/hello.html`
 
 ```html
-<div tg-layout="home" tg-component="blog_item" class="bg-gray-100 py-2">
-  <span tg-slot="title">Greeting</span>
-  <span tg-slot="body">
-    <p>Hello.</p>
-  </span>
-  <span tg-slot="date">2022-12-31</span>
-</div>
+<tg-template layout="home">
+  <main class="bg-gray-100 py-2">
+    <tg-component name="blog_item">
+      <tg-insert name="title">Greeting</tg-insert>
+      <tg-insert name="body">
+        <p>Hello.</p>
+      </tg-insert>
+      <tg-insert name="date">2022-12-31</tg-insert>
+    </tg-component>
+  </main>
+</tg-template>
 ```
 
 ## Articles
 
-## Tags
+### What is an article
+
+Like a page, an _article_ is a template file used to generate an HTML document.
+
+Articles are placed in the `src/articles` subdirectory under the working directory.
+It is possible to create a subdirectory under the `src/articles` directory and place articles
+under it.
+
+The articles will be converted into complete HTML documents and written to the `dist/articles`
+directory.
+
+For example, `src/articles/tech.html` is converted to `dist/articles/tech.html` and
+`src/articles/blog/happy_new_year.html` is converted to `dist/articles/blog/happy_new_year.html`.
+
+Articles and pages have exactly the same characteristics in the following respects:
+
+* A layout can be applied to them.
+* Images and audios can be embedded in them.
+* The content of the `<head>` element is automatically generated in the manner described
+  [below](#managing-the-contents-of-the-head-element).
+
+### Embedding an article in a page
+
+Like components, articles can be embedded in pages.
+Place `<tg-article>` elements where you want to embed articles as follows:
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Our Recent Articles</h1>
+    <tg-article name="blog/got_a_gadget"></tg-article>
+    <tg-article name="blog/happy_new_year"></tg-article>
+  </main>
+</tg-template>
+```
+
+The value of the `name` attribute of the `<tg-article>` element must be the name of the
+article file without the extension (`.html`).
+
+Unlike components, articles can only be embedded into a page.
+Articles cannot be embedded in other articles or layouts.
+
+### Embedding articles in a page
+
+The `<tg-articles>` element can be used to embed multiple articles into a page.
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <tg-articles pattern="/proposals/*"></tg-articles>
+  </main>
+</tg-template>
+```
+
+The above example embeds all articles in the `src/articles/proposals` directory under the
+`<h1>` element.
+
+By default, articles are sorted in ascending (alphabetically) order by file name.
+To sort articles in any order, add a `index` attribute to each article:
+
+```html
+<tg-template index="000">
+  <article>
+    ...
+  </article>
+</tg-template>
+```
+
+Then, specify the `order-by` attribute of the `<tg-articles>` element.
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <tg-articles pattern="/proposals/*" order-by="index:asc"></tg-articles>
+  </main>
+</tg-template>
+```
+
+The value of the `order-by` attribute is a string separated by a single colon.
+In the current specification, the left side of the colon is always `"index"`.
+The right side of the colon is always `"asc"` or `"desc"`, where `"asc"` means "ascending order"
+and `"desc"` means "descending order".
+
+TODO: Allow `"title"` as the left side value.
+
+Note that the value of the `index` attribute of `<tg-template>` element is interpreted as a string;
+`"123"` is evaluated as a value greater than `"009"`, but
+`"123"` is evaluated as a value _less_ than `"9"`
+
+TODO: Add `tg-limit` and `tg-offset` attributes.
+
+### Generating a link list to articles
+
+The `tg-links` attribute can be used to embed links to articles in any template
+(page, layout, component, article).
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Our Proposals</h1>
+    <ul>
+      <tg-links pattern="/proposals/*">
+        <li>
+          <a href="#">
+            <tg-slot name="title"></tg-slot>
+            <tg-if-complete>
+              <span class="text-sm">
+                (<tg-slot name="date"></tg-slot>)
+              </span>
+            </tg-if-complete>
+          </a>
+        </li>
+      </tg-links>
+    </ul>
+  </main>
+</tg-template>
+```
+
+The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
+zero or more `<tg-slot>` elements.
+
+The `href` attribute of the `<a>` element is replaced by the URL of the article, and the
+`<tg-slot>` element is replaced by the content defined by the `tg-slot` attribute in the article.
+
+Inside the `<tg-links>` element, `<tg-if-complete>` elements work the same way
+as inside components.
+That is, a `<tg-if-complete>` element will be removed from the output
+unless content is provided for all `tg-slot` elements within it.
+
+By default, articles are sorted in ascending (alphabetically) order by file name.
+To sort articles in any order, add a `tg-index` attribute to each article:
+
+```html
+<tg-template layout="home" index="000">
+  <article>
+    ...
+  </article>
+</tg-template>
+```
+
+Then, specify the `order-by` attribute of the `<tg-links>` element.
+
+```html
+    <tg-links pattern="/proposals/*" order-by="index:asc">
+      <li>
+        ...
+      </li>
+    </tg-links>
+```
+
+### Filtering articles by tags
+
+You may use _tags_ to categorize your articles.
+
+To attach tags to an article, specify their names in the `tags` attribute, separated by commas.
+
+```html
+<tg-template tags="travel,europe">
+  <article>
+    ...
+  </article>
+</tg-template>
+```
+
+You can use the `filter` attribute to filter articles embedded on the page:
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Articles (tag:travel)</h1>
+    <tg-articles pattern="/blog/*" filter="tag:travel"></tg-articles>
+  </main>
+</tg-template>
+```
+
+The value of the `filter` attribute is a string separated by a single colon.
+In the current specification, the left side of the colon is always `"tag"` and
+the right side of the colon is a tag name.
+
+You can also filter the list of links to articles using the `filter` attribute:
+
+```html
+<tg-template layout="home">
+  <main>
+    <h1>Articles (tag:travel)</h1>
+    <ul>
+      <tg-links pattern="/blog/*" filter="tag:travel">
+        <li>
+          <a href="#">
+            <tg-slot name="title"></tg-slot>
+          </a>
+        </li>
+      </tg-links>
+    </ul>
+  </main>
+</tg-template>
+```
+
+Note that you cannot assign tags to a page.
+
+### Generating tag pages
+
+TODO: Implement this functionality.
+
+## Links
+
+### Links within the website
+
+When linking to a page within your website using the `<a>` element, specify the _absolute_ path to
+the page in its `href` attribute:
+
+```html
+<nav>
+  <a href="/articles/goal">Our Goal</a>
+  <a href="/articles/about">About Us</a>
+</nav>
+```
+
+When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
+elements in it will be converted appropriately.
+
+### `<tg-link>`, `<tg-if-current>` and `<tg-label>`
+
+The `<tg-link>` is a special element used to conditionally cause the `<a>` element to appear.
+Basically, the content of this element is just rendered as it is.
+If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
+attribute of the `<tg-link>` element is set to the value of the `href` attribute of that `<a>`
+element.
+
+The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
+
+```html
+<tg-link href="/articles/goal.html">
+  <a href="#">Our Goal</a>
+</tg-link>
+```
+
+However, when an article with the path `/articles/goal.html` contains the above code, this part is
+removed from the generated HTML document.
+
+Zero or one `<tg-if-current>` element may be placed inside the `<tg-link>` element.
+The content of the `<tg-if-current>` element is only rendered if the value of the `href`
+attribute of the `<tg-link>` element matches the path of the HTML document that is being generated.
+
+The following code is rendered as `<span class="font-bold">Our Goal</span>` when it appears in
+an article with the path `/articles/goal.html`.
+
+```html
+<tg-link href="/articles/goal.html">
+  <a href="#">Our Goal</a>
+  <tg-if-current>
+    <span class="font-bold">Our Goal</span>
+  </tg-if-current>
+</tg-link>
+```
+
+The `<tg-label>` element can be used to remove duplication from the above code.
+
+```html
+<tg-link href="/articles/goal.html" label="Our Goal">
+  <a href="#"><tg-label></tg-label></a>
+  <tg-if-current>
+    <span class="font-bold"><tg-label></tg-label></span>
+  </tg-if-current>
+</tg-link>
+```
+
+This element is replaced by the value specified in the `label` attribute of the `<tg-link>`
+element.
+
+#### Example
+
+`src/components/nav.html`
+
+```html
+<nav>
+  <tg-link href="/articles/goal.html" label="Our Goal">
+    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+    <tg-if-current>
+      <span class="font-bold"><tg-label></tg-label></span>
+    </tg-if-current>
+  </tg-link>
+  <tg-link href="/articles/about.html" label="About Us">
+    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+    <tg-if-current>
+      <span class="font-bold"><tg-label></tg-label></span>
+    </tg-if-current>
+  </tg-link>
+</nav>
+```
+
+### link components
+
+A component whose top-level element is the `<tg-link>` element is called a _link component_.
+
+Normal components are embedded by the `<tg-component>` element, while link components are
+embedded by the `<tg-link>` element with the `component` attribute.
+
+The following is an example of a link component.
+
+`src/components/nav_link.html`
+
+```html
+<tg-link>
+  <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+  <tg-if-current>
+    <span class="font-bold"><tg-label></tg-label></span>
+  </tg-if-current>
+</tg-link>
+```
+
+Note that the top-level `<tg-link>` element does not have `href` and `label` attributes.
+
+This link component can be embedded as follows:
+
+`src/components/nav.html`
+
+```html
+<nav>
+  <tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
+  <tg-link component="nav_link" href="/articles/about.html" label="About Us"></tg-link>
+</nav>
+```
+
+The values of `href` and `label` attributes are _passed_ to the link component.
+
+### `<tg-link>` elements within the `<tg-links`> element
+
+The `<tg-link>` elements can be placed within the `<tg-links`> element:
+
+```html
+    <tg-links pattern="/proposals/*" order-by="index:asc">
+      <li>
+        <tg-link>
+          <a href="#" class="underline text-blue-500">
+            <tg-slot name="title"></tg-slot>
+          </a>
+          <tg-if-current>
+            <span class="font-bold">
+              <tg-slot name="title"></tg-slot>
+            </span>
+          </tg-if-current>
+        </tg-link>
+      </li>
+    </tg-links>
+```
+
+In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
+You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
 
 ## Tailwind CSS
 
@@ -615,24 +988,25 @@ within a component is similar to that of a layout.
 
 ### `<title>` element
 
-The content of the `<title>` element is determined by the following rules:
+The content of the `<title>` element is determined from the (page or article) template
+by the following rules:
 
-1. The value of the `tg-title` attribute of the root element of the page template,
+1. The value of the `title` attribute of the top-level element of the template,
    if one is specified.
-2. The text content of the first `<h1>` element, if the page template contains one.
-3. The text content of the first `<h2>` element, if the page template contains one.
-4. The text content of the first `<h3>` element, if the page template contains one.
-5. The text content of the first `<h4>` element, if the page template contains one.
-6. The text content of the first `<h5>` element, if the page template contains one.
-7. The text content of the first `<h6>` element, if the page template contains one.
+2. The text content of the first `<h1>` element, if the template contains one.
+3. The text content of the first `<h2>` element, if the template contains one.
+4. The text content of the first `<h3>` element, if the template contains one.
+5. The text content of the first `<h4>` element, if the template contains one.
+6. The text content of the first `<h5>` element, if the template contains one.
+7. The text content of the first `<h6>` element, if the template contains one.
 8. `"No Title"`
 
 #### Examples
 
-The title of the HTML document generated from the page template below will be "Greeting":
+The title of the HTML document generated from the template below will be "Greeting":
 
 ```html
-<body tg-title="Greeting">
+<body title="Greeting">
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
@@ -651,7 +1025,7 @@ The string "Welcome!" is extracted as the title from the following template:
 </body>
 ```
 
-If the next page template is used, the page title will be "No Title":
+If the next template is rendered as an HTML document, its title will be "No Title":
 
 ```html
 <body>
@@ -662,18 +1036,11 @@ If the next page template is used, the page title will be "No Title":
 </body>
 ```
 
-#### Note
-
-If the `tg-component` attribute is set on the root element of the page template,
-the title text is extracted from that component's template.
-However, if the `tg-title` attribute is set on the root element of the page template,
-that value takes precedence.
-
-### `<meta>` elements
+### `<meta>`
 
 Not yet implemented.
 
-### `<link>` elements
+### `<link>`
 
 Not yet implemented.
 
@@ -687,7 +1054,7 @@ The following link element are always inserted within the head element.
 
 A link element that refers to another stylesheet cannot be inserted within the head element.
 
-### `<script>` elements
+### `<script>`
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.

@@ -63,18 +63,18 @@ describe("update", () => {
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
-    create("src/articles/about.html", siteData)
+    create("src/articles/culture.html", siteData)
 
     process.chdir(wd + "a")
 
-    update("src/articles/about.html", siteData)
+    update("src/articles/culture.html", siteData)
     update("src/components/hello.html", siteData)
 
-    assert.equal(fs.existsSync(wd + "a/dist/articles/about.html"), true)
+    assert.equal(fs.existsSync(wd + "a/dist/articles/culture.html"), true)
 
-    const html = fs.readFileSync(wd + "a/dist/articles/about.html")
+    const html = fs.readFileSync(wd + "a/dist/articles/culture.html")
 
-    assert.match(html.toString(), /\bAbout us\b/)
+    assert.match(html.toString(), /\bCulture\b/)
     assert.match(html.toString(), /\bgreat\b/)
   })
 })

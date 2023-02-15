@@ -1,8 +1,8 @@
-<div tg-layout="product" tg-title="Product 1">
+<tg-template layout="product" title="Product 1">
   <div>
     <h1>Product 1</h1>
     <p>Description</p>
   </div>
-  <span tg-slot="remarks">This product is very fragile.</span>
-  <span tg-slot="badges"><span>A</span><span>B</span></span>
-</div>
+  <tg-insert name="remarks">This product is very fragile.</tg-insert>
+  <tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
+</tg-template>

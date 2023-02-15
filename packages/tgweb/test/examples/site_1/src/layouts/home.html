@@ -1,9 +1,10 @@
 <body class="p-2">
+  <tg-component name="nav"></tg-component>
   <div class="grid grid-cols-1 gap-6 x:grid-cols-2 lg:grid-cols-3">
-    <div tg-component="hello"></div>
-    <div tg-component="i_am">
-      <span tg-slot="name">computer</span>
-    </div>
+    <tg-component name="hello"></tg-component>
+    <tg-component name="i_am">
+      <tg-insert name="name">computer</tg-insert>
+    </tg-component>
     <tg-content></tg-content>
   </div>
 </body>

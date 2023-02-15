@@ -1,4 +1,15 @@
 <body class="p-2">
   <h1>Blog</h1>
-  <tg-content></tg-content>
+  <main>
+    <tg-content></tg-content>
+  </main>
+  <tg-component name="blog_nav"></tg-component>
+  <footer>
+    <tg-link href="/about.html" label="About">
+      <a href="#"><tg-label></tg-label></a>
+      <tg-if-current>
+        <span class="font-bold"><tg-label></tg-label></span>
+      </tg-if-current>
+    </tg-link>
+  </footer>
 </body>

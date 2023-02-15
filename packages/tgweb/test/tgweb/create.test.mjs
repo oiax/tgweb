@@ -32,11 +32,11 @@ describe("create", () => {
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
 
-    create("src/articles/about.html", siteData)
+    create("src/articles/culture.html", siteData)
 
-    assert.equal(fs.existsSync(wd + "/dist/articles/about.html"), true)
+    assert.equal(fs.existsSync(wd + "/dist/articles/culture.html"), true)
 
-    const html = fs.readFileSync(wd + "/dist/articles/about.html")
+    const html = fs.readFileSync(wd + "/dist/articles/culture.html")
     const dom = new JSDOM(html)
     const body = dom.window.document.body
 

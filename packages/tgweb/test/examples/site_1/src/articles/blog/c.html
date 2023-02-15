@@ -1,11 +1,12 @@
-<div
-  tg-layout="blog_article"
-  tg-component="blog_item"
-  tg-tags="technology,web"
-  tg-index="000"
-  tg-title="C"
-  class="bg-gray-100 py-2"
+<tg-template
+  layout="blog_article"
+  tags="technology,web"
+  index="000"
+  title="C"
 >
-  <span tg-slot="title">C</span>
-  <span tg-slot="date">2023-01-02</span>
-</div>
+  <tg-component name="blog_item">
+    <p>This is C.</p>
+    <tg-insert name="title">C</tg-insert>
+    <tg-insert name="date">2023-01-02</tg-insert>
+  </tg-component>
+</tg-template>

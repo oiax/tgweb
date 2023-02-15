@@ -1,11 +1,16 @@
-<div
-  tg-layout="blog_article"
-  tg-component="blog_item"
-  tg-tags="technology"
-  tg-index="002"
-  tg-title="A"
-  class="bg-gray-100 py-2"
+<tg-template
+  layout="blog_article"
+  tags="technology"
+  index="002"
+  title="A"
 >
-  <span tg-slot="title">A</span>
-  <span tg-slot="date">2022-12-31</span>
-</div>
+  <tg-component name="blog_item">
+    <p>
+      <a href="/">Home</a>
+      <a href="/articles/about.html">About</a>
+      <a href="/articles/blogs/c.html">C</a>
+    </p>
+    <tg-insert name="title">A</tg-insert>
+    <tg-insert name="date">2022-12-31</tg-insert>
+  </tg-component>
+</tg-template>

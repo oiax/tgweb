@@ -18,9 +18,9 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const layout = siteData.layouts.find(layout => layout.path == "home.html")
-    assert.equal(layout.dependencies.length, 2)
+    assert.equal(layout.dependencies.length, 3)
 
     const page = siteData.pages[0]
-    assert.equal(page.dependencies.length, 3)
+    assert.equal(page.dependencies.length, 4)
   })
 })
