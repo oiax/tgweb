@@ -11,7 +11,7 @@
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
     "test": "mocha --slow 500 test/*.test.mjs test/**/*.test.mjs",
-    "lint-eslint": "eslint . --ext mjs --max-warnings=0 --config .eslintrc.json --no-eslintrc"
+    "lint": "eslint . --ext mjs --max-warnings=0 --config .eslintrc.json --no-eslintrc"
   },
   "author": "Coregenik Inc.",
   "license": "MIT",
