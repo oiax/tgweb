@@ -8,22 +8,54 @@ import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 const generationFuncs = {}
 
 generationFuncs["page"] = (path, siteData) => {
-  const filename = PATH.basename(path)
-  const page = siteData.pages.find(page => page.path == filename)
+  const relPath = path.replace(/^src\/pages\//, "")
+  const page = siteData.pages.find(page => page.path == relPath)
 
   if (page) {
     const pageRoot = page.dom.window.document.body.children[0].cloneNode(true)
     setAttrs(pageRoot)
 
-    if (pageRoot.attrs["layout"]) {
+    const dirname = PATH.dirname(relPath)
+    const dirParts = dirname.split(PATH.sep)
+
+    let wrapper = undefined
+
+    for(let i = dirParts.length; i > 0; i--) {
+      const dir = dirParts.slice(0, i).join(PATH.sep)
+      const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
+      wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+      if (wrapper) break
+    }
+
+    let layoutRoot
+
+    if (wrapper) {
+      const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
+      setAttrs(wrapperRoot)
+      embedSlotContents(wrapperRoot, pageRoot)
+
+      embedComponents(pageRoot, siteData, path)
+      embedArticles(pageRoot, siteData, path)
+      embedArticleLists(pageRoot, siteData, path)
+      embedLinksToArticles(pageRoot, siteData, path)
+
+      embedContent(wrapperRoot, pageRoot)
+
+      const headAttrs = { title: getTitle(wrapperRoot) }
+
+      layoutRoot = applyLayout(wrapperRoot, siteData, path)
+      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+      else console.log("Error")
+    }
+    else if (pageRoot.attrs["layout"]) {
       const headAttrs = { title: getTitle(pageRoot) }
 
       embedComponents(pageRoot, siteData, path)
       embedArticles(pageRoot, siteData, path)
-      embedArticleLists(pageRoot, siteData)
+      embedArticleLists(pageRoot, siteData, path)
       embedLinksToArticles(pageRoot, siteData, path)
 
-      const layoutRoot = applyLayout(pageRoot, siteData, path)
+      layoutRoot = applyLayout(pageRoot, siteData, path)
       if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
       else return renderHTML(pageRoot, siteData, headAttrs, path)
     }
@@ -35,7 +67,7 @@ generationFuncs["page"] = (path, siteData) => {
 
       embedComponents(body, siteData, path)
       embedArticles(body, siteData, path)
-      embedArticleLists(body, siteData)
+      embedArticleLists(body, siteData, path)
       embedLinksToArticles(body, siteData, path)
 
       const layoutRoot = applyLayout(body, siteData, path)
@@ -62,10 +94,42 @@ generationFuncs["article"] = (path, siteData) => {
 }
 
 const renderArticle = (articleRoot, siteData, path) => {
-  const headAttrs = { title: getTitle(articleRoot) }
-  embedLinksToArticles(articleRoot, siteData, path)
-  const layoutRoot = applyLayout(articleRoot, siteData, path)
-  if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+  const relPath = path.replace(/^src\/articles\//, "")
+  const dirname = PATH.dirname(relPath)
+  const dirParts = dirname.split(PATH.sep)
+
+  let wrapper = undefined
+
+  for(let i = dirParts.length; i > 0; i--) {
+    const dir = dirParts.slice(0, i).join(PATH.sep)
+    const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
+    wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+    if (wrapper) break
+  }
+
+  if (wrapper) {
+    embedComponents(articleRoot, siteData, path)
+    embedLinksToArticles(articleRoot, siteData, path)
+
+    const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
+    setAttrs(wrapperRoot)
+
+    embedContent(wrapperRoot, articleRoot)
+    embedSlotContents(wrapperRoot, articleRoot)
+
+    const headAttrs = { title: getTitle(wrapperRoot) }
+
+    const layoutRoot = applyLayout(wrapperRoot, siteData, path)
+    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    else console.log("Error")
+  }
+  else {
+    const headAttrs = { title: getTitle(articleRoot) }
+    embedLinksToArticles(articleRoot, siteData, path)
+    const layoutRoot = applyLayout(articleRoot, siteData, path)
+    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    else console.log("Error")
+  }
 }
 
 const applyLayout = (element, siteData, path) => {
@@ -77,6 +141,7 @@ const applyLayout = (element, siteData, path) => {
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+
   embedContent(layoutRoot, element)
   embedSlotContents(layoutRoot, element)
   embedComponents(layoutRoot, siteData, path)
@@ -96,19 +161,20 @@ const extractSlotContents = element => {
 }
 
 const embedContent = (element, provider) => {
-  element.childNodes.forEach(child => {
-    if (child.nodeType !== 1) return
+  const target =
+    Array.from(element.childNodes).find(child =>
+      child.nodeType === 1 && child.nodeName == "TG-CONTENT"
+    )
 
-    if (child.nodeName == "TG-CONTENT") {
-      const copy = provider.cloneNode(true)
-      Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
-      Array.from(copy.childNodes).forEach(c => element.insertBefore(c, child))
-      element.removeChild(child)
-    }
-    else {
-      embedContent(child, provider)
-    }
-  })
+  if (target) {
+    const copy = provider.cloneNode(true)
+    Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
+    Array.from(copy.childNodes).forEach(c => element.insertBefore(c, target))
+    element.removeChild(target)
+  }
+  else {
+    element.childNodes.forEach(child => embedContent(child, provider))
+  }
 }
 
 const embedSlotContents = (element, provider) => {
@@ -201,12 +267,39 @@ const embedArticleLists = (node, siteData, path) => {
     if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
 
     articles.forEach(article => {
+      const dirParts = article.path.split(PATH.sep)
+      dirParts.pop()
+
+      let wrapper = undefined
+
+      for(let i = dirParts.length; i > 0; i--) {
+        const dir = dirParts.slice(0, i).join(PATH.sep)
+        const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
+
+        wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+        if (wrapper) break
+      }
+
       const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
       setAttrs(articleRoot)
 
-      embedComponents(articleRoot, siteData, path)
+      if (wrapper) {
+        const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
+        setAttrs(wrapperRoot)
+        embedSlotContents(wrapperRoot, articleRoot)
 
-      Array.from(articleRoot.children).forEach(child => target.before(child))
+        embedComponents(articleRoot, siteData, path)
+        embedLinksToArticles(articleRoot, siteData, path)
+
+        embedContent(wrapperRoot, articleRoot)
+
+        Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
+      }
+      else {
+        embedComponents(articleRoot, siteData, path)
+
+        Array.from(articleRoot.childNodes).forEach(child => target.before(child))
+      }
     })
   })
 
@@ -326,14 +419,16 @@ const sortArticles = (articles, orderBy) => {
 
 const renderHTML = (root, siteData, headAttrs, path) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
+
   processTgLinks(root, siteData, path)
   removeTgAttributes(root)
+
   dom.window.document.body.replaceWith(root)
 
   if (headAttrs["title"])
     dom.window.document.head.querySelector("title").textContent = headAttrs["title"]
 
-  return pretty(dom.serialize())
+  return pretty(dom.serialize(), {ocd: true})
 }
 
 const processTgLinks = (root, siteData, path) => {

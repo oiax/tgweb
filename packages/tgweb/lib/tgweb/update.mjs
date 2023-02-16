@@ -7,7 +7,7 @@ import generateHTML from "./generate_html.mjs"
 const update = (path, siteData) => {
   updateSiteData(siteData, path)
 
-  const type = getType(PATH.dirname(path))
+  const type = getType(path)
 
   if (type === "page" || type === "article") {
     updateHTML(path, siteData)

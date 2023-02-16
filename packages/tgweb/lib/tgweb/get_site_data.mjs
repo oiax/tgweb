@@ -15,6 +15,7 @@ const getSiteData = directory => {
   const siteData = {
     pages: [],
     layouts: [],
+    wrappers: [],
     articles: [],
     components: []
   }
@@ -36,15 +37,20 @@ const getSiteData = directory => {
 
   if (fs.existsSync(directory + "/src/articles")) {
     process.chdir(directory + "/src/articles")
-    siteData.articles = glob.sync("**/*.html").map(getDom)
+    siteData.articles = glob.sync("**/!(_wrapper).html").map(getDom)
     siteData.articles.map(article => setDependencies(article, siteData))
   }
 
   if (fs.existsSync(directory + "/src/pages")) {
     process.chdir(directory + "/src/pages")
-    siteData.pages = glob.sync("**/*.html").map(getDom)
+    siteData.pages = glob.sync("**/!(_wrapper).html").map(getDom)
     siteData.pages.map(page => setDependencies(page, siteData))
   }
+
+  process.chdir(directory + "/src")
+  siteData.wrappers = glob.sync("@(pages|articles)/**/_wrapper.html").map(getDom)
+
+  addWrapperDepdencies(siteData)
 
   process.chdir(cwd)
 
@@ -52,7 +58,7 @@ const getSiteData = directory => {
 }
 
 const updateSiteData = (siteData, path) => {
-  const type = getType(PATH.dirname(path))
+  const type = getType(path)
 
   if (type == "component") {
     siteData.components.forEach(component => {
@@ -86,6 +92,14 @@ const updateSiteData = (siteData, path) => {
       }
     })
   }
+  else if (type == "wrapper") {
+    siteData.wrappers.forEach(wrapper => {
+      if ("src/" + wrapper.path == path) {
+        const html = fs.readFileSync(path)
+        wrapper.dom = new JSDOM(html)
+      }
+    })
+  }
 }
 
 const setDependencies = (object, siteData) => {
@@ -109,6 +123,43 @@ const setDependencies = (object, siteData) => {
     const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
     if (layout) layout.dependencies.forEach(dep => object.dependencies.push(dep))
   }
+}
+
+const addWrapperDepdencies = siteData => {
+  const pages =
+    siteData.pages.map(page => {
+      const parts = page.path.split(PATH.sep)
+      parts.pop()
+
+      for(let i = parts.length; i >= 0; i--) {
+        const dir = parts.slice(i).join(PATH.sep)
+        const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
+        const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+
+        if (wrapper) {
+          page.dependencies.push(PATH.join("pages", dir, "_wrapper"))
+
+          const wrapperRoot = wrapper.dom.window.document.body.childNodes[0]
+          setAttrs(wrapperRoot)
+          const layoutName = wrapperRoot.attrs["layout"]
+
+          if (layoutName) {
+            const layout = siteData.layouts.find(layout => layout.path === `${layoutName}.html`)
+
+            if (layout) {
+              page.dependencies.push(PATH.join("layouts", layoutName))
+              layout.dependencies.forEach(dep => page.dependencies.push(dep))
+            }
+          }
+
+          break
+        }
+      }
+
+      return page
+    })
+
+  siteData.pages = pages
 }
 
 const getDom = path => {

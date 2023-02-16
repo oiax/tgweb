@@ -9,6 +9,7 @@
 * [Images](#images)
 * [Audios](#audios)
 * [Layouts](#layouts)
+* [Wrappers](#wrapper)
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
@@ -78,8 +79,8 @@ Make sure that the text "Hello, world!" appears in the red background area.
 The class tokens `bg-red-300` and `p-4` specified in the `class` attribute of the `<div>`
 element are provided by [Tailwind CSS](https://tailwindcss.com/).
 
-The token `bg-red-300` specifies light red as the background color of `<div>` element,
-and the token `p-4` sets a padding of 16 pixels to it.
+The token `bg-red-300` specifies light red (`#fca5a5`) as the background color of `<div>` element,
+and the token `p-4` sets the padding of the `<div>` element to scale 4 (16px/1rem).
 
 Also verify that a file named `index.html` has been created in the `dist` directory.
 The contents of that file should be a complete HTML document that contains
@@ -351,7 +352,7 @@ The `<tg-content>` element indicates where in the layout the page will be insert
 
 Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-content>`.
 
-### Applying this layout to a page
+### Applying a layout to a page
 
 To apply this layout to a page, specify the name of the layout in the `tg-layout` attribute of the
 top-level element of the page.
@@ -541,6 +542,67 @@ the following HTML document is generated:
     <h1>Home</h1>
   </body>
 </html>
+```
+
+## Wrappers
+
+### What is a wrapper
+
+A wrapper is a template that exists at a level between layouts and pages.
+
+Wrappers allow you to apply a common style and add common elements to a group of pages.
+
+### Adding a wrapper
+
+The file name of a wrapper is always `_wrapper.html` and it is placed directly under the
+`src/pages` subdirectory of working directory or its descendant directories.
+
+A wrapper placed in a directory applies to all pages in that directory.
+
+If the wrapper does not exist in a directory, the first wrapper found in the directory hierarchy
+from the bottom up becomes the wrapper for that directory.
+
+For example, if `src/pages/foo/_wrapper.html` exists and `_wrapper.html` does not exist in either
+the `src/pages/foo/bar` directory or the `src/pages/foo/bar/baz` directory, then
+`src/pages/foo/_wrapper.html` will be the wrapper for `src/pages/foo/bar/baz` directory.
+
+A wrapper must satisfy the following four conditions:
+
+1. There is only one top-level element.
+2. The top-level element is a `<tg-template>` element.
+3. The `<tg-template>` element has the `layout` attribute.
+4. The top-level element contains only one `<tg-content>` element within its descendant elements.
+
+The `<tg-content>` element indicates where in the wrapper the page will be inserted.
+
+#### Example
+
+`src/pages/_wrapper.html`
+
+```html
+<div layout="common" class="[&_p]:mt-4">
+  <tg-content></tg-content>
+</div>
+```
+
+The `class` attribute value `[&_p]:mt-4` sets the `margin-top` of all `<p>` elements within this
+wrapper to scale 4 (16px/1rem). For the notation `[&_p]`, see
+[Using arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
+
+#### Applying a wrapper to a page
+
+As already mentioned, a wrapper placed in a directory applies to all pages in that directory.
+The only thing you should do is take the `layout` attribute off the page.
+
+`src/pages/index.html`
+
+```html
+<tg-template>
+  <h1>Welcome!</h1>
+  <div class="bg-green-300 p-4">
+    <p>Hello, world!</p>
+  </div>
+</tg-template>
 ```
 
 ## Components

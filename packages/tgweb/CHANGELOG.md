@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.0.10
+
+* 379515d Introduce wrapper templates
+
 ## 0.0.9
 
 * 0207b41 Introduce `<tg-template>` elements
