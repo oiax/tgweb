@@ -8,6 +8,15 @@ import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
+const dbg = element => {
+  console.log("<<<<")
+  console.log(pretty(element.outerHTML, {ocd: true}))
+  console.log(">>>>")
+}
+
+// Prevent warnings when function dbg is not used.
+if (dbg === undefined) { dbg() }
+
 describe("generateHTML", () => {
   it("should embed the given page into the document template", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
@@ -70,7 +79,7 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
-  it("should omit a <tg-if-complete> element if all slots receives an insert", () => {
+  it("should omit a <tg-if-complete> element if all slots receive an insert", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
@@ -99,8 +108,6 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
-
-    // console.log(pretty(body.outerHTML, {ocd: true}))
 
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
@@ -149,6 +156,18 @@ describe("generateHTML", () => {
     assert.equal(tech3.children[0].textContent.trim(), "C")
   })
 
+  it("should embed a custom property to a layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+
+    const footer = dom.window.document.body.querySelector("footer")
+
+    assert.equal(footer.innerHTML.trim(), "© 2023 Example Inc.")
+  })
+
   it("should apply a wrapper to a page in a subdirectory", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_2")
     const siteData = getSiteData(wd)
@@ -165,8 +184,8 @@ describe("generateHTML", () => {
       '  <nav><a href="/">Index</a></nav>',
       '  <main class="bg-gray-100 py-2">',
       '    <h3 class="font-bold text-lg ml-2">About us</h3>',
-      '    <p>We are ...</p>',
-      '    <p>Our goal is ...</p>',
+      '    <p class="mb-4 text-gray-900">We are ...</p>',
+      '    <p class="mb-4 text-gray-900">Our goal is ...</p>',
       '  </main>',
       '  <footer>FOOTER</footer>',
       '</body>'
@@ -185,6 +204,7 @@ describe("generateHTML", () => {
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
+
     const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
 
     const expected = [
@@ -193,7 +213,7 @@ describe("generateHTML", () => {
       '  <nav><a href="/">Index</a></nav>',
       '  <main class="bg-green-100 py-2">',
       '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
-      '    <p>Baz baz baz ...</p>',
+      '    <p class="text-red-500">Baz baz baz ...</p>',
       '  </main>',
       '  <footer>FOOTER</footer>',
       '</body>'
@@ -243,24 +263,55 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
-  it("should merge attributes of article and component", () => {
+  it("should embed the value of a custom property into <tg-if-complete> envelope", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
     const html = generateHTML("src/articles/blog/b.html", siteData)
     const dom = new JSDOM(html)
 
     const body = dom.window.document.body
+    const main = body.querySelector("main")
 
-    const h3 = body.querySelector("h3")
+    const lines = pretty(main.outerHTML, {ocd: true}).split("\n")
 
-    assert.equal(h3.textContent.trim(), "B")
+    const expected = [
+      '<main>',
+      '  <div class="bg-gray-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">',
+      '      B',
+      '    </h3>',
+      '    <p>This is B.</p>',
+      '    <div>2023-01-01</div>',
+      '  </div>',
+      '</main>'
+    ]
 
-    const p = body.children[1].children[0].children[1]
-    assert.equal(p.tagName, "P")
-    assert.equal(p.textContent, "This is B.")
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
 
-    const dateDiv = body.children[1].children[0].children[2]
-    assert.equal(dateDiv.textContent, "2023-01-01")
+  it("should not embed undefined value of a custom property into <tg-if-complete> envelope", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/articles/blog/e.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const main = body.querySelector("main")
+
+    const lines = pretty(main.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<main>',
+      '  <div class="bg-gray-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">',
+      '      E',
+      '    </h3>',
+      '    <p>This is E.</p>',
+      '  </div>',
+      '</main>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should render <tg-link> correctly when href is not current", () => {
@@ -326,9 +377,115 @@ describe("generateHTML", () => {
         '      <a href="/articles/blog/d.html">D</a>',
         '      (<span>2023-01-03</span>)',
         '    </li>',
+        '    <li>',
+        '      <a href="/articles/blog/e.html">E</a>',
+        '    </li>',
         '  </ul>',
         '</nav>'
       ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should expand class aliases in a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/etc/about.html">About</a></nav>',
+      '  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">',
+      '    <div class="bg-gray-100 py-2">',
+      '      <h3 class="font-bold text-lg ml-2">Greeting</h3>',
+      '      <div class="flex justify-center">',
+      '        Hello, world!',
+      '      </div>',
+      '    </div>',
+      '  </div>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should expand class aliases in a layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/a.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header class="bg-green-500">HEADER</header>',
+      '  <nav><a href="/">Index</a></nav>',
+      '  <div class="">',
+      '    <div class="bg-gray-100 py-2">',
+      '      <h3>A</h3>',
+      '      <div class="flex justify-center">',
+      '        Hello, world!',
+      '      </div>',
+      '    </div>',
+      '  </div>',
+      '  <footer class="bg-red-700">FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should expand class aliases in a wrapper", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/articles/foo/bar/baz.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/">Index</a></nav>',
+      '  <main class="bg-green-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
+      '    <p class="text-red-500">Baz baz baz ...</p>',
+      '  </main>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should expand class aliases in a component", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/b.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/">Index</a></nav>',
+      '  <div>',
+      '    <h3>B</h3>',
+      '    <div class="w-24 h-24 bg-pink-700">',
+      '      BOX',
+      '    </div>',
+      '  </div>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
 
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })

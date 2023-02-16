@@ -8,7 +8,7 @@
             <span class="font-bold"><tg-slot name="title"></tg-slot></span>
           </tg-if-current>
         </tg-link>
-        (<span><tg-slot name="date"></tg-slot></span>)
+        <tg-if-complete>(<span><tg-data name="date"></tg-data></span>)</tg-if-complete>
       </li>
     </tg-links>
   </ul>

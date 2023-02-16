@@ -1,15 +1,16 @@
-<tg-template layout="home">
-  <div class="bg-gray-100 py-2">
-    <h3 class="font-bold text-lg ml-2">Technology</h3>
-    <nav>
-      <ul>
-        <tg-links pattern="blog/*" filter="tag:technology">
-          <li>
-            <a href="#"><tg-slot name="title"></tg-slot></a>
-            (<span><tg-slot name="date"></tg-slot></span>)
-          </li>
-        </tg-links>
-      </ul>
-    </nav>
-  </div>
-</tg-template>
+---
+layout: home
+---
+<div class="bg-gray-100 py-2">
+  <h3 class="font-bold text-lg ml-2">Technology</h3>
+  <nav>
+    <ul>
+      <tg-links pattern="blog/*" filter="tag:technology">
+        <li>
+          <a href="#"><tg-slot name="title"></tg-slot></a>
+          (<span><tg-data name="date"></tg-data></span>)
+        </li>
+      </tg-links>
+    </ul>
+  </nav>
+</div>

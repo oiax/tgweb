@@ -6,6 +6,7 @@
 * [Getting Started](#getting-started)
 * [Directory Structure](#directory-structure)
 * [Pages](#pages)
+* [Front Matter](#front-matter)
 * [Images](#images)
 * [Audios](#audios)
 * [Layouts](#layouts)
@@ -146,6 +147,10 @@ Please note the following:
 
 In **tgweb**, the HTML documents that make up a website are generated from a combination of
 template files. A _page_ is a type of such template file.
+
+Non-page templates include layouts, wrappers, articles, and components, which
+are described in turn in the following sections.
+
 Pages are placed in the `src/pages` subdirectory under the working directory.
 
 It is possible to create a subdirectory under the `src/pages` directory and place pages under it.
@@ -188,6 +193,145 @@ For example, `src/pages/index.html` is converted to `dist/index.html` and
 The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
 
+## Front Matter
+
+### Front matter block
+
+When a template begins with a line that consists only of `---` and there is another such line in
+the template, the area enclosed by these two lines is called the _front matter block_.
+In this area you can set
+
+In this area you can give values to a set of properties.
+This combination of properties and values is called _front matter_.
+
+Each line of the front matter block contains the name and value of a property, separated by a
+colon and space ("`: `").
+
+The following example sets the property `title` to the "Our Mission".
+
+```
+title: Our Mission
+```
+
+Normally, values written to the right of a colon and space are interpreted as strings.
+
+However, values containing numbers or symbols might be interpreted as something other than
+strings or cause interpretation errors. Enclose such values in single or double quotes.
+
+```
+title: "You can't miss it"
+```
+
+Also, exceptionally, `true`, `false`, `yes`, `no` and their uppercase versions
+(`True`, `FALSE`, etc.) are interpreted as boolean values.
+
+To have these values interpreted as strings, enclose them in single or double quotes.
+
+### Predefined properties
+
+There are some predefined properties that have special meaning.
+
+* `title`: The title of the HTML document to be generated.
+* `layout`: The name of layout to be applied to the template. See [Layouts](#layouts).
+
+### Embedding property values in a template
+
+The value of a predefined property can be embedded into a template by the `<tg-prop>` element.
+
+```html
+---
+title: Our Mission
+---
+<body>
+  <h1 class="text-2xl font-bold">
+    <tg-prop name="title"></tg-prop>
+  </h1>
+  <div class="bg-green-300 p-4">
+    <p>Hello, world!</p>
+  </div>
+</body>
+```
+
+### Custom properties
+
+Properties whose names begin with `data-` are called _custom properties_ and can be freely
+defined by the website author.
+
+The value of a custom property can be embedded into a template by the `<tg-data>` element.
+
+```html
+---
+title: Our Mission
+data-message: "Hello, world!"
+---
+<body>
+  <h1 class="text-2xl font-bold">
+    <tg-prop name="title"></tg-prop>
+  </h1>
+  <div class="bg-green-300 p-4">
+    <p><tg-data name="message"></tg-data></p>
+  </div>
+</body>
+```
+
+### Defining an alias to a set of class tokens
+
+A property whose name begins with `class-` can be used to give an alias to a set of class tokens.
+To expand an alias defined as such in the value of a `class` attribute, use the `${...} `
+notation.
+
+```html
+---
+class-blue-square: "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
+---
+<body>
+  <div class="${blue-square}">
+    Hello, world!
+  </div>
+</body>
+```
+
+Expanding the alias contained in the above template, we get the following:
+
+```html
+<body>
+  <div class="w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4">
+    Hello, world!
+  </div>
+</body>
+```
+
+Using the `-` symbol, a very long sequence of class tokens can be written over several lines:
+
+```html
+---
+class-card:
+  - "bg-white dark:bg-slate-900 rounded-lg px-6 py-8"
+  - "ring-1 ring-slate-900/5 shadow-xl"
+---
+<body>
+  <div class="${card}">
+    Hello, world!
+  </div>
+</body>
+```
+
+Note that the `-` symbol must be preceded by two spaces.
+
+### Site properties
+
+Creating a file named `site.yml` in the `src` directory allows you to set values for properties
+at the site level. The values set here will be the default values for properties set in the
+front matter of each page.
+
+`src/site.yml`
+
+```yaml
+title: No title
+layout: common
+custom-current-year: "2023"
+```
+
 ## Images
 
 Image files are placed in the `src/images` subdirectory under the working directory.
@@ -210,15 +354,15 @@ If the `src` attribute of the `<img>` element contains the relative path of the 
 the image will be embedded in the page.
 
 ```html
-<img src="../images/smile.png" alt="Smile face">
+<img src="/images/smile.png" alt="Smile face">
 ```
 
-You do not need to write the width and height attributes in the img tag,
+You do not need to write the `width` and `height` attributes in the `<img>` tag,
 because Teamgenik will automatically specify them for you.
 
-Note that the value of the `src` attribute is a relative path from the page file to the image file.
-When you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
-you must specify `../../images/smile.png` in the `src` attribute of the `<img>` element.
+Note that the value of the `src` attribute is the _absolute_ path of the image file.
+When your website is published on Teamgenik, the values of the `src` attribute of the `<img>`
+elements will be converted appropriately.
 
 Note also that Teamgenik does not allow the `<img>` element to reference an external URL.
 
@@ -286,12 +430,12 @@ You can embed a UI object to play an audio content with the `<audio>` element.
 
 There are two ways to construct the `<audio>` element.
 
-One is to specify the relative path to the audio file in the `src` attribute of the `<audio>`
+One is to specify the _absolute_ path of the audio file in the `src` attribute of the `<audio>`
 element itself.
 
 ```html
-<audio controls src="../audio/theme.mp3">
-  <a href="../audio/theme.mp3">Download</a>
+<audio controls src="/audios/theme.mp3">
+  <a href="/audios/theme.mp3">Download</a>
 </audio>
 ```
 
@@ -299,12 +443,12 @@ The content of the `<audio>` element will be shown when thw browser does not sup
 element.
 
 The other is to place one or more `<source>` elements inside the `<audio>` element and specify
-the relative path to the audio file in their `src` attribute.
+the absolute path of the audio file in their `src` attribute.
 
 ```html
 <audio controls>
-  <source src="./audio/theme.ogg" type="audio/ogg">
-  <source src="./audio/theme.mp3" type="audio/mpeg">
+  <source src="/audios/theme.ogg" type="audio/ogg">
+  <source src="/audios/theme.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
 ```
@@ -354,26 +498,24 @@ Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-conte
 
 ### Applying a layout to a page
 
-To apply this layout to a page, specify the name of the layout in the `tg-layout` attribute of the
-top-level element of the page.
+To apply this layout to a page, specify the name of the layout in the `layout` property of the
+the front matter of the page.
 
 The name of the layout is the file name of the layout minus its extension (`.html`).
 In this case, `common` is the name of the layout.
-
-The top-level element of the page to which a layout is applied must be a `<tg-template>` element
-rather than the `<body>` element.
 
 #### Example
 
 `src/pages/index.html`
 
 ```html
-<tg-template layout="common">
-  <h1>Welcome!</h1>
-  <div class="bg-green-300 p-4">
-    <p>Hello, world!</p>
-  </div>
-</tg-template>
+---
+layout: common
+---
+<h1>Welcome!</h1>
+<div class="bg-green-300 p-4">
+  <p>Hello, world!</p>
+</div>
 ```
 
 When the layout `common` shown in the previous example is applied to this page file,
@@ -397,6 +539,41 @@ the following HTML document is generated:
     <footer>&copy; Example Inc. 2023</footer>
   </body>
 </html>
+```
+
+### Embedding property values in layouts
+
+The values of the properties set in the front matter of the page can be embedded in the layout
+using the `<tg-prop>` element.
+
+#### Example
+
+`src/layouts/common.html`
+
+```html
+<body>
+  <header>
+    <div>Example</div>
+  </header>
+  <main>
+    <h1 class="text-3xl"><tg-prop name="title"></tg-prop></h1>
+    <tg-content></tg-content>
+  </main>
+  <footer>&copy; Example Inc. <tg-prop name="year"></tg-prop></footer>
+</body>
+```
+
+`src/pages/greeting.html`
+
+```html
+---
+layout: common
+title: Greeting
+---
+<h1>Welcome!</h1>
+<div class="bg-green-300 p-4">
+  <p>Hello, world!</p>
+</div>
 ```
 
 ### Slots and inserts
@@ -431,14 +608,16 @@ all `<tg-insert>` elements are removed from the page content.
 `src/pages/product1.html`
 
 ```html
-<tg-template layout="product" title="Product 1">
-  <div>
-    <h1>Product 1</h1>
-    <p>Description</p>
-  </div>
-  <tg-insert name="remarks">This product is very fragile.</tg-insert>
-  <tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
-</tg-template>
+---
+layout: product
+title: Product 1
+---
+<div>
+  <h1>Product 1</h1>
+  <p>Description</p>
+</div>
+<tg-insert name="remarks">This product is very <em>fragile</em>.</tg-insert>
+<tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
 ```
 
 When the layout `product` is applied to the page `product1.html`,
@@ -455,7 +634,7 @@ the following HTML document is generated:
       <p>Description</p>
     </div>
     <div class="border-2 border-black border-solid p-2">
-      This product is very fragile.
+      This product is very <em>fragile</em>.
     </div>
     <div><span>A</span><span>B</span></div>
   </body>
@@ -481,9 +660,12 @@ is used as a fallback content.
 `src/pages/home.html`
 
 ```html
-<tg-template layout="message" title="Home">
-  <h1>Home</h1>
-</tg-template>
+---
+layout: message
+title: Home
+---
+<h1>Home</h1>
+<p>Hello, world!</p>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -496,6 +678,7 @@ the following HTML document is generated:
   </head>
   <body class="p-2">
     <h1>Home</h1>
+    <p>Hello, world!</p>
     <div>No message.</div>
   </body>
 </html>
@@ -503,8 +686,11 @@ the following HTML document is generated:
 
 ### `<tg-if-complete>`
 
-The `<tg-if-complete>` element in a layout is simply replaced with its content. However, if any
-of the slots within the element have no insert defined, the entire element is deleted.
+Normally, the `<tg-if-complete>` element in a layout is simply replaced with its content.
+However, if the following two conditions are not met, the entire element is deleted:
+
+* The property values to be inserted for all `<tg-prop>` elements within it are defined.
+* The contents to be inserted for all `<tg-slot>` elements within it are defined.
 
 #### Example
 
@@ -515,7 +701,7 @@ of the slots within the element have no insert defined, the entire element is de
   <tg-content></tg-content>
   <tg-if-complete>
     <hr class="h-px my-8 bg-gray-200 border-0">
-    <div class="bg-gray-800 text-white p-4">To: <tg-slot name="name"></tg-slot></div>
+    <div class="bg-gray-800 text-white p-4">To: <tg-prop name="custom-name"></tg-prop></div>
     <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
   </tg-if-complete>
 </body>
@@ -524,10 +710,10 @@ of the slots within the element have no insert defined, the entire element is de
 `src/pages/home.html`
 
 ```html
-<tg-template layout="message" title="Home">
-  <h1>Home</h1>
-  <tg-insert name="name">Alice</tg-insert>
-</tg-template>
+---
+custom-name: Alice
+---
+<h1>Home</h1>
 ```
 
 When the layout `message` is applied to the page `home.html`,
@@ -566,13 +752,7 @@ For example, if `src/pages/foo/_wrapper.html` exists and `_wrapper.html` does no
 the `src/pages/foo/bar` directory or the `src/pages/foo/bar/baz` directory, then
 `src/pages/foo/_wrapper.html` will be the wrapper for `src/pages/foo/bar/baz` directory.
 
-A wrapper must satisfy the following four conditions:
-
-1. There is only one top-level element.
-2. The top-level element is a `<tg-template>` element.
-3. The `<tg-template>` element has the `layout` attribute.
-4. The top-level element contains only one `<tg-content>` element within its descendant elements.
-
+Basically, the wrapper is written the same way as that of the layout.
 The `<tg-content>` element indicates where in the wrapper the page will be inserted.
 
 #### Example
@@ -580,7 +760,7 @@ The `<tg-content>` element indicates where in the wrapper the page will be inser
 `src/pages/_wrapper.html`
 
 ```html
-<div layout="common" class="[&_p]:mt-4">
+<div class="[&_p]:mt-4">
   <tg-content></tg-content>
 </div>
 ```
@@ -589,7 +769,7 @@ The `class` attribute value `[&_p]:mt-4` sets the `margin-top` of all `<p>` elem
 wrapper to scale 4 (16px/1rem). For the notation `[&_p]`, see
 [Using arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
 
-#### Applying a wrapper to a page
+### Applying a wrapper to a page
 
 As already mentioned, a wrapper placed in a directory applies to all pages in that directory.
 The only thing you should do is take the `layout` attribute off the page.
@@ -597,12 +777,42 @@ The only thing you should do is take the `layout` attribute off the page.
 `src/pages/index.html`
 
 ```html
-<tg-template>
-  <h1>Welcome!</h1>
-  <div class="bg-green-300 p-4">
-    <p>Hello, world!</p>
-  </div>
-</tg-template>
+---
+layout: common
+---
+<h1>Welcome!</h1>
+<div class="bg-green-300 p-4">
+  <p>Hello, world!</p>
+</div>
+```
+
+### Wrapper properties
+
+The value of a property set in the wrapper's front matter becomes the default value of the
+property for the page to which that wrapper is applied.
+
+Wrapper property values take precedence over site property values.
+
+#### Example
+
+`src/pages/_wrapper.html`
+
+```html
+---
+layout: common
+---
+<div class="[&_p]:mt-4">
+  <tg-content></tg-content>
+</div>
+```
+
+`src/pages/index.html`
+
+```html
+<h1>Welcome!</h1>
+<div class="bg-green-300 p-4">
+  <p>Hello, world!</p>
+</div>
 ```
 
 ## Components
@@ -675,17 +885,18 @@ within a component is similar to that of a layout.
 `src/pages/hello.html`
 
 ```html
-<tg-template layout="home">
-  <main class="bg-gray-100 py-2">
-    <tg-component name="blog_item">
-      <tg-insert name="title">Greeting</tg-insert>
-      <tg-insert name="body">
-        <p>Hello.</p>
-      </tg-insert>
-      <tg-insert name="date">2022-12-31</tg-insert>
-    </tg-component>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main class="bg-gray-100 py-2">
+  <tg-component name="blog_item">
+    <tg-insert name="title">Greeting</tg-insert>
+    <tg-insert name="body">
+      <p>Hello.</p>
+    </tg-insert>
+    <tg-insert name="date">2022-12-31</tg-insert>
+  </tg-component>
+</main>
 ```
 
 ## Articles
@@ -717,13 +928,14 @@ Like components, articles can be embedded in pages.
 Place `<tg-article>` elements where you want to embed articles as follows:
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Our Recent Articles</h1>
-    <tg-article name="blog/got_a_gadget"></tg-article>
-    <tg-article name="blog/happy_new_year"></tg-article>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Our Recent Articles</h1>
+  <tg-article name="blog/got_a_gadget"></tg-article>
+  <tg-article name="blog/happy_new_year"></tg-article>
+</main>
 ```
 
 The value of the `name` attribute of the `<tg-article>` element must be the name of the
@@ -737,37 +949,40 @@ Articles cannot be embedded in other articles or layouts.
 The `<tg-articles>` element can be used to embed multiple articles into a page.
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Our Proposals</h1>
-    <tg-articles pattern="/proposals/*"></tg-articles>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg-articles pattern="/proposals/*"></tg-articles>
+</main>
 ```
 
 The above example embeds all articles in the `src/articles/proposals` directory under the
 `<h1>` element.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles in any order, add a `index` attribute to each article:
+To sort articles in any order, set the `index` property to an integer value for each article:
 
 ```html
-<tg-template index="000">
-  <article>
-    ...
-  </article>
-</tg-template>
+---
+index: 123
+---
+<article>
+  ...
+</article>
 ```
 
 Then, specify the `order-by` attribute of the `<tg-articles>` element.
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Our Proposals</h1>
-    <tg-articles pattern="/proposals/*" order-by="index:asc"></tg-articles>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg-articles pattern="/proposals/*" order-by="index:asc"></tg-articles>
+</main>
 ```
 
 The value of the `order-by` attribute is a string separated by a single colon.
@@ -777,10 +992,6 @@ and `"desc"` means "descending order".
 
 TODO: Allow `"title"` as the left side value.
 
-Note that the value of the `index` attribute of `<tg-template>` element is interpreted as a string;
-`"123"` is evaluated as a value greater than `"009"`, but
-`"123"` is evaluated as a value _less_ than `"9"`
-
 TODO: Add `tg-limit` and `tg-offset` attributes.
 
 ### Generating a link list to articles
@@ -789,25 +1000,26 @@ The `tg-links` attribute can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Our Proposals</h1>
-    <ul>
-      <tg-links pattern="/proposals/*">
-        <li>
-          <a href="#">
-            <tg-slot name="title"></tg-slot>
-            <tg-if-complete>
-              <span class="text-sm">
-                (<tg-slot name="date"></tg-slot>)
-              </span>
-            </tg-if-complete>
-          </a>
-        </li>
-      </tg-links>
-    </ul>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Our Proposals</h1>
+  <ul>
+    <tg-links pattern="/proposals/*">
+      <li>
+        <a href="#">
+          <tg-slot name="title"></tg-slot>
+          <tg-if-complete>
+            <span class="text-sm">
+              (<tg-slot name="date"></tg-slot>)
+            </span>
+          </tg-if-complete>
+        </a>
+      </li>
+    </tg-links>
+  </ul>
+</main>
 ```
 
 The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
@@ -825,11 +1037,13 @@ By default, articles are sorted in ascending (alphabetically) order by file name
 To sort articles in any order, add a `tg-index` attribute to each article:
 
 ```html
-<tg-template layout="home" index="000">
-  <article>
-    ...
-  </article>
-</tg-template>
+---
+layout: home
+index 123
+---
+<article>
+  ...
+</article>
 ```
 
 Then, specify the `order-by` attribute of the `<tg-links>` element.
@@ -849,22 +1063,24 @@ You may use _tags_ to categorize your articles.
 To attach tags to an article, specify their names in the `tags` attribute, separated by commas.
 
 ```html
-<tg-template tags="travel,europe">
-  <article>
-    ...
-  </article>
-</tg-template>
+---
+tags: [travel, europe]
+---
+<article>
+  ...
+</article>
 ```
 
 You can use the `filter` attribute to filter articles embedded on the page:
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Articles (tag:travel)</h1>
-    <tg-articles pattern="/blog/*" filter="tag:travel"></tg-articles>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <tg-articles pattern="/blog/*" filter="tag:travel"></tg-articles>
+</main>
 ```
 
 The value of the `filter` attribute is a string separated by a single colon.
@@ -874,20 +1090,21 @@ the right side of the colon is a tag name.
 You can also filter the list of links to articles using the `filter` attribute:
 
 ```html
-<tg-template layout="home">
-  <main>
-    <h1>Articles (tag:travel)</h1>
-    <ul>
-      <tg-links pattern="/blog/*" filter="tag:travel">
-        <li>
-          <a href="#">
-            <tg-slot name="title"></tg-slot>
-          </a>
-        </li>
-      </tg-links>
-    </ul>
-  </main>
-</tg-template>
+---
+layout: home
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <ul>
+    <tg-links pattern="/blog/*" filter="tag:travel">
+      <li>
+        <a href="#">
+          <tg-slot name="title"></tg-slot>
+        </a>
+      </li>
+    </tg-links>
+  </ul>
+</main>
 ```
 
 Note that you cannot assign tags to a page.
@@ -1023,20 +1240,20 @@ The values of `href` and `label` attributes are _passed_ to the link component.
 The `<tg-link>` elements can be placed within the `<tg-links`> element:
 
 ```html
-    <tg-links pattern="/proposals/*" order-by="index:asc">
-      <li>
-        <tg-link>
-          <a href="#" class="underline text-blue-500">
-            <tg-slot name="title"></tg-slot>
-          </a>
-          <tg-if-current>
-            <span class="font-bold">
-              <tg-slot name="title"></tg-slot>
-            </span>
-          </tg-if-current>
-        </tg-link>
-      </li>
-    </tg-links>
+<tg-links pattern="/proposals/*" order-by="index:asc">
+  <li>
+    <tg-link>
+      <a href="#" class="underline text-blue-500">
+        <tg-slot name="title"></tg-slot>
+      </a>
+      <tg-if-current>
+        <span class="font-bold">
+          <tg-slot name="title"></tg-slot>
+        </span>
+      </tg-if-current>
+    </tg-link>
+  </li>
+</tg-links>
 ```
 
 In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
@@ -1053,14 +1270,13 @@ You should use `<tg-slot`> elements to compose the content of the `<a>` and othe
 The content of the `<title>` element is determined from the (page or article) template
 by the following rules:
 
-1. The value of the `title` attribute of the top-level element of the template,
-   if one is specified.
-2. The text content of the first `<h1>` element, if the template contains one.
-3. The text content of the first `<h2>` element, if the template contains one.
-4. The text content of the first `<h3>` element, if the template contains one.
-5. The text content of the first `<h4>` element, if the template contains one.
-6. The text content of the first `<h5>` element, if the template contains one.
-7. The text content of the first `<h6>` element, if the template contains one.
+1. The value of the `title` property if available
+2. The text content of the first `<h1>` element if available
+3. The text content of the first `<h2>` element if available
+4. The text content of the first `<h3>` element if available
+5. The text content of the first `<h4>` element if available
+6. The text content of the first `<h5>` element if available
+7. The text content of the first `<h6>` element if available
 8. `"No Title"`
 
 #### Examples
