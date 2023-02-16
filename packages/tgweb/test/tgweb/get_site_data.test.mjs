@@ -32,7 +32,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.wrappers.length, 1)
+    assert.equal(siteData.wrappers.length, 2)
   })
 })
 
