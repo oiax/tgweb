@@ -53,7 +53,7 @@ generationFuncs["page"] = (path, siteData) => {
       const headAttrs = { title: getTitle(page, wrapperRoot) }
 
       layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
-      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+      if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
       else console.log("Error")
     }
     else if (page.frontMatter["layout"]) {
@@ -65,8 +65,8 @@ generationFuncs["page"] = (path, siteData) => {
       embedLinksToArticles(page, pageRoot, siteData, path)
 
       layoutRoot = applyLayout(page, pageRoot, siteData, path)
-      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
-      else return renderHTML(pageRoot, siteData, headAttrs, path)
+      if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
+      else return renderHTML(page, pageRoot, siteData, headAttrs, path)
     }
     else {
       const body = page.dom.window.document.body.cloneNode(true)
@@ -80,8 +80,8 @@ generationFuncs["page"] = (path, siteData) => {
       embedLinksToArticles(page, body, siteData, path)
 
       const layoutRoot = applyLayout(page, body, siteData, path)
-      if (layoutRoot) return renderHTML(body, siteData, headAttrs, path)
-      else return renderHTML(body, siteData, headAttrs, path)
+      if (layoutRoot) return renderHTML(page, body, siteData, headAttrs, path)
+      else return renderHTML(page, body, siteData, headAttrs, path)
     }
   }
 
@@ -128,14 +128,14 @@ const renderArticle = (article, articleRoot, siteData, path) => {
     const headAttrs = { title: getTitle(article, wrapperRoot) }
 
     const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
   else {
     const headAttrs = { title: getTitle(article, articleRoot) }
     embedLinksToArticles(article, articleRoot, siteData, path)
     const layoutRoot = applyLayout(article, articleRoot, siteData, path)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
 }
@@ -464,7 +464,7 @@ const sortArticles = (articles, orderBy) => {
   }
 }
 
-const renderHTML = (root, siteData, headAttrs, path) => {
+const renderHTML = (template, root, siteData, headAttrs, path) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
 
   processTgLinks(root, siteData, path)
@@ -474,6 +474,51 @@ const renderHTML = (root, siteData, headAttrs, path) => {
 
   if (headAttrs["title"])
     dom.window.document.head.querySelector("title").textContent = headAttrs["title"]
+
+  const link = dom.window.document.head.querySelector("link")
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("meta-")) {
+      const name = key.slice(5)
+      const content = template.frontMatter[key]
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("name", name)
+      meta.setAttribute("content", content)
+      link.before(meta)
+    }
+  })
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("http-equiv-")) {
+      const name = key.slice(11)
+      const content = template.frontMatter[key]
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("http-equiv", name)
+      meta.setAttribute("content", content)
+      link.before(meta)
+    }
+  })
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("property-")) {
+      const name = key.slice(9)
+      const content = template.frontMatter[key]
+
+      const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+        if (Object.hasOwn(template.frontMatter, propName)) {
+          return template.frontMatter[propName]
+        }
+        else {
+          `\${${propName}}`
+        }
+      })
+
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("property", name)
+      meta.setAttribute("content", converted)
+      link.before(meta)
+    }
+  })
 
   return pretty(dom.serialize(), {ocd: true})
 }

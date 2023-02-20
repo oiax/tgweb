@@ -14,6 +14,10 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "Home")
+    assert.equal(page.frontMatter["property-fb:app_id"], "0123456789abced")
+
+    assert.equal(page.frontMatter["property-og:image"],
+      "http://localhost:3000/images/icons/default.png")
   })
 
   it("should make the page front matter inherit site and wrapper properties", () => {
@@ -54,6 +58,8 @@ describe("getSiteData", () => {
     assert.equal(article.frontMatter["layout"], "blog_article")
     assert.equal(article.frontMatter["title"], "A")
     assert.equal(article.frontMatter["data-current-year"], 2023)
+    assert.equal(article.frontMatter["property-og:image"],
+      "http://localhost:3000/images/red_square.png")
   })
 
   it("should return the site data with dependencies", () => {

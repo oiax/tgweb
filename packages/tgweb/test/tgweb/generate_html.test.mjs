@@ -35,6 +35,35 @@ describe("generateHTML", () => {
     assert.equal(script.attributes.getNamedItem("defer").value, "")
   })
 
+  it("should generate <meta> tags", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+
+    const head = dom.window.document.head
+    const lines = pretty(head.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<head>',
+      '  <meta charset="utf-8">',
+      '  <title>Home</title>',
+      '  <meta name="viewport" content="width=device-width, initial-scale=1">',
+      `  <meta http-equiv="content-security-policy" content="default-src 'self'">`,
+      '  <meta property="fb:app_id" content="0123456789abced">',
+      '  <meta property="og:type" content="website">',
+      '  <meta property="og:url" content="http://localhost:3000/">',
+      '  <meta property="og:title" content="Home">',
+      '  <meta property="og:image" content="http://localhost:3000/images/icons/default.png">',
+      '  <link href="/css/tailwind.css" rel="stylesheet">',
+      '  <script src="/reload/reload.js" defer=""></script>',
+      '</head>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
   it("should embed the given page into the specified layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)

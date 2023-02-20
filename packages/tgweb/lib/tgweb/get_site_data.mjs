@@ -18,7 +18,12 @@ const getSiteData = directory => {
     layouts: [],
     wrappers: [],
     articles: [],
-    components: []
+    components: [],
+    properties: {
+      scheme: "http",
+      host: "localhost",
+      port: 3000
+    }
   }
 
   const htmlPath = PATH.resolve(__dirname, "../../resources/document_template.html")
@@ -29,11 +34,8 @@ const getSiteData = directory => {
 
   if (fs.existsSync(site_yaml_path)) {
     const source = fs.readFileSync(site_yaml_path)
-    siteData.properties = YAML.load(source)
+    mergeProperties(siteData.properties, YAML.load(source))
     normalizeFrontMatter(siteData.properties)
-  }
-  else {
-    siteData.properties = {}
   }
 
   process.chdir(directory + "/src")
@@ -64,6 +66,8 @@ const getSiteData = directory => {
     siteData.articles =
       glob.sync("**/!(_wrapper).html").map(path => {
         const article = getDom(path)
+        setUrlProperty(article.frontMatter, siteData, "articles/" + path)
+
         const wrapper = getArticleWrapper(article, siteData)
 
         if (wrapper)
@@ -71,6 +75,7 @@ const getSiteData = directory => {
         else
           mergeProperties(article.frontMatter, siteData.properties)
 
+        expandPaths(article.frontMatter)
         return article
       })
 
@@ -83,6 +88,8 @@ const getSiteData = directory => {
     siteData.pages =
       glob.sync("**/!(_wrapper).html").map(path => {
         const page = getDom(path)
+        setUrlProperty(page.frontMatter, siteData, path)
+
         const wrapper = getPageWrapper(page, siteData)
 
         if (wrapper)
@@ -90,6 +97,7 @@ const getSiteData = directory => {
         else
           mergeProperties(page.frontMatter, siteData.properties)
 
+        expandPaths(page.frontMatter)
         return page
       })
 
@@ -271,6 +279,70 @@ const normalizeFrontMatter = frontMatter => {
       }
     }
   })
+}
+
+const setUrlProperty = (frontMatter, siteData, path) => {
+  const scheme = siteData.properties["scheme"]
+  const host = siteData.properties["host"]
+  const port = siteData.properties["port"]
+
+  let converted = path
+  if (path === "index.html") converted = ""
+  converted = converted.replace(/\/index.html$/, "/")
+
+  if (scheme === "http") {
+    if (port === 80) {
+      frontMatter.url = `http://${host}/${converted}`
+    }
+    else {
+      frontMatter.url = `http://${host}:${port}/${converted}`
+    }
+  }
+  else if (scheme === "https") {
+    if (port === 443) {
+      frontMatter.url = `https://${host}/${converted}`
+    }
+    else {
+      frontMatter.url = `https://${host}:${port}/${converted}`
+    }
+  }
+}
+
+const expandPaths = frontMatter => {
+  Object.keys(frontMatter).forEach(key => {
+    const value = frontMatter[key]
+
+    if (typeof value === "string") {
+      const converted = value.replaceAll(/%\{([^}]+)\}/g, (_, path) =>
+        getUrlPrefix(frontMatter) + path
+      )
+
+      frontMatter[key] = converted
+    }
+  })
+}
+
+const getUrlPrefix = (frontMatter) => {
+  const scheme = frontMatter["scheme"]
+  const host = frontMatter["host"]
+  const port = frontMatter["port"]
+
+  if (scheme === "http") {
+    if (port === 80) {
+      return `http://${host}`
+    }
+    else {
+      return `http://${host}:${port}`
+    }
+  }
+  else if (scheme === "https") {
+    if (port === 443) {
+      return `https://${host}`
+    }
+    else {
+      return `https://${host}:${port}`
+    }
+  }
 }
 
 export { getSiteData, updateSiteData }
