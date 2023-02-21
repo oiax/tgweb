@@ -519,4 +519,32 @@ describe("generateHTML", () => {
 
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
+
+  it("should render a page with Japanese text", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/index_ja.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <nav><a href="/etc/about.html">About</a></nav>',
+      '  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">',
+      '    <div class="bg-gray-100 py-2">',
+      '      <h3 class="font-bold text-lg ml-2">挨拶</h3>',
+      '      <div class="flex justify-center">',
+      '        こんにちは、世界よ！',
+      '      </div>',
+      '    </div>',
+      '  </div>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
 })
