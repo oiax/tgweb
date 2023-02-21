@@ -520,6 +520,18 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
     }
   })
 
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("link-")) {
+      const rel = key.slice(5)
+      if (rel == "stylesheet") return
+      const href = template.frontMatter[key]
+      const newLink = dom.window.document.createElement("link")
+      newLink.setAttribute("rel", rel)
+      newLink.setAttribute("href", href)
+      link.before(newLink)
+    }
+  })
+
   return pretty(dom.serialize(), {ocd: true})
 }
 

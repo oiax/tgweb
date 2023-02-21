@@ -35,7 +35,7 @@ describe("generateHTML", () => {
     assert.equal(script.attributes.getNamedItem("defer").value, "")
   })
 
-  it("should generate <meta> tags", () => {
+  it("should generate <meta> and <link> tags", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_0")
     const siteData = getSiteData(wd)
 
@@ -56,7 +56,8 @@ describe("generateHTML", () => {
       '  <meta property="og:url" content="http://localhost:3000/">',
       '  <meta property="og:title" content="Home">',
       '  <meta property="og:image" content="http://localhost:3000/images/icons/default.png">',
-      '  <link href="/css/tailwind.css" rel="stylesheet">',
+      '  <link rel="canonical" href="http://localhost:3000/">',
+      '  <link rel="stylesheet" href="/css/tailwind.css">',
       '  <script src="/reload/reload.js" defer=""></script>',
       '</head>'
     ]
