@@ -119,7 +119,7 @@ const updateSiteData = (siteData, path) => {
     siteData.components.forEach(component => {
       if ("src/components/" + component.path == path) {
         const html = fs.readFileSync(path)
-        component.dom = new JSDOM(html)
+        component.dom = new JSDOM(html.toString())
       }
     })
   }
@@ -127,7 +127,7 @@ const updateSiteData = (siteData, path) => {
     siteData.layouts.forEach(layout => {
       if ("src/layouts/" + layout.path == path) {
         const html = fs.readFileSync(path)
-        layout.dom = new JSDOM(html)
+        layout.dom = new JSDOM(html.toString())
       }
     })
   }
@@ -135,7 +135,7 @@ const updateSiteData = (siteData, path) => {
     siteData.articles.forEach(article => {
       if ("src/articles/" + article.path == path) {
         const html = fs.readFileSync(path)
-        article.dom = new JSDOM(html)
+        article.dom = new JSDOM(html.toString())
       }
     })
   }
@@ -143,7 +143,7 @@ const updateSiteData = (siteData, path) => {
     siteData.pages.forEach(page => {
       if ("src/pages/" + page.path == path) {
         const html = fs.readFileSync(path)
-        page.dom = new JSDOM(html)
+        page.dom = new JSDOM(html.toString())
       }
     })
   }
@@ -151,7 +151,7 @@ const updateSiteData = (siteData, path) => {
     siteData.wrappers.forEach(wrapper => {
       if ("src/" + wrapper.path == path) {
         const html = fs.readFileSync(path)
-        wrapper.dom = new JSDOM(html)
+        wrapper.dom = new JSDOM(html.toString())
       }
     })
   }
