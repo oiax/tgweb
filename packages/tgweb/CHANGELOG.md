@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.4
+
+* 9b61878 Fix updateSiteData/2: convert Buffers to strings
+
 ## 0.1.3
 
 * 0671b65 Fix getDom/1: convert Buffer to a string
