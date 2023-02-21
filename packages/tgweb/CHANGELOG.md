@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.2
+
+* 8b85fc1 Allow single site configuration
+
 ## 0.1.1
 
 * d4becae The value of tags attribute may be an array
