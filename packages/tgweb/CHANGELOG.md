@@ -1,5 +1,12 @@
 # tgweb CHANGELOG
 
+## 0.1.0
+
+* 8cd198b tgweb-init: copy `site.yml` from stubs directory
+* a86a84a Generate `<link>` elements
+* e492830 Generate `<meta>` elements
+* 711a85c Introduce front matter
+
 ## 0.0.10
 
 * 379515d Introduce wrapper templates
