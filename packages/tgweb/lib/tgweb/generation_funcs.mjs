@@ -7,13 +7,23 @@ import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
 
+const dbg = element => {
+  console.log("<<<<")
+  console.log(pretty(element.outerHTML, {ocd: true}))
+  console.log(">>>>")
+}
+
+// Prevent warnings when function dbg is not used.
+if (dbg === undefined) { dbg() }
+
 generationFuncs["page"] = (path, siteData) => {
   const relPath = path.replace(/^src\/pages\//, "")
   const page = siteData.pages.find(page => page.path == relPath)
 
   if (page) {
-    const pageRoot = page.dom.window.document.body.children[0].cloneNode(true)
+    const pageRoot = page.dom.window.document.body.cloneNode(true)
     setAttrs(pageRoot)
+    expandClassAliases(page.frontMatter, pageRoot)
 
     const dirname = PATH.dirname(relPath)
     const dirParts = dirname.split(PATH.sep)
@@ -30,49 +40,48 @@ generationFuncs["page"] = (path, siteData) => {
     let layoutRoot
 
     if (wrapper) {
-      const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
-      setAttrs(wrapperRoot)
-      embedSlotContents(wrapperRoot, pageRoot)
-
-      embedComponents(pageRoot, siteData, path)
+      const frontMatter = makeLocalFrontMatter(page, wrapper)
+      const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+      expandClassAliases(frontMatter, wrapperRoot)
+      fillInPlaceHolders(wrapperRoot, pageRoot, page)
+      embedComponents(page, pageRoot, siteData, path)
       embedArticles(pageRoot, siteData, path)
       embedArticleLists(pageRoot, siteData, path)
-      embedLinksToArticles(pageRoot, siteData, path)
-
+      embedLinksToArticles(page, pageRoot, siteData, path)
       embedContent(wrapperRoot, pageRoot)
 
-      const headAttrs = { title: getTitle(wrapperRoot) }
+      const headAttrs = { title: getTitle(page, wrapperRoot) }
 
-      layoutRoot = applyLayout(wrapperRoot, siteData, path)
-      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+      layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
+      if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
       else console.log("Error")
     }
-    else if (pageRoot.attrs["layout"]) {
-      const headAttrs = { title: getTitle(pageRoot) }
+    else if (page.frontMatter["layout"]) {
+      const headAttrs = { title: getTitle(page, pageRoot) }
 
-      embedComponents(pageRoot, siteData, path)
+      embedComponents(page, pageRoot, siteData, path)
       embedArticles(pageRoot, siteData, path)
       embedArticleLists(pageRoot, siteData, path)
-      embedLinksToArticles(pageRoot, siteData, path)
+      embedLinksToArticles(page, pageRoot, siteData, path)
 
-      layoutRoot = applyLayout(pageRoot, siteData, path)
-      if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
-      else return renderHTML(pageRoot, siteData, headAttrs, path)
+      layoutRoot = applyLayout(page, pageRoot, siteData, path)
+      if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
+      else return renderHTML(page, pageRoot, siteData, headAttrs, path)
     }
     else {
       const body = page.dom.window.document.body.cloneNode(true)
       setAttrs(body)
 
-      const headAttrs = { title: getTitle(body) }
+      const headAttrs = { title: getTitle(page, body) }
 
-      embedComponents(body, siteData, path)
+      embedComponents(page, body, siteData, path)
       embedArticles(body, siteData, path)
       embedArticleLists(body, siteData, path)
-      embedLinksToArticles(body, siteData, path)
+      embedLinksToArticles(page, body, siteData, path)
 
-      const layoutRoot = applyLayout(body, siteData, path)
-      if (layoutRoot) return renderHTML(body, siteData, headAttrs, path)
-      else return renderHTML(body, siteData, headAttrs, path)
+      const layoutRoot = applyLayout(page, body, siteData, path)
+      if (layoutRoot) return renderHTML(page, body, siteData, headAttrs, path)
+      else return renderHTML(page, body, siteData, headAttrs, path)
     }
   }
 
@@ -83,17 +92,16 @@ generationFuncs["article"] = (path, siteData) => {
   const article = siteData.articles.find(article => "src/articles/" + article.path == path)
 
   if (article) {
-    const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-    setAttrs(articleRoot)
-
-    embedComponents(articleRoot, siteData, path)
-    return renderArticle(articleRoot, siteData, path)
+    const articleRoot = article.dom.window.document.body.cloneNode(true)
+    expandClassAliases(article.frontMatter, articleRoot)
+    embedComponents(article, articleRoot, siteData, path)
+    return renderArticle(article, articleRoot, siteData, path)
   }
 
   return pretty(siteData.documentTemplate.serialize())
 }
 
-const renderArticle = (articleRoot, siteData, path) => {
+const renderArticle = (article, articleRoot, siteData, path) => {
   const relPath = path.replace(/^src\/articles\//, "")
   const dirname = PATH.dirname(relPath)
   const dirParts = dirname.split(PATH.sep)
@@ -108,43 +116,83 @@ const renderArticle = (articleRoot, siteData, path) => {
   }
 
   if (wrapper) {
-    embedComponents(articleRoot, siteData, path)
-    embedLinksToArticles(articleRoot, siteData, path)
+    embedComponents(article, articleRoot, siteData, path)
+    embedLinksToArticles(article, articleRoot, siteData, path)
 
-    const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
-    setAttrs(wrapperRoot)
-
+    const frontMatter = makeLocalFrontMatter(article, wrapper)
+    const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+    expandClassAliases(frontMatter, wrapperRoot)
     embedContent(wrapperRoot, articleRoot)
-    embedSlotContents(wrapperRoot, articleRoot)
+    fillInPlaceHolders(wrapperRoot, articleRoot, article)
 
-    const headAttrs = { title: getTitle(wrapperRoot) }
+    const headAttrs = { title: getTitle(article, wrapperRoot) }
 
-    const layoutRoot = applyLayout(wrapperRoot, siteData, path)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
+    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
   else {
-    const headAttrs = { title: getTitle(articleRoot) }
-    embedLinksToArticles(articleRoot, siteData, path)
-    const layoutRoot = applyLayout(articleRoot, siteData, path)
-    if (layoutRoot) return renderHTML(layoutRoot, siteData, headAttrs, path)
+    const headAttrs = { title: getTitle(article, articleRoot) }
+    embedLinksToArticles(article, articleRoot, siteData, path)
+    const layoutRoot = applyLayout(article, articleRoot, siteData, path)
+    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
 }
 
-const applyLayout = (element, siteData, path) => {
-  if (element.attrs["layout"] === undefined) return
+const makeLocalFrontMatter = (template, wrapperOrLayout) => {
+  const frontMatter = {}
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (Object.hasOwn(template.frontMatter, key)) {
+      frontMatter[key] = template.frontMatter[key]
+    }
+  })
+
+  Object.keys(wrapperOrLayout.frontMatter).forEach(key => {
+    if (Object.hasOwn(wrapperOrLayout.frontMatter, key) && !Object.hasOwn(frontMatter, key)) {
+      frontMatter[key] = wrapperOrLayout.frontMatter[key]
+    }
+  })
+
+  return frontMatter
+}
+
+const expandClassAliases = (frontMatter, root) => {
+  if (root.className) doExpandClassAliases(frontMatter, root)
+
+  root.querySelectorAll("[class]").forEach(elem => {
+    doExpandClassAliases(frontMatter, elem)
+  })
+}
+
+const doExpandClassAliases = (frontMatter, elem) => {
+  const htmlClass = elem.getAttribute("class")
+
+  const expanded = htmlClass.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, alias) => {
+    const key = `class-${alias}`
+    if (Object.hasOwn(frontMatter, key)) return frontMatter[key]
+    else return `\${${alias}}`
+  })
+
+  elem.setAttribute("class", expanded)
+}
+
+const applyLayout = (template, element, siteData, path) => {
+  if (template.frontMatter["layout"] === undefined) return
 
   const layout =
-    siteData.layouts.find(layout => layout.path == element.attrs["layout"] + ".html")
+    siteData.layouts.find(layout => layout.path == template.frontMatter["layout"] + ".html")
 
   if (layout === undefined) return
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
 
+  const frontMatter = makeLocalFrontMatter(template, layout)
+  expandClassAliases(frontMatter, layoutRoot)
   embedContent(layoutRoot, element)
-  embedSlotContents(layoutRoot, element)
-  embedComponents(layoutRoot, siteData, path)
+  fillInPlaceHolders(layoutRoot, element, template)
+  embedComponents(template, layoutRoot, siteData, path)
 
   return layoutRoot
 }
@@ -177,62 +225,79 @@ const embedContent = (element, provider) => {
   }
 }
 
-const embedSlotContents = (element, provider) => {
+const fillInPlaceHolders = (element, provider, template) => {
   const slotContents = extractSlotContents(provider)
 
-  element.querySelectorAll("tg-if-complete").forEach(wrapper => {
-    const complete = Array.from(wrapper.querySelectorAll("tg-slot")).every(slot => {
-      setAttrs(slot)
+  element.querySelectorAll("tg-if-complete").forEach(envelope => {
+    const placeholders = Array.from(envelope.querySelectorAll("tg-slot, tg-data, tg-prop"))
 
-      return slotContents.some(c => {
-        setAttrs(c)
-        return c.attrs["name"] == slot.attrs["name"]
-      })
+    const complete = placeholders.every(placeholder => {
+      setAttrs(placeholder)
+
+      if (placeholder.tagName == "TG-PROP") {
+        return Object.hasOwn(template.frontMatter, placeholder.attrs["name"])
+      }
+      else if (placeholder.tagName == "TG-DATA") {
+        return Object.hasOwn(template.frontMatter, "data-" + placeholder.attrs["name"])
+      }
+      else if (placeholder.tagName == "TG-SLOT") {
+        return slotContents.some(c => c.attrs["name"] == placeholder.attrs["name"])
+      }
     })
 
     if (complete) {
-      wrapper.childNodes.forEach(child => element.insertBefore(child.cloneNode(true), wrapper))
+      envelope.childNodes.forEach(child =>
+        envelope.parentNode.insertBefore(child.cloneNode(true), envelope)
+      )
     }
   })
 
   element.querySelectorAll("tg-if-complete").forEach(wrapper => wrapper.remove())
 
-  element.querySelectorAll("tg-slot").forEach(slot => {
-    setAttrs(slot)
-    const content = slotContents.find(c => c.attrs["name"] == slot.attrs["name"])
+  element.querySelectorAll("tg-slot, tg-data, tg-prop").forEach(placeholder => {
+    setAttrs(placeholder)
 
-    if (content) Array.from(content.cloneNode(true).childNodes).forEach(child => slot.before(child))
-    else Array.from(slot.childNodes).forEach(child => slot.before(child))
+    if (placeholder.tagName == "TG-PROP") {
+      const value = template.frontMatter[placeholder.attrs["name"]]
+      if (value) placeholder.before(value)
+    }
+    else if (placeholder.tagName == "TG-DATA") {
+      const value = template.frontMatter["data-" + placeholder.attrs["name"]]
+      if (value) placeholder.before(value)
+    }
+    else if (placeholder.tagName == "TG-SLOT") {
+      const content = slotContents.find(c => c.attrs["name"] == placeholder.attrs["name"])
+
+      if (content)
+        Array.from(content.cloneNode(true).childNodes).forEach(child => placeholder.before(child))
+      else
+        Array.from(placeholder.childNodes).forEach(child => placeholder.before(child))
+    }
   })
 
-  element.querySelectorAll("tg-slot").forEach(slot => slot.remove())
+  element.querySelectorAll("tg-slot, tg-data, tg-prop").forEach(slot => slot.remove())
 }
 
-const embedComponents = (node, siteData, path) => {
+const embedComponents = (template, node, siteData, path) => {
   const targets = node.querySelectorAll("tg-component")
 
   targets.forEach(target => {
     setAttrs(target)
-    const componentRoot = getComponentRoot(target, siteData)
 
-    if (componentRoot) {
+    const componentName = target.attrs["name"]
+
+    const component =
+      siteData.components.find(component => component.path == componentName + ".html")
+
+    if (component) {
+      const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
+      expandClassAliases(component.frontMatter, componentRoot)
       embedContent(componentRoot, target)
-      embedLinksToArticles(componentRoot, siteData, path)
-      embedSlotContents(componentRoot, target)
+      embedLinksToArticles(template, componentRoot, siteData, path)
+      fillInPlaceHolders(componentRoot, target, template)
       target.replaceWith(componentRoot)
     }
   })
-}
-
-const getComponentRoot = (element, siteData) => {
-  const componentName = element.attrs["name"]
-
-  const component =
-    siteData.components.find(component => component.path == componentName + ".html")
-
-  if (component) {
-    return component.dom.window.document.body.children[0].cloneNode(true)
-  }
 }
 
 const embedArticles = (node, siteData, path) => {
@@ -245,9 +310,8 @@ const embedArticles = (node, siteData, path) => {
       siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
 
     if (article) {
-      const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setAttrs(articleRoot)
-      embedComponents(articleRoot, siteData, path)
+      const articleRoot = article.dom.window.document.body.cloneNode(true)
+      embedComponents(article, articleRoot, siteData, path)
       Array.from(articleRoot.children).forEach(child => target.before(child))
     }
   })
@@ -280,23 +344,21 @@ const embedArticleLists = (node, siteData, path) => {
         if (wrapper) break
       }
 
-      const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setAttrs(articleRoot)
+      const articleRoot = article.dom.window.document.body.cloneNode(true)
 
       if (wrapper) {
-        const wrapperRoot = wrapper.dom.window.document.body.children[0].cloneNode(true)
-        setAttrs(wrapperRoot)
-        embedSlotContents(wrapperRoot, articleRoot)
+        const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+        fillInPlaceHolders(wrapperRoot, articleRoot, article)
 
-        embedComponents(articleRoot, siteData, path)
-        embedLinksToArticles(articleRoot, siteData, path)
+        embedComponents(article, articleRoot, siteData, path)
+        embedLinksToArticles(article, articleRoot, siteData, path)
 
         embedContent(wrapperRoot, articleRoot)
 
         Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
       }
       else {
-        embedComponents(articleRoot, siteData, path)
+        embedComponents(article, articleRoot, siteData, path)
 
         Array.from(articleRoot.childNodes).forEach(child => target.before(child))
       }
@@ -306,7 +368,7 @@ const embedArticleLists = (node, siteData, path) => {
   Array.from(node.querySelectorAll("tg-articles")).forEach(target => target.remove())
 }
 
-const embedLinksToArticles = (node, siteData, path) => {
+const embedLinksToArticles = (template, node, siteData, path) => {
   const targets = node.querySelectorAll("tg-links")
 
   targets.forEach(target => {
@@ -321,12 +383,11 @@ const embedLinksToArticles = (node, siteData, path) => {
     articles.forEach(article => {
       const href = `/articles/${article.path}`.replace(/\/index.html$/, "/")
 
-      const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-      setAttrs(articleRoot)
+      const articleRoot = article.dom.window.document.body.cloneNode(true)
 
       const copy = target.cloneNode(true)
 
-      embedSlotContents(copy, articleRoot)
+      fillInPlaceHolders(copy, articleRoot, article)
 
       Array.from(copy.querySelectorAll("tg-link")).forEach(link => {
         if (`src/articles/${article.path}` === path) {
@@ -359,11 +420,8 @@ const filterArticles = (articles, pattern, tag) => {
     articles.filter(article => {
       if (minimatch(article.path, pattern)) {
         if (tag) {
-          const articleRoot = article.dom.window.document.body.children[0].cloneNode(true)
-          setAttrs(articleRoot)
-
-          if (articleRoot.attrs["tags"]) {
-            return articleRoot.attrs["tags"].split(",").includes(tag)
+          if (article.frontMatter["tags"]) {
+            return article.frontMatter["tags"].split(/, */).includes(tag)
           }
         }
         else {
@@ -381,43 +439,32 @@ const sortArticles = (articles, orderBy) => {
 
   if (md) {
     articles.sort((a, b) => {
-      const c = a.dom.window.document.body.children[0]
-      const d = b.dom.window.document.body.children[0]
+      const i = a.frontMatter["index"]
+      const j = b.frontMatter["index"]
 
-      if (c && d) {
-        setAttrs(c)
-        setAttrs(d)
-        const i = c.attrs["index"]
-        const j = d.attrs["index"]
-
-        if (i) {
-          if (j) {
-            if (i > j) return 1
-            if (i < j) return -1
-            if (a.path > b.path) return 1
-            if (a.path < b.path) return -1
-            return 0
-          }
-          else {
-            return 1
-          }
+      if (i) {
+        if (j) {
+          if (i > j) return 1
+          if (i < j) return -1
+          if (a.path > b.path) return 1
+          if (a.path < b.path) return -1
+          return 0
         }
         else {
-          if (j) return -1
-          else return 1
+          return 1
         }
       }
-      else if (c) {
-        return 1
+      else {
+        if (j) return -1
+        else return 1
       }
-      else return -1
     })
 
     if (md[2] == "desc") articles.reverse()
   }
 }
 
-const renderHTML = (root, siteData, headAttrs, path) => {
+const renderHTML = (template, root, siteData, headAttrs, path) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
 
   processTgLinks(root, siteData, path)
@@ -427,6 +474,63 @@ const renderHTML = (root, siteData, headAttrs, path) => {
 
   if (headAttrs["title"])
     dom.window.document.head.querySelector("title").textContent = headAttrs["title"]
+
+  const link = dom.window.document.head.querySelector("link")
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("meta-")) {
+      const name = key.slice(5)
+      const content = template.frontMatter[key]
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("name", name)
+      meta.setAttribute("content", content)
+      link.before(meta)
+    }
+  })
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("http-equiv-")) {
+      const name = key.slice(11)
+      const content = template.frontMatter[key]
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("http-equiv", name)
+      meta.setAttribute("content", content)
+      link.before(meta)
+    }
+  })
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("property-")) {
+      const name = key.slice(9)
+      const content = template.frontMatter[key]
+
+      const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+        if (Object.hasOwn(template.frontMatter, propName)) {
+          return template.frontMatter[propName]
+        }
+        else {
+          `\${${propName}}`
+        }
+      })
+
+      const meta = dom.window.document.createElement("meta")
+      meta.setAttribute("property", name)
+      meta.setAttribute("content", converted)
+      link.before(meta)
+    }
+  })
+
+  Object.keys(template.frontMatter).forEach(key => {
+    if (key.startsWith("link-")) {
+      const rel = key.slice(5)
+      if (rel == "stylesheet") return
+      const href = template.frontMatter[key]
+      const newLink = dom.window.document.createElement("link")
+      newLink.setAttribute("rel", rel)
+      newLink.setAttribute("href", href)
+      link.before(newLink)
+    }
+  })
 
   return pretty(dom.serialize(), {ocd: true})
 }
@@ -446,8 +550,14 @@ const processTgLinks = (root, siteData, path) => {
 
       if (component) {
         const componentRoot = component.dom.window.document.body.childNodes[0]
-        link.innerHTML = ""
-        Array.from(componentRoot.childNodes).forEach(child => link.appendChild(child))
+
+        if (componentRoot.tagName === "TG-LINK") {
+          link.innerHTML = ""
+          Array.from(componentRoot.childNodes).forEach(child => link.appendChild(child))
+        }
+        else {
+          console.log("Error.")
+        }
       }
     }
 
@@ -474,8 +584,8 @@ const processTgLinks = (root, siteData, path) => {
   Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => link.remove())
 }
 
-const getTitle = element => {
-  if (element.attrs["title"]) return element.attrs["title"]
+const getTitle = (template, element) => {
+  if (template.frontMatter["title"]) return template.frontMatter["title"]
 
   const h1 = element.querySelector("h1")
   if (h1) return h1.textContent

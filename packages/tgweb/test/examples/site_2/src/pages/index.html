@@ -1,10 +1,19 @@
-<tg-template layout="home" title="Home">
-  <div  class="grid grid-cols-1 gap-6 x:grid-cols-2 lg:grid-cols-3">
-    <div class="bg-gray-100 py-2">
-      <h3 class="font-bold text-lg ml-2">Greeting</h3>
-      <div class="flex justify-center">
-        Hello, world!
-      </div>
+---
+layout: home
+title: Home
+class-three-cols:
+- "grid"
+- "grid-cols-1"
+- "gap-6"
+- "md:grid-cols-2"
+- "lg:grid-cols-3"
+class-h3: "font-bold text-lg ml-2"
+---
+<div class="${three-cols}">
+  <div class="bg-gray-100 py-2">
+    <h3 class="${h3}">Greeting</h3>
+    <div class="flex justify-center">
+      Hello, world!
     </div>
   </div>
-</tg-template>
+</div>

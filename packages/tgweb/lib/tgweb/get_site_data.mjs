@@ -1,4 +1,5 @@
 import fs from "fs"
+import YAML from "js-yaml"
 import * as PATH from "path"
 import glob from "glob"
 import { JSDOM } from "jsdom"
@@ -17,12 +18,36 @@ const getSiteData = directory => {
     layouts: [],
     wrappers: [],
     articles: [],
-    components: []
+    components: [],
+    properties: {
+      scheme: "http",
+      host: "localhost",
+      port: 3000
+    }
   }
 
   const htmlPath = PATH.resolve(__dirname, "../../resources/document_template.html")
   const documentTemplate = getDom(htmlPath)
   siteData.documentTemplate = documentTemplate.dom
+
+  const site_yaml_path = PATH.join(directory, "src", "site.yml")
+
+  if (fs.existsSync(site_yaml_path)) {
+    const source = fs.readFileSync(site_yaml_path)
+    mergeProperties(siteData.properties, YAML.load(source))
+    normalizeFrontMatter(siteData.properties)
+  }
+
+  process.chdir(directory + "/src")
+
+  siteData.wrappers =
+    glob.sync("@(pages|articles)/**/_wrapper.html").map(path => {
+      const wrapper = getDom(path)
+      mergeProperties(wrapper.frontMatter, siteData.properties)
+      return wrapper
+    })
+
+  siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
 
   if (fs.existsSync(directory + "/src/components")) {
     process.chdir(directory + "/src/components")
@@ -37,20 +62,50 @@ const getSiteData = directory => {
 
   if (fs.existsSync(directory + "/src/articles")) {
     process.chdir(directory + "/src/articles")
-    siteData.articles = glob.sync("**/!(_wrapper).html").map(getDom)
+
+    siteData.articles =
+      glob.sync("**/!(_wrapper).html").map(path => {
+        const article = getDom(path)
+        setUrlProperty(article.frontMatter, siteData, "articles/" + path)
+
+        const wrapper = getArticleWrapper(article, siteData)
+
+        if (wrapper)
+          mergeProperties(article.frontMatter, wrapper.frontMatter)
+        else
+          mergeProperties(article.frontMatter, siteData.properties)
+
+        expandPaths(article.frontMatter)
+        return article
+      })
+
     siteData.articles.map(article => setDependencies(article, siteData))
   }
 
   if (fs.existsSync(directory + "/src/pages")) {
     process.chdir(directory + "/src/pages")
-    siteData.pages = glob.sync("**/!(_wrapper).html").map(getDom)
+
+    siteData.pages =
+      glob.sync("**/!(_wrapper).html").map(path => {
+        const page = getDom(path)
+        setUrlProperty(page.frontMatter, siteData, path)
+
+        const wrapper = getPageWrapper(page, siteData)
+
+        if (wrapper)
+          mergeProperties(page.frontMatter, wrapper.frontMatter)
+        else
+          mergeProperties(page.frontMatter, siteData.properties)
+
+        expandPaths(page.frontMatter)
+        return page
+      })
+
     siteData.pages.map(page => setDependencies(page, siteData))
   }
 
-  process.chdir(directory + "/src")
-  siteData.wrappers = glob.sync("@(pages|articles)/**/_wrapper.html").map(getDom)
-
-  addWrapperDepdencies(siteData)
+  addPageWrapperDepdencies(siteData)
+  addArticleWrapperDepdencies(siteData)
 
   process.chdir(cwd)
 
@@ -104,10 +159,9 @@ const updateSiteData = (siteData, path) => {
 
 const setDependencies = (object, siteData) => {
   const body = object.dom.window.document.body
-  const componentRefs = body.querySelectorAll("tg-component")
-  const layoutRef = body.querySelector("[layout]")
-
   object.dependencies = []
+
+  const componentRefs = body.querySelectorAll("tg-component")
 
   componentRefs.forEach(ref => {
     setAttrs(ref)
@@ -115,9 +169,9 @@ const setDependencies = (object, siteData) => {
     object.dependencies.push("components/" + componentName)
   })
 
-  if (layoutRef) {
-    setAttrs(layoutRef)
-    const layoutName = layoutRef.attrs["layout"]
+  const layoutName = object.frontMatter["layout"]
+
+  if (layoutName) {
     object.dependencies.push("layouts/" + layoutName)
 
     const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
@@ -125,35 +179,17 @@ const setDependencies = (object, siteData) => {
   }
 }
 
-const addWrapperDepdencies = siteData => {
+const addPageWrapperDepdencies = siteData => {
   const pages =
     siteData.pages.map(page => {
-      const parts = page.path.split(PATH.sep)
-      parts.pop()
+      const wrapper = getPageWrapper(page, siteData)
 
-      for(let i = parts.length; i >= 0; i--) {
-        const dir = parts.slice(i).join(PATH.sep)
-        const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
-        const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+      if (wrapper) {
+        page.dependencies.push(wrapper.path.replace(/\.html$/, ""))
 
-        if (wrapper) {
-          page.dependencies.push(PATH.join("pages", dir, "_wrapper"))
-
-          const wrapperRoot = wrapper.dom.window.document.body.childNodes[0]
-          setAttrs(wrapperRoot)
-          const layoutName = wrapperRoot.attrs["layout"]
-
-          if (layoutName) {
-            const layout = siteData.layouts.find(layout => layout.path === `${layoutName}.html`)
-
-            if (layout) {
-              page.dependencies.push(PATH.join("layouts", layoutName))
-              layout.dependencies.forEach(dep => page.dependencies.push(dep))
-            }
-          }
-
-          break
-        }
+        wrapper.dependencies.forEach(dep => {
+          if (! page.dependencies.includes(dep)) page.dependencies.push(dep)
+        })
       }
 
       return page
@@ -162,11 +198,151 @@ const addWrapperDepdencies = siteData => {
   siteData.pages = pages
 }
 
-const getDom = path => {
-  const html = fs.readFileSync(path)
-  const dom = new JSDOM(html)
+const addArticleWrapperDepdencies = siteData => {
+  const articles =
+    siteData.articles.map(article => {
+      const wrapper = getArticleWrapper(article, siteData)
 
-  return { path, dom }
+      if (wrapper) {
+        article.dependencies.push(wrapper.path.replace(/\.html$/, ""))
+
+        wrapper.dependencies.forEach(dep => {
+          if (! article.dependencies.includes(dep)) article.dependencies.push(dep)
+        })
+      }
+
+      return article
+    })
+
+  siteData.articles = articles
+}
+
+const getPageWrapper = (page, siteData) => {
+  const parts = page.path.split(PATH.sep)
+  parts.pop()
+
+  for(let i = parts.length; i >= 0; i--) {
+    const dir = parts.slice(i).join(PATH.sep)
+    const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
+    const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+    if (wrapper) return wrapper
+  }
+}
+
+const getArticleWrapper = (article, siteData) => {
+  const parts = article.path.split(PATH.sep)
+  parts.pop()
+
+  for(let i = parts.length; i >= 0; i--) {
+    const dir = parts.slice(i).join(PATH.sep)
+    const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
+    const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+    if (wrapper) return wrapper
+  }
+}
+
+const separatorRegex = new RegExp("^---\\n", "m")
+
+const getDom = path => {
+  const source = fs.readFileSync(path)
+  const parts = source.toString().split(separatorRegex)
+
+  if (parts[0] === "" && parts[1] !== undefined) {
+    const frontMatter = YAML.load(parts[1])
+    normalizeFrontMatter(frontMatter)
+    const html = parts.slice(2).join("---\n")
+    const dom = new JSDOM(html)
+
+    return { path, frontMatter, dom }
+  }
+  else {
+    const frontMatter = {}
+    const dom = new JSDOM(source)
+
+    return { path, frontMatter, dom }
+  }
+}
+
+const mergeProperties = (target, source) => {
+  Object.keys(source).forEach(key => {
+    if (!Object.hasOwn(target, key)) target[key] = source[key]
+  })
+}
+
+const normalizeFrontMatter = frontMatter => {
+  Object.keys(frontMatter).forEach(key => {
+    if (key.startsWith("class-")) {
+      const value = frontMatter[key]
+
+      if (Array.isArray(value)) {
+        frontMatter[key] = value.join(" ")
+      }
+    }
+  })
+}
+
+const setUrlProperty = (frontMatter, siteData, path) => {
+  const scheme = siteData.properties["scheme"]
+  const host = siteData.properties["host"]
+  const port = siteData.properties["port"]
+
+  let converted = path
+  if (path === "index.html") converted = ""
+  converted = converted.replace(/\/index.html$/, "/")
+
+  if (scheme === "http") {
+    if (port === 80) {
+      frontMatter.url = `http://${host}/${converted}`
+    }
+    else {
+      frontMatter.url = `http://${host}:${port}/${converted}`
+    }
+  }
+  else if (scheme === "https") {
+    if (port === 443) {
+      frontMatter.url = `https://${host}/${converted}`
+    }
+    else {
+      frontMatter.url = `https://${host}:${port}/${converted}`
+    }
+  }
+}
+
+const expandPaths = frontMatter => {
+  Object.keys(frontMatter).forEach(key => {
+    const value = frontMatter[key]
+
+    if (typeof value === "string") {
+      const converted = value.replaceAll(/%\{([^}]+)\}/g, (_, path) =>
+        getUrlPrefix(frontMatter) + path
+      )
+
+      frontMatter[key] = converted
+    }
+  })
+}
+
+const getUrlPrefix = (frontMatter) => {
+  const scheme = frontMatter["scheme"]
+  const host = frontMatter["host"]
+  const port = frontMatter["port"]
+
+  if (scheme === "http") {
+    if (port === 80) {
+      return `http://${host}`
+    }
+    else {
+      return `http://${host}:${port}`
+    }
+  }
+  else if (scheme === "https") {
+    if (port === 443) {
+      return `https://${host}`
+    }
+    else {
+      return `https://${host}:${port}`
+    }
+  }
 }
 
 export { getSiteData, updateSiteData }
