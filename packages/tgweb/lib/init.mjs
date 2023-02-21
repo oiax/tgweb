@@ -9,14 +9,30 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const run = () => {
-  const targetDirName = process.argv[2]
+const initialize = () => {
+  const sitesDirPath = PATH.resolve(process.cwd(), "./sites")
 
-  if (targetDirName == undefined) {
-    console.log("Usage: npx tgweb-init <site-name>")
+  if (fs.existsSync(sitesDirPath)) {
+    console.log('A directory named "sites" exists.')
+    console.log('It seems that this directory has already been initialized as a multi-site working directory.')
     return
   }
 
+  generateSkeleton(process.cwd())
+
+  console.log(`A website scaffold was created.`)
+}
+
+const initializeSites = () => {
+  const srcDirPath = PATH.resolve(process.cwd(), "./src")
+
+  if (fs.existsSync(srcDirPath)) {
+    console.log('A directory named "src" exists.')
+    console.log('It seems that this directory has already been initialized as a single-site working directory.')
+    return
+  }
+
+  const targetDirName = process.argv[2]
   const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
 
   if (fs.existsSync(targetDirPath)) {
@@ -25,6 +41,13 @@ const run = () => {
   }
 
   fs.mkdirSync(targetDirPath, { recursive: true })
+
+  generateSkeleton(targetDirPath)
+
+  console.log(`A website scaffold was created in the sites/${targetDirName} directory.`)
+}
+
+const generateSkeleton = (targetDirPath) => {
   fs.mkdirSync(`${targetDirPath}/src`)
   fs.mkdirSync(`${targetDirPath}/dist`)
 
@@ -40,8 +63,7 @@ const run = () => {
     const dest = PATH.resolve(targetDirPath, `./${path}`)
     fs.copyFileSync(path, dest)
   })
-
-  console.log(`A site named "${targetDirName}" was created successfully.`)
 }
 
-run()
+if (process.argv.length === 2) initialize()
+else initializeSites()

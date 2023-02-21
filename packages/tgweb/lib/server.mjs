@@ -11,21 +11,25 @@ import { getRouter } from "./server/router.mjs"
 import tgweb from "./tgweb.mjs"
 
 const run = () => {
-  const targetDirName = process.argv[2]
+  console.log({len: process.argv.length})
 
-  if (targetDirName == undefined) {
-    console.log("Usage: npx tgweb-server <site-name>")
-    return
+  if (process.argv.length > 2) {
+    const targetDirName = process.argv[2]
+
+    if (targetDirName == undefined) {
+      console.log("Usage: npx tgweb-server <site-name>")
+      return
+    }
+
+    const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
+
+    if (!fs.existsSync(targetDirPath)) {
+      console.log(`A directory named "sites/${targetDirName}" does not exist.`)
+      return
+    }
+
+    process.chdir(targetDirPath)
   }
-
-  const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
-
-  if (!fs.existsSync(targetDirPath)) {
-    console.log(`A directory named "sites/${targetDirName}" does not exist.`)
-    return
-  }
-
-  process.chdir(targetDirPath)
 
   const app = express()
   const router = getRouter()
