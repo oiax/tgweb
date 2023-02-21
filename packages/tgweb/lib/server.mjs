@@ -11,8 +11,6 @@ import { getRouter } from "./server/router.mjs"
 import tgweb from "./tgweb.mjs"
 
 const run = () => {
-  console.log({len: process.argv.length})
-
   if (process.argv.length > 2) {
     const targetDirName = process.argv[2]
 
