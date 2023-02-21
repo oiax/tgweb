@@ -103,6 +103,18 @@ describe("getSiteData", () => {
     assert.equal(siteData.properties["title"], "No Title")
     assert.equal(siteData.properties["data-current-year"], 2023)
   })
+
+  it("should return the site data with Japanese text", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+
+    const page = siteData.pages.find(page => page.path == "index_ja.html")
+    assert.equal(page.frontMatter["title"], "ホーム")
+
+    const comp = siteData.components.find(comp => comp.path == "world.html")
+
+    assert(comp.dom.window.document.body.outerHTML.includes("世界"))
+  })
 })
 
 describe("updateSiteData", () => {
