@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.1
+
+* d4becae The value of tags attribute may be an array
+
 ## 0.1.0
 
 * 8cd198b tgweb-init: copy `site.yml` from stubs directory

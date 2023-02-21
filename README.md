@@ -1108,11 +1108,24 @@ Then, specify the `order-by` attribute of the `<tg-links>` element.
 
 You may use _tags_ to categorize your articles.
 
-To attach tags to an article, specify their names in the `tags` attribute, separated by commas.
+To attach tags to an article, specify their names in the `tags` attribute as an array
+using `[...]` notation:
 
 ```html
 ---
 tags: [travel, europe]
+---
+<article>
+  ...
+</article>
+```
+
+To attach a single tag to an article, the value of the `tags` attribute may be specified as a
+string:
+
+```html
+---
+tags: anime
 ---
 <article>
   ...
@@ -1332,7 +1345,10 @@ by the following rules:
 The title of the HTML document generated from the template below will be "Greeting":
 
 ```html
-<body title="Greeting">
+---
+title: Greeting
+---
+<body>
   <h1>Welcome!</h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>

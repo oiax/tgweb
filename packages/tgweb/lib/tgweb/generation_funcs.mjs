@@ -420,8 +420,11 @@ const filterArticles = (articles, pattern, tag) => {
     articles.filter(article => {
       if (minimatch(article.path, pattern)) {
         if (tag) {
-          if (article.frontMatter["tags"]) {
-            return article.frontMatter["tags"].split(/, */).includes(tag)
+          if (typeof article.frontMatter["tags"] === "string") {
+            return article.frontMatter["tags"] === tag
+          }
+          else if (Array.isArray(article.frontMatter["tags"])) {
+            return article.frontMatter["tags"].includes(tag)
           }
         }
         else {
