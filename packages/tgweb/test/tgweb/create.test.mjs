@@ -64,4 +64,21 @@ describe("create", () => {
 
     assert.equal(fs.existsSync(wd + "/dist/audios/dummy.mp3"), true)
   })
+
+  it("should render a page with Japanese text", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/pages/index_ja.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/index_ja.html"), true)
+
+    const html = fs.readFileSync(wd + "/dist/index_ja.html")
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    assert.match(body.innerHTML, /世界/)
+  })
 })
