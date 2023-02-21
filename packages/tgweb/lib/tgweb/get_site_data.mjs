@@ -257,7 +257,7 @@ const getDom = path => {
   }
   else {
     const frontMatter = {}
-    const dom = new JSDOM(source)
+    const dom = new JSDOM(source.toString())
 
     return { path, frontMatter, dom }
   }
