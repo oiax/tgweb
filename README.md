@@ -127,15 +127,20 @@ example/
 │   ├── images
 │   ├── layouts
 │   ├── pages
-│   └── tags
+│   ├── tags
+│   └── site.yml
 ├── tailwind.config.js
 └── tailwind.css
 ```
 
 Please note the following:
 
-* **tgweb** scans the contents of the `src` directory, generates HTML files, CSS files, etc., and
-  writes them into the `dist` directory.
+* **tgweb** scans the contents of the `src` directory, generates HTML files and writes them into
+  the `dist` directory.
+* **tgweb** scans the contents of the `src` directory, copies image and audio files to the `dist`
+  directory.
+* Tailwind CSS scans the HTML files of the `dist` directory, generates a CSS file `tailwind.css`
+  on the `dist/css` directory.
 * It makes no sense for the user to rewrite the contents of the `dist` directory.
 * Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
 * Users are not allowed to add their own CSS files to the website.

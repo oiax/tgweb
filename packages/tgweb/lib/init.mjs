@@ -10,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const run = () => {
-  const src = PATH.resolve(__dirname, "../stubs")
   const targetDirName = process.argv[2]
 
   if (targetDirName == undefined) {
@@ -34,9 +33,11 @@ const run = () => {
 
   subdirectories.forEach(subdir => fs.mkdirSync(`${targetDirPath}/src/${subdir}`))
 
-  glob.sync(`${src}/*`).map(path => {
-    const filename = PATH.basename(path)
-    const dest = PATH.resolve(targetDirPath, `./${filename}`)
+  const stubsDir = PATH.resolve(__dirname, "../stubs")
+  process.chdir(stubsDir)
+
+  glob.sync("**/*.*").map(path => {
+    const dest = PATH.resolve(targetDirPath, `./${path}`)
     fs.copyFileSync(path, dest)
   })
 
