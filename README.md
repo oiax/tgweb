@@ -31,25 +31,33 @@
 
 ### Installation
 
-Install with npm:
+The first thing to do is create a _working directory_ for **tgweb**. Its location can be anywhere.
+As an example, let's say you create a subdirectory called `my_site` under your home directory
+and choose that as your working directory:
+
+```
+mkdir -p ~/my_site
+```
+
+Then go in and install **tgweb** with `npm`:
 
 ```bash
+cd my_site
 npm install tgweb
 ```
 
-### Create a site
+In your working directory you will have a directory named `node_modules`, where you will find
+**tgweb** and its dependencies installed.
 
-To create a website named `example`, run the following command:
+### Initialization
+
+To begin creating a website using **tgweb**, run the following command in your working directory:
 
 ```bash
-npx tgweb-init example
+npx tgweb-init
 ```
 
-This command creates `example` directory in the `sites` directory.
-
-Henceforth we will refer to this directory as the _working directory_.
-
-In addition, this command creates `src` and `dist` directory under the woking directory.
+This command creates two subdirectories, `src` and `dist`, and several files.
 
 ### Add content
 
@@ -70,7 +78,7 @@ Note that the `body` element should not be surrounded by `<html>` and `</html>`.
 To start the tgweb server, run the following command:
 
 ```bash
-npx tgweb-server example
+npx tgweb-server
 ```
 
 Then, open `http://localhost:3000` with your browser.
@@ -114,12 +122,13 @@ Presse `Ctrl + C` to stop the tgweb server.
 
 ## Directory Structure
 
-Running `npx tgweb-init example` from the command line creates a directory structure with the
+Running `npx tgweb-init` from the command line creates a directory structure with the
 following elements:
 
 ```plain
-example/
+.
 ├── dist
+├── node_modules
 ├── src
 │   ├── articles
 │   ├── audios
@@ -129,6 +138,8 @@ example/
 │   ├── pages
 │   ├── tags
 │   └── site.yml
+├── package-lock.json
+├── package.json
 ├── tailwind.config.js
 └── tailwind.css
 ```
@@ -145,6 +156,84 @@ Please note the following:
 * Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
 * Users are not allowed to add their own CSS files to the website.
 * Users are not allowed to add their own javascript files to the website.
+
+## Managing multiple websites
+
+### Installation and initialization
+
+In the [Getting Started](#getting-started) section, we installed **tgweb** in a working directory
+and built a single website there.
+However, it is possible to manage multiple websites under a working directory.
+
+As an example, let's assume the `web` directory under the home directory is the working directory.
+We will proceed in the same order as when building a single website up to the point where we install tgweb with npm.
+
+The procedure is the same as when building a single website, up to the point where **tgweb** is
+installed with `npm`:
+
+```bash
+mkdir ~/web
+cd web
+npm install tgweb
+```
+
+Now choose a subdirectory name for the first website you will create in this working directory.
+Let's call it `site_0` as an example. Then run the following command:
+
+```bash
+npx tgweb-init site_0
+```
+
+This command creates a `sites` subdirectory, and then a `site_0` subdirectory under that. It then
+creates two subdirectories, `src` and `dist`, and some files under the `site_0` subdirectory.
+
+### Add content and start the tgweb server
+
+Just as you did in the Getting Started section, create a file named `index.html` under the
+`sites/site_0/src/pages` subdirectory.
+
+Then, you can start the tgweb server by executing the following command:
+
+```bash
+npx tgweb-server site_0
+```
+
+Thus, by specifying a subdirectory namea as the argument to the `npx tgweb-init` and
+`npx tgweb-server` commands, multiple websites can be managed under a single working directory.
+
+If this approach is adopted, the structure of the working directory will look like this:
+
+```
+.
+├── node_modules
+├── package-lock.json
+├── package.json
+└── sites
+    ├── site_0
+    │   ├── dist
+    │   ├── src
+    │   │   ├── articles
+    │   │   ├── audios
+    │   │   ├── components
+    │   │   ├── images
+    │   │   ├── layouts
+    │   │   ├── pages
+    │   │   └── tags
+    │   ├── tailwind.config.js
+    │   └── tailwind.css
+    └── site_1
+        ├── dist
+        ├── src
+        │   ├── articles
+        │   ├── audios
+        │   ├── components
+        │   ├── images
+        │   ├── layouts
+        │   ├── pages
+        │   └── tags
+        ├── tailwind.config.js
+        └── tailwind.css
+```
 
 ## Pages
 
