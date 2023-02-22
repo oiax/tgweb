@@ -155,17 +155,17 @@ describe("generateHTML", () => {
       '<nav>',
       '  <ul>',
       '    <li>',
+      '      <a href="/articles/blog/d.html">X</a>',
+      '      (<span>2023-01-03</span>)',
+      '      <span>New</span>',
+      '    </li>',
+      '    <li>',
       '      <a href="/articles/blog/a.html">Y</a>',
       '      (<span>2022-12-31</span>)',
       '    </li>',
       '    <li>',
       '      <a href="/articles/blog/c.html">Z</a>',
       '      (<span>2023-01-02</span>)',
-      '    </li>',
-      '    <li>',
-      '      <a href="/articles/blog/d.html">X</a>',
-      '      (<span>2023-01-03</span>)',
-      '      <span>New</span>',
       '    </li>',
       '  </ul>',
       '</nav>'
@@ -265,13 +265,29 @@ describe("generateHTML", () => {
     const body = dom.window.document.body
     const list = body.querySelector("nav > ul")
 
-    assert.equal(list.children.length, 3)
+    const lines = pretty(list.outerHTML, {ocd: true}).split("\n")
 
-    const link0 = list.children[0].children[0]
+    const expected = [
+      '<ul>',
+      '  <li>',
+      '    <a href="/articles/blog/d.html">X</a>',
+      '    (<span>2023-01-03</span>)',
+      '    <span>New</span>',
+      '  </li>',
+      '  <li>',
+      '    <a href="/articles/blog/a.html">Y</a>',
+      '    (<span>2022-12-31</span>)',
+      '  </li>',
+      '  <li>',
+      '    <a href="/articles/blog/c.html">Z</a>',
+      '    (<span>2023-01-02</span>)',
+      '  </li>',
+      '</ul>'
+    ]
 
-    assert.equal(link0.href, "/articles/blog/a.html")
-    assert.equal(link0.textContent, "Y")
-    assert.equal(link0.attributes.getNamedItem("tg-text"), null)
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
   })
 
   it("should generate a single link", () => {

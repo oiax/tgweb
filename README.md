@@ -1128,7 +1128,31 @@ The above example embeds all articles in the `src/articles/proposals` directory 
 `<h1>` element.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles in any order, set the `index` property to an integer value for each article:
+
+### Sorting articles by their title
+
+To sort articles in by their title, set the `order-by` attribute of the `<tg-articles>` element
+to `"title:asc"` or `"title:desc"`:
+
+```html
+---
+layout: home
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg-articles pattern="/proposals/*" order-by="title:asc"></tg-articles>
+</main>
+```
+
+The value of the `order-by` attribute is a string separated by a single colon.
+The left side of the colon must be `"title"` or `"index"`.
+The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
+and `"desc"` means "descending order".
+
+### Sorting articles in an arbitrary order
+
+To sort articles in an arbitrary order, set the `index` property to an integer value for each
+article:
 
 ```html
 ---
@@ -1139,7 +1163,8 @@ index: 123
 </article>
 ```
 
-Then, specify the `order-by` attribute of the `<tg-articles>` element.
+Then, set the `order-by` attribute of the `<tg-articles>` element to `"index:asc"` or
+`"index:desc"`:
 
 ```html
 ---
@@ -1151,18 +1176,12 @@ layout: home
 </main>
 ```
 
-The value of the `order-by` attribute is a string separated by a single colon.
-In the current specification, the left side of the colon is always `"index"`.
-The right side of the colon is always `"asc"` or `"desc"`, where `"asc"` means "ascending order"
-and `"desc"` means "descending order".
-
-TODO: Allow `"title"` as the left side value.
-
-TODO: Add `tg-limit` and `tg-offset` attributes.
+Articles without the `index` property are ordered by file name after those with the `index`
+property.
 
 ### Generating a link list to articles
 
-The `tg-links` attribute can be used to embed links to articles in any template
+The `<tg-links>` element can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
@@ -1188,10 +1207,10 @@ layout: home
 </main>
 ```
 
-The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
+The `<tg-links>` element contains one or more `<a>` elements and
 zero or more `<tg-prop>`, `<tg-data>` and `<tg-slot>` elements.
 
-The `href` attribute of the `<a>` element is replaced by the URL of the article.
+The values of `href` attribute of `<a>` are replaced by the URL of the article.
 The `<tg-prop>` and `<tg-data>` elements are replaced by the value of a property of the article
 to be embedded.
 The `<tg-slot>` elements are replaced by the content of a `<tg-insert>` element defined in the

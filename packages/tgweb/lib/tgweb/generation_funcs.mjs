@@ -437,10 +437,24 @@ const filterArticles = (articles, pattern, tag) => {
 }
 
 const sortArticles = (articles, orderBy) => {
-  const re = /^(index):(asc|desc)$/
+  const re = /^(title|index):(asc|desc)$/
   const md = re.exec(orderBy)
+  const criteria = md[1]
+  const direction = md[2]
 
-  if (md) {
+  if (criteria === undefined) return
+
+  if (criteria === "title") {
+    articles.sort((a, b) => {
+      const titleA = getTitle(a, a.dom.window.document.body)
+      const titleB = getTitle(b, b.dom.window.document.body)
+
+      if (titleA > titleB) return 1
+      if (titleA < titleB) return -1
+      return 0
+    })
+  }
+  else if (criteria === "index") {
     articles.sort((a, b) => {
       const i = a.frontMatter["index"]
       const j = b.frontMatter["index"]
@@ -462,9 +476,9 @@ const sortArticles = (articles, orderBy) => {
         else return 1
       }
     })
-
-    if (md[2] == "desc") articles.reverse()
   }
+
+  if (direction === "desc") articles.reverse()
 }
 
 const renderHTML = (template, root, siteData, headAttrs, path) => {
