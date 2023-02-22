@@ -118,40 +118,35 @@ const updateSiteData = (siteData, path) => {
   if (type == "component") {
     siteData.components.forEach(component => {
       if ("src/components/" + component.path == path) {
-        const html = fs.readFileSync(path)
-        component.dom = new JSDOM(html.toString())
+        updateTemplate(component, path)
       }
     })
   }
   else if (type == "layout") {
     siteData.layouts.forEach(layout => {
       if ("src/layouts/" + layout.path == path) {
-        const html = fs.readFileSync(path)
-        layout.dom = new JSDOM(html.toString())
+        updateTemplate(layout, path)
       }
     })
   }
   else if (type == "article") {
     siteData.articles.forEach(article => {
       if ("src/articles/" + article.path == path) {
-        const html = fs.readFileSync(path)
-        article.dom = new JSDOM(html.toString())
+        updateTemplate(article, path)
       }
     })
   }
   else if (type == "page") {
     siteData.pages.forEach(page => {
       if ("src/pages/" + page.path == path) {
-        const html = fs.readFileSync(path)
-        page.dom = new JSDOM(html.toString())
+        updateTemplate(page, path)
       }
     })
   }
   else if (type == "wrapper") {
     siteData.wrappers.forEach(wrapper => {
       if ("src/" + wrapper.path == path) {
-        const html = fs.readFileSync(path)
-        wrapper.dom = new JSDOM(html.toString())
+        updateTemplate(wrapper, path)
       }
     })
   }
@@ -261,6 +256,12 @@ const getTemplate = path => {
 
     return { path, frontMatter, dom }
   }
+}
+
+const updateTemplate = (template, path) => {
+  const newTemplate = getTemplate(path)
+  template.frontMatter = newTemplate.frontMatter
+  template.dom = newTemplate.dom
 }
 
 const mergeProperties = (target, source) => {
