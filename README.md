@@ -5,6 +5,7 @@
 * [Requirements](#requirements)
 * [Getting Started](#getting-started)
 * [Directory Structure](#directory-structure)
+* [Managing multiple websites](#managing-multiple-websites)
 * [Pages](#pages)
 * [Front Matter](#front-matter)
 * [Images](#images)
@@ -161,14 +162,15 @@ Please note the following:
 
 ### Installation and initialization
 
-In the [Getting Started](#getting-started) section, we installed **tgweb** in a working directory
+In the [Getting Started](#getting-started) section, we installed tgweb in a working directory
 and built a single website there.
 However, it is possible to manage multiple websites under a working directory.
 
 As an example, let's assume the `web` directory under the home directory is the working directory.
-We will proceed in the same order as when building a single website up to the point where we install tgweb with npm.
+We will proceed in the same order as when building a single website up to the point where we
+install tgweb with npm.
 
-The procedure is the same as when building a single website, up to the point where **tgweb** is
+The procedure is the same as when building a single website, up to the point where tgweb is
 installed with `npm`:
 
 ```bash
@@ -187,10 +189,14 @@ npx tgweb-init site_0
 This command creates a `sites` subdirectory, and then a `site_0` subdirectory under that. It then
 creates two subdirectories, `src` and `dist`, and some files under the `site_0` subdirectory.
 
+When a working directory has the `sites` subdirectory, we say that it has a
+_multi-site composition_. Conversely, when a working directory does not have the `sites`
+subdirectory, we say that the it has a _single-site composition_.
+
 ### Add content and start the tgweb server
 
-Just as you did in the Getting Started section, create a file named `index.html` under the
-`sites/site_0/src/pages` subdirectory.
+Just as described in the [Add content](#add-content) subsection, create a file named
+`index.html` under the `sites/site_0/src/pages` subdirectory.
 
 Then, you can start the tgweb server by executing the following command:
 
@@ -198,7 +204,7 @@ Then, you can start the tgweb server by executing the following command:
 npx tgweb-server site_0
 ```
 
-Thus, by specifying a subdirectory namea as the argument to the `npx tgweb-init` and
+Thus, by specifying a subdirectory name as the argument to the `npx tgweb-init` and
 `npx tgweb-server` commands, multiple websites can be managed under a single working directory.
 
 If this approach is adopted, the structure of the working directory will look like this:
@@ -234,6 +240,29 @@ If this approach is adopted, the structure of the working directory will look li
         ├── tailwind.config.js
         └── tailwind.css
 ```
+
+### Changing the working directory composition
+
+Switching to a multi-site composition
+
+To make a working directory that has a single-site composition to have a multi-site one,
+execute the following commands replacing `site_0` with any subdirectory name:
+
+```bash
+mkdir -p sites/site_0
+mv dist src tailwind.* sites/site_0
+```
+
+Conversely, to make a working directory that has a multi-site composition to have a single-site
+one, execute the following commands:
+
+```bash
+mv sites/site_0/* .
+rm -rf sites
+```
+
+Note that if there are multiple subdirectories in the `sites` directory, this operation will
+delete all subdirectories except for `site_0`.
 
 ## Pages
 
