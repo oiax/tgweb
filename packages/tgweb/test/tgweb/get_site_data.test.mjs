@@ -118,24 +118,33 @@ describe("getSiteData", () => {
 })
 
 describe("updateSiteData", () => {
-  it("should update a wrapper of the site data", () => {
+  it("should update the site date of a wrapper", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
-    process.chdir(wd)
-
-    siteData.wrappers = siteData.wrappers.map(w => {
-      if (w.path === "pages/_wrapper.html") {
-        w.dom = undefined
-      }
-
-      return w
-    })
+    process.chdir(wd + "a")
 
     updateSiteData(siteData, "src/pages/_wrapper.html")
 
     const wrapper = siteData.wrappers.find(w => w.path === "pages/_wrapper.html")
     assert(wrapper)
     assert(wrapper.dom)
+
+    assert.equal(wrapper.frontMatter["class-div1"], "bg-blue-100 py-2")
+  })
+
+  it("should update the site date of a component", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    process.chdir(wd + "a")
+
+    updateSiteData(siteData, "src/components/hello.html")
+
+    const component = siteData.components.find(c => c.path === "hello.html")
+    assert(component)
+    assert(component.dom)
+
+    assert.equal(component.frontMatter["class-div1"], "bg-blue-100 p-2")
   })
 })
