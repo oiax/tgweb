@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.1.5
+
+* 8bbb90a Fix updateSiteData/2: process front matters
+* 4422628 Update all pages and articles when site.yml gets updated
+
 ## 0.1.4
 
 * 9b61878 Fix updateSiteData/2: convert Buffers to strings
