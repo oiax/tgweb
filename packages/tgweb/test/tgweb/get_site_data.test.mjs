@@ -119,11 +119,10 @@ describe("getSiteData", () => {
 
 describe("updateSiteData", () => {
   it("should update the site date of a wrapper", () => {
-    const wd1 = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd1)
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
 
-    const wd2 = PATH.resolve(__dirname, "../examples/site_1a")
-    process.chdir(wd2)
+    process.chdir(wd + "a")
 
     updateSiteData(siteData, "src/pages/_wrapper.html")
 
@@ -135,11 +134,10 @@ describe("updateSiteData", () => {
   })
 
   it("should update the site date of a component", () => {
-    const wd1 = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd1)
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
 
-    const wd2 = PATH.resolve(__dirname, "../examples/site_1a")
-    process.chdir(wd2)
+    process.chdir(wd + "a")
 
     updateSiteData(siteData, "src/components/hello.html")
 

@@ -12,6 +12,10 @@ const update = (path, siteData) => {
   if (type === "page" || type === "article") {
     updateHTML(path, siteData)
   }
+  else if (type == "site.yml") {
+    siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
+    siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+  }
   else {
     const name = path.replace(/^src\//, "").replace(/\.html$/, "")
 

@@ -11,6 +11,7 @@ const getType = path => {
   else if (dirname.startsWith("src/articles/")) return "article"
   else if (dirname === "src/pages") return "page"
   else if (dirname.startsWith("src/pages/")) return "page"
+  else if (filename === "site.yml") return "site.yml"
   else return "unkown"
 }
 

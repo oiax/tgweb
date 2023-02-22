@@ -27,7 +27,7 @@ describe("update", () => {
   it("should regenerate a page dependent on a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     process.chdir(wd)
-    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
     update("src/pages/index.html", siteData)
     process.chdir(wd + "a")
@@ -44,7 +44,7 @@ describe("update", () => {
   it("should regenerate a page dependent on a component", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     process.chdir(wd)
-    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
     update("src/pages/index.html", siteData)
     process.chdir(wd + "a")
@@ -61,7 +61,7 @@ describe("update", () => {
   it("should regenerate an article dependent on a component", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     process.chdir(wd)
-    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
     create("src/articles/culture.html", siteData)
 
@@ -76,5 +76,21 @@ describe("update", () => {
 
     assert.match(html.toString(), /\bCulture\b/)
     assert.match(html.toString(), /\bgreat\b/)
+  })
+
+  it("should regenerate all pages and articles", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    create("src/pages/index.html", siteData)
+    create("src/articles/culture.html", siteData)
+
+    process.chdir(wd + "a")
+
+    update("src/site.yml", siteData)
+
+    assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
+    assert.equal(fs.existsSync(wd + "a/dist/articles/culture.html"), true)
   })
 })
