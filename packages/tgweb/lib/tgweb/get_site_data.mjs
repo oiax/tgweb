@@ -27,7 +27,7 @@ const getSiteData = directory => {
   }
 
   const htmlPath = PATH.resolve(__dirname, "../../resources/document_template.html")
-  const documentTemplate = getDom(htmlPath)
+  const documentTemplate = getTemplate(htmlPath)
   siteData.documentTemplate = documentTemplate.dom
 
   const site_yaml_path = PATH.join(directory, "src", "site.yml")
@@ -42,7 +42,7 @@ const getSiteData = directory => {
 
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => {
-      const wrapper = getDom(path)
+      const wrapper = getTemplate(path)
       mergeProperties(wrapper.frontMatter, siteData.properties)
       return wrapper
     })
@@ -51,12 +51,12 @@ const getSiteData = directory => {
 
   if (fs.existsSync(directory + "/src/components")) {
     process.chdir(directory + "/src/components")
-    siteData.components = glob.sync("*.html").map(getDom)
+    siteData.components = glob.sync("*.html").map(getTemplate)
   }
 
   if (fs.existsSync(directory + "/src/layouts")) {
     process.chdir(directory + "/src/layouts")
-    siteData.layouts = glob.sync("*.html").map(getDom)
+    siteData.layouts = glob.sync("*.html").map(getTemplate)
     siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
@@ -65,7 +65,7 @@ const getSiteData = directory => {
 
     siteData.articles =
       glob.sync("**/!(_wrapper).html").map(path => {
-        const article = getDom(path)
+        const article = getTemplate(path)
         setUrlProperty(article.frontMatter, siteData, "articles/" + path)
 
         const wrapper = getArticleWrapper(article, siteData)
@@ -87,7 +87,7 @@ const getSiteData = directory => {
 
     siteData.pages =
       glob.sync("**/!(_wrapper).html").map(path => {
-        const page = getDom(path)
+        const page = getTemplate(path)
         setUrlProperty(page.frontMatter, siteData, path)
 
         const wrapper = getPageWrapper(page, siteData)
@@ -243,7 +243,7 @@ const getArticleWrapper = (article, siteData) => {
 
 const separatorRegex = new RegExp("^---\\n", "m")
 
-const getDom = path => {
+const getTemplate = path => {
   const source = fs.readFileSync(path)
   const parts = source.toString().split(separatorRegex)
 
