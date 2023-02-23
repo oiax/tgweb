@@ -155,16 +155,17 @@ describe("generateHTML", () => {
       '<nav>',
       '  <ul>',
       '    <li>',
-      '      <a href="/articles/blog/a.html">A</a>',
+      '      <a href="/articles/blog/a.html">Y</a>',
       '      (<span>2022-12-31</span>)',
       '    </li>',
       '    <li>',
-      '      <a href="/articles/blog/c.html">C</a>',
+      '      <a href="/articles/blog/c.html">Z</a>',
       '      (<span>2023-01-02</span>)',
       '    </li>',
       '    <li>',
-      '      <a href="/articles/blog/d.html">D</a>',
+      '      <a href="/articles/blog/d.html">X</a>',
       '      (<span>2023-01-03</span>)',
+      '      <span>New</span>',
       '    </li>',
       '  </ul>',
       '</nav>'
@@ -269,7 +270,7 @@ describe("generateHTML", () => {
     const link0 = list.children[0].children[0]
 
     assert.equal(link0.href, "/articles/blog/a.html")
-    assert.equal(link0.textContent, "A")
+    assert.equal(link0.textContent, "Y")
     assert.equal(link0.attributes.getNamedItem("tg-text"), null)
   })
 

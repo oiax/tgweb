@@ -1175,7 +1175,7 @@ layout: home
     <tg-links pattern="/proposals/*">
       <li>
         <a href="#">
-          <tg-slot name="title"></tg-slot>
+          <tg-prop name="title"></tg-prop>
           <tg-if-complete>
             <span class="text-sm">
               (<tg-slot name="date"></tg-slot>)
@@ -1189,18 +1189,36 @@ layout: home
 ```
 
 The content of an element with the `tg-links` attribute contains one or more `<a>` elements and
-zero or more `<tg-slot>` elements.
+zero or more `<tg-prop>`, `<tg-data>` and `<tg-slot>` elements.
 
-The `href` attribute of the `<a>` element is replaced by the URL of the article, and the
-`<tg-slot>` element is replaced by the content defined by the `tg-slot` attribute in the article.
+The `href` attribute of the `<a>` element is replaced by the URL of the article.
+The `<tg-prop>` and `<tg-data>` elements are replaced by the value of a property of the article
+to be embedded.
+The `<tg-slot>` elements are replaced by the content of a `<tg-insert>` element defined in the
+article to be embedded.
 
 Inside the `<tg-links>` element, `<tg-if-complete>` elements work the same way
 as inside components.
 That is, a `<tg-if-complete>` element will be removed from the output
-unless content is provided for all `tg-slot` elements within it.
+unless a value or content is provided for all `<tg-prop>`, `<tg-data>`, and `<tg-slot>` elements
+within it.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles in any order, add a `tg-index` attribute to each article:
+To sort articles by their title, set  the `order-by` attribute of the `<tg-links>` element to
+`"title:asc"` or `"title:desc"`:
+
+```html
+    <tg-links pattern="/proposals/*" order-by="title:asc">
+      <li>
+        ...
+      </li>
+    </tg-links>
+```
+
+See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
+to be set in the `order-by` attribute.
+
+To sort articles in an arbitrary order, add a `tg-index` attribute to each article:
 
 ```html
 ---
@@ -1221,6 +1239,11 @@ Then, specify the `order-by` attribute of the `<tg-links>` element.
       </li>
     </tg-links>
 ```
+
+Note that the current specification does not allow a `<tg-component>` element to be placed within
+a `<tg-links>` element.
+
+TODO: allow this.
 
 ### Filtering articles by tags
 

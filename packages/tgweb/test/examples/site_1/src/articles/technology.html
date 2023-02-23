@@ -7,8 +7,11 @@ layout: home
     <ul>
       <tg-links pattern="blog/*" filter="tag:technology">
         <li>
-          <a href="#"><tg-slot name="title"></tg-slot></a>
+          <a href="#"><tg-prop name="title"></tg-prop></a>
           (<span><tg-data name="date"></tg-data></span>)
+          <tg-if-complete>
+            <tg-slot name="extra"></tg-slot>
+          </tg-if-complete>
         </li>
       </tg-links>
     </ul>

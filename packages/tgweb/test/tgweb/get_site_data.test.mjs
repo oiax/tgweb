@@ -56,7 +56,7 @@ describe("getSiteData", () => {
     const article = siteData.articles.find(article => article.path == "blog/a.html")
 
     assert.equal(article.frontMatter["layout"], "blog_article")
-    assert.equal(article.frontMatter["title"], "A")
+    assert.equal(article.frontMatter["title"], "Y")
     assert.equal(article.frontMatter["data-current-year"], 2023)
     assert.equal(article.frontMatter["property-og:image"],
       "http://localhost:3000/images/red_square.png")
