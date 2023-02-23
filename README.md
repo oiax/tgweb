@@ -19,6 +19,7 @@
 * [Tailwind CSS](#tailwind-css)
 * [Alpine.js](#alpinejs)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [Links](#links)
 * [License](#license)
 
 ## Directory structure
@@ -1261,8 +1262,6 @@ Then, specify the `order-by` attribute of the `<tg-links>` element.
 Note that the current specification does not allow a `<tg-component>` element to be placed within
 a `<tg-links>` element.
 
-TODO: allow this.
-
 ### Filtering articles by tags
 
 You may use _tags_ to categorize your articles.
@@ -1328,10 +1327,6 @@ layout: home
 ```
 
 Note that you cannot assign tags to a page.
-
-### Generating tag pages
-
-TODO: Implement this functionality.
 
 ## Links
 
@@ -1679,6 +1674,10 @@ The `<script>` elements are managed by tgweb. Users are not allowed to insert th
 `<script>` elements into the `<head>` or `<body>` elements.
 
 Users can use [Alpine.js](https://alpinejs.dev/) to dynamically change HTML documents.
+
+## Links
+
+* [TODO List](./TODO.md)
 
 ## License
 
