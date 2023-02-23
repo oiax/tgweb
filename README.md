@@ -16,8 +16,6 @@
 * [Articles](#articles)
 * [Tags](#tags)
 * [Links](#links)
-* [Tailwind CSS](#tailwind-css)
-* [Alpine.js](#alpinejs)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -1474,10 +1472,6 @@ The `<tg-link>` elements can be placed within the `<tg-links`> element:
 In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
 You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
 
-## Tailwind CSS
-
-## Alpine.js
-
 ## Managing the Contents of the `<head>` Element
 
 ### `<title>` element
@@ -1672,8 +1666,6 @@ A `<link>` element that refers to another stylesheet cannot be inserted within t
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
-
-Users can use [Alpine.js](https://alpinejs.dev/) to dynamically change HTML documents.
 
 ## TODO List
 
