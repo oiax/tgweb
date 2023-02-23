@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.6
+
+* 2fb77c5 Allow sorting articles by their title
+
 ## 0.1.5
 
 * 8bbb90a Fix updateSiteData/2: process front matters
