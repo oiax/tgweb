@@ -19,7 +19,7 @@
 * [Tailwind CSS](#tailwind-css)
 * [Alpine.js](#alpinejs)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
-* [Links](#links)
+* [TODO List](#todo-list)
 * [License](#license)
 
 ## Directory structure
@@ -1675,9 +1675,9 @@ The `<script>` elements are managed by tgweb. Users are not allowed to insert th
 
 Users can use [Alpine.js](https://alpinejs.dev/) to dynamically change HTML documents.
 
-## Links
+## TODO List
 
-* [TODO List](./TODO.md)
+See [TODO.md](./TODO.md).
 
 ## License
 
