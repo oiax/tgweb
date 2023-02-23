@@ -322,10 +322,9 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 When a template begins with a line that consists only of `---` and there is another such line in
 the template, the area enclosed by these two lines is called the _front matter block_.
-In this area you can set
 
 In this area you can give values to a set of properties.
-This combination of properties and values is called _front matter_.
+This set of property/value pairs is called _front matter_.
 
 Each line of the front matter block contains the name and value of a property, separated by a
 colon and space ("`: `").
