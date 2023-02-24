@@ -118,6 +118,21 @@ describe("getSiteData", () => {
 })
 
 describe("updateSiteData", () => {
+  it("should update the site date of an article", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    process.chdir(wd + "a")
+
+    updateSiteData(siteData, "src/articles/culture.html")
+
+    const article = siteData.articles.find(a => a.path === "culture.html")
+    assert(article)
+    assert(article.dom)
+
+    assert.equal(article.frontMatter["class-div1"], "bg-red-100 py-2")
+  })
+
   it("should update the site date of a wrapper", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
