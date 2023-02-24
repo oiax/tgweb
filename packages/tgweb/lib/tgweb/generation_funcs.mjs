@@ -25,46 +25,23 @@ generationFuncs["page"] = (path, siteData) => {
     setAttrs(pageRoot)
     expandClassAliases(page.frontMatter, pageRoot)
 
-    const dirname = PATH.dirname(relPath)
-    const dirParts = dirname.split(PATH.sep)
+    embedComponents(page, pageRoot, siteData, path)
+    embedArticles(pageRoot, siteData, path)
+    embedArticleLists(pageRoot, siteData, path)
+    embedLinksToArticles(page, pageRoot, siteData, path)
 
-    let wrapper = undefined
-
-    for(let i = dirParts.length; i > 0; i--) {
-      const dir = dirParts.slice(0, i).join(PATH.sep)
-      const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
-      wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-      if (wrapper) break
-    }
-
-    let layoutRoot
+    const wrapper = getWrapper(siteData, "pages/" + page.path)
 
     if (wrapper) {
-      const frontMatter = makeLocalFrontMatter(page, wrapper)
-      const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
-      expandClassAliases(frontMatter, wrapperRoot)
-      fillInPlaceHolders(wrapperRoot, pageRoot, page)
-      embedComponents(page, pageRoot, siteData, path)
-      embedArticles(pageRoot, siteData, path)
-      embedArticleLists(pageRoot, siteData, path)
-      embedLinksToArticles(page, pageRoot, siteData, path)
-      embedContent(wrapperRoot, pageRoot)
-
+      const wrapperRoot = applyWrapper(page, pageRoot, wrapper)
       const headAttrs = { title: getTitle(page, wrapperRoot) }
-
-      layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
+      const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
       if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
       else console.log("Error")
     }
     else if (page.frontMatter["layout"]) {
       const headAttrs = { title: getTitle(page, pageRoot) }
-
-      embedComponents(page, pageRoot, siteData, path)
-      embedArticles(pageRoot, siteData, path)
-      embedArticleLists(pageRoot, siteData, path)
-      embedLinksToArticles(page, pageRoot, siteData, path)
-
-      layoutRoot = applyLayout(page, pageRoot, siteData, path)
+      const layoutRoot = applyLayout(page, pageRoot, siteData, path)
       if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)
       else return renderHTML(page, pageRoot, siteData, headAttrs, path)
     }
@@ -73,11 +50,6 @@ generationFuncs["page"] = (path, siteData) => {
       setAttrs(body)
 
       const headAttrs = { title: getTitle(page, body) }
-
-      embedComponents(page, body, siteData, path)
-      embedArticles(body, siteData, path)
-      embedArticleLists(body, siteData, path)
-      embedLinksToArticles(page, body, siteData, path)
 
       const layoutRoot = applyLayout(page, body, siteData, path)
       if (layoutRoot) return renderHTML(page, body, siteData, headAttrs, path)
@@ -102,38 +74,20 @@ generationFuncs["article"] = (path, siteData) => {
 }
 
 const renderArticle = (article, articleRoot, siteData, path) => {
-  const relPath = path.replace(/^src\/articles\//, "")
-  const dirname = PATH.dirname(relPath)
-  const dirParts = dirname.split(PATH.sep)
+  embedComponents(article, articleRoot, siteData, path)
+  embedLinksToArticles(article, articleRoot, siteData, path)
 
-  let wrapper = undefined
-
-  for(let i = dirParts.length; i > 0; i--) {
-    const dir = dirParts.slice(0, i).join(PATH.sep)
-    const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
-    wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-    if (wrapper) break
-  }
+  const wrapper = getWrapper(siteData, "articles/" + article.path)
 
   if (wrapper) {
-    embedComponents(article, articleRoot, siteData, path)
-    embedLinksToArticles(article, articleRoot, siteData, path)
-
-    const frontMatter = makeLocalFrontMatter(article, wrapper)
-    const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
-    expandClassAliases(frontMatter, wrapperRoot)
-    embedContent(wrapperRoot, articleRoot)
-    fillInPlaceHolders(wrapperRoot, articleRoot, article)
-
+    const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
     const headAttrs = { title: getTitle(article, wrapperRoot) }
-
     const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
     if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
   else {
     const headAttrs = { title: getTitle(article, articleRoot) }
-    embedLinksToArticles(article, articleRoot, siteData, path)
     const layoutRoot = applyLayout(article, articleRoot, siteData, path)
     if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
@@ -176,6 +130,15 @@ const doExpandClassAliases = (frontMatter, elem) => {
   })
 
   elem.setAttribute("class", expanded)
+}
+
+const applyWrapper = (template, root, wrapper) => {
+  const frontMatter = makeLocalFrontMatter(template, wrapper)
+  const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+  expandClassAliases(frontMatter, wrapperRoot)
+  embedContent(wrapperRoot, root)
+  fillInPlaceHolders(wrapperRoot, root, template)
+  return wrapperRoot
 }
 
 const applyLayout = (template, element, siteData, path) => {
@@ -309,10 +272,21 @@ const embedArticles = (node, siteData, path) => {
     const article =
       siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
 
+    const articleRoot = article.dom.window.document.body.cloneNode(true)
+
     if (article) {
-      const articleRoot = article.dom.window.document.body.cloneNode(true)
       embedComponents(article, articleRoot, siteData, path)
-      Array.from(articleRoot.children).forEach(child => target.before(child))
+      embedLinksToArticles(article, articleRoot, siteData, path)
+
+      const wrapper = getWrapper(siteData, "articles/" + article.path)
+
+      if (wrapper) {
+        const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
+        Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
+      }
+      else {
+        Array.from(articleRoot.children).forEach(child => target.before(child))
+      }
     }
   })
 
@@ -331,35 +305,18 @@ const embedArticleLists = (node, siteData, path) => {
     if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
 
     articles.forEach(article => {
-      const dirParts = article.path.split(PATH.sep)
-      dirParts.pop()
-
-      let wrapper = undefined
-
-      for(let i = dirParts.length; i > 0; i--) {
-        const dir = dirParts.slice(0, i).join(PATH.sep)
-        const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
-
-        wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-        if (wrapper) break
-      }
-
       const articleRoot = article.dom.window.document.body.cloneNode(true)
 
+      const wrapper = getWrapper(siteData, "articles/" + article.path)
+
+      embedComponents(article, articleRoot, siteData, path)
+      embedLinksToArticles(article, articleRoot, siteData, path)
+
       if (wrapper) {
-        const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
-        fillInPlaceHolders(wrapperRoot, articleRoot, article)
-
-        embedComponents(article, articleRoot, siteData, path)
-        embedLinksToArticles(article, articleRoot, siteData, path)
-
-        embedContent(wrapperRoot, articleRoot)
-
+        const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
         Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
       }
       else {
-        embedComponents(article, articleRoot, siteData, path)
-
         Array.from(articleRoot.childNodes).forEach(child => target.before(child))
       }
     })
@@ -631,6 +588,23 @@ const getTag = element => {
     const md = re.exec(element.attrs["filter"])
     if (md) return md[2]
   }
+}
+
+const getWrapper = (siteData, path) => {
+  const dirParts = path.split(PATH.sep)
+  dirParts.pop()
+
+  let wrapper = undefined
+
+  for(let i = dirParts.length; i > 0; i--) {
+    const dir = dirParts.slice(0, i).join(PATH.sep)
+    const wrapperPath = PATH.join(dir, "_wrapper.html")
+
+    wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+    if (wrapper) break
+  }
+
+  return wrapper
 }
 
 export default generationFuncs
