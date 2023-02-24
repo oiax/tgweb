@@ -71,12 +71,17 @@ describe("getSiteData", () => {
 
     const page = siteData.pages.find(page => page.path == "index.html")
 
-    assert.equal(page.dependencies.length, 5)
+    assert.equal(page.dependencies.length, 10)
     assert(page.dependencies.includes("pages/_wrapper"))
     assert(page.dependencies.includes("layouts/home"))
     assert(page.dependencies.includes("components/nav"))
     assert(page.dependencies.includes("components/hello"))
     assert(page.dependencies.includes("components/i_am"))
+    assert(page.dependencies.includes("articles/technology"))
+    assert(page.dependencies.includes("articles/blog/a"))
+    assert(page.dependencies.includes("articles/blog/c"))
+    assert(page.dependencies.includes("articles/blog/d"))
+    assert(page.dependencies.includes("articles/blog/e"))
 
     const article = siteData.articles.find(article => article.path == "blog/a.html")
 
@@ -118,6 +123,24 @@ describe("getSiteData", () => {
 })
 
 describe("updateSiteData", () => {
+  it("should update the site date of a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    process.chdir(wd + "a")
+
+    updateSiteData(siteData, "src/site.yml")
+    updateSiteData(siteData, "src/pages/index.html")
+
+    const page = siteData.pages.find(p => p.path === "index.html")
+    assert(page)
+    assert(page.dom)
+
+    assert.equal(page.frontMatter["title"], "FizzBuzz")
+    assert.equal(page.frontMatter["layout"], "home")
+    assert.equal(page.frontMatter["data-current-year"], 2024)
+  })
+
   it("should update the site date of an article", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)

@@ -1,20 +1,24 @@
 import * as PATH from "path"
 import pretty from "pretty"
 import { JSDOM } from "jsdom"
-import { minimatch } from "minimatch"
+import getTag from "./get_tag.mjs"
+import filterArticles from "./filter_articles.mjs"
 import { setAttrs } from "./set_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 
 const generationFuncs = {}
 
-const dbg = element => {
+const dbg = arg => console.log(arg)
+
+const pp = element => {
   console.log("<<<<")
   console.log(pretty(element.outerHTML, {ocd: true}))
   console.log(">>>>")
 }
 
-// Prevent warnings when function dbg is not used.
+// Prevent warnings when functions dbg and pp are not used.
 if (dbg === undefined) { dbg() }
+if (pp === undefined) { pp() }
 
 generationFuncs["page"] = (path, siteData) => {
   const relPath = path.replace(/^src\/pages\//, "")
@@ -46,14 +50,8 @@ generationFuncs["page"] = (path, siteData) => {
       else return renderHTML(page, pageRoot, siteData, headAttrs, path)
     }
     else {
-      const body = page.dom.window.document.body.cloneNode(true)
-      setAttrs(body)
-
-      const headAttrs = { title: getTitle(page, body) }
-
-      const layoutRoot = applyLayout(page, body, siteData, path)
-      if (layoutRoot) return renderHTML(page, body, siteData, headAttrs, path)
-      else return renderHTML(page, body, siteData, headAttrs, path)
+      const headAttrs = { title: getTitle(page, pageRoot) }
+      return renderHTML(page, pageRoot, siteData, headAttrs, path)
     }
   }
 
@@ -372,27 +370,6 @@ const embedLinksToArticles = (template, node, siteData, path) => {
   Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
 
-const filterArticles = (articles, pattern, tag) => {
-  articles =
-    articles.filter(article => {
-      if (minimatch(article.path, pattern)) {
-        if (tag) {
-          if (typeof article.frontMatter["tags"] === "string") {
-            return article.frontMatter["tags"] === tag
-          }
-          else if (Array.isArray(article.frontMatter["tags"])) {
-            return article.frontMatter["tags"].includes(tag)
-          }
-        }
-        else {
-          return true
-        }
-      }
-    })
-
-  return articles
-}
-
 const sortArticles = (articles, orderBy) => {
   const re = /^(title|index):(asc|desc)$/
   const md = re.exec(orderBy)
@@ -578,16 +555,6 @@ const getTitle = (template, element) => {
 
   const h6 = element.querySelector("h6")
   if (h6) return h6.textContent
-}
-
-const getTag = element => {
-  element.attrs["filter"]
-
-  if (element.attrs["filter"]) {
-    const re = /^(tag):(.+)$/
-    const md = re.exec(element.attrs["filter"])
-    if (md) return md[2]
-  }
 }
 
 const getWrapper = (siteData, path) => {
