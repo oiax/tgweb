@@ -185,6 +185,22 @@ describe("generateHTML", () => {
 
     const tech3 = main.children[3]
     assert.equal(tech3.children[0].textContent.trim(), "C")
+
+    const e = main.children[4]
+    const e_lines = pretty(e.outerHTML, {ocd: true}).split("\n")
+
+    const e_expected = [
+      '<div class="bg-gray-100 py-2">',
+      '  <h3 class="font-bold text-lg ml-2">',
+      '    E',
+      '  </h3>',
+      '  <p>This is E.</p>',
+      '</div>'
+    ]
+
+    e_lines.forEach((line, index) =>
+      assert.equal(line, e_expected[index], `Line: ${index + 1}`)
+    )
   })
 
   it("should embed a custom property to a layout", () => {

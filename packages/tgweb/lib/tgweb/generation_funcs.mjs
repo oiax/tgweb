@@ -309,10 +309,37 @@ const embedArticles = (node, siteData, path) => {
     const article =
       siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
 
+    const articleRoot = article.dom.window.document.body.cloneNode(true)
+
     if (article) {
-      const articleRoot = article.dom.window.document.body.cloneNode(true)
-      embedComponents(article, articleRoot, siteData, path)
-      Array.from(articleRoot.children).forEach(child => target.before(child))
+      const dirParts = article.path.split(PATH.sep)
+      dirParts.pop()
+
+      let wrapper = undefined
+
+      for(let i = dirParts.length; i > 0; i--) {
+        const dir = dirParts.slice(0, i).join(PATH.sep)
+        const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
+
+        wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
+        if (wrapper) break
+      }
+
+      if (wrapper) {
+        const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+        fillInPlaceHolders(wrapperRoot, articleRoot, article)
+
+        embedComponents(article, articleRoot, siteData, path)
+        embedLinksToArticles(article, articleRoot, siteData, path)
+
+        embedContent(wrapperRoot, articleRoot)
+
+        Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
+      }
+      else {
+        embedComponents(article, articleRoot, siteData, path)
+        Array.from(articleRoot.children).forEach(child => target.before(child))
+      }
     }
   })
 
