@@ -8,34 +8,20 @@ import { embedComponents } from "./embed_components.mjs"
 import { applyWrapper } from "./apply_wrapper.mjs"
 import { applyLayout } from "./apply_layout.mjs"
 
-const generationFuncs = {}
-
-const dbg = arg => console.log(arg)
-
-const pp = element => {
-  console.log("<<<<")
-  console.log(pretty(element.outerHTML, {ocd: true}))
-  console.log(">>>>")
-}
-
-// Prevent warnings when functions dbg and pp are not used.
-if (dbg === undefined) { dbg() }
-if (pp === undefined) { pp() }
-
-generationFuncs["article"] = (path, siteData) => {
+const renderArticle = (path, siteData) => {
   const article = siteData.articles.find(article => "src/articles/" + article.path == path)
 
   if (article) {
     const articleRoot = article.dom.window.document.body.cloneNode(true)
     expandClassAliases(article.frontMatter, articleRoot)
     embedComponents(article, articleRoot, siteData, path)
-    return renderArticle(article, articleRoot, siteData, path)
+    return _renderArticle(article, articleRoot, siteData, path)
   }
 
   return pretty(siteData.documentTemplate.serialize())
 }
 
-const renderArticle = (article, articleRoot, siteData, path) => {
+const _renderArticle = (article, articleRoot, siteData, path) => {
   embedComponents(article, articleRoot, siteData, path)
   embedLinksToArticles(article, articleRoot, siteData, path)
 
@@ -56,4 +42,4 @@ const renderArticle = (article, articleRoot, siteData, path) => {
   }
 }
 
-export default generationFuncs
+export { renderArticle }
