@@ -7,6 +7,7 @@ import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
 import { makeLocalFrontMatter } from "./make_local_front_matter.mjs"
 import { processTgLinks } from "./process_tg_links.mjs"
+import { expandClassAliases } from "./expand_class_aliases.mjs"
 
 const generationFuncs = {}
 
@@ -103,25 +104,6 @@ const renderArticle = (article, articleRoot, siteData, path) => {
 }
 
 
-const expandClassAliases = (frontMatter, root) => {
-  if (root.className) doExpandClassAliases(frontMatter, root)
-
-  root.querySelectorAll("[class]").forEach(elem => {
-    doExpandClassAliases(frontMatter, elem)
-  })
-}
-
-const doExpandClassAliases = (frontMatter, elem) => {
-  const htmlClass = elem.getAttribute("class")
-
-  const expanded = htmlClass.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, alias) => {
-    const key = `class-${alias}`
-    if (Object.hasOwn(frontMatter, key)) return frontMatter[key]
-    else return `\${${alias}}`
-  })
-
-  elem.setAttribute("class", expanded)
-}
 
 const applyWrapper = (template, root, wrapper) => {
   const frontMatter = makeLocalFrontMatter(template, wrapper)
