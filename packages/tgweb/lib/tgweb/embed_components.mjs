@@ -3,6 +3,7 @@ import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
+import { err } from "./err.mjs"
 
 const embedComponents = (template, node, siteData, path) => {
   const targets = node.querySelectorAll("tg-component")
@@ -22,6 +23,10 @@ const embedComponents = (template, node, siteData, path) => {
       embedLinksToArticles(componentRoot, siteData, path)
       fillInPlaceHolders(componentRoot, target, template)
       target.replaceWith(componentRoot)
+    }
+    else {
+      err(target, siteData, `No component named ${target.attrs["name"]} exists.`)
+      target.remove()
     }
   })
 }
