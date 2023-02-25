@@ -24,6 +24,23 @@ describe("update", () => {
     assert.match(html.toString(), /\bp-2\b/)
   })
 
+  it("should regenerate a page dependent on an article", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    update("src/pages/index.html", siteData)
+    process.chdir(wd + "a")
+
+    update("src/articles/technology.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
+
+    const html = fs.readFileSync(wd + "a/dist/index.html")
+
+    assert.match(html.toString(), /Added paragraph./)
+  })
+
   it("should regenerate a page dependent on a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     process.chdir(wd)
