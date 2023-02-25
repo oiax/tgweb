@@ -19,7 +19,7 @@ const embedComponents = (template, node, siteData, path) => {
       const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
       expandClassAliases(component.frontMatter, componentRoot)
       embedContent(componentRoot, target)
-      embedLinksToArticles(template, componentRoot, siteData, path)
+      embedLinksToArticles(componentRoot, siteData, path)
       fillInPlaceHolders(componentRoot, target, template)
       target.replaceWith(componentRoot)
     }

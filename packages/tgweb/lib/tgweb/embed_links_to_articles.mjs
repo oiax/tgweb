@@ -4,7 +4,7 @@ import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 
-const embedLinksToArticles = (template, node, siteData, path) => {
+const embedLinksToArticles = (node, siteData, path) => {
   const targets = node.querySelectorAll("tg-links")
 
   targets.forEach(target => {

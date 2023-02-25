@@ -7,8 +7,8 @@ import { getWrapper } from "./get_wrapper.mjs"
 import { applyWrapper } from "./apply_wrapper.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 
-const embedArticleLists = (node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-articles")
+const embedArticleLists = (templateRoot, siteData, path) => {
+  const targets = templateRoot.querySelectorAll("tg-articles")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -20,11 +20,10 @@ const embedArticleLists = (node, siteData, path) => {
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
+      embedComponents(article, articleRoot, siteData, path)
+      embedLinksToArticles(articleRoot, siteData, path)
 
       const wrapper = getWrapper(siteData, "articles/" + article.path)
-
-      embedComponents(article, articleRoot, siteData, path)
-      embedLinksToArticles(article, articleRoot, siteData, path)
 
       if (wrapper) {
         const wrapperRoot = applyWrapper(article, articleRoot, wrapper, siteData, path)
@@ -36,7 +35,7 @@ const embedArticleLists = (node, siteData, path) => {
     })
   })
 
-  Array.from(node.querySelectorAll("tg-articles")).forEach(target => target.remove())
+  Array.from(templateRoot.querySelectorAll("tg-articles")).forEach(target => target.remove())
 }
 
 export { embedArticleLists }

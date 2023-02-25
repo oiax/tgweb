@@ -18,7 +18,7 @@ const embedArticles = (node, siteData, path) => {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
 
       embedComponents(article, articleRoot, siteData, path)
-      embedLinksToArticles(article, articleRoot, siteData, path)
+      embedLinksToArticles(articleRoot, siteData, path)
 
       const wrapper = getWrapper(siteData, "articles/" + article.path)
 

@@ -23,7 +23,7 @@ const renderArticle = (path, siteData) => {
 
 const _renderArticle = (article, articleRoot, siteData, path) => {
   embedComponents(article, articleRoot, siteData, path)
-  embedLinksToArticles(article, articleRoot, siteData, path)
+  embedLinksToArticles(articleRoot, siteData, path)
 
   const wrapper = getWrapper(siteData, "articles/" + article.path)
 
