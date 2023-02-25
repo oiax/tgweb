@@ -8,6 +8,8 @@ import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { getTitle } from "./get_title.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 import { renderHTML } from "./render_html.mjs"
+import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
+import { embedContent } from "./embed_content.mjs"
 
 const generationFuncs = {}
 
@@ -129,87 +131,6 @@ const applyLayout = (template, element, siteData, path) => {
   embedComponents(template, layoutRoot, siteData, path)
 
   return layoutRoot
-}
-
-const extractSlotContents = element => {
-  const slotContents =
-    Array.from(element.querySelectorAll("tg-insert")).map(elem => {
-      const copy = elem.cloneNode(true)
-      setAttrs(copy)
-      return copy
-    })
-
-  return slotContents
-}
-
-const embedContent = (element, provider) => {
-  const target =
-    Array.from(element.childNodes).find(child =>
-      child.nodeType === 1 && child.nodeName == "TG-CONTENT"
-    )
-
-  if (target) {
-    const copy = provider.cloneNode(true)
-    Array.from(copy.querySelectorAll("tg-insert")).map(elem => elem.remove())
-    Array.from(copy.childNodes).forEach(c => element.insertBefore(c, target))
-    element.removeChild(target)
-  }
-  else {
-    element.childNodes.forEach(child => embedContent(child, provider))
-  }
-}
-
-const fillInPlaceHolders = (element, provider, template) => {
-  const slotContents = extractSlotContents(provider)
-
-  element.querySelectorAll("tg-if-complete").forEach(envelope => {
-    const placeholders = Array.from(envelope.querySelectorAll("tg-slot, tg-data, tg-prop"))
-
-    const complete = placeholders.every(placeholder => {
-      setAttrs(placeholder)
-
-      if (placeholder.tagName == "TG-PROP") {
-        return Object.hasOwn(template.frontMatter, placeholder.attrs["name"])
-      }
-      else if (placeholder.tagName == "TG-DATA") {
-        return Object.hasOwn(template.frontMatter, "data-" + placeholder.attrs["name"])
-      }
-      else if (placeholder.tagName == "TG-SLOT") {
-        return slotContents.some(c => c.attrs["name"] == placeholder.attrs["name"])
-      }
-    })
-
-    if (complete) {
-      envelope.childNodes.forEach(child =>
-        envelope.parentNode.insertBefore(child.cloneNode(true), envelope)
-      )
-    }
-  })
-
-  element.querySelectorAll("tg-if-complete").forEach(wrapper => wrapper.remove())
-
-  element.querySelectorAll("tg-slot, tg-data, tg-prop").forEach(placeholder => {
-    setAttrs(placeholder)
-
-    if (placeholder.tagName == "TG-PROP") {
-      const value = template.frontMatter[placeholder.attrs["name"]]
-      if (value) placeholder.before(value)
-    }
-    else if (placeholder.tagName == "TG-DATA") {
-      const value = template.frontMatter["data-" + placeholder.attrs["name"]]
-      if (value) placeholder.before(value)
-    }
-    else if (placeholder.tagName == "TG-SLOT") {
-      const content = slotContents.find(c => c.attrs["name"] == placeholder.attrs["name"])
-
-      if (content)
-        Array.from(content.cloneNode(true).childNodes).forEach(child => placeholder.before(child))
-      else
-        Array.from(placeholder.childNodes).forEach(child => placeholder.before(child))
-    }
-  })
-
-  element.querySelectorAll("tg-slot, tg-data, tg-prop").forEach(slot => slot.remove())
 }
 
 const embedComponents = (template, node, siteData, path) => {
@@ -345,6 +266,5 @@ const embedLinksToArticles = (template, node, siteData, path) => {
 
   Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
-
 
 export default generationFuncs
