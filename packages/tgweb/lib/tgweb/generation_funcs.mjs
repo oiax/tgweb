@@ -8,6 +8,8 @@ import { getWrapper } from "./get_wrapper.mjs"
 import { makeLocalFrontMatter } from "./make_local_front_matter.mjs"
 import { processTgLinks } from "./process_tg_links.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { getTitle } from "./get_title.mjs"
+import { sortArticles } from "./sort_articles.mjs"
 
 const generationFuncs = {}
 
@@ -102,8 +104,6 @@ const renderArticle = (article, articleRoot, siteData, path) => {
     else console.log("Error")
   }
 }
-
-
 
 const applyWrapper = (template, root, wrapper) => {
   const frontMatter = makeLocalFrontMatter(template, wrapper)
@@ -348,51 +348,6 @@ const embedLinksToArticles = (template, node, siteData, path) => {
   Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
 
-const sortArticles = (articles, orderBy) => {
-  const re = /^(title|index):(asc|desc)$/
-  const md = re.exec(orderBy)
-  const criteria = md[1]
-  const direction = md[2]
-
-  if (criteria === undefined) return
-
-  if (criteria === "title") {
-    articles.sort((a, b) => {
-      const titleA = getTitle(a, a.dom.window.document.body)
-      const titleB = getTitle(b, b.dom.window.document.body)
-
-      if (titleA > titleB) return 1
-      if (titleA < titleB) return -1
-      return 0
-    })
-  }
-  else if (criteria === "index") {
-    articles.sort((a, b) => {
-      const i = a.frontMatter["index"]
-      const j = b.frontMatter["index"]
-
-      if (i) {
-        if (j) {
-          if (i > j) return 1
-          if (i < j) return -1
-          if (a.path > b.path) return 1
-          if (a.path < b.path) return -1
-          return 0
-        }
-        else {
-          return 1
-        }
-      }
-      else {
-        if (j) return -1
-        else return 1
-      }
-    })
-  }
-
-  if (direction === "desc") articles.reverse()
-}
-
 const renderHTML = (template, root, siteData, headAttrs, path) => {
   const dom = new JSDOM(siteData.documentTemplate.serialize())
 
@@ -462,29 +417,6 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
   })
 
   return pretty(dom.serialize(), {ocd: true})
-}
-
-
-const getTitle = (template, element) => {
-  if (template.frontMatter["title"]) return template.frontMatter["title"]
-
-  const h1 = element.querySelector("h1")
-  if (h1) return h1.textContent
-
-  const h2 = element.querySelector("h2")
-  if (h2) return h2.textContent
-
-  const h3 = element.querySelector("h3")
-  if (h3) return h3.textContent
-
-  const h4 = element.querySelector("h4")
-  if (h4) return h4.textContent
-
-  const h5 = element.querySelector("h5")
-  if (h5) return h5.textContent
-
-  const h6 = element.querySelector("h6")
-  if (h6) return h6.textContent
 }
 
 export default generationFuncs
