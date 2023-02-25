@@ -28,7 +28,7 @@ const renderPage = (path, siteData) => {
     const wrapper = getWrapper(siteData, "pages/" + page.path)
 
     if (wrapper) {
-      const wrapperRoot = applyWrapper(page, pageRoot, wrapper)
+      const wrapperRoot = applyWrapper(page, pageRoot, wrapper, siteData, path)
       const headAttrs = { title: getTitle(page, wrapperRoot) }
       const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
       if (layoutRoot) return renderHTML(page, layoutRoot, siteData, headAttrs, path)

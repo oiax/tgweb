@@ -27,7 +27,7 @@ const embedArticleLists = (node, siteData, path) => {
       embedLinksToArticles(article, articleRoot, siteData, path)
 
       if (wrapper) {
-        const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
+        const wrapperRoot = applyWrapper(article, articleRoot, wrapper, siteData, path)
         Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
       }
       else {

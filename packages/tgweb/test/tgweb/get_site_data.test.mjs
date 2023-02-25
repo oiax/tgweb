@@ -82,6 +82,7 @@ describe("getSiteData", () => {
       'components/hello',
       'components/i_am',
       'components/nav',
+      'components/special',
       'layouts/home',
       'pages/_wrapper'
     ]

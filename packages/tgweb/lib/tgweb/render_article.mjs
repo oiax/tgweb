@@ -28,7 +28,7 @@ const _renderArticle = (article, articleRoot, siteData, path) => {
   const wrapper = getWrapper(siteData, "articles/" + article.path)
 
   if (wrapper) {
-    const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
+    const wrapperRoot = applyWrapper(article, articleRoot, wrapper, siteData, path)
     const headAttrs = { title: getTitle(article, wrapperRoot) }
     const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
     if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
