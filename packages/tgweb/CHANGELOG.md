@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.1.8
+
+* dda67cd Include articles as dependencies
+* 751fd21 Bug fix: Update dom of page template
+* 6d25de7 Show error message if specified article does not exist
+
 ## 0.1.7
 
 * 6615976 Apply wrapper to articles more correctly
