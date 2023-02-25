@@ -1,18 +1,16 @@
 import pretty from "pretty"
-import getTag from "./get_tag.mjs"
-import filterArticles from "./filter_articles.mjs"
 import { setAttrs } from "./set_attrs.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
 import { makeLocalFrontMatter } from "./make_local_front_matter.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { getTitle } from "./get_title.mjs"
-import { sortArticles } from "./sort_articles.mjs"
 import { renderHTML } from "./render_html.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { embedArticles } from "./embed_articles.mjs"
+import { embedArticleLists } from "./embed_article_lists.mjs"
+import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { embedComponents } from "./embed_components.mjs"
-import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { applyWrapper } from "./apply_wrapper.mjs"
 
 const generationFuncs = {}
@@ -118,38 +116,6 @@ const applyLayout = (template, element, siteData, path) => {
   embedComponents(template, layoutRoot, siteData, path)
 
   return layoutRoot
-}
-
-const embedArticleLists = (node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-articles")
-
-  targets.forEach(target => {
-    setAttrs(target)
-    const pattern = target.attrs["pattern"]
-    const tag = getTag(target)
-    const articles = filterArticles(siteData.articles, pattern, tag)
-
-    if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
-
-    articles.forEach(article => {
-      const articleRoot = article.dom.window.document.body.cloneNode(true)
-
-      const wrapper = getWrapper(siteData, "articles/" + article.path)
-
-      embedComponents(article, articleRoot, siteData, path)
-      embedLinksToArticles(article, articleRoot, siteData, path)
-
-      if (wrapper) {
-        const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
-        Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
-      }
-      else {
-        Array.from(articleRoot.childNodes).forEach(child => target.before(child))
-      }
-    })
-  })
-
-  Array.from(node.querySelectorAll("tg-articles")).forEach(target => target.remove())
 }
 
 export default generationFuncs
