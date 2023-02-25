@@ -11,16 +11,25 @@ const setDependencies = (object, siteData) => {
 
   componentRefs.forEach(ref => {
     setAttrs(ref)
-    const componentName = ref.attrs["name"]
-    object.dependencies.push("components/" + componentName)
+    const componentName = "components/" + ref.attrs["name"]
+    object.dependencies.push(componentName)
   })
 
   const articleRefs = body.querySelectorAll("tg-article")
 
   articleRefs.forEach(ref => {
     setAttrs(ref)
-    const articleName = ref.attrs["name"]
-    object.dependencies.push("articles/" + articleName)
+    const articleName = "articles/" + ref.attrs["name"]
+    object.dependencies.push(articleName)
+
+    const article = siteData.articles.find(a => a.path === ref.attrs["name"] + ".html")
+
+    if (article) {
+      article.dependencies.forEach(dep => {
+        if (dep.startsWith("layouts/")) return
+        object.dependencies.push(dep)
+      })
+    }
   })
 
   const articleListRefs = body.querySelectorAll("tg-articles")
@@ -34,6 +43,11 @@ const setDependencies = (object, siteData) => {
     articles.forEach(article => {
       const articleName = "articles/" + article.path.replace(/\.html$/, "")
       object.dependencies.push(articleName)
+
+      article.dependencies.forEach(dep => {
+        if (dep.startsWith("layouts/")) return
+        object.dependencies.push(dep)
+      })
     })
   })
 
@@ -64,13 +78,13 @@ const setDependencies = (object, siteData) => {
     const wrapper = getWrapper(object, siteData)
 
     if (wrapper) {
-      object.dependencies.push(wrapper.path.replace(/\.html$/, ""))
-
-      wrapper.dependencies.forEach(dep => {
-        if (! object.dependencies.includes(dep)) object.dependencies.push(dep)
-      })
+      const wrapperName = wrapper.path.replace(/\.html$/, "")
+      object.dependencies.push(wrapperName)
+      wrapper.dependencies.forEach(dep => object.dependencies.push(dep))
     }
   }
+
+  object.dependencies = Array.from(new Set(object.dependencies)).sort()
 }
 
 export { setDependencies }

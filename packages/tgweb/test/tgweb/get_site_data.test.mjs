@@ -71,24 +71,32 @@ describe("getSiteData", () => {
 
     const page = siteData.pages.find(page => page.path == "index.html")
 
-    assert.equal(page.dependencies.length, 10)
-    assert(page.dependencies.includes("pages/_wrapper"))
-    assert(page.dependencies.includes("layouts/home"))
-    assert(page.dependencies.includes("components/nav"))
-    assert(page.dependencies.includes("components/hello"))
-    assert(page.dependencies.includes("components/i_am"))
-    assert(page.dependencies.includes("articles/technology"))
-    assert(page.dependencies.includes("articles/blog/a"))
-    assert(page.dependencies.includes("articles/blog/c"))
-    assert(page.dependencies.includes("articles/blog/d"))
-    assert(page.dependencies.includes("articles/blog/e"))
+    const expected1 = [
+      'articles/blog/_wrapper',
+      'articles/blog/a',
+      'articles/blog/c',
+      'articles/blog/d',
+      'articles/blog/e',
+      'articles/technology',
+      'components/blog_nav',
+      'components/hello',
+      'components/i_am',
+      'components/nav',
+      'layouts/home',
+      'pages/_wrapper'
+    ]
+
+    assert.deepEqual(page.dependencies, expected1)
 
     const article = siteData.articles.find(article => article.path == "blog/a.html")
 
-    assert.equal(article.dependencies.length, 3)
-    assert(article.dependencies.includes("articles/blog/_wrapper"))
-    assert(article.dependencies.includes("layouts/blog_article"))
-    assert(article.dependencies.includes("components/blog_nav"))
+    const expected2 = [
+      'articles/blog/_wrapper',
+      'components/blog_nav',
+      'layouts/blog_article'
+    ]
+
+    assert.deepEqual(article.dependencies, expected2)
   })
 
   it("should return the site data with wrappers", () => {
