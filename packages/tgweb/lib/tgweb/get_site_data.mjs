@@ -2,11 +2,20 @@ import fs from "fs"
 import YAML from "js-yaml"
 import * as PATH from "path"
 import glob from "glob"
-import { JSDOM } from "jsdom"
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import getType from "./get_type.mjs"
-import { setAttrs } from "./set_attrs.mjs"
+import { getTemplate } from "./get_template.mjs"
+import { getWrapper } from "./get_wrapper.mjs"
+import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
+import { mergeProperties } from "./merge_properties.mjs"
+import { setUrlProperty } from "./set_url_property.mjs"
+import { setDependencies } from "./set_dependencies.mjs"
+import { expandPaths } from "./expand_paths.mjs"
+
+const dbg = arg => console.log(arg)
+
+// Prevent warnings when function d is not used.
+if (dbg === undefined) { dbg() }
 
 const getSiteData = directory => {
   const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +36,7 @@ const getSiteData = directory => {
   }
 
   const htmlPath = PATH.resolve(__dirname, "../../resources/document_template.html")
-  const documentTemplate = getTemplate(htmlPath)
+  const documentTemplate = getTemplate(htmlPath, "document")
   siteData.documentTemplate = documentTemplate.dom
 
   const site_yaml_path = PATH.join(directory, "src", "site.yml")
@@ -42,7 +51,7 @@ const getSiteData = directory => {
 
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => {
-      const wrapper = getTemplate(path)
+      const wrapper = getTemplate(path, "wrapper")
       mergeProperties(wrapper.frontMatter, siteData.properties)
       return wrapper
     })
@@ -51,12 +60,12 @@ const getSiteData = directory => {
 
   if (fs.existsSync(directory + "/src/components")) {
     process.chdir(directory + "/src/components")
-    siteData.components = glob.sync("*.html").map(getTemplate)
+    siteData.components = glob.sync("*.html").map(path => getTemplate(path, "component"))
   }
 
   if (fs.existsSync(directory + "/src/layouts")) {
     process.chdir(directory + "/src/layouts")
-    siteData.layouts = glob.sync("*.html").map(getTemplate)
+    siteData.layouts = glob.sync("*.html").map(path => getTemplate(path, "layout"))
     siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
@@ -65,10 +74,10 @@ const getSiteData = directory => {
 
     siteData.articles =
       glob.sync("**/!(_wrapper).html").map(path => {
-        const article = getTemplate(path)
+        const article = getTemplate(path, "article")
         setUrlProperty(article.frontMatter, siteData, "articles/" + path)
 
-        const wrapper = getArticleWrapper(article, siteData)
+        const wrapper = getWrapper(article, siteData)
 
         if (wrapper)
           mergeProperties(article.frontMatter, wrapper.frontMatter)
@@ -87,10 +96,10 @@ const getSiteData = directory => {
 
     siteData.pages =
       glob.sync("**/!(_wrapper).html").map(path => {
-        const page = getTemplate(path)
+        const page = getTemplate(path, "page")
         setUrlProperty(page.frontMatter, siteData, path)
 
-        const wrapper = getPageWrapper(page, siteData)
+        const wrapper = getWrapper(page, siteData)
 
         if (wrapper)
           mergeProperties(page.frontMatter, wrapper.frontMatter)
@@ -104,246 +113,9 @@ const getSiteData = directory => {
     siteData.pages.map(page => setDependencies(page, siteData))
   }
 
-  addPageWrapperDepdencies(siteData)
-  addArticleWrapperDepdencies(siteData)
-
   process.chdir(cwd)
 
   return siteData
 }
 
-const updateSiteData = (siteData, path) => {
-  const type = getType(path)
-
-  if (type == "component") {
-    siteData.components.forEach(component => {
-      if ("src/components/" + component.path == path) {
-        updateTemplate(component, path)
-      }
-    })
-  }
-  else if (type == "layout") {
-    siteData.layouts.forEach(layout => {
-      if ("src/layouts/" + layout.path == path) {
-        updateTemplate(layout, path)
-      }
-    })
-  }
-  else if (type == "article") {
-    siteData.articles.forEach(article => {
-      if ("src/articles/" + article.path == path) {
-        updateTemplate(article, path)
-      }
-    })
-  }
-  else if (type == "page") {
-    siteData.pages.forEach(page => {
-      if ("src/pages/" + page.path == path) {
-        updateTemplate(page, path)
-      }
-    })
-  }
-  else if (type == "wrapper") {
-    siteData.wrappers.forEach(wrapper => {
-      if ("src/" + wrapper.path == path) {
-        updateTemplate(wrapper, path)
-      }
-    })
-  }
-}
-
-const setDependencies = (object, siteData) => {
-  const body = object.dom.window.document.body
-  object.dependencies = []
-
-  const componentRefs = body.querySelectorAll("tg-component")
-
-  componentRefs.forEach(ref => {
-    setAttrs(ref)
-    const componentName = ref.attrs["name"]
-    object.dependencies.push("components/" + componentName)
-  })
-
-  const layoutName = object.frontMatter["layout"]
-
-  if (layoutName) {
-    object.dependencies.push("layouts/" + layoutName)
-
-    const layout = siteData.layouts.find(layout => layout.path == layoutName + ".html")
-    if (layout) layout.dependencies.forEach(dep => object.dependencies.push(dep))
-  }
-}
-
-const addPageWrapperDepdencies = siteData => {
-  const pages =
-    siteData.pages.map(page => {
-      const wrapper = getPageWrapper(page, siteData)
-
-      if (wrapper) {
-        page.dependencies.push(wrapper.path.replace(/\.html$/, ""))
-
-        wrapper.dependencies.forEach(dep => {
-          if (! page.dependencies.includes(dep)) page.dependencies.push(dep)
-        })
-      }
-
-      return page
-    })
-
-  siteData.pages = pages
-}
-
-const addArticleWrapperDepdencies = siteData => {
-  const articles =
-    siteData.articles.map(article => {
-      const wrapper = getArticleWrapper(article, siteData)
-
-      if (wrapper) {
-        article.dependencies.push(wrapper.path.replace(/\.html$/, ""))
-
-        wrapper.dependencies.forEach(dep => {
-          if (! article.dependencies.includes(dep)) article.dependencies.push(dep)
-        })
-      }
-
-      return article
-    })
-
-  siteData.articles = articles
-}
-
-const getPageWrapper = (page, siteData) => {
-  const parts = page.path.split(PATH.sep)
-  parts.pop()
-
-  for(let i = parts.length; i >= 0; i--) {
-    const dir = parts.slice(i).join(PATH.sep)
-    const wrapperPath = PATH.join("pages", dir, "_wrapper.html")
-    const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-    if (wrapper) return wrapper
-  }
-}
-
-const getArticleWrapper = (article, siteData) => {
-  const parts = article.path.split(PATH.sep)
-  parts.pop()
-
-  for(let i = parts.length; i >= 0; i--) {
-    const dir = parts.slice(i).join(PATH.sep)
-    const wrapperPath = PATH.join("articles", dir, "_wrapper.html")
-    const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-    if (wrapper) return wrapper
-  }
-}
-
-const separatorRegex = new RegExp("^---\\n", "m")
-
-const getTemplate = path => {
-  const source = fs.readFileSync(path)
-  const parts = source.toString().split(separatorRegex)
-
-  if (parts[0] === "" && parts[1] !== undefined) {
-    const frontMatter = YAML.load(parts[1])
-    normalizeFrontMatter(frontMatter)
-    const html = parts.slice(2).join("---\n")
-    const dom = new JSDOM(html)
-
-    return { path, frontMatter, dom }
-  }
-  else {
-    const frontMatter = {}
-    const dom = new JSDOM(source.toString())
-
-    return { path, frontMatter, dom }
-  }
-}
-
-const updateTemplate = (template, path) => {
-  const newTemplate = getTemplate(path)
-  template.frontMatter = newTemplate.frontMatter
-  template.dom = newTemplate.dom
-}
-
-const mergeProperties = (target, source) => {
-  Object.keys(source).forEach(key => {
-    if (!Object.hasOwn(target, key)) target[key] = source[key]
-  })
-}
-
-const normalizeFrontMatter = frontMatter => {
-  Object.keys(frontMatter).forEach(key => {
-    if (key.startsWith("class-")) {
-      const value = frontMatter[key]
-
-      if (Array.isArray(value)) {
-        frontMatter[key] = value.join(" ")
-      }
-    }
-  })
-}
-
-const setUrlProperty = (frontMatter, siteData, path) => {
-  const scheme = siteData.properties["scheme"]
-  const host = siteData.properties["host"]
-  const port = siteData.properties["port"]
-
-  let converted = path
-  if (path === "index.html") converted = ""
-  converted = converted.replace(/\/index.html$/, "/")
-
-  if (scheme === "http") {
-    if (port === 80) {
-      frontMatter.url = `http://${host}/${converted}`
-    }
-    else {
-      frontMatter.url = `http://${host}:${port}/${converted}`
-    }
-  }
-  else if (scheme === "https") {
-    if (port === 443) {
-      frontMatter.url = `https://${host}/${converted}`
-    }
-    else {
-      frontMatter.url = `https://${host}:${port}/${converted}`
-    }
-  }
-}
-
-const expandPaths = frontMatter => {
-  Object.keys(frontMatter).forEach(key => {
-    const value = frontMatter[key]
-
-    if (typeof value === "string") {
-      const converted = value.replaceAll(/%\{([^}]+)\}/g, (_, path) =>
-        getUrlPrefix(frontMatter) + path
-      )
-
-      frontMatter[key] = converted
-    }
-  })
-}
-
-const getUrlPrefix = (frontMatter) => {
-  const scheme = frontMatter["scheme"]
-  const host = frontMatter["host"]
-  const port = frontMatter["port"]
-
-  if (scheme === "http") {
-    if (port === 80) {
-      return `http://${host}`
-    }
-    else {
-      return `http://${host}:${port}`
-    }
-  }
-  else if (scheme === "https") {
-    if (port === 443) {
-      return `https://${host}`
-    }
-    else {
-      return `https://${host}:${port}`
-    }
-  }
-}
-
-export { getSiteData, updateSiteData }
+export { getSiteData }

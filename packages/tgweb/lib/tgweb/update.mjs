@@ -1,6 +1,6 @@
 import * as PATH from "path"
 import fs from "fs"
-import { updateSiteData } from "./get_site_data.mjs"
+import { updateSiteData } from "./update_site_data.mjs"
 import getType from "./get_type.mjs"
 import generateHTML from "./generate_html.mjs"
 
