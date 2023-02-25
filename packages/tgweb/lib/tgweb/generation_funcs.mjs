@@ -9,9 +9,11 @@ import { getTitle } from "./get_title.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 import { renderHTML } from "./render_html.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
+import { embedArticles } from "./embed_articles.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { embedComponents } from "./embed_components.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
+import { applyWrapper } from "./apply_wrapper.mjs"
 
 const generationFuncs = {}
 
@@ -26,14 +28,6 @@ const pp = element => {
 // Prevent warnings when functions dbg and pp are not used.
 if (dbg === undefined) { dbg() }
 if (pp === undefined) { pp() }
-
-const err = (node, siteData, message) => {
-  console.log(`Error: ${message}`)
-  const errorDiv = siteData.documentTemplate.window.document.createElement("div")
-  errorDiv.textContent = message
-  errorDiv.style = "border: solid black 0.5rem; background-color: #800; color: #fee; padding: 1rem"
-  node.before(errorDiv)
-}
 
 generationFuncs["page"] = (path, siteData) => {
   const relPath = path.replace(/^src\/pages\//, "")
@@ -107,15 +101,6 @@ const renderArticle = (article, articleRoot, siteData, path) => {
   }
 }
 
-const applyWrapper = (template, root, wrapper) => {
-  const frontMatter = makeLocalFrontMatter(template, wrapper)
-  const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
-  expandClassAliases(frontMatter, wrapperRoot)
-  embedContent(wrapperRoot, root)
-  fillInPlaceHolders(wrapperRoot, root, template)
-  return wrapperRoot
-}
-
 const applyLayout = (template, element, siteData, path) => {
   if (template.frontMatter["layout"] === undefined) return
 
@@ -133,39 +118,6 @@ const applyLayout = (template, element, siteData, path) => {
   embedComponents(template, layoutRoot, siteData, path)
 
   return layoutRoot
-}
-
-const embedArticles = (node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-article")
-
-  targets.forEach(target => {
-    setAttrs(target)
-
-    const article =
-      siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
-
-    if (article) {
-      const articleRoot = article.dom.window.document.body.cloneNode(true)
-
-      embedComponents(article, articleRoot, siteData, path)
-      embedLinksToArticles(article, articleRoot, siteData, path)
-
-      const wrapper = getWrapper(siteData, "articles/" + article.path)
-
-      if (wrapper) {
-        const wrapperRoot = applyWrapper(article, articleRoot, wrapper)
-        Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
-      }
-      else {
-        Array.from(articleRoot.children).forEach(child => target.before(child))
-      }
-    }
-    else {
-      err(target, siteData, `No article named ${target.attrs["name"]} exists.`)
-    }
-  })
-
-  Array.from(node.querySelectorAll("tg-article")).forEach(target => target.remove())
 }
 
 const embedArticleLists = (node, siteData, path) => {
