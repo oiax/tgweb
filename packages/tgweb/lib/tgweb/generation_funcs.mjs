@@ -10,6 +10,8 @@ import { sortArticles } from "./sort_articles.mjs"
 import { renderHTML } from "./render_html.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { embedContent } from "./embed_content.mjs"
+import { embedComponents } from "./embed_components.mjs"
+import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 
 const generationFuncs = {}
 
@@ -133,28 +135,6 @@ const applyLayout = (template, element, siteData, path) => {
   return layoutRoot
 }
 
-const embedComponents = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-component")
-
-  targets.forEach(target => {
-    setAttrs(target)
-
-    const componentName = target.attrs["name"]
-
-    const component =
-      siteData.components.find(component => component.path == componentName + ".html")
-
-    if (component) {
-      const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
-      expandClassAliases(component.frontMatter, componentRoot)
-      embedContent(componentRoot, target)
-      embedLinksToArticles(template, componentRoot, siteData, path)
-      fillInPlaceHolders(componentRoot, target, template)
-      target.replaceWith(componentRoot)
-    }
-  })
-}
-
 const embedArticles = (node, siteData, path) => {
   const targets = node.querySelectorAll("tg-article")
 
@@ -218,53 +198,6 @@ const embedArticleLists = (node, siteData, path) => {
   })
 
   Array.from(node.querySelectorAll("tg-articles")).forEach(target => target.remove())
-}
-
-const embedLinksToArticles = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-links")
-
-  targets.forEach(target => {
-    setAttrs(target)
-    const pattern = target.attrs["pattern"]
-    const tag = getTag(target)
-
-    const articles = filterArticles(siteData.articles, pattern, tag)
-
-    if (target.attrs["order-by"]) sortArticles(articles, target.attrs["order-by"])
-
-    articles.forEach(article => {
-      const href = `/articles/${article.path}`.replace(/\/index.html$/, "/")
-
-      const articleRoot = article.dom.window.document.body.cloneNode(true)
-
-      const copy = target.cloneNode(true)
-
-      fillInPlaceHolders(copy, articleRoot, article)
-
-      Array.from(copy.querySelectorAll("tg-link")).forEach(link => {
-        if (`src/articles/${article.path}` === path) {
-          const fallback = link.querySelector("tg-if-current")
-          if (fallback)  {
-            Array.from(fallback.childNodes).forEach(child => link.before(child))
-          }
-        }
-        else {
-          const fallback = link.querySelector("tg-if-current")
-          if (fallback) fallback.remove()
-          Array.from(link.querySelectorAll("a[href='#']")).forEach(a => a.href = href)
-          Array.from(link.childNodes).forEach(child => link.before(child))
-        }
-      })
-
-      Array.from(copy.querySelectorAll("tg-link")).forEach(link => link.remove())
-
-      copy.querySelectorAll("a[href='#']").forEach(anchor => anchor.href = href)
-
-      Array.from(copy.childNodes).forEach(child => target.before(child))
-    })
-  })
-
-  Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
 
 export default generationFuncs
