@@ -20,6 +20,14 @@ const pp = element => {
 if (dbg === undefined) { dbg() }
 if (pp === undefined) { pp() }
 
+const err = (node, siteData, message) => {
+  console.log(`Error: ${message}`)
+  const errorDiv = siteData.documentTemplate.window.document.createElement("div")
+  errorDiv.textContent = message
+  errorDiv.style = "border: solid black 0.5rem; background-color: #800; color: #fee; padding: 1rem"
+  node.before(errorDiv)
+}
+
 generationFuncs["page"] = (path, siteData) => {
   const relPath = path.replace(/^src\/pages\//, "")
   const page = siteData.pages.find(page => page.path == relPath)
@@ -270,9 +278,9 @@ const embedArticles = (node, siteData, path) => {
     const article =
       siteData.articles.find(article => article.path == target.attrs["name"] + ".html")
 
-    const articleRoot = article.dom.window.document.body.cloneNode(true)
-
     if (article) {
+      const articleRoot = article.dom.window.document.body.cloneNode(true)
+
       embedComponents(article, articleRoot, siteData, path)
       embedLinksToArticles(article, articleRoot, siteData, path)
 
@@ -285,6 +293,9 @@ const embedArticles = (node, siteData, path) => {
       else {
         Array.from(articleRoot.children).forEach(child => target.before(child))
       }
+    }
+    else {
+      err(target, siteData, `No article named ${target.attrs["name"]} exists.`)
     }
   })
 
