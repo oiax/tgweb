@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.9
+
+* 44a2d15 Make pages to take dependencies from associated articles
+
 ## 0.1.8
 
 * dda67cd Include articles as dependencies
