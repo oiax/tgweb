@@ -42,7 +42,7 @@ const updateSiteData = (siteData, path) => {
         updateTemplate(article, path)
         setUrlProperty(article.frontMatter, siteData, "articles/" + path)
 
-        const wrapper = getWrapper(article, siteData)
+        const wrapper = getWrapper(siteData, "articles/" + article.path)
 
         if (wrapper)
           mergeProperties(article.frontMatter, wrapper.frontMatter)
@@ -60,7 +60,7 @@ const updateSiteData = (siteData, path) => {
         updateTemplate(page, path)
         setUrlProperty(page.frontMatter, siteData, path)
 
-        const wrapper = getWrapper(page, siteData)
+        const wrapper = getWrapper(siteData, "pages/" + page.path)
 
         if (wrapper)
           mergeProperties(page.frontMatter, wrapper.frontMatter)

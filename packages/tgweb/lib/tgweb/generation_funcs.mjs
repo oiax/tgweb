@@ -1,10 +1,10 @@
-import * as PATH from "path"
 import pretty from "pretty"
 import { JSDOM } from "jsdom"
 import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
 import { setAttrs } from "./set_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
+import { getWrapper } from "./get_wrapper.mjs"
 
 const generationFuncs = {}
 
@@ -566,23 +566,6 @@ const getTitle = (template, element) => {
 
   const h6 = element.querySelector("h6")
   if (h6) return h6.textContent
-}
-
-const getWrapper = (siteData, path) => {
-  const dirParts = path.split(PATH.sep)
-  dirParts.pop()
-
-  let wrapper = undefined
-
-  for(let i = dirParts.length; i > 0; i--) {
-    const dir = dirParts.slice(0, i).join(PATH.sep)
-    const wrapperPath = PATH.join(dir, "_wrapper.html")
-
-    wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
-    if (wrapper) break
-  }
-
-  return wrapper
 }
 
 export default generationFuncs

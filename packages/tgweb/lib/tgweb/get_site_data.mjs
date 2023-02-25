@@ -77,7 +77,7 @@ const getSiteData = directory => {
         const article = getTemplate(path, "article")
         setUrlProperty(article.frontMatter, siteData, "articles/" + path)
 
-        const wrapper = getWrapper(article, siteData)
+        const wrapper = getWrapper(siteData, "articles/" + path)
 
         if (wrapper)
           mergeProperties(article.frontMatter, wrapper.frontMatter)
@@ -99,7 +99,7 @@ const getSiteData = directory => {
         const page = getTemplate(path, "page")
         setUrlProperty(page.frontMatter, siteData, path)
 
-        const wrapper = getWrapper(page, siteData)
+        const wrapper = getWrapper(siteData, "pages/" + path)
 
         if (wrapper)
           mergeProperties(page.frontMatter, wrapper.frontMatter)
