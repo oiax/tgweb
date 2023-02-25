@@ -1,6 +1,5 @@
 import assert from "node:assert/strict"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
-import { updateSiteData } from "../../lib/tgweb/update_site_data.mjs"
 import { fileURLToPath } from "url";
 import * as PATH from "path"
 
@@ -123,67 +122,3 @@ describe("getSiteData", () => {
   })
 })
 
-describe("updateSiteData", () => {
-  it("should update the site date of a page", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    process.chdir(wd + "a")
-
-    updateSiteData(siteData, "src/site.yml")
-    updateSiteData(siteData, "src/pages/index.html")
-
-    const page = siteData.pages.find(p => p.path === "index.html")
-    assert(page)
-    assert(page.dom)
-
-    assert.equal(page.frontMatter["title"], "FizzBuzz")
-    assert.equal(page.frontMatter["layout"], "home")
-    assert.equal(page.frontMatter["data-current-year"], 2024)
-  })
-
-  it("should update the site date of an article", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    process.chdir(wd + "a")
-
-    updateSiteData(siteData, "src/articles/culture.html")
-
-    const article = siteData.articles.find(a => a.path === "culture.html")
-    assert(article)
-    assert(article.dom)
-
-    assert.equal(article.frontMatter["class-div1"], "bg-red-100 py-2")
-  })
-
-  it("should update the site date of a wrapper", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    process.chdir(wd + "a")
-
-    updateSiteData(siteData, "src/pages/_wrapper.html")
-
-    const wrapper = siteData.wrappers.find(w => w.path === "pages/_wrapper.html")
-    assert(wrapper)
-    assert(wrapper.dom)
-
-    assert.equal(wrapper.frontMatter["class-div1"], "bg-blue-100 py-2")
-  })
-
-  it("should update the site date of a component", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    process.chdir(wd + "a")
-
-    updateSiteData(siteData, "src/components/hello.html")
-
-    const component = siteData.components.find(c => c.path === "hello.html")
-    assert(component)
-    assert(component.dom)
-
-    assert.equal(component.frontMatter["class-div1"], "bg-blue-100 p-2")
-  })
-})

@@ -57,6 +57,7 @@ const updateSiteData = (siteData, path) => {
   else if (type == "page") {
     siteData.pages.forEach(page => {
       if ("src/pages/" + page.path == path) {
+        updateTemplate(page, path)
         setUrlProperty(page.frontMatter, siteData, path)
 
         const wrapper = getWrapper(page, siteData)
