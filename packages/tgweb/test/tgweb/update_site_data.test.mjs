@@ -7,6 +7,8 @@ import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
+const dbg = arg => console.log(arg)
+
 const pp = element => {
   console.log("<<<<")
   console.log(pretty(element.outerHTML, {ocd: true}))
@@ -14,6 +16,7 @@ const pp = element => {
 }
 
 // Prevent warnings when functions dbg and pp are not used.
+if (dbg === undefined) { dbg() }
 if (pp === undefined) { pp() }
 
 describe("updateSiteData", () => {
@@ -39,6 +42,8 @@ describe("updateSiteData", () => {
 
     process.chdir(wd + "a")
 
+    updateSiteData(siteData, "src/components/x.html")
+    updateSiteData(siteData, "src/articles/culture.html")
     updateSiteData(siteData, "src/pages/index.html")
 
     const page = siteData.pages.find(p => p.path === "index.html")
@@ -51,6 +56,19 @@ describe("updateSiteData", () => {
     assert.equal(page.frontMatter["title"], "FizzBuzz")
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["data-current-year"], 2023)
+
+    const expected = [
+      'articles/blog/b',
+      'articles/culture',
+      'components/hello',
+      'components/i_am',
+      'components/nav',
+      'components/x',
+      'layouts/home',
+      'pages/_wrapper'
+    ]
+
+    assert.deepEqual(page.dependencies, expected)
   })
 
   it("should update an article template", () => {
@@ -69,6 +87,17 @@ describe("updateSiteData", () => {
     assert.equal(p.textContent, "Added paragraph.")
 
     assert.equal(article.frontMatter["class-div1"], "bg-red-100 py-2")
+
+    const expected = [
+      'articles/blog/b',
+      'components/hello',
+      'components/i_am',
+      'components/nav',
+      'components/x',
+      'layouts/home'
+    ]
+
+    assert.deepEqual(article.dependencies.sort(), expected)
   })
 
   it("should update a wrapper template", () => {
