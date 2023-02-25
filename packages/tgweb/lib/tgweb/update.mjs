@@ -1,8 +1,6 @@
-import * as PATH from "path"
-import fs from "fs"
 import { updateSiteData } from "./update_site_data.mjs"
 import getType from "./get_type.mjs"
-import generateHTML from "./generate_html.mjs"
+import { updateHTML } from "./update_html.mjs"
 import { dbg, pp } from "./debugging.mjs"
 
 // Prevent warnings when functions dbg and pp are not used.
@@ -40,18 +38,6 @@ const update = (path, siteData) => {
     siteData.articles
       .filter(article => article.dependencies.includes(name))
       .forEach(article => updateHTML("src/articles/" + article.path, siteData))
-  }
-}
-
-const updateHTML = (path, siteData) => {
-  const html = generateHTML(path, siteData)
-
-  if (html !== undefined) {
-    const targetPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
-    const targetDir = PATH.dirname(targetPath)
-
-    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
-    fs.writeFileSync(targetPath, html)
   }
 }
 

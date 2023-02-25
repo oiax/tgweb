@@ -81,4 +81,114 @@ describe("create", () => {
 
     assert.match(body.innerHTML, /世界/)
   })
+
+  it("should process a new page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/pages/new.html", siteData)
+
+    const n = siteData.pages.find(p => p.path === "new.html")
+    assert(n)
+
+    assert.equal(fs.existsSync(wd + "a/dist/new.html"), true)
+  })
+
+  it("should proces a new article", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/articles/k.html", siteData)
+
+    const k = siteData.articles.find(a => a.path === "k.html")
+    assert(k)
+
+    assert.equal(fs.existsSync(wd + "a/dist/articles/k.html"), true)
+  })
+
+  it("should process a new component", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/components/x.html", siteData)
+
+    const x = siteData.components.find(c => c.path === "x.html")
+    assert(x)
+  })
+
+  it("should process a new layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/layouts/simple.html", siteData)
+
+    const s = siteData.layouts.find(l => l.path === "simple.html")
+    assert(s)
+  })
+
+  it("should process new page wrapper", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/pages/etc/_wrapper.html", siteData)
+
+    const w = siteData.wrappers.find(w => w.path === "pages/etc/_wrapper.html")
+    assert(w)
+
+    const info = siteData.pages.find(p => p.path === "etc/info.html")
+    assert(info.dependencies.includes("pages/etc/_wrapper"))
+    assert(!info.dependencies.includes("pages/_wrapper"))
+
+    assert.equal(fs.existsSync(wd + "a/dist/etc/info.html"), true)
+  })
+
+  it("should process new article wrapper", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/articles/_wrapper.html", siteData)
+
+    const w = siteData.wrappers.find(w => w.path === "articles/_wrapper.html")
+    assert(w)
+
+    const c = siteData.articles.find(a => a.path === "culture.html")
+    assert(c.dependencies.includes("articles/_wrapper"))
+
+    assert.equal(fs.existsSync(wd + "a/dist/articles/culture.html"), true)
+  })
+
+  it("should process the addition of site.yml", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    process.chdir(wd + "a")
+
+    create("src/site.yml", siteData)
+
+    assert.equal(siteData.properties["title"], "Example")
+
+    const index = siteData.pages.find(p => p.path === "index.html")
+    assert.equal(index.frontMatter["data-foo"], "Bar")
+
+    assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
+  })
 })

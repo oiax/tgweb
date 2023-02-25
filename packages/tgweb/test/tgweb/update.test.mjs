@@ -84,6 +84,7 @@ describe("update", () => {
 
     process.chdir(wd + "a")
 
+    create("src/components/x.html", siteData)
     update("src/articles/culture.html", siteData)
     update("src/components/hello.html", siteData)
 
