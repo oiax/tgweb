@@ -1,17 +1,15 @@
 import pretty from "pretty"
 import { setAttrs } from "./set_attrs.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
-import { makeLocalFrontMatter } from "./make_local_front_matter.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { getTitle } from "./get_title.mjs"
 import { renderHTML } from "./render_html.mjs"
-import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { embedArticles } from "./embed_articles.mjs"
 import { embedArticleLists } from "./embed_article_lists.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
-import { embedContent } from "./embed_content.mjs"
 import { embedComponents } from "./embed_components.mjs"
 import { applyWrapper } from "./apply_wrapper.mjs"
+import { applyLayout } from "./apply_layout.mjs"
 
 const generationFuncs = {}
 
@@ -97,25 +95,6 @@ const renderArticle = (article, articleRoot, siteData, path) => {
     if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
     else console.log("Error")
   }
-}
-
-const applyLayout = (template, element, siteData, path) => {
-  if (template.frontMatter["layout"] === undefined) return
-
-  const layout =
-    siteData.layouts.find(layout => layout.path == template.frontMatter["layout"] + ".html")
-
-  if (layout === undefined) return
-
-  const layoutRoot = layout.dom.window.document.body.cloneNode(true)
-
-  const frontMatter = makeLocalFrontMatter(template, layout)
-  expandClassAliases(frontMatter, layoutRoot)
-  embedContent(layoutRoot, element)
-  fillInPlaceHolders(layoutRoot, element, template)
-  embedComponents(template, layoutRoot, siteData, path)
-
-  return layoutRoot
 }
 
 export default generationFuncs
