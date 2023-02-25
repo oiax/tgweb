@@ -5,6 +5,7 @@ import filterArticles from "./filter_articles.mjs"
 import { setAttrs } from "./set_attrs.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
+import { makeLocalFrontMatter } from "./make_local_front_matter.mjs"
 import { processTgLinks } from "./process_tg_links.mjs"
 
 const generationFuncs = {}
@@ -101,23 +102,6 @@ const renderArticle = (article, articleRoot, siteData, path) => {
   }
 }
 
-const makeLocalFrontMatter = (template, wrapperOrLayout) => {
-  const frontMatter = {}
-
-  Object.keys(template.frontMatter).forEach(key => {
-    if (Object.hasOwn(template.frontMatter, key)) {
-      frontMatter[key] = template.frontMatter[key]
-    }
-  })
-
-  Object.keys(wrapperOrLayout.frontMatter).forEach(key => {
-    if (Object.hasOwn(wrapperOrLayout.frontMatter, key) && !Object.hasOwn(frontMatter, key)) {
-      frontMatter[key] = wrapperOrLayout.frontMatter[key]
-    }
-  })
-
-  return frontMatter
-}
 
 const expandClassAliases = (frontMatter, root) => {
   if (root.className) doExpandClassAliases(frontMatter, root)
