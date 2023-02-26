@@ -25,6 +25,8 @@ const create = (path, siteData) => {
 
       if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
       fs.writeFileSync(targetPath, html)
+
+      if (process.env.VERBOSE) console.log(`Created ${path}.`)
     }
 
     const type = getType(path)

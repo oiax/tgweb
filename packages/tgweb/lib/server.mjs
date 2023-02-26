@@ -49,12 +49,17 @@ const run = () => {
     console.error("Could not start a web server.", err)
   })
 
+  let ready = false
   const siteData = tgweb.getSiteData(process.cwd())
 
   chokidar.watch("./src")
-    .on("add", path => tgweb.create(path, siteData))
+    .on("add", path => {
+      if (ready) tgweb.create(path, siteData)
+      else tgweb.createInitially(path, siteData)
+    })
     .on("change", path => tgweb.update(path, siteData))
     .on("unlink", path => tgweb.destroy(path, siteData))
+    .on("ready", () => ready = true)
 
   const childProcess = spawn("npx", [
     "tailwindcss",
