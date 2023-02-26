@@ -54,6 +54,7 @@ const run = () => {
   chokidar.watch("./src")
     .on("add", path => tgweb.create(path, siteData))
     .on("change", path => tgweb.update(path, siteData))
+    .on("unlink", path => tgweb.destroy(path, siteData))
 
   const childProcess = spawn("npx", [
     "tailwindcss",

@@ -11,6 +11,7 @@ const updateHTML = (path, siteData) => {
 
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
     fs.writeFileSync(targetPath, html)
+    console.log(`Generated ${path}.`)
   }
 }
 
