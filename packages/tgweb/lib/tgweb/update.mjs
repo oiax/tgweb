@@ -41,4 +41,4 @@ const update = (path, siteData) => {
   }
 }
 
-export default update
+export { update }

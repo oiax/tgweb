@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import create from "../../lib/tgweb/create.mjs"
+import { create } from "../../lib/tgweb/create.mjs"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import { fileURLToPath } from "url";
 import fs from "fs"

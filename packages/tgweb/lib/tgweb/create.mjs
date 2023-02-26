@@ -5,7 +5,7 @@ import generateHTML from "./generate_html.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
 
-const createHTML = (path, siteData) => {
+const create = (path, siteData) => {
   const dirname = PATH.dirname(path)
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
@@ -48,4 +48,4 @@ const createHTML = (path, siteData) => {
   }
 }
 
-export default createHTML
+export { create }
