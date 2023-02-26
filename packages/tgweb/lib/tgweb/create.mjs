@@ -30,7 +30,7 @@ const create = (path, siteData) => {
     const type = getType(path)
     const name = path.replace(/^src\//, "").replace(/\.html$/, "")
 
-    if (type === "page" || type === "article") return
+    if (type === "page") return
 
     if (type === "site.yml") {
       siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))

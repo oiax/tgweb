@@ -104,12 +104,16 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "a")
 
-    create("src/articles/k.html", siteData)
+    create("src/articles/blog/k.html", siteData)
 
-    const k = siteData.articles.find(a => a.path === "k.html")
+    const k = siteData.articles.find(a => a.path === "blog/k.html")
     assert(k)
 
-    assert.equal(fs.existsSync(wd + "a/dist/articles/k.html"), true)
+    const tech = siteData.articles.find(a => a.path === "technology.html")
+    assert(tech.dependencies.includes("articles/blog/k"))
+
+    assert.equal(fs.existsSync(wd + "a/dist/articles/blog/k.html"), true)
+    assert.equal(fs.existsSync(wd + "a/dist/articles/technology.html"), true)
   })
 
   it("should process a new component", () => {

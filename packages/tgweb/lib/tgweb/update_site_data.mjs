@@ -83,7 +83,27 @@ const updateSiteData = (siteData, path) => {
     else {
       process.chdir("src/articles")
       const shortPath = path.replace(/^src\/articles\//, "")
-      siteData.articles.push(getTemplate(shortPath, "article"))
+      const newArticle = getTemplate(shortPath, "article")
+
+      setUrlProperty(newArticle.frontMatter, siteData, "articles/" + newArticle.path)
+
+      const wrapper = getWrapper(siteData, "articles/" + newArticle.path)
+
+      if (wrapper)
+        mergeProperties(newArticle.frontMatter, wrapper.frontMatter)
+      else
+        mergeProperties(newArticle.frontMatter, siteData.properties)
+
+      expandPaths(newArticle.frontMatter)
+      setDependencies(newArticle, siteData)
+
+      siteData.articles.push(newArticle)
+
+      siteData.pages.forEach(p => setDependencies(p, siteData))
+
+      siteData.articles.forEach(a => {
+        if (a.path !== shortPath) setDependencies(a, siteData)
+      })
     }
   }
   else if (type == "page") {

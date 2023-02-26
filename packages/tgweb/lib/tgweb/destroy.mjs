@@ -102,7 +102,8 @@ const _removeFile = (path) => {
   if (type === "page" || type === "article") {
     const targetPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
     fs.unlinkSync(targetPath)
-    console.log(`Deleted ${path}.`)
+
+    if (process.env.VERBOSE) console.log(`Deleted ${path}.`)
   }
 }
 
