@@ -8,14 +8,14 @@ import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
-const dbg = element => {
+const pp = element => {
   console.log("<<<<")
   console.log(pretty(element.outerHTML, {ocd: true}))
   console.log(">>>>")
 }
 
-// Prevent warnings when function dbg is not used.
-if (dbg === undefined) { dbg() }
+// Prevent warnings when function pp is not used.
+if (pp === undefined) { pp() }
 
 describe("generateHTML", () => {
   it("should embed the given page into the document template", () => {
@@ -446,6 +446,20 @@ describe("generateHTML", () => {
         '  </ul>',
         '</nav>'
       ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should embed a component into a wrapper", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+    const aside = body.querySelector("aside")
+
+    const lines = pretty(aside.outerHTML, {ocd: true}).split("\n")
+    const expected = [ '<aside>', '  <div>Special Content</div>', '</aside>' ]
 
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })

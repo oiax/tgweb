@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
-import create from "../../lib/tgweb/create.mjs"
-import update from "../../lib/tgweb/update.mjs"
+import { create } from "../../lib/tgweb/create.mjs"
+import { update } from "../../lib/tgweb/update.mjs"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import { fileURLToPath } from "url";
 import fs from "fs"
@@ -22,6 +22,23 @@ describe("update", () => {
     const html = fs.readFileSync(wd + "/dist/index.html")
 
     assert.match(html.toString(), /\bp-2\b/)
+  })
+
+  it("should regenerate a page dependent on an article", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "a/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    update("src/pages/index.html", siteData)
+    process.chdir(wd + "a")
+
+    update("src/articles/technology.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
+
+    const html = fs.readFileSync(wd + "a/dist/index.html")
+
+    assert.match(html.toString(), /Added paragraph./)
   })
 
   it("should regenerate a page dependent on a layout", () => {
@@ -67,6 +84,7 @@ describe("update", () => {
 
     process.chdir(wd + "a")
 
+    create("src/components/x.html", siteData)
     update("src/articles/culture.html", siteData)
     update("src/components/hello.html", siteData)
 

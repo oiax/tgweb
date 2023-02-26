@@ -63,6 +63,7 @@ describe("updateSiteData", () => {
       'components/hello',
       'components/i_am',
       'components/nav',
+      'components/special',
       'components/x',
       'layouts/home',
       'pages/_wrapper'

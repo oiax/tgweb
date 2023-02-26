@@ -1,5 +1,16 @@
 # tgweb CHANGELOG
 
+## 0.1.10
+
+* 1200f07 Fix applyWrapper to embed components into wrappers
+* aea6464 Show error message when the specified component does not exist
+* 1c9d133 Bug fix: regenerate a page dependent on an article
+* eedefe9 Make create/2 to add an entry to the template list of site data
+* 1ef686d Process the deletion of templates and sites.yml
+* dafb0e0 Make create/2 to regenerate dependencies
+* da31f70 Call createInitially/2 until chokidar returns 'ready'
+* e983a5a Introduce `embedded-only` property to skip HTML file creation
+
 ## 0.1.9
 
 * 44a2d15 Make pages to take dependencies from associated articles

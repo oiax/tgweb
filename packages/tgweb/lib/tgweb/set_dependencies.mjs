@@ -1,3 +1,4 @@
+import * as PATH from "path"
 import { setAttrs } from "./set_attrs.mjs"
 import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
@@ -75,7 +76,8 @@ const setDependencies = (object, siteData) => {
   }
 
   if (object.type === "page" || object.type === "article") {
-    const wrapper = getWrapper(object, siteData)
+    const parentDir = object.type === "page" ? "pages" : "articles"
+    const wrapper = getWrapper(siteData, PATH.join(parentDir, object.path))
 
     if (wrapper) {
       const wrapperName = wrapper.path.replace(/\.html$/, "")

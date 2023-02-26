@@ -303,11 +303,10 @@ The following is an example of a simple page:
 </body>
 ```
 
-Note that the top-level element of a page is the `<body>` element.
-The top-level element of a normal HTML document is the `<html>` element, under which are
-the `<head>` element and the `<body>` element.
-
-The pages will be converted into a complete HTML document and written to the `dist` directory.
+Note that the top-level element of a page should be the `<body>` element.
+Unlike normal HTML files, a tgweb page is not enclosed in `<html>` and `</html>` tags and does
+not have a `<head>` element.
+A page will be converted into a complete HTML document and written to the `dist` directory.
 
 For example, `src/pages/index.html` is converted to `dist/index.html` and
 `src/pages/shops/new_york.html` is converted to `dist/shops/new_york.html`.
@@ -1107,6 +1106,19 @@ article file without the extension (`.html`).
 
 Unlike components, articles can only be embedded into a page.
 Articles cannot be embedded in other articles or layouts.
+
+### `embedded-only` property
+
+When the value of the `embedded-only` property of an article is set to `true`, it is not converted
+into a full HTML file, but is used only for embedding in a page:
+
+```html
+---
+embedded-only: true
+---
+<h3>Greeting</h3>
+<p>Hello, world!</p>
+```
 
 ### Embedding articles in a page
 

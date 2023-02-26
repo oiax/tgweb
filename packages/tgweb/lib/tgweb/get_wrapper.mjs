@@ -1,13 +1,13 @@
 import * as PATH from "path"
 
-const getWrapper = (template, siteData) => {
-  const parts = template.path.split(PATH.sep)
-  parts.pop()
+const getWrapper = (siteData, path) => {
+  const dirParts = path.split(PATH.sep)
+  dirParts.pop()
 
-  for(let i = parts.length; i >= 0; i--) {
-    const dir = parts.slice(i).join(PATH.sep)
-    const parentDir = template.type === "page" ? "pages" : "articles"
-    const wrapperPath = PATH.join(parentDir, dir, "_wrapper.html")
+  for(let i = dirParts.length; i > 0; i--) {
+    const dir = dirParts.slice(0, i).join(PATH.sep)
+    const wrapperPath = PATH.join(dir, "_wrapper.html")
+
     const wrapper = siteData.wrappers.find(wrapper => wrapper.path === wrapperPath)
     if (wrapper) return wrapper
   }

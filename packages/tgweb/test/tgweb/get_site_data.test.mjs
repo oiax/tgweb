@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import { fileURLToPath } from "url";
 import * as PATH from "path"
+import pretty from "pretty"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
@@ -18,6 +19,36 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["property-og:image"],
       "http://localhost:3000/images/icons/default.png")
+  })
+
+  it("should process a page without <body> and </body> tags", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const page = siteData.pages.find(page => page.path == "div_only.html")
+    const lines = pretty(page.dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>DIV ONLY</div>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should process an empty page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const page = siteData.pages.find(page => page.path == "empty.html")
+    const lines = pretty(page.dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body></body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
   it("should make the page front matter inherit site and wrapper properties", () => {
@@ -46,7 +77,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 7)
+    assert.equal(siteData.articles.length, 8)
   })
 
   it("should make the article front matter inherit site and wrapper properties", () => {
@@ -82,6 +113,7 @@ describe("getSiteData", () => {
       'components/hello',
       'components/i_am',
       'components/nav',
+      'components/special',
       'layouts/home',
       'pages/_wrapper'
     ]

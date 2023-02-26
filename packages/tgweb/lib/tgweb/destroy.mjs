@@ -1,0 +1,110 @@
+import * as PATH from "path"
+import fs from "fs"
+import getType from "./get_type.mjs"
+import { updateSiteData } from "./update_site_data.mjs"
+import { updateHTML } from "./update_html.mjs"
+import { setDependencies } from "./set_dependencies.mjs"
+
+const destroy = (path, siteData) => {
+  const dirname = PATH.dirname(path)
+
+  if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
+    const targetPath = path.replace(/^src\//, "dist/")
+    fs.unlinkSync(targetPath)
+  }
+  else if (path === "src/site.yml") {
+    updateSiteData(siteData, path)
+    _regenerateFiles(path, siteData)
+  }
+  else {
+    _destroyTemplate(path, siteData)
+    _regenerateFiles(path, siteData)
+    _makeDependencies(path, siteData)
+    _removeFile(path)
+  }
+}
+
+const _destroyTemplate = (path, siteData) => {
+  const type = getType(path)
+
+  if (type === "page") {
+    const shortPath = path.replace(/^src\/pages\//, "")
+    siteData.pages = siteData.pages.filter(p => p.path !== shortPath)
+  }
+  else if (type === "article") {
+    const shortPath = path.replace(/^src\/articles\//, "")
+    siteData.articles = siteData.articles.filter(a => a.path !== shortPath)
+  }
+  else if (type === "wrapper") {
+    const shortPath = path.replace(/^src\//, "")
+    siteData.wrappers = siteData.wrappers.filter(w => w.path !== shortPath)
+  }
+  else if (type === "layout") {
+    const shortPath = path.replace(/^src\/layouts\//, "")
+    siteData.layouts = siteData.layouts.filter(l => l.path !== shortPath)
+  }
+  else if (type === "component") {
+    const shortPath = path.replace(/^src\/components\//, "")
+    siteData.components = siteData.components.filter(c => c.path !== shortPath)
+  }
+}
+
+const _regenerateFiles = (path, siteData) => {
+  const type = getType(path)
+
+  if (type === "page") {
+    return
+  }
+  else if (type === "site.yml") {
+    siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
+    siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+  }
+  else {
+    const depName = path.replace(/^src\//, "").replace(/\.html$/, "")
+
+    siteData.pages
+      .filter(page => page.dependencies.includes(depName))
+      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+
+    siteData.articles
+      .filter(article => article.dependencies.includes(depName))
+      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+  }
+}
+
+const _makeDependencies = (path, siteData) => {
+  const type = getType(path)
+  const depName = path.replace(/^src\//, "").replace(/\.html$/, "")
+
+  if (type === "article") {
+    siteData.pages.forEach(p => {
+      p.dependencies = p.dependencies.filter(dep => dep !== depName)
+    })
+
+    siteData.articles.forEach(a => {
+      a.dependencies = a.dependencies.filter(dep => dep !== depName)
+    })
+  }
+  else if (type === "wrapper") {
+    siteData.pages.forEach(p => {
+      if (p.dependencies.includes(depName)) setDependencies(p, siteData)
+    })
+
+    siteData.articles.forEach(a => {
+      if (a.dependencies.includes(depName)) setDependencies(a, siteData)
+    })
+  }
+}
+
+const _removeFile = (path) => {
+  const type = getType(path)
+
+  if (type === "page" || type === "article") {
+    const targetPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+    fs.unlinkSync(targetPath)
+
+    if (process.env.VERBOSE) console.log(`Deleted ${path}.`)
+  }
+}
+
+export { destroy }
