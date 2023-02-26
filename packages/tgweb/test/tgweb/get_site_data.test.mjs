@@ -77,7 +77,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 7)
+    assert.equal(siteData.articles.length, 8)
   })
 
   it("should make the article front matter inherit site and wrapper properties", () => {

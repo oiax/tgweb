@@ -1107,6 +1107,19 @@ article file without the extension (`.html`).
 Unlike components, articles can only be embedded into a page.
 Articles cannot be embedded in other articles or layouts.
 
+### `embedded-only` property
+
+When the value of the `embedded-only` property of an article is set to `true`, it is not converted
+into a full HTML file, but is used only for embedding in a page:
+
+```html
+---
+embedded-only: true
+---
+<h3>Greeting</h3>
+<p>Hello, world!</p>
+```
+
 ### Embedding articles in a page
 
 The `<tg-articles>` element can be used to embed multiple articles into a page.

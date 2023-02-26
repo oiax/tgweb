@@ -1,4 +1,3 @@
-import pretty from "pretty"
 import { getWrapper } from "./get_wrapper.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { getTitle } from "./get_title.mjs"
@@ -12,13 +11,13 @@ const renderArticle = (path, siteData) => {
   const article = siteData.articles.find(article => "src/articles/" + article.path == path)
 
   if (article) {
+    if (article.frontMatter["embedded-only"] === true) return
+
     const articleRoot = article.dom.window.document.body.cloneNode(true)
     expandClassAliases(article.frontMatter, articleRoot)
     embedComponents(article, articleRoot, siteData, path)
     return _renderArticle(article, articleRoot, siteData, path)
   }
-
-  return pretty(siteData.documentTemplate.serialize())
 }
 
 const _renderArticle = (article, articleRoot, siteData, path) => {
@@ -31,14 +30,12 @@ const _renderArticle = (article, articleRoot, siteData, path) => {
     const wrapperRoot = applyWrapper(article, articleRoot, wrapper, siteData, path)
     const headAttrs = { title: getTitle(article, wrapperRoot) }
     const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
-    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
-    else console.log("Error")
+    return renderHTML(article, layoutRoot, siteData, headAttrs, path)
   }
   else {
     const headAttrs = { title: getTitle(article, articleRoot) }
     const layoutRoot = applyLayout(article, articleRoot, siteData, path)
-    if (layoutRoot) return renderHTML(article, layoutRoot, siteData, headAttrs, path)
-    else console.log("Error")
+    return renderHTML(article, layoutRoot, siteData, headAttrs, path)
   }
 }
 

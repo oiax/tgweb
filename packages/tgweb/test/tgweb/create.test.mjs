@@ -43,6 +43,17 @@ describe("create", () => {
     assert.match(body.innerHTML, /computer/)
   })
 
+  it("should not generate an HTML file for an article with embedded-only property", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/articles/embedded_only.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/articles/embedded_only.html"), false)
+  })
+
   it("should copy the specified image file to dist directory", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     process.chdir(wd)

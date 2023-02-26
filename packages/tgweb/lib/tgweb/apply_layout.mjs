@@ -4,20 +4,20 @@ import { embedContent } from "./embed_content.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { embedComponents } from "./embed_components.mjs"
 
-const applyLayout = (template, element, siteData, path) => {
-  if (template.frontMatter["layout"] === undefined) return
+const applyLayout = (template, templateRoot, siteData, path) => {
+  if (template.frontMatter["layout"] === undefined) return templateRoot
 
   const layout =
     siteData.layouts.find(layout => layout.path == template.frontMatter["layout"] + ".html")
 
-  if (layout === undefined) return
+  if (layout === undefined) return templateRoot
 
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
 
   const frontMatter = makeLocalFrontMatter(template, layout)
   expandClassAliases(frontMatter, layoutRoot)
-  embedContent(layoutRoot, element)
-  fillInPlaceHolders(layoutRoot, element, template)
+  embedContent(layoutRoot, templateRoot)
+  fillInPlaceHolders(layoutRoot, templateRoot, template)
   embedComponents(template, layoutRoot, siteData, path)
 
   return layoutRoot
