@@ -68,7 +68,7 @@ const run = () => {
     "-o",
     "./dist/css/tailwind.css",
     "--watch",
-  ])
+  ], {shell: true})
 
   console.log("tailwindcss began to monitor the HTML files for changes.")
 
