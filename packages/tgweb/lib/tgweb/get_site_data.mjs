@@ -47,12 +47,39 @@ const getSiteData = directory => {
     normalizeFrontMatter(siteData.properties)
   }
 
+  const layoutsDir = PATH.join(directory, "src", "layouts")
+
+  if (fs.existsSync(layoutsDir)) {
+    process.chdir(layoutsDir)
+
+    siteData.layouts = glob.sync("*.html").map(path => {
+      const layout = getTemplate(path, "layout")
+      mergeProperties(layout.frontMatter, siteData.properties)
+      return layout
+    })
+
+    siteData.layouts.map(layout => setDependencies(layout, siteData))
+  }
+
   process.chdir(PATH.join(directory, "/src"))
 
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => {
       const wrapper = getTemplate(path, "wrapper")
-      mergeProperties(wrapper.frontMatter, siteData.properties)
+      const layoutName = wrapper.frontMatter["layout"]
+
+      if (layoutName) {
+        const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
+
+        if (layout)
+          mergeProperties(wrapper.frontMatter, layout.frontMatter)
+        else
+          mergeProperties(wrapper.frontMatter, siteData.properties)
+      }
+      else {
+        mergeProperties(wrapper.frontMatter, siteData.properties)
+      }
+
       return wrapper
     })
 
@@ -63,14 +90,6 @@ const getSiteData = directory => {
   if (fs.existsSync(componentsDir)) {
     process.chdir(componentsDir)
     siteData.components = glob.sync("*.html").map(path => getTemplate(path, "component"))
-  }
-
-  const layoutsDir = PATH.join(directory, "src", "layouts")
-
-  if (fs.existsSync(layoutsDir)) {
-    process.chdir(layoutsDir)
-    siteData.layouts = glob.sync("*.html").map(path => getTemplate(path, "layout"))
-    siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
   const articlesDir = PATH.join(directory, "src", "articles")

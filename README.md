@@ -16,6 +16,7 @@
 * [Articles](#articles)
 * [Tags](#tags)
 * [Links](#links)
+* [Notes on property values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -364,6 +365,15 @@ The values of these properties will be set appropriately when the website is pub
 Teamgenik.
 The value of the `url` property is generated from these properties and the path to the page or
 article. Its value is readonly.
+
+The following three properties are meaningful only in articles:
+
+* `index`: An integer value used to sort the articles.
+* `tags`: A single string or list of strings to classify articles.
+* `embedded-only`: A boolean value that determines whether a separate HTML document is created
+   from an article; if `true`, it will not be created. Default: `false`.
+
+See [Articles](#articles) for details.
 
 ### Embedding property values in a template
 
@@ -1274,7 +1284,7 @@ a `<tg-links>` element.
 
 ### Filtering articles by tags
 
-You may use _tags_ to categorize your articles.
+You may use _tags_ to classify your articles.
 
 To attach tags to an article, specify their names in the `tags` attribute as an array
 using `[...]` notation:
@@ -1483,6 +1493,72 @@ The `<tg-link>` elements can be placed within the `<tg-links`> element:
 
 In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
 You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
+
+## Notes on property values
+
+### Property Inheritance
+
+If no value is set for a particular property in the front matter of a page or an article, tgweb
+will search for a value in the following order:
+
+1. the front matter of its wrapper if available
+2. the front matter of its layout if available
+3. `sites.yml` if available
+
+For example, suppose that the value `"a"` is set to the custom property `data-x` in the front
+matter of a page as follows:
+
+```
+data-x: "a"
+```
+
+And suppose the front matter of its wrapper has the following settings:
+
+```
+data-x: "b"
+data-y: "c"
+```
+
+In this case, the value of the property `data-x` for this page is `"a"` and the value of the
+property `data-y` is `"c"`.
+
+In addition, suppose that the front matter of the layout applied to this page has the following
+settings:
+
+```
+data-z: "d"
+```
+
+If so, the value of property `data-x` on this page is `"d"`.
+
+### Embedding property values into a wrapper or layout
+
+When a wrapper or layout is applied to a page or article, the values that are substituted for
+the `<tg-prop>` and `<tg-data>` elements in that wrapper or layout are the values of
+properties that the page or article has.
+
+For example, suppose a page has the following front matter
+
+```
+data-x: "a"
+```
+
+And suppose its wrapper has the following front matter and HTML fragment:
+
+```html
+---
+data-x: "b"
+data-y: "c"
+---
+<header>
+  <tg-data name="x"></tg-data>
+  <tg-data name="y"></tg-data>
+</header>
+<tg-content></tg-content>
+```
+
+Then, the text content of the `<header>` element of the HTML document generated from them will
+be "a c" instead of "b c".
 
 ## Managing the Contents of the `<head>` Element
 
