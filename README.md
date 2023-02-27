@@ -1147,11 +1147,24 @@ layout: home
 The above example embeds all articles in the `src/articles/proposals` directory under the
 `<h1>` element.
 
-By default, articles are sorted in ascending (alphabetically) order by file name.
+By default, articles are sorted in ascending (alphabetically) order by filename.
+
+To sort articles in descending order by their filename, set the `order-by` attribute of the
+`<tg-articles>` element to `"filename:desc"`:
+
+```html
+---
+layout: home
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg-articles pattern="proposals/*" order-by="filename:desc"></tg-articles>
+</main>
+```
 
 ### Sorting articles by their title
 
-To sort articles in by their title, set the `order-by` attribute of the `<tg-articles>` element
+To sort articles by their title, set the `order-by` attribute of the `<tg-articles>` element
 to `"title:asc"` or `"title:desc"`:
 
 ```html
@@ -1165,7 +1178,7 @@ layout: home
 ```
 
 The value of the `order-by` attribute is a string separated by a single colon.
-The left side of the colon must be `"title"` or `"index"`.
+The left side of the colon must be `"title"`, `"index"` or `"filename"`.
 The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
 and `"desc"` means "descending order".
 
