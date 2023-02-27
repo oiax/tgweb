@@ -8,9 +8,12 @@ import reload from "reload"
 import chokidar from "chokidar"
 import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
+import { installFonts } from "./server/install_fonts.mjs"
 import tgweb from "./tgweb.mjs"
 
 const run = () => {
+  const workingDir = process.cwd()
+
   if (process.argv.length > 2) {
     const targetDirName = process.argv[2]
 
@@ -52,7 +55,9 @@ const run = () => {
   let ready = false
   const siteData = tgweb.getSiteData(process.cwd())
 
-  chokidar.watch("./src")
+  installFonts(siteData, workingDir)
+
+  chokidar.watch("src")
     .on("add", path => {
       if (ready) tgweb.create(path, siteData)
       else tgweb.createInitially(path, siteData)
@@ -64,11 +69,11 @@ const run = () => {
   const childProcess = spawn("npx", [
     "tailwindcss",
     "-i",
-    "./tailwind.css",
+    "tailwind.css",
     "-o",
-    "./dist/css/tailwind.css",
+    PATH.join("dist", "css", "tailwind.css"),
     "--watch",
-  ])
+  ], {shell: true})
 
   console.log("tailwindcss began to monitor the HTML files for changes.")
 
@@ -76,7 +81,7 @@ const run = () => {
 
   childProcess.stderr.on("data", data => {
     const message = data.toString().trim().replaceAll(regex, "")
-    if (message !== "") console.error("Rebuilding... " + message)
+    if (message !== "") console.error("Rebuilding tailwind.css. " + message)
   })
 
   childProcess.on("close", code => {

@@ -71,6 +71,13 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
     }
   })
 
+  if (siteData.properties["font-material-symbols"] === true) {
+    const newLink = dom.window.document.createElement("link")
+    newLink.setAttribute("rel", "stylesheet")
+    newLink.setAttribute("href", "/css/material-symbols/index.css")
+    link.before(newLink)
+  }
+
   return pretty(dom.serialize(), {ocd: true})
 }
 

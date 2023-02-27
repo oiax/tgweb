@@ -1,5 +1,7 @@
+import { slash } from "./slash.mjs"
+
 const processTgLinks = (root, siteData, path) => {
-  const currentPath = path.replace(/^src\//, "").replace(/^pages\//, "")
+  const currentPath = slash(path).replace(/^src\//, "").replace(/^pages\//, "")
 
   Array.from(root.querySelectorAll("tg-link[href]")).forEach(link => {
     const href = link.getAttribute("href")

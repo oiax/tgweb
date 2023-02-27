@@ -21,7 +21,7 @@ const getTemplate = (path, type) => {
     const frontMatter = {}
     const dom = new JSDOM(source.toString())
 
-    return { path, frontMatter, dom }
+    return { path, type, frontMatter, dom }
   }
 }
 

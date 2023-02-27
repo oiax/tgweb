@@ -1,5 +1,14 @@
 # tgweb CHANGELOG
 
+## 0.1.11
+
+* 2c893b0 Add {shell: true} to spawn for Windows
+* 94ddbd3 Handle Windows-style paths correctly
+* 6a0fec4 Try to remove files only if they exist
+* e5feb64 Inherit properties from layout front matter
+* f5a771d Make articles sortable by filename in descending order
+* ac5e3e6 Introduce font-materials-symbols property
+
 ## 0.1.10
 
 * 1200f07 Fix applyWrapper to embed components into wrappers

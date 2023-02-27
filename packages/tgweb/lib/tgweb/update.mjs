@@ -1,3 +1,4 @@
+import { slash } from "./slash.mjs"
 import { updateSiteData } from "./update_site_data.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
@@ -18,7 +19,7 @@ const update = (path, siteData) => {
   else if (type === "article") {
     updateHTML(path, siteData)
 
-    const name = path.replace(/^src\//, "").replace(/\.html$/, "")
+    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
@@ -29,7 +30,7 @@ const update = (path, siteData) => {
     siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
   }
   else {
-    const name = path.replace(/^src\//, "").replace(/\.html$/, "")
+    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
