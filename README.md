@@ -1130,7 +1130,7 @@ layout: home
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="/proposals/*"></tg-articles>
+  <tg-articles pattern="proposals/*"></tg-articles>
 </main>
 ```
 
@@ -1150,7 +1150,7 @@ layout: home
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="/proposals/*" order-by="title:asc"></tg-articles>
+  <tg-articles pattern="proposals/*" order-by="title:asc"></tg-articles>
 </main>
 ```
 
@@ -1182,7 +1182,7 @@ layout: home
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="/proposals/*" order-by="index:asc"></tg-articles>
+  <tg-articles pattern="proposals/*" order-by="index:asc"></tg-articles>
 </main>
 ```
 
@@ -1201,7 +1201,7 @@ layout: home
 <main>
   <h1>Our Proposals</h1>
   <ul>
-    <tg-links pattern="/proposals/*">
+    <tg-links pattern="proposals/*">
       <li>
         <a href="#">
           <tg-prop name="title"></tg-prop>
@@ -1237,7 +1237,7 @@ To sort articles by their title, set  the `order-by` attribute of the `<tg-links
 `"title:asc"` or `"title:desc"`:
 
 ```html
-    <tg-links pattern="/proposals/*" order-by="title:asc">
+    <tg-links pattern="proposals/*" order-by="title:asc">
       <li>
         ...
       </li>
@@ -1262,7 +1262,7 @@ index 123
 Then, specify the `order-by` attribute of the `<tg-links>` element.
 
 ```html
-    <tg-links pattern="/proposals/*" order-by="index:asc">
+    <tg-links pattern="proposals/*" order-by="index:asc">
       <li>
         ...
       </li>
@@ -1308,7 +1308,7 @@ layout: home
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
-  <tg-articles pattern="/blog/*" filter="tag:travel"></tg-articles>
+  <tg-articles pattern="blog/*" filter="tag:travel"></tg-articles>
 </main>
 ```
 
@@ -1325,7 +1325,7 @@ layout: home
 <main>
   <h1>Articles (tag:travel)</h1>
   <ul>
-    <tg-links pattern="/blog/*" filter="tag:travel">
+    <tg-links pattern="blog/*" filter="tag:travel">
       <li>
         <a href="#">
           <tg-slot name="title"></tg-slot>
@@ -1465,7 +1465,7 @@ The values of `href` and `label` attributes are _passed_ to the link component.
 The `<tg-link>` elements can be placed within the `<tg-links`> element:
 
 ```html
-<tg-links pattern="/proposals/*" order-by="index:asc">
+<tg-links pattern="proposals/*" order-by="index:asc">
   <li>
     <tg-link>
       <a href="#" class="underline text-blue-500">
