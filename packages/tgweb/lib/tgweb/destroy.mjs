@@ -12,7 +12,12 @@ const destroy = (path, siteData) => {
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
     const distPath = slash(path).replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
-    fs.unlinkSync(targetPath)
+
+    if (fs.existsSync(targetPath)) {
+      fs.rmSync(targetPath)
+
+      if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
+    }
   }
   else if (path === "src/site.yml") {
     updateSiteData(siteData, path)
@@ -104,9 +109,12 @@ const _removeFile = (path) => {
   if (type === "page" || type === "article") {
     const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
     const targetPath = PATH.resolve(distPath)
-    fs.unlinkSync(targetPath)
 
-    if (process.env.VERBOSE) console.log(`Deleted ${targetPath}.`)
+    if (fs.existsSync(targetPath)) {
+      fs.rmSync(targetPath)
+
+      if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
+    }
   }
 }
 
