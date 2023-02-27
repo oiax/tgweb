@@ -47,7 +47,7 @@ const getSiteData = directory => {
     normalizeFrontMatter(siteData.properties)
   }
 
-  process.chdir(directory + "/src")
+  process.chdir(PATH.join(directory, "/src"))
 
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => {
@@ -58,19 +58,25 @@ const getSiteData = directory => {
 
   siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
 
-  if (fs.existsSync(directory + "/src/components")) {
-    process.chdir(directory + "/src/components")
+  const componentsDir = PATH.join(directory, "src", "components")
+
+  if (fs.existsSync(componentsDir)) {
+    process.chdir(componentsDir)
     siteData.components = glob.sync("*.html").map(path => getTemplate(path, "component"))
   }
 
-  if (fs.existsSync(directory + "/src/layouts")) {
-    process.chdir(directory + "/src/layouts")
+  const layoutsDir = PATH.join(directory, "src", "layouts")
+
+  if (fs.existsSync(layoutsDir)) {
+    process.chdir(layoutsDir)
     siteData.layouts = glob.sync("*.html").map(path => getTemplate(path, "layout"))
     siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
-  if (fs.existsSync(directory + "/src/articles")) {
-    process.chdir(directory + "/src/articles")
+  const articlesDir = PATH.join(directory, "src", "articles")
+
+  if (fs.existsSync(articlesDir)) {
+    process.chdir(articlesDir)
 
     siteData.articles =
       glob.sync("**/!(_wrapper).html").map(path => {
@@ -91,8 +97,10 @@ const getSiteData = directory => {
     siteData.articles.map(article => setDependencies(article, siteData))
   }
 
-  if (fs.existsSync(directory + "/src/pages")) {
-    process.chdir(directory + "/src/pages")
+  const pagesDir = PATH.join(directory, "src", "pages")
+
+  if (fs.existsSync(pagesDir)) {
+    process.chdir(pagesDir)
 
     siteData.pages =
       glob.sync("**/!(_wrapper).html").map(path => {

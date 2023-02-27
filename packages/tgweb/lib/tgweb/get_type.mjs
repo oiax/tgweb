@@ -1,7 +1,8 @@
 import * as PATH from "path"
+import { slash } from "./slash.mjs"
 
 const getType = path => {
-  const dirname = PATH.dirname(path)
+  const dirname = slash(PATH.dirname(path))
   const filename = PATH.basename(path)
 
   if (filename === "_wrapper.html") return "wrapper"

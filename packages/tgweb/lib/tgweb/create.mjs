@@ -1,4 +1,5 @@
 import * as PATH from "path"
+import { slash } from "./slash.mjs"
 import fs from "fs"
 import { updateSiteData } from "./update_site_data.mjs"
 import generateHTML from "./generate_html.mjs"
@@ -6,10 +7,11 @@ import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
 
 const create = (path, siteData) => {
-  const dirname = PATH.dirname(path)
+  const dirname = slash(PATH.dirname(path))
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
-    const targetPath = path.replace(/^src\//, "dist/")
+    const distPath = slash(path).replace(/^src\//, "dist/")
+    const targetPath = PATH.resolve(distPath)
     const targetDir = PATH.dirname(targetPath)
 
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
@@ -20,17 +22,18 @@ const create = (path, siteData) => {
     const html = generateHTML(path, siteData)
 
     if (html !== undefined) {
-      const targetPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+      const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+      const targetPath = PATH.resolve(distPath)
       const targetDir = PATH.dirname(targetPath)
 
       if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
       fs.writeFileSync(targetPath, html)
 
-      if (process.env.VERBOSE) console.log(`Created ${path}.`)
+      if (process.env.VERBOSE) console.log(`Created ${targetPath}.`)
     }
 
     const type = getType(path)
-    const name = path.replace(/^src\//, "").replace(/\.html$/, "")
+    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
 
     if (type === "page") return
 

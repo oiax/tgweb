@@ -52,7 +52,7 @@ const run = () => {
   let ready = false
   const siteData = tgweb.getSiteData(process.cwd())
 
-  chokidar.watch("./src")
+  chokidar.watch("src")
     .on("add", path => {
       if (ready) tgweb.create(path, siteData)
       else tgweb.createInitially(path, siteData)
@@ -64,9 +64,9 @@ const run = () => {
   const childProcess = spawn("npx", [
     "tailwindcss",
     "-i",
-    "./tailwind.css",
+    "tailwind.css",
     "-o",
-    "./dist/css/tailwind.css",
+    PATH.join("dist", "css", "tailwind.css"),
     "--watch",
   ], {shell: true})
 
@@ -76,7 +76,7 @@ const run = () => {
 
   childProcess.stderr.on("data", data => {
     const message = data.toString().trim().replaceAll(regex, "")
-    if (message !== "") console.error("Rebuilding... " + message)
+    if (message !== "") console.error("Rebuilding tailwind.css. " + message)
   })
 
   childProcess.on("close", code => {
