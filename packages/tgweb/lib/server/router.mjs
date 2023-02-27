@@ -17,6 +17,14 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
+  router.get("/css/**/*.css", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
+  router.get("/css/**/*.woff2", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
   router.get(/^\/images\/.*\.(gif|png|jpe?g|svg|avif)$/, (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })

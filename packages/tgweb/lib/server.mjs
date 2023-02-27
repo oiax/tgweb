@@ -8,9 +8,12 @@ import reload from "reload"
 import chokidar from "chokidar"
 import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
+import { installFonts } from "./server/install_fonts.mjs"
 import tgweb from "./tgweb.mjs"
 
 const run = () => {
+  const workingDir = process.cwd()
+
   if (process.argv.length > 2) {
     const targetDirName = process.argv[2]
 
@@ -51,6 +54,8 @@ const run = () => {
 
   let ready = false
   const siteData = tgweb.getSiteData(process.cwd())
+
+  installFonts(siteData, workingDir)
 
   chokidar.watch("src")
     .on("add", path => {

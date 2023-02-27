@@ -10,6 +10,7 @@
 * [Front Matter](#front-matter)
 * [Images](#images)
 * [Audios](#audios)
+* [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
 * [Wrappers](#wrapper)
 * [Components](#components)
@@ -628,6 +629,38 @@ the absolute path of the audio file in their `src` attribute.
 
 Note that Teamgenik does not allow the `<audio>` and `<source>` elements to reference an external
 URL.
+
+## Fonts and Icons
+
+### Material Symbols
+
+By setting the value of the `font-material-symbols` property to `true` in `sites.yml`,
+[Material Symbols](https://developers.google.com/fonts/docs/material_symbols) provided by
+Google will be available on your website.
+
+```yaml
+font-material-symbols: true
+```
+
+#### Examples
+
+Outlined "Home" symbol:
+
+```html
+<span class="materials-symbols-outlined">Home</span>
+```
+
+Rounded "Delete" symbol:
+
+```html
+<span class="materials-symbols-rounded">Delete</span>
+```
+
+Sharp "Shopping Bag" symbol:
+
+```html
+<span class="materials-symbols-sharp">Shopping Bag</span>
+```
 
 ## Layouts
 
