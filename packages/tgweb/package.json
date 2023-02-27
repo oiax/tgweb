@@ -22,6 +22,7 @@
     "glob": "^8.0.3",
     "js-yaml": "^4.1.0",
     "jsdom": "^21.0.0",
+    "material-symbols": "^0.4.5",
     "minimatch": "^6.1.6",
     "pretty": "^2.0.0",
     "reload": "^3.2.1",
