@@ -62,6 +62,16 @@ describe("getSiteData", () => {
     assert.equal(page.frontMatter["data-current-year"], 2023)
   })
 
+  it("should make the page front matter inherit layout properties", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const siteData = getSiteData(wd)
+
+    const page = siteData.pages.find(page => page.path == "index.html")
+
+    assert.equal(page.frontMatter["http-equiv-content-security-policy"], "default-src 'self'")
+    assert.equal(page.frontMatter["title"], "Home")
+  })
+
   it("should interpret the class aliases correctly", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_2")
     const siteData = getSiteData(wd)

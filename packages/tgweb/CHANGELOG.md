@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.1.12
+
+* ad507f8 Introduce daisyUI
+* 660ba25 Bug fix: make pages/article inherit properties from layout
+* c2cb0d7 Make `tgweb-init` create `.gitignore` file
+
 ## 0.1.11
 
 * 2c893b0 Add {shell: true} to spawn for Windows

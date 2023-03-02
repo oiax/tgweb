@@ -109,6 +109,13 @@ const getSiteData = directory => {
         else
           mergeProperties(article.frontMatter, siteData.properties)
 
+        const layoutName = article.frontMatter["layout"]
+
+        if (layoutName) {
+          const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
+          if (layout) mergeProperties(article.frontMatter, layout.frontMatter)
+        }
+
         expandPaths(article.frontMatter)
         return article
       })
@@ -132,6 +139,13 @@ const getSiteData = directory => {
           mergeProperties(page.frontMatter, wrapper.frontMatter)
         else
           mergeProperties(page.frontMatter, siteData.properties)
+
+        const layoutName = page.frontMatter["layout"]
+
+        if (layoutName) {
+          const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
+          if (layout) mergeProperties(page.frontMatter, layout.frontMatter)
+        }
 
         expandPaths(page.frontMatter)
         return page
