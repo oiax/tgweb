@@ -18,6 +18,7 @@ const initialize = () => {
     return
   }
 
+  createGitignore()
   generateSkeleton(process.cwd())
 
   console.log(`A website scaffold was created.`)
@@ -31,6 +32,8 @@ const initializeSites = () => {
     console.log('It seems that this directory has already been initialized as a single-site working directory.')
     return
   }
+
+  createGitignore()
 
   const targetDirName = process.argv[2]
   const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
@@ -63,6 +66,18 @@ const generateSkeleton = (targetDirPath) => {
     const dest = PATH.resolve(targetDirPath, `./${path}`)
     fs.copyFileSync(path, dest)
   })
+}
+
+const createGitignore = () => {
+  const lines = [
+    "/node_modules",
+    "/dist",
+    "/sites/*/dist"
+  ]
+
+  const content = lines.join("\n") + "\n"
+
+  fs.writeFileSync(".gitignore", content)
 }
 
 if (process.argv.length === 2) initialize()
