@@ -1,13 +1,21 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "keywords": [
     "teamgenik",
     "blog",
     "website",
     "generator"
   ],
+  "homepage": "https://github.com/oiax/tgweb",
+  "bugs": {
+    "url": "https://github.com/oiax/tgweb/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oiax/tgweb.git"
+  },
   "description": "Teamgenik Website Builder Offline Tool",
   "scripts": {
     "test": "mocha --slow 500 test/*.test.mjs test/**/*.test.mjs",
