@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.13
+
+* 7152cfb Fix getTemplate/2 for to remove carriage returnes from source
+
 ## 0.1.12
 
 * ad507f8 Introduce daisyUI

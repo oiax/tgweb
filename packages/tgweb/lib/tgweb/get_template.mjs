@@ -6,8 +6,8 @@ import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 const separatorRegex = new RegExp("^---\\n", "m")
 
 const getTemplate = (path, type) => {
-  const source = fs.readFileSync(path)
-  const parts = source.toString().split(separatorRegex)
+  const source = fs.readFileSync(path).toString().replaceAll(/\r/g, "")
+  const parts = source.split(separatorRegex)
 
   if (parts[0] === "" && parts[1] !== undefined) {
     const frontMatter = YAML.load(parts[1])
@@ -19,7 +19,7 @@ const getTemplate = (path, type) => {
   }
   else {
     const frontMatter = {}
-    const dom = new JSDOM(source.toString())
+    const dom = new JSDOM(source)
 
     return { path, type, frontMatter, dom }
   }
