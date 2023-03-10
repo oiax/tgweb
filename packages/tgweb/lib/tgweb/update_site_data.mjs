@@ -66,7 +66,7 @@ const updateSiteData = (siteData, path) => {
 
     if (article) {
       siteData.articles.forEach(article => {
-        if ("src/articles/" + article.path == path) {
+        if ("src/articles/" + article.path == posixPath) {
           updateTemplate(article, path)
           setUrlProperty(article.frontMatter, siteData, "articles/" + posixPath)
 
