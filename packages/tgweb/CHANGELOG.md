@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.15
+
+* fb2cd35 Bug fix: cannot embed articles into a layout
+
 ## 0.1.14
 
 * e07263d Fix updateSiteData/2 for Windows
