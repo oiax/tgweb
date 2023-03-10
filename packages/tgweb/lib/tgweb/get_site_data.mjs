@@ -25,6 +25,7 @@ const getSiteData = directory => {
   const siteData = {
     pages: [],
     layouts: [],
+    segments: [],
     wrappers: [],
     articles: [],
     components: [],
@@ -47,12 +48,26 @@ const getSiteData = directory => {
     normalizeFrontMatter(siteData.properties)
   }
 
+  const componentsDir = PATH.join(directory, "src", "components")
+
+  if (fs.existsSync(componentsDir)) {
+    process.chdir(componentsDir)
+    siteData.components = glob.sync("**/*.html").map(path => getTemplate(path, "component"))
+  }
+
+  const segmentsDir = PATH.join(directory, "src", "segments")
+
+  if (fs.existsSync(segmentsDir)) {
+    process.chdir(segmentsDir)
+    siteData.segments = glob.sync("**/*.html").map(path => getTemplate(path, "segment"))
+  }
+
   const layoutsDir = PATH.join(directory, "src", "layouts")
 
   if (fs.existsSync(layoutsDir)) {
     process.chdir(layoutsDir)
 
-    siteData.layouts = glob.sync("*.html").map(path => {
+    siteData.layouts = glob.sync("**/*.html").map(path => {
       const layout = getTemplate(path, "layout")
       mergeProperties(layout.frontMatter, siteData.properties)
       return layout
@@ -84,13 +99,6 @@ const getSiteData = directory => {
     })
 
   siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
-
-  const componentsDir = PATH.join(directory, "src", "components")
-
-  if (fs.existsSync(componentsDir)) {
-    process.chdir(componentsDir)
-    siteData.components = glob.sync("*.html").map(path => getTemplate(path, "component"))
-  }
 
   const articlesDir = PATH.join(directory, "src", "articles")
 

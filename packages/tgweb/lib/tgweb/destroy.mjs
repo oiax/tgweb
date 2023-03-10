@@ -54,6 +54,10 @@ const _destroyTemplate = (path, siteData) => {
     const shortPath = slash(path).replace(/^src\/components\//, "")
     siteData.components = siteData.components.filter(c => c.path !== shortPath)
   }
+  else if (type === "segment") {
+    const shortPath = slash(path).replace(/^src\/segments\//, "")
+    siteData.segments = siteData.segments.filter(s => s.path !== shortPath)
+  }
 }
 
 const _regenerateFiles = (path, siteData) => {

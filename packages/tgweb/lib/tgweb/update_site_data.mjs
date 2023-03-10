@@ -21,6 +21,7 @@ const updateSiteData = (siteData, path) => {
     const newSiteData = getSiteData(process.cwd())
     siteData.properties = newSiteData.properties
     siteData.pages = newSiteData.pages
+    siteData.segments = newSiteData.segments
     siteData.articles = newSiteData.articles
     siteData.components = newSiteData.components
     siteData.layouts = newSiteData.layouts
@@ -41,6 +42,23 @@ const updateSiteData = (siteData, path) => {
       process.chdir("src/components")
       const shortPath = posixPath.replace(/^src\/components\//, "")
       siteData.components.push(getTemplate(shortPath, "component"))
+    }
+  }
+  else if (type === "segment") {
+    const segment = siteData.segments.find(s => "src/segments/" + s.path === posixPath)
+
+    if (segment) {
+      siteData.segments.forEach(segment => {
+        if ("src/segments/" + segment.path === posixPath) {
+          updateTemplate(segment, path)
+          mergeProperties(segment.frontMatter, siteData.properties)
+        }
+      })
+    }
+    else {
+      process.chdir("src/segments")
+      const shortPath = posixPath.replace(/^src\/segments\//, "")
+      siteData.segments.push(getTemplate(shortPath, "segment"))
     }
   }
   else if (type === "layout") {

@@ -13,6 +13,7 @@
 * [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
 * [Wrappers](#wrapper)
+* [Segments](#segments)
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
@@ -138,6 +139,7 @@ following elements:
 │   ├── images
 │   ├── layouts
 │   ├── pages
+│   ├── segments
 │   ├── tags
 │   └── site.yml
 ├── package-lock.json
@@ -225,6 +227,7 @@ If this approach is adopted, the structure of the working directory will look li
     │   │   ├── images
     │   │   ├── layouts
     │   │   ├── pages
+    │   │   ├── segments
     │   │   └── tags
     │   ├── tailwind.config.js
     │   └── tailwind.css
@@ -237,6 +240,7 @@ If this approach is adopted, the structure of the working directory will look li
         │   ├── images
         │   ├── layouts
         │   ├── pages
+        │   ├── segments
         │   └── tags
         ├── tailwind.config.js
         └── tailwind.css
@@ -272,7 +276,7 @@ delete all subdirectories except for `site_0`.
 In **tgweb**, the HTML documents that make up a website are generated from a combination of
 template files. A _page_ is a type of such template file.
 
-Non-page templates include layouts, wrappers, articles, and components, which
+Non-page templates include layouts, segments, wrappers, articles, and components, which
 are described in turn in the following sections.
 
 Pages are placed in the `src/pages` subdirectory under the working directory.
@@ -1021,17 +1025,96 @@ layout: common
 </div>
 ```
 
+## Segments
+
+### Segment files
+
+A _segment_ is a template file that can be embedded in pages or layouts.
+Segments cannot be embedded in templates other than these types, such as articles, segments or
+components.
+
+Segments are placed in the `src/segments` subdirectory of the working directory.
+
+The following is an example of a segment:
+
+`src/segments/hero.html`
+
+```html
+<section class="bg-base-200 p-4 border border-rounded">
+  <div class="flex">
+    <img src="/images/hello.jpg">
+    <div>
+      <h1 class="text-5xl font-bold">Hello, world!</h1>
+      <p>The quick brown fox jumps over the lazy dog.</p>
+    </div>
+  </div>
+</section>
+```
+
+### Embedding segments into a page
+
+To embed a segment into a page, add a `<tg-segment>` element at the
+location where you want to place it and specify its name in the `name` attribute.
+
+#### Example
+
+```html
+<div>
+  <tg-segment name="hero"></tg-segment>
+
+  <main>
+    ...
+  </main>
+</div>
+```
+
+### Slots
+
+Like layouts, slots can be placed inside segments. The method of embedding content in the slots
+within a segment is similar to that of a layout.
+
+#### Example
+
+`src/segment/hero.html`
+
+```html
+<section class="bg-base-200 p-4 border border-rounded">
+  <div class="flex">
+    <img src="/images/hello.jpg">
+    <div>
+      <h1 class="text-5xl font-bold">Hello, world!</h1>
+      <tg-slot name="paragraph"></tg-slot>
+    </div>
+  </div>
+</section>
+```
+
+`src/pages/index.html`
+
+```html
+<div>
+  <tg-segment name="hero">
+    <tg-insert name="paragraph">
+      <p>The quick brown fox jumps over the lazy dog.</p>
+    </tg-insert>
+  </tg-segment>
+
+  <main>
+    ...
+  </main>
+</div>
+```
+
 ## Components
 
 ### Component files
 
-A _components_ is a template file that can be embedded in pages, articles and layouts.
+A _components_ is a template file that can be embedded in pages, segments, articles and layouts.
 However, embedding a component in another is not allowed.
 
-Components are live in the `src/components` subdirectory of the working directory.
+Components are placed in the `src/components` subdirectory of the working directory.
 
-A component must have only one top-level element. The following is an example of a correct
-component:
+The following is an example of a component:
 
 `src/components/smile.html`
 
@@ -1039,16 +1122,6 @@ component:
 <span class="inline-block border-solid border-2 border-black rounded p-2">
   <i class="fas fa-smile"></i>
 </span>
-```
-
-The following example is incorrect for a component because it has multiple top-level elements:
-
-`src/components/rgb.html`
-
-```html
-<span class="text-red-500">R</span>
-<span class="text-green-500">G</span>
-<span class="text-bluer-500">B</span>
 ```
 
 ### Embedding components
@@ -1067,8 +1140,8 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Slots
 
-Like layouts, slots can be placed inside components. The method of embedding content in the slots
-within a component is similar to that of a layout.
+Like layouts and segments, slots can be placed inside components. The method of embedding content
+in the slots within a component is similar to that of a layout and segment.
 
 #### Example
 
@@ -1128,9 +1201,9 @@ Articles and pages have exactly the same characteristics in the following respec
 * The content of the `<head>` element is automatically generated in the manner described
   [below](#managing-the-contents-of-the-head-element).
 
-### Embedding an article in a page
+### Embedding an article in a page or segment
 
-Like components, articles can be embedded in pages.
+Like components, articles can be embedded in pages or segments.
 Place `<tg-article>` elements where you want to embed articles as follows:
 
 ```html
@@ -1153,7 +1226,7 @@ Articles cannot be embedded in other articles or layouts.
 ### `embedded-only` property
 
 When the value of the `embedded-only` property of an article is set to `true`, it is not converted
-into a full HTML file, but is used only for embedding in a page:
+into a full HTML file, but is used only for embedding in a page or segment:
 
 ```html
 ---
@@ -1165,7 +1238,7 @@ embedded-only: true
 
 ### Embedding articles in a page
 
-The `<tg-articles>` element can be used to embed multiple articles into a page.
+The `<tg-articles>` element can be used to embed multiple articles into a page or segment.
 
 ```html
 ---
