@@ -571,6 +571,31 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
+  it("should embed article list into a layout", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/c.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <div>',
+      '    <h3>C</h3>',
+      '    <p>This is C.</p>',
+      '  </div>',
+      '  <main class="bg-green-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
+      '    <p class="${p}">Baz baz baz ...</p>',
+      '  </main>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
   it("should render a page with Japanese text", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_2")
     const siteData = getSiteData(wd)
