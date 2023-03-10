@@ -142,6 +142,9 @@ describe("generateHTML", () => {
     const h3 = body.querySelector("h3")
     assert.equal(h3.textContent, "FizzBuzz")
 
+    const div = body.querySelector("h3 + div")
+    assert.equal(div.className, "flex justify-center")
+
     const p1 = body.querySelector("div.grid > div > p")
     assert.equal(p1.textContent, "Hello, world!")
 
@@ -382,6 +385,7 @@ describe("generateHTML", () => {
     const siteData = getSiteData(wd)
     const html = generateHTML("src/pages/index.html", siteData)
     const dom = new JSDOM(html)
+
     const nav = dom.window.document.body.querySelector("nav")
     const lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 

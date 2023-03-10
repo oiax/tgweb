@@ -123,13 +123,14 @@ describe("getSiteData", () => {
       'articles/blog/d',
       'articles/blog/e',
       'articles/technology',
-      'components/blog_nav',
       'components/hello',
       'components/i_am',
-      'components/nav',
       'components/special',
       'layouts/home',
-      'pages/_wrapper'
+      'pages/_wrapper',
+      'segments/apps/fizz_buzz',
+      'segments/blog_nav',
+      'segments/nav'
     ]
 
     assert.deepEqual(page.dependencies, expected1)
@@ -138,8 +139,8 @@ describe("getSiteData", () => {
 
     const expected2 = [
       'articles/blog/_wrapper',
-      'components/blog_nav',
-      'layouts/blog_article'
+      'layouts/blog_article',
+      'segments/blog_nav'
     ]
 
     assert.deepEqual(article.dependencies, expected2)

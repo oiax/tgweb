@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.1.14
+
+* e07263d Fix updateSiteData/2 for Windows
+* 681c4f6 Introduce segment templates that can be embedded into a page or layout
+
 ## 0.1.13
 
 * 7152cfb Fix getTemplate/2 for to remove carriage returnes from source

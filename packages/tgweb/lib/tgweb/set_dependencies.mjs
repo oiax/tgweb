@@ -16,6 +16,14 @@ const setDependencies = (object, siteData) => {
     object.dependencies.push(componentName)
   })
 
+  const segmentRefs = body.querySelectorAll("tg-segment")
+
+  segmentRefs.forEach(ref => {
+    setAttrs(ref)
+    const segmentName = "segments/" + ref.attrs["name"]
+    object.dependencies.push(segmentName)
+  })
+
   const articleRefs = body.querySelectorAll("tg-article")
 
   articleRefs.forEach(ref => {

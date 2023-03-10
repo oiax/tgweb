@@ -62,11 +62,11 @@ describe("updateSiteData", () => {
       'articles/culture',
       'components/hello',
       'components/i_am',
-      'components/nav',
       'components/special',
       'components/x',
       'layouts/home',
-      'pages/_wrapper'
+      'pages/_wrapper',
+      'segments/nav'
     ]
 
     assert.deepEqual(page.dependencies, expected)
@@ -93,9 +93,9 @@ describe("updateSiteData", () => {
       'articles/blog/b',
       'components/hello',
       'components/i_am',
-      'components/nav',
       'components/x',
-      'layouts/home'
+      'layouts/home',
+      'segments/nav'
     ]
 
     assert.deepEqual(article.dependencies.sort(), expected)
