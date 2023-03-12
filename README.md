@@ -478,26 +478,6 @@ layout: common
 custom-current-year: "2023"
 ```
 
-### `${...}` notation
-
-You can embed the value of a property into the value of another property using
-`${...}` notation:
-
-```yaml
-data-x: ABC
-data-y: "${x} DEF"
-```
-
-Note that the value of the property to be embedded is the value before `${...}` is expanded.
-
-```yaml
-data-x: ABC
-data-y: "${x} DEF"
-data-z: "${y} GHI"
-```
-
-The above sets `data-z` property to the string `"${x} DEF GHI"` instead of `"ABC DEF GHI"`.
-
 ### `%{...}` notation
 
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
