@@ -5,7 +5,7 @@
 * [Requirements](#requirements)
 * [Getting Started](#getting-started)
 * [Directory Structure](#directory-structure)
-* [Managing multiple websites](#managing-multiple-websites)
+* [Managing Multiple Websites](#managing-multiple-websites)
 * [Pages](#pages)
 * [Front Matter](#front-matter)
 * [Images](#images)
@@ -18,7 +18,7 @@
 * [Articles](#articles)
 * [Tags](#tags)
 * [Links](#links)
-* [Notes on property values](#notes-on-property-values)
+* [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -161,7 +161,7 @@ Please note the following:
 * Users are not allowed to add their own CSS files to the website.
 * Users are not allowed to add their own javascript files to the website.
 
-## Managing multiple websites
+## Managing Multiple Websites
 
 ### Installation and initialization
 
@@ -1158,6 +1158,24 @@ layout: home
 </main>
 ```
 
+### Embedding property values into a component
+
+The `<tg-prop>` and `<tg-data>` elements allow you to embed the value of a property in a component.
+
+```html
+---
+data-message: Hi!
+---
+<span>
+  <i class="fas fa-smile"></i>
+  <tg-data name="message"></tg-data>
+</span>
+```
+
+Note that the component inherits the property from the page or article in which it is embedded.
+When a property with the same name is defined in a component and a page or article, the value
+defined in the page or article takes precedence.
+
 ## Articles
 
 ### What is an article
@@ -1534,7 +1552,7 @@ element.
 </nav>
 ```
 
-### link components
+### Link components
 
 A component whose top-level element is the `<tg-link>` element is called a _link component_.
 
@@ -1593,7 +1611,7 @@ The `<tg-link>` elements can be placed within the `<tg-links`> element:
 In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
 You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
 
-## Notes on property values
+## Notes on Property Values
 
 ### Property Inheritance
 
@@ -1629,6 +1647,10 @@ data-z: "d"
 ```
 
 If so, the value of property `data-x` on this page is `"d"`.
+
+Custom properties as well as predefined properties such as `title` are inherited as well.
+Also, properties with names beginning with `meta`, `http-equiv-`, `og-` or `property-` are
+inherited. However, properties whose name begins with `class-` are _not_ inherited.
 
 ### Embedding property values into a wrapper or layout
 

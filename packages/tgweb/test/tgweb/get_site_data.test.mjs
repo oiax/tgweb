@@ -60,6 +60,7 @@ describe("getSiteData", () => {
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "FizzBuzz")
     assert.equal(page.frontMatter["data-current-year"], 2023)
+    assert.equal(page.frontMatter["class-div1"], undefined)
   })
 
   it("should make the page front matter inherit layout properties", () => {
@@ -70,6 +71,7 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["http-equiv-content-security-policy"], "default-src 'self'")
     assert.equal(page.frontMatter["title"], "Home")
+    assert.equal(page.frontMatter["class-grid"], undefined)
   })
 
   it("should interpret the class aliases correctly", () => {
