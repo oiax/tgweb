@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.1.16
+
+* 7d50a63 Properties whose name begins with `class-` are not inherited
+
 ## 0.1.15
 
 * fb2cd35 Bug fix: cannot embed articles into a layout
