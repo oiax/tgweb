@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.0
+
+No changes
+
 ## 0.1.16
 
 * 7d50a63 Properties whose name begins with `class-` are not inherited
