@@ -5,12 +5,14 @@ import getType from "./get_type.mjs"
 import { updateSiteData } from "./update_site_data.mjs"
 import { updateHTML } from "./update_html.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
+import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
 
 const destroy = (path, siteData) => {
-  const dirname = slash(PATH.dirname(path))
+  const posixPath = slash(path)
+  const dirname = PATH.dirname(posixPath)
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
-    const distPath = slash(path).replace(/^src\//, "dist/")
+    const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
 
     if (fs.existsSync(targetPath)) {
@@ -19,15 +21,20 @@ const destroy = (path, siteData) => {
       if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
     }
   }
-  else if (path === "src/site.yml") {
+  else if (posixPath === "src/site.yml") {
     updateSiteData(siteData, path)
-    _regenerateFiles(path, siteData)
+    _regenerateFiles(posixPath, siteData)
+  }
+  else if (posixPath === "src/color_scheme.yml") {
+    const tailwindConfig = generateTailwindConfig(PATH.dirname(posixPath))
+    if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
+    if (process.env.VERBOSE) console.log(`Updated tailwind.config.js`)
   }
   else {
-    _destroyTemplate(path, siteData)
-    _regenerateFiles(path, siteData)
-    _makeDependencies(path, siteData)
-    _removeFile(path)
+    _destroyTemplate(posixPath, siteData)
+    _regenerateFiles(posixPath, siteData)
+    _makeDependencies(posixPath, siteData)
+    _removeFile(posixPath)
   }
 }
 

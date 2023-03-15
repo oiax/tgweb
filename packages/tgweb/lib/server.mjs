@@ -9,6 +9,7 @@ import chokidar from "chokidar"
 import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
 import { installFonts } from "./server/install_fonts.mjs"
+import { generateTailwindConfig } from "./tgweb/generate_tailwind_config.mjs"
 import tgweb from "./tgweb.mjs"
 
 const run = () => {
@@ -56,6 +57,9 @@ const run = () => {
   const siteData = tgweb.getSiteData(process.cwd())
 
   installFonts(siteData, workingDir)
+
+  const tailwindConfig = generateTailwindConfig(PATH.join(process.cwd(), "src"))
+  if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
 
   chokidar.watch("src")
     .on("add", path => {

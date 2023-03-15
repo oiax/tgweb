@@ -5,9 +5,11 @@ import { updateSiteData } from "./update_site_data.mjs"
 import generateHTML from "./generate_html.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
+import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
 
 const create = (path, siteData) => {
-  const dirname = slash(PATH.dirname(path))
+  const posixPath = slash(path)
+  const dirname = PATH.dirname(posixPath)
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
     const distPath = slash(path).replace(/^src\//, "dist/")
@@ -18,8 +20,8 @@ const create = (path, siteData) => {
     fs.copyFileSync(path, targetPath)
   }
   else {
-    updateSiteData(siteData, path)
-    const html = generateHTML(path, siteData)
+    updateSiteData(siteData, posixPath)
+    const html = generateHTML(posixPath, siteData)
 
     if (html !== undefined) {
       const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
@@ -40,6 +42,11 @@ const create = (path, siteData) => {
     if (type === "site.yml") {
       siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
       siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+    }
+    else if (type === "color_scheme.yml") {
+      const tailwindConfig = generateTailwindConfig(PATH.dirname(posixPath))
+      if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
+      if (process.env.VERBOSE) console.log(`Updated tailwind.config.js`)
     }
     else {
       siteData.pages
