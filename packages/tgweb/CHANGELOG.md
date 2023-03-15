@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.1
+
+* 8acd48d Update `tailwind.config.js` with the value of `color_scheme.yml`
+
 ## 0.2.0
 
 No changes
