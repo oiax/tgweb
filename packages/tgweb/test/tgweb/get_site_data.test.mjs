@@ -92,7 +92,7 @@ describe("getSiteData", () => {
     assert.equal(siteData.articles.length, 8)
   })
 
-  it("should make the article front matter inherit site, layout and wrapper properties", () => {
+  it("should make the article front matter inherit site and wrapper properties", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
 
@@ -104,7 +104,7 @@ describe("getSiteData", () => {
     assert.equal(article.frontMatter["property-og:image"],
       "http://localhost:3000/images/red_square.png")
     assert.equal(article.frontMatter["data-w"], 0)
-    assert.equal(article.frontMatter["data-x"], 1)
+    assert.equal(article.frontMatter["data-x"], 0)
     assert.equal(article.frontMatter["data-y"], 2)
     assert.equal(article.frontMatter["data-z"], 3)
   })

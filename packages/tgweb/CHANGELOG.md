@@ -1,5 +1,12 @@
 # tgweb CHANGELOG
 
+## 0.2.2
+
+* 07103da Change and refine mechanism of property inheritance:
+  - Do not inherit properties whose name begins with "class-"
+  - Merge layout front matter just before rendering the main template
+  - Make component merge the container's front matter
+
 ## 0.2.1
 
 * 8acd48d Update `tailwind.config.js` with the value of `color_scheme.yml`

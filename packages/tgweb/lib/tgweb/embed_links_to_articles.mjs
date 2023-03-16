@@ -23,7 +23,7 @@ const embedLinksToArticles = (node, siteData, path) => {
 
       const copy = target.cloneNode(true)
 
-      fillInPlaceHolders(copy, articleRoot, article)
+      fillInPlaceHolders(copy, articleRoot, article.frontMatter)
 
       Array.from(copy.querySelectorAll("tg-link")).forEach(link => {
         if (`src/articles/${article.path}` === path) {
