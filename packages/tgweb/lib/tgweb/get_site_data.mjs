@@ -44,7 +44,7 @@ const getSiteData = directory => {
 
   if (fs.existsSync(site_yaml_path)) {
     const source = fs.readFileSync(site_yaml_path)
-    mergeProperties(siteData.properties, YAML.load(source))
+    siteData.properties = mergeProperties(siteData.properties, YAML.load(source))
     normalizeFrontMatter(siteData.properties)
   }
 
@@ -69,7 +69,7 @@ const getSiteData = directory => {
 
     siteData.layouts = glob.sync("**/*.html").map(path => {
       const layout = getTemplate(path, "layout")
-      mergeProperties(layout.frontMatter, siteData.properties)
+      layout.frontMatter = mergeProperties(layout.frontMatter, siteData.properties)
       return layout
     })
 
@@ -87,12 +87,12 @@ const getSiteData = directory => {
         const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
 
         if (layout)
-          mergeProperties(wrapper.frontMatter, layout.frontMatter)
+          wrapper.frontMatter = mergeProperties(wrapper.frontMatter, layout.frontMatter)
         else
-          mergeProperties(wrapper.frontMatter, siteData.properties)
+          wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
       }
       else {
-        mergeProperties(wrapper.frontMatter, siteData.properties)
+        wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
       }
 
       return wrapper
@@ -113,15 +113,17 @@ const getSiteData = directory => {
         const wrapper = getWrapper(siteData, "articles/" + path)
 
         if (wrapper)
-          mergeProperties(article.frontMatter, wrapper.frontMatter)
+          article.frontMatter = mergeProperties(article.frontMatter, wrapper.frontMatter)
         else
-          mergeProperties(article.frontMatter, siteData.properties)
+          article.frontMatter = mergeProperties(article.frontMatter, siteData.properties)
 
         const layoutName = article.frontMatter["layout"]
 
         if (layoutName) {
           const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
-          if (layout) mergeProperties(article.frontMatter, layout.frontMatter)
+
+          if (layout)
+            article.frontMatter = mergeProperties(article.frontMatter, layout.frontMatter)
         }
 
         expandPaths(article.frontMatter)
@@ -144,15 +146,15 @@ const getSiteData = directory => {
         const wrapper = getWrapper(siteData, "pages/" + path)
 
         if (wrapper)
-          mergeProperties(page.frontMatter, wrapper.frontMatter)
+          page.frontMatter = mergeProperties(page.frontMatter, wrapper.frontMatter)
         else
-          mergeProperties(page.frontMatter, siteData.properties)
+          page.frontMatter = mergeProperties(page.frontMatter, siteData.properties)
 
         const layoutName = page.frontMatter["layout"]
 
         if (layoutName) {
           const layout = siteData.layouts.find(l => l.path == layoutName + ".html")
-          if (layout) mergeProperties(page.frontMatter, layout.frontMatter)
+          if (layout) page.frontMatter = mergeProperties(page.frontMatter, layout.frontMatter)
         }
 
         expandPaths(page.frontMatter)

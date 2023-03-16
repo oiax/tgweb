@@ -34,7 +34,7 @@ const updateSiteData = (siteData, path) => {
       siteData.components.forEach(component => {
         if ("src/components/" + component.path === posixPath) {
           updateTemplate(component, path)
-          mergeProperties(component.frontMatter, siteData.properties)
+          component.frontMatter = mergeProperties(component.frontMatter, siteData.properties)
         }
       })
     }
@@ -51,7 +51,7 @@ const updateSiteData = (siteData, path) => {
       siteData.segments.forEach(segment => {
         if ("src/segments/" + segment.path === posixPath) {
           updateTemplate(segment, path)
-          mergeProperties(segment.frontMatter, siteData.properties)
+          segment.frontMatter = mergeProperties(segment.frontMatter, siteData.properties)
         }
       })
     }
@@ -68,7 +68,7 @@ const updateSiteData = (siteData, path) => {
       siteData.layouts.forEach(layout => {
         if ("src/layouts/" + layout.path == posixPath) {
           updateTemplate(layout, path)
-          mergeProperties(layout.frontMatter, siteData.properties)
+          layout.frontMatter = mergeProperties(layout.frontMatter, siteData.properties)
           setDependencies(layout, siteData)
         }
       })
@@ -91,9 +91,9 @@ const updateSiteData = (siteData, path) => {
           const wrapper = getWrapper(siteData, "articles/" + article.path)
 
           if (wrapper)
-            mergeProperties(article.frontMatter, wrapper.frontMatter)
+            article.frontMatter = mergeProperties(article.frontMatter, wrapper.frontMatter)
           else
-            mergeProperties(article.frontMatter, siteData.properties)
+            article.frontMatter = mergeProperties(article.frontMatter, siteData.properties)
 
           expandPaths(article.frontMatter)
           setDependencies(article, siteData)
@@ -110,9 +110,9 @@ const updateSiteData = (siteData, path) => {
       const wrapper = getWrapper(siteData, "articles/" + newArticle.path)
 
       if (wrapper)
-        mergeProperties(newArticle.frontMatter, wrapper.frontMatter)
+        newArticle.frontMatter = mergeProperties(newArticle.frontMatter, wrapper.frontMatter)
       else
-        mergeProperties(newArticle.frontMatter, siteData.properties)
+        newArticle.frontMatter = mergeProperties(newArticle.frontMatter, siteData.properties)
 
       expandPaths(newArticle.frontMatter)
       setDependencies(newArticle, siteData)
@@ -138,9 +138,9 @@ const updateSiteData = (siteData, path) => {
           const wrapper = getWrapper(siteData, "pages/" + page.path)
 
           if (wrapper)
-            mergeProperties(page.frontMatter, wrapper.frontMatter)
+            page.frontMatter = mergeProperties(page.frontMatter, wrapper.frontMatter)
           else
-            mergeProperties(page.frontMatter, siteData.properties)
+            page.frontMatter = mergeProperties(page.frontMatter, siteData.properties)
 
           expandPaths(page.frontMatter)
           setDependencies(page, siteData)
@@ -160,7 +160,7 @@ const updateSiteData = (siteData, path) => {
       siteData.wrappers.forEach(wrapper => {
         if ("src/" + wrapper.path == posixPath) {
           updateTemplate(wrapper, path)
-          mergeProperties(wrapper.frontMatter, siteData.properties)
+          wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
           setDependencies(wrapper, siteData)
         }
       })
@@ -169,7 +169,7 @@ const updateSiteData = (siteData, path) => {
       process.chdir("src")
       const shortPath = posixPath.replace(/^src\//, "")
       const wrapper = getTemplate(shortPath, "wrapper")
-      mergeProperties(wrapper.frontMatter, siteData.properties)
+      wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
       setDependencies(wrapper, siteData)
       siteData.wrappers.push(wrapper)
 
