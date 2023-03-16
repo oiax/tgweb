@@ -329,6 +329,21 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
+  it("should inherit custom properties from site.yml and containers", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/articles/blog/a.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const div = body.querySelector("#custom-props")
+
+    const lines = pretty(div.outerHTML, {ocd: true}).split("\n")
+    const expected = [ '<div id="custom-props">', '  0', '  1', '  2', '  3', '</div>' ]
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
   it("should embed the value of a custom property into <tg-if-complete> envelope", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)

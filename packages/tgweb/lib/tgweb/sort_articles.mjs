@@ -13,8 +13,8 @@ const sortArticles = (articles, orderBy) => {
 
   if (criteria === "title") {
     articles.sort((a, b) => {
-      const titleA = getTitle(a, a.dom.window.document.body)
-      const titleB = getTitle(b, b.dom.window.document.body)
+      const titleA = getTitle(a.frontMatter, a.dom.window.document.body)
+      const titleB = getTitle(b.frontMatter, b.dom.window.document.body)
 
       if (titleA > titleB) return 1
       if (titleA < titleB) return -1
@@ -26,8 +26,8 @@ const sortArticles = (articles, orderBy) => {
       const i = a.frontMatter["index"]
       const j = b.frontMatter["index"]
 
-      if (i) {
-        if (j) {
+      if (i !== undefined) {
+        if (j !== undefined) {
           if (i > j) return 1
           if (i < j) return -1
           if (a.path > b.path) return 1
@@ -39,7 +39,7 @@ const sortArticles = (articles, orderBy) => {
         }
       }
       else {
-        if (j) return -1
+        if (j !== undefined) return -1
         else return 1
       }
     })

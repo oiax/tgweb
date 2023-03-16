@@ -1010,8 +1010,8 @@ layout: common
 ### Segment files
 
 A _segment_ is a template file that can be embedded in pages or layouts.
-Segments cannot be embedded in templates other than these types, such as articles, segments or
-components.
+Segments cannot be embedded in templates other than these types, such as articles, segments,
+wrappers or components.
 
 Segments are placed in the `src/segments` subdirectory of the working directory.
 

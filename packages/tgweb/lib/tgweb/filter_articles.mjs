@@ -1,7 +1,7 @@
 import { minimatch } from "minimatch"
 
 const filterArticles = (articles, pattern, tag) => {
-  articles =
+  const sorted =
     articles.filter(article => {
       if (minimatch(article.path, pattern)) {
         if (tag) {
@@ -18,7 +18,7 @@ const filterArticles = (articles, pattern, tag) => {
       }
     })
 
-  return articles
+  return sorted
 }
 
 export default filterArticles

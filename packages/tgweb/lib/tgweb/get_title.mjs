@@ -1,5 +1,5 @@
-const getTitle = (template, element) => {
-  if (template.frontMatter["title"]) return template.frontMatter["title"]
+const getTitle = (documentProperties, element) => {
+  if (documentProperties["title"]) return documentProperties["title"]
 
   const h1 = element.querySelector("h1")
   if (h1) return h1.textContent

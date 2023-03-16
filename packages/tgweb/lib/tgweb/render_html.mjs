@@ -2,8 +2,12 @@ import { JSDOM } from "jsdom"
 import pretty from "pretty"
 import { processTgLinks } from "./process_tg_links.mjs"
 import { removeTgAttributes } from "./remove_tg_attributes.mjs"
+import { setUrlProperty } from "./set_url_property.mjs"
+import { expandPaths } from "./expand_paths.mjs"
 
-const renderHTML = (template, root, siteData, headAttrs, path) => {
+const renderHTML = (root, siteData, documentProperties, headAttrs, path) => {
+  setUrlProperty(documentProperties, siteData, path)
+  expandPaths(documentProperties)
   const dom = new JSDOM(siteData.documentTemplate.serialize())
 
   processTgLinks(root, siteData, path)
@@ -16,10 +20,10 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
 
   const link = dom.window.document.head.querySelector("link")
 
-  Object.keys(template.frontMatter).forEach(key => {
+  Object.keys(documentProperties).forEach(key => {
     if (key.startsWith("meta-")) {
       const name = key.slice(5)
-      const content = template.frontMatter[key]
+      const content = documentProperties[key]
       const meta = dom.window.document.createElement("meta")
       meta.setAttribute("name", name)
       meta.setAttribute("content", content)
@@ -27,10 +31,10 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
     }
   })
 
-  Object.keys(template.frontMatter).forEach(key => {
+  Object.keys(documentProperties).forEach(key => {
     if (key.startsWith("http-equiv-")) {
       const name = key.slice(11)
-      const content = template.frontMatter[key]
+      const content = documentProperties[key]
       const meta = dom.window.document.createElement("meta")
       meta.setAttribute("http-equiv", name)
       meta.setAttribute("content", content)
@@ -38,17 +42,17 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
     }
   })
 
-  Object.keys(template.frontMatter).forEach(key => {
+  Object.keys(documentProperties).forEach(key => {
     if (key.startsWith("property-")) {
       const name = key.slice(9)
-      const content = template.frontMatter[key]
+      const content = documentProperties[key]
 
       const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
-        if (Object.hasOwn(template.frontMatter, propName)) {
-          return template.frontMatter[propName]
+        if (Object.hasOwn(documentProperties, propName)) {
+          return documentProperties[propName]
         }
         else {
-          `\${${propName}}`
+          return `\${${propName}}`
         }
       })
 
@@ -59,11 +63,11 @@ const renderHTML = (template, root, siteData, headAttrs, path) => {
     }
   })
 
-  Object.keys(template.frontMatter).forEach(key => {
+  Object.keys(documentProperties).forEach(key => {
     if (key.startsWith("link-")) {
       const rel = key.slice(5)
       if (rel == "stylesheet") return
-      const href = template.frontMatter[key]
+      const href = documentProperties[key]
       const newLink = dom.window.document.createElement("link")
       newLink.setAttribute("rel", rel)
       newLink.setAttribute("href", href)

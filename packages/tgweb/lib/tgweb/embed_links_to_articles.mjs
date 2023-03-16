@@ -4,8 +4,8 @@ import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 
-const embedLinksToArticles = (node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-links")
+const embedLinksToArticles = (container, siteData, path) => {
+  const targets = container.querySelectorAll("tg-links")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -48,7 +48,7 @@ const embedLinksToArticles = (node, siteData, path) => {
     })
   })
 
-  Array.from(node.querySelectorAll("tg-links")).forEach(target => target.remove())
+  Array.from(container.querySelectorAll("tg-links")).forEach(target => target.remove())
 }
 
 export { embedLinksToArticles }

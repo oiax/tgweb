@@ -6,8 +6,8 @@ import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
 import { err } from "./err.mjs"
 
-const embedComponents = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-component")
+const embedComponents = (container, documentProperties, siteData, path) => {
+  const targets = container.querySelectorAll("tg-component")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -18,12 +18,12 @@ const embedComponents = (template, node, siteData, path) => {
       siteData.components.find(component => component.path == componentName + ".html")
 
     if (component) {
+      const properties = mergeProperties(component.frontMatter, documentProperties)
       const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
-      const frontMatter = mergeProperties(template.frontMatter, component.frontMatter)
-      expandClassAliases(component.frontMatter, componentRoot)
+      expandClassAliases(componentRoot, component.frontMatter)
       embedContent(componentRoot, target)
       embedLinksToArticles(componentRoot, siteData, path)
-      fillInPlaceHolders(componentRoot, target, frontMatter)
+      fillInPlaceHolders(componentRoot, target, properties)
       target.replaceWith(componentRoot)
     }
     else {

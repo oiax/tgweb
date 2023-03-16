@@ -8,8 +8,8 @@ import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { err } from "./err.mjs"
 
-const embedSegments = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-segment")
+const embedSegments = (container, documentProperties, siteData, path) => {
+  const targets = container.querySelectorAll("tg-segment")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -21,13 +21,13 @@ const embedSegments = (template, node, siteData, path) => {
 
     if (segment) {
       const segmentRoot = segment.dom.window.document.body.children[0].cloneNode(true)
-      expandClassAliases(segment.frontMatter, segmentRoot)
+      expandClassAliases(segmentRoot, segment.frontMatter)
       embedContent(segmentRoot, target)
-      embedComponents(segment, segmentRoot, siteData, path)
+      embedComponents(segmentRoot, documentProperties, siteData, path)
       embedArticles(segmentRoot, siteData, path)
       embedArticleLists(segmentRoot, siteData, path)
       embedLinksToArticles(segmentRoot, siteData, path)
-      fillInPlaceHolders(segmentRoot, target, template)
+      fillInPlaceHolders(segmentRoot, target, documentProperties)
       target.replaceWith(segmentRoot)
     }
     else {
