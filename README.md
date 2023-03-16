@@ -1615,7 +1615,7 @@ You should use `<tg-slot`> elements to compose the content of the `<a>` and othe
 
 ### Property Inheritance
 
-If no value is set for a particular property in the front matter of a page or an article, tgweb
+If no value is set for a particular property in the front matter of a page, tgweb
 will search for a value in the following order:
 
 1. the front matter of its wrapper if available
@@ -1652,6 +1652,15 @@ Custom properties as well as predefined properties such as `title` are inherited
 Also, properties with names beginning with `meta`, `http-equiv-`, `og-` or `property-` are
 inherited. However, properties whose name begins with `class-` are _not_ inherited.
 
+### Embedding property values into an article
+
+When an article is rendered as an independent HTML document, the property inheritance mechanism is
+exactly the same as that of a page.
+
+When an article is embedded in a page, segment, or layout, it inherits properties from the wrapper
+surrounding it, if any, and `site.yml` but not from the page, segment, or layout that embeds that
+article.
+
 ### Embedding property values into a wrapper or layout
 
 When a wrapper or layout is applied to a page or article, the values that are substituted for
@@ -1680,6 +1689,22 @@ data-y: "c"
 
 Then, the text content of the `<header>` element of the HTML document generated from them will
 be "a c" instead of "b c".
+
+### Embedding property values into a segment
+
+When a segment is embedded into a page, the values that are substituted for
+the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+properties that the page has.
+
+Similarly, when a segment is into a layout, the values that are substituted for
+the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+properties of the main template (page or article).
+
+### Embedding property values into a component
+
+When a component is embedded into a page, article, segment, wrapper, layout,
+the values that are substituted for the `<tg-prop>` and `<tg-data>` elements in that template
+are the values of properties of the main template (page or article).
 
 ## Managing the Contents of the `<head>` Element
 

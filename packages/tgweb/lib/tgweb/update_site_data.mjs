@@ -3,11 +3,8 @@ import { slash } from "./slash.mjs"
 import { dbg } from "./debugging.mjs"
 import getType from "./get_type.mjs"
 import { getSiteData } from "./get_site_data.mjs"
-import { mergeProperties } from "./merge_properties.mjs"
-import { getWrapper } from "./get_wrapper.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
 import { setUrlProperty } from "./set_url_property.mjs"
-import { expandPaths } from "./expand_paths.mjs"
 import { getTemplate } from "./get_template.mjs"
 
 if (dbg === undefined) dbg(undefined)
@@ -33,15 +30,14 @@ const updateSiteData = (siteData, path) => {
     if (component) {
       siteData.components.forEach(component => {
         if ("src/components/" + component.path === posixPath) {
-          updateTemplate(component, path)
-          component.frontMatter = mergeProperties(component.frontMatter, siteData.properties)
+          updateTemplate(component, path, siteData.properties)
         }
       })
     }
     else {
       process.chdir("src/components")
       const shortPath = posixPath.replace(/^src\/components\//, "")
-      siteData.components.push(getTemplate(shortPath, "component"))
+      siteData.components.push(getTemplate(shortPath, "component", siteData.properties))
     }
   }
   else if (type === "segment") {
@@ -50,15 +46,14 @@ const updateSiteData = (siteData, path) => {
     if (segment) {
       siteData.segments.forEach(segment => {
         if ("src/segments/" + segment.path === posixPath) {
-          updateTemplate(segment, path)
-          segment.frontMatter = mergeProperties(segment.frontMatter, siteData.properties)
+          updateTemplate(segment, path, siteData.properties)
         }
       })
     }
     else {
       process.chdir("src/segments")
       const shortPath = posixPath.replace(/^src\/segments\//, "")
-      siteData.segments.push(getTemplate(shortPath, "segment"))
+      siteData.segments.push(getTemplate(shortPath, "segment", siteData.properties))
     }
   }
   else if (type === "layout") {
@@ -67,8 +62,7 @@ const updateSiteData = (siteData, path) => {
     if (layout) {
       siteData.layouts.forEach(layout => {
         if ("src/layouts/" + layout.path == posixPath) {
-          updateTemplate(layout, path)
-          layout.frontMatter = mergeProperties(layout.frontMatter, siteData.properties)
+          updateTemplate(layout, path, siteData.properties)
           setDependencies(layout, siteData)
         }
       })
@@ -76,7 +70,7 @@ const updateSiteData = (siteData, path) => {
     else {
       process.chdir("src/layouts")
       const shortPath = posixPath.replace(/^src\/layouts\//, "")
-      siteData.layouts.push(getTemplate(shortPath, "layout"))
+      siteData.layouts.push(getTemplate(shortPath, "layout", siteData.properties))
     }
   }
   else if (type === "article") {
@@ -85,17 +79,8 @@ const updateSiteData = (siteData, path) => {
     if (article) {
       siteData.articles.forEach(article => {
         if ("src/articles/" + article.path == posixPath) {
-          updateTemplate(article, path)
+          updateTemplate(article, path, siteData.properties)
           setUrlProperty(article.frontMatter, siteData, "articles/" + posixPath)
-
-          const wrapper = getWrapper(siteData, "articles/" + article.path)
-
-          if (wrapper)
-            article.frontMatter = mergeProperties(article.frontMatter, wrapper.frontMatter)
-          else
-            article.frontMatter = mergeProperties(article.frontMatter, siteData.properties)
-
-          expandPaths(article.frontMatter)
           setDependencies(article, siteData)
         }
       })
@@ -103,18 +88,9 @@ const updateSiteData = (siteData, path) => {
     else {
       process.chdir("src/articles")
       const shortPath = posixPath.replace(/^src\/articles\//, "")
-      const newArticle = getTemplate(shortPath, "article")
+      const newArticle = getTemplate(shortPath, "article", siteData.properties)
 
       setUrlProperty(newArticle.frontMatter, siteData, "articles/" + newArticle.path)
-
-      const wrapper = getWrapper(siteData, "articles/" + newArticle.path)
-
-      if (wrapper)
-        newArticle.frontMatter = mergeProperties(newArticle.frontMatter, wrapper.frontMatter)
-      else
-        newArticle.frontMatter = mergeProperties(newArticle.frontMatter, siteData.properties)
-
-      expandPaths(newArticle.frontMatter)
       setDependencies(newArticle, siteData)
 
       siteData.articles.push(newArticle)
@@ -132,17 +108,8 @@ const updateSiteData = (siteData, path) => {
     if (page) {
       siteData.pages.forEach(page => {
         if ("src/pages/" + page.path == posixPath) {
-          updateTemplate(page, path)
+          updateTemplate(page, path, siteData.properties)
           setUrlProperty(page.frontMatter, siteData, posixPath)
-
-          const wrapper = getWrapper(siteData, "pages/" + page.path)
-
-          if (wrapper)
-            page.frontMatter = mergeProperties(page.frontMatter, wrapper.frontMatter)
-          else
-            page.frontMatter = mergeProperties(page.frontMatter, siteData.properties)
-
-          expandPaths(page.frontMatter)
           setDependencies(page, siteData)
         }
       })
@@ -150,7 +117,7 @@ const updateSiteData = (siteData, path) => {
     else {
       process.chdir("src/pages")
       const shortPath = posixPath.replace(/^src\/pages\//, "")
-      siteData.pages.push(getTemplate(shortPath, "page"))
+      siteData.pages.push(getTemplate(shortPath, "page", siteData.properties))
     }
   }
   else if (type === "wrapper") {
@@ -159,8 +126,7 @@ const updateSiteData = (siteData, path) => {
     if (wrapper) {
       siteData.wrappers.forEach(wrapper => {
         if ("src/" + wrapper.path == posixPath) {
-          updateTemplate(wrapper, path)
-          wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
+          updateTemplate(wrapper, path, siteData.properties)
           setDependencies(wrapper, siteData)
         }
       })
@@ -168,8 +134,7 @@ const updateSiteData = (siteData, path) => {
     else {
       process.chdir("src")
       const shortPath = posixPath.replace(/^src\//, "")
-      const wrapper = getTemplate(shortPath, "wrapper")
-      wrapper.frontMatter = mergeProperties(wrapper.frontMatter, siteData.properties)
+      const wrapper = getTemplate(shortPath, "wrapper", siteData.properties)
       setDependencies(wrapper, siteData)
       siteData.wrappers.push(wrapper)
 
@@ -213,8 +178,8 @@ const updateSiteData = (siteData, path) => {
   process.chdir(cwd)
 }
 
-const updateTemplate = (template, path) => {
-  const newTemplate = getTemplate(path)
+const updateTemplate = (template, path, properties) => {
+  const newTemplate = getTemplate(path, undefined, properties)
   template.frontMatter = newTemplate.frontMatter
   template.dom = newTemplate.dom
 }

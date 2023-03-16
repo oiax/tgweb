@@ -1,6 +1,6 @@
 import { setAttrs } from "./set_attrs.mjs"
 
-const fillInPlaceHolders = (element, provider, template) => {
+const fillInPlaceHolders = (element, provider, frontMatter) => {
   const slotContents = extractSlotContents(provider)
 
   element.querySelectorAll("tg-if-complete").forEach(envelope => {
@@ -10,10 +10,10 @@ const fillInPlaceHolders = (element, provider, template) => {
       setAttrs(placeholder)
 
       if (placeholder.tagName == "TG-PROP") {
-        return Object.hasOwn(template.frontMatter, placeholder.attrs["name"])
+        return Object.hasOwn(frontMatter, placeholder.attrs["name"])
       }
       else if (placeholder.tagName == "TG-DATA") {
-        return Object.hasOwn(template.frontMatter, "data-" + placeholder.attrs["name"])
+        return Object.hasOwn(frontMatter, "data-" + placeholder.attrs["name"])
       }
       else if (placeholder.tagName == "TG-SLOT") {
         return slotContents.some(c => c.attrs["name"] == placeholder.attrs["name"])
@@ -33,11 +33,11 @@ const fillInPlaceHolders = (element, provider, template) => {
     setAttrs(placeholder)
 
     if (placeholder.tagName == "TG-PROP") {
-      const value = template.frontMatter[placeholder.attrs["name"]]
+      const value = frontMatter[placeholder.attrs["name"]]
       if (value) placeholder.before(value)
     }
     else if (placeholder.tagName == "TG-DATA") {
-      const value = template.frontMatter["data-" + placeholder.attrs["name"]]
+      const value = frontMatter["data-" + placeholder.attrs["name"]]
       if (value) placeholder.before(value)
     }
     else if (placeholder.tagName == "TG-SLOT") {
