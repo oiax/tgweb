@@ -19,6 +19,7 @@ const embedArticles = (container, documentProperties, siteData, path) => {
     if (article) {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
 
+      expandClassAliases(articleRoot, article.frontMatter)
       embedComponents(articleRoot, documentProperties, siteData, path)
       embedLinksToArticles(articleRoot, siteData, path)
 
@@ -26,7 +27,6 @@ const embedArticles = (container, documentProperties, siteData, path) => {
 
       if (wrapper) {
         const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
-
         expandClassAliases(wrapperRoot, wrapper.frontMatter)
         embedComponents(wrapperRoot, documentProperties, siteData, path)
         embedContent(wrapperRoot, articleRoot)

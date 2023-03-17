@@ -22,6 +22,8 @@ const embedArticleLists = (templateRoot, documentProperties, siteData, path) => 
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
+
+      expandClassAliases(articleRoot, article.frontMatter)
       embedComponents(articleRoot, documentProperties, siteData, path)
       embedLinksToArticles(articleRoot, siteData, path)
 

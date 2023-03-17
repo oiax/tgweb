@@ -1,8 +1,10 @@
 ---
 layout: home
+class-a: bg-gray-100 py-2
+class-h3: font-bold text-lg ml-2
 ---
-<div class="bg-gray-100 py-2">
-  <h3 class="font-bold text-lg ml-2">Technology</h3>
+<div class="${a}">
+  <h3 class="${h3}">Technology</h3>
   <nav>
     <ul>
       <tg-links pattern="blog/*" order-by="title:asc" filter="tag:technology">

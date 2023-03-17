@@ -151,6 +151,9 @@ describe("generateHTML", () => {
     const p2 = body.querySelector("div.grid > div:nth-child(2) > p")
     assert.equal(p2.textContent, "I am a computer.")
 
+    const article_h3 = body.querySelector("main > div:nth-child(1) > h3")
+    assert.equal(article_h3.className, "font-bold text-lg ml-2")
+
     const nav = body.querySelector("main > div:nth-child(1) > nav")
     const nav_lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
@@ -655,7 +658,7 @@ describe("generateHTML", () => {
       '  </div>',
       '  <main class="${g} py-2">',
       '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
-      '    <p class="${p}">Baz baz baz ...</p>',
+      '    <p class="text-red-500">Baz baz baz ...</p>',
       '  </main>',
       '</body>'
     ]
