@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.2.3
+
+* dd1b844 Overhaul the mechanism of property inheritance
+* 080ac6f Allow a segment or component have multiple top-level nodes
+
 ## 0.2.2
 
 * 07103da Change and refine mechanism of property inheritance:
