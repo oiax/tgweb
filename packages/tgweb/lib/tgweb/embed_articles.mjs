@@ -43,7 +43,7 @@ const embedArticles = (container, documentProperties, siteData, path) => {
     }
   })
 
-  Array.from(container.querySelectorAll("tg-article")).forEach(target => target.remove())
+  targets.forEach(target => target.remove())
 }
 
 export { embedArticles }

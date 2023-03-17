@@ -20,7 +20,7 @@ const embedSegments = (container, documentProperties, siteData, path) => {
       siteData.segments.find(segment => segment.path == segmentName + ".html")
 
     if (segment) {
-      const segmentRoot = segment.dom.window.document.body.children[0].cloneNode(true)
+      const segmentRoot = segment.dom.window.document.body.cloneNode(true)
       expandClassAliases(segmentRoot, segment.frontMatter)
       embedContent(segmentRoot, target)
       embedComponents(segmentRoot, documentProperties, siteData, path)
@@ -28,13 +28,15 @@ const embedSegments = (container, documentProperties, siteData, path) => {
       embedArticleLists(segmentRoot, siteData, path)
       embedLinksToArticles(segmentRoot, siteData, path)
       fillInPlaceHolders(segmentRoot, target, documentProperties)
-      target.replaceWith(segmentRoot)
+
+      Array.from(segmentRoot.childNodes).forEach(child => target.before(child))
     }
     else {
       err(target, siteData, `No segment named ${target.attrs["name"]} exists.`)
-      target.remove()
     }
   })
+
+  targets.forEach(target => target.remove())
 }
 
 export { embedSegments }

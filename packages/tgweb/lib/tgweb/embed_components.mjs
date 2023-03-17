@@ -19,18 +19,20 @@ const embedComponents = (container, documentProperties, siteData, path) => {
 
     if (component) {
       const properties = mergeProperties(component.frontMatter, documentProperties)
-      const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
+      const componentRoot = component.dom.window.document.body.cloneNode(true)
       expandClassAliases(componentRoot, component.frontMatter)
       embedContent(componentRoot, target)
       embedLinksToArticles(componentRoot, siteData, path)
       fillInPlaceHolders(componentRoot, target, properties)
-      target.replaceWith(componentRoot)
+
+      Array.from(componentRoot.childNodes).forEach(child => target.before(child))
     }
     else {
       err(target, siteData, `No component named ${target.attrs["name"]} exists.`)
-      target.remove()
     }
   })
+
+  targets.forEach(target => target.remove())
 }
 
 export { embedComponents }

@@ -48,7 +48,7 @@ const embedLinksToArticles = (container, siteData, path) => {
     })
   })
 
-  Array.from(container.querySelectorAll("tg-links")).forEach(target => target.remove())
+  targets.forEach(target => target.remove())
 }
 
 export { embedLinksToArticles }

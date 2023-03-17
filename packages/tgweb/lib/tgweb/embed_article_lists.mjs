@@ -43,7 +43,7 @@ const embedArticleLists = (templateRoot, documentProperties, siteData, path) => 
     })
   })
 
-  Array.from(templateRoot.querySelectorAll("tg-articles")).forEach(target => target.remove())
+  targets.forEach(target => target.remove())
 }
 
 export { embedArticleLists }

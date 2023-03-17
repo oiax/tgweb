@@ -206,6 +206,58 @@ describe("generateHTML", () => {
     )
   })
 
+  it("should embed a segment to a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_3")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <div>HERO</div>',
+      '  <div>Message</div>',
+      '  <h3 class="font-bold text-lg ml-2">Greeting</h3>',
+      '  <div class="flex justify-center">',
+      '    Hello, world!',
+      '  </div>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
+  it("should embed a multi-node component to a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_3")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/about.html", siteData)
+    const dom = new JSDOM(html)
+
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h3>About us</h3>',
+      '  <span>A</span>',
+      '  <span>B</span>',
+      '  <hr>',
+      '  <span>A</span>',
+      '  <span>B</span>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
   it("should embed a custom property to a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
