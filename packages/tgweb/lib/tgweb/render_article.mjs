@@ -1,6 +1,7 @@
 import { getWrapper } from "./get_wrapper.mjs"
 import { getLayout } from "./get_layout.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import { getTitle } from "./get_title.mjs"
 import { renderHTML } from "./render_html.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
@@ -48,15 +49,17 @@ const renderArticle = (path, siteData) => {
 
 const makeArticleRoot = (article, documentProperties, siteData, path) => {
   const articleRoot = article.dom.window.document.body.cloneNode(true)
+  embedLinksToArticles(articleRoot, article.frontMatter, siteData, path)
   expandClassAliases(articleRoot, article.frontMatter)
+  expandCustomProperties(articleRoot, documentProperties)
   embedComponents(articleRoot, documentProperties, siteData, path)
-  embedLinksToArticles(articleRoot, siteData, path)
   return articleRoot
 }
 
 const applyWrapper = (wrapper, articleRoot, documentProperties, siteData, path) => {
   const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
   expandClassAliases(wrapperRoot, wrapper.frontMatter)
+  expandCustomProperties(wrapperRoot, documentProperties)
   embedComponents(wrapperRoot, documentProperties, siteData, path)
   embedContent(wrapperRoot, articleRoot)
   fillInPlaceHolders(wrapperRoot, articleRoot, documentProperties)
@@ -65,10 +68,11 @@ const applyWrapper = (wrapper, articleRoot, documentProperties, siteData, path) 
 
 const applyLayout = (layout, innerContent, provider, documentProperties, siteData, path) => {
   const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+  embedLinksToArticles(layoutRoot, layout.frontMatter, siteData, path)
   expandClassAliases(layoutRoot, layout.frontMatter)
+  expandCustomProperties(layoutRoot, documentProperties)
   embedSegments(layoutRoot, documentProperties, siteData, path)
   embedComponents(layoutRoot, documentProperties, siteData, path)
-  embedLinksToArticles(layoutRoot, siteData, path)
   embedContent(layoutRoot, innerContent)
   fillInPlaceHolders(layoutRoot, provider, documentProperties)
   return layoutRoot

@@ -1,10 +1,12 @@
 import { setAttrs } from "./set_attrs.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
+import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 
-const embedLinksToArticles = (container, siteData, path) => {
+const embedLinksToArticles = (container, containerFrontMatter, siteData, path) => {
   const targets = container.querySelectorAll("tg-links")
 
   targets.forEach(target => {
@@ -23,6 +25,8 @@ const embedLinksToArticles = (container, siteData, path) => {
 
       const copy = target.cloneNode(true)
 
+      expandClassAliases(copy, containerFrontMatter)
+      expandCustomProperties(copy, article.frontMatter)
       fillInPlaceHolders(copy, articleRoot, article.frontMatter)
 
       Array.from(copy.querySelectorAll("tg-link")).forEach(link => {

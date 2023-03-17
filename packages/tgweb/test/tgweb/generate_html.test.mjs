@@ -499,11 +499,11 @@ describe("generateHTML", () => {
         '<nav>',
         '  <ul>',
         '    <li>',
-        '      <a href="/articles/blog/a.html">A</a>',
+        '      <a href="/articles/blog/a.html" title="A">A</a>',
         '      (<span>2022-12-31</span>)',
         '    </li>',
         '    <li>',
-        '      <a href="/articles/blog/b.html">B</a>',
+        '      <a href="/articles/blog/b.html" title="B">B</a>',
         '      (<span>2023-01-01</span>)',
         '    </li>',
         '    <li>',
@@ -635,6 +635,27 @@ describe("generateHTML", () => {
       '    </div>',
       '  </div>',
       '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should expand custom property values in HTML element attributes", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/d.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2" id="baz">',
+      '  <div>',
+      '    <h3>D</h3>',
+      '    <p><a href="https://teamgenik.com">Teamgenik</a></p>',
+      '  </div>',
       '</body>'
     ]
 

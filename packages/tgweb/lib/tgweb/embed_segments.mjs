@@ -1,5 +1,6 @@
 import { setAttrs } from "./set_attrs.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { embedComponents } from "./embed_components.mjs"
 import { embedArticles } from "./embed_articles.mjs"
@@ -21,12 +22,13 @@ const embedSegments = (container, documentProperties, siteData, path) => {
 
     if (segment) {
       const segmentRoot = segment.dom.window.document.body.cloneNode(true)
+      embedLinksToArticles(segmentRoot, segment.frontMatter, siteData, path)
       expandClassAliases(segmentRoot, segment.frontMatter)
+      expandCustomProperties(segmentRoot, documentProperties)
       embedContent(segmentRoot, target)
       embedComponents(segmentRoot, documentProperties, siteData, path)
       embedArticles(segmentRoot, siteData, path)
       embedArticleLists(segmentRoot, siteData, path)
-      embedLinksToArticles(segmentRoot, siteData, path)
       fillInPlaceHolders(segmentRoot, target, documentProperties)
 
       Array.from(segmentRoot.childNodes).forEach(child => target.before(child))

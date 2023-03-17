@@ -474,6 +474,21 @@ data-message: "Hello, world!"
 </body>
 ```
 
+You can also use the `${...}` notation to embed the value of a custom property into the attribute
+value of an HTML element.
+
+```html
+---
+data-div-id: "special"
+---
+<body>
+  <div id="${div-id}">...</div>
+</body>
+```
+
+However, as we will see shortly, the `${...}` notation used in the `class` attribute of HTML
+elements has a different meaning.
+
 ### Defining an alias to a set of class tokens
 
 A property whose name begins with `class-` can be used to give an alias to a set of class tokens.
@@ -516,7 +531,7 @@ class-card:
 </body>
 ```
 
-Note that the `-` symbol must be preceded by two spaces.
+Note that the `-` symbol should be preceded by two spaces.
 
 ### Site properties
 

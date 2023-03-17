@@ -1,5 +1,6 @@
 import { setAttrs } from "./set_attrs.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
@@ -20,9 +21,10 @@ const embedComponents = (container, documentProperties, siteData, path) => {
     if (component) {
       const properties = mergeProperties(component.frontMatter, documentProperties)
       const componentRoot = component.dom.window.document.body.cloneNode(true)
+      embedLinksToArticles(componentRoot, component.frontMatter,siteData, path)
       expandClassAliases(componentRoot, component.frontMatter)
+      expandCustomProperties(componentRoot, documentProperties)
       embedContent(componentRoot, target)
-      embedLinksToArticles(componentRoot, siteData, path)
       fillInPlaceHolders(componentRoot, target, properties)
 
       Array.from(componentRoot.childNodes).forEach(child => target.before(child))
