@@ -33,7 +33,6 @@ describe("updateSiteData", () => {
 
     assert.equal(page.frontMatter["title"], "FizzBuzz")
     assert.equal(page.frontMatter["layout"], "home")
-    assert.equal(page.frontMatter["data-current-year"], 2024)
   })
 
   it("should update a page template", () => {
@@ -55,7 +54,6 @@ describe("updateSiteData", () => {
 
     assert.equal(page.frontMatter["title"], "FizzBuzz")
     assert.equal(page.frontMatter["layout"], "home")
-    assert.equal(page.frontMatter["data-current-year"], 2023)
 
     const expected = [
       'articles/blog/b',

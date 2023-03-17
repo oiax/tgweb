@@ -3,8 +3,8 @@ const setUrlProperty = (frontMatter, siteData, path) => {
   const host = siteData.properties["host"]
   const port = siteData.properties["port"]
 
-  let converted = path
-  if (path === "index.html") converted = ""
+  let converted = path.replace(/^src\//, "").replace(/^pages\//, "")
+  if (converted === "index.html") converted = ""
   converted = converted.replace(/\/index.html$/, "/")
 
   if (scheme === "http") {

@@ -206,6 +206,58 @@ describe("generateHTML", () => {
     )
   })
 
+  it("should embed a segment to a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_3")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/index.html", siteData)
+    const dom = new JSDOM(html)
+
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2">',
+      '  <header>HEADER</header>',
+      '  <div>HERO</div>',
+      '  <div>Message</div>',
+      '  <h3 class="font-bold text-lg ml-2">Greeting</h3>',
+      '  <div class="flex justify-center">',
+      '    Hello, world!',
+      '  </div>',
+      '  <footer>FOOTER</footer>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
+  it("should embed a multi-node component to a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_3")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/about.html", siteData)
+    const dom = new JSDOM(html)
+
+    const lines = pretty(dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h3>About us</h3>',
+      '  <span>A</span>',
+      '  <span>B</span>',
+      '  <hr>',
+      '  <span>A</span>',
+      '  <span>B</span>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
   it("should embed a custom property to a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_1")
     const siteData = getSiteData(wd)
@@ -326,6 +378,21 @@ describe("generateHTML", () => {
       '</footer>'
     ]
 
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
+  it("should inherit custom properties from site.yml and containers", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/articles/blog/a.html", siteData)
+    const dom = new JSDOM(html)
+
+    const body = dom.window.document.body
+    const div = body.querySelector("#custom-props")
+
+    const lines = pretty(div.outerHTML, {ocd: true}).split("\n")
+    const expected = [ '<div id="custom-props">', '  0', '  1', '  2', '  3', '</div>' ]
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 

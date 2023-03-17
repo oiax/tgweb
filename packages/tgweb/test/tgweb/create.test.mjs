@@ -200,10 +200,6 @@ describe("create", () => {
     create("src/site.yml", siteData)
 
     assert.equal(siteData.properties["title"], "Example")
-
-    const index = siteData.pages.find(p => p.path === "index.html")
-    assert.equal(index.frontMatter["data-foo"], "Bar")
-
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
   })
 })

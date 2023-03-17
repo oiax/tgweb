@@ -1,42 +1,77 @@
 import { getWrapper } from "./get_wrapper.mjs"
+import { getLayout } from "./get_layout.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { getTitle } from "./get_title.mjs"
 import { renderHTML } from "./render_html.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { embedComponents } from "./embed_components.mjs"
-import { applyWrapper } from "./apply_wrapper.mjs"
-import { applyLayout } from "./apply_layout.mjs"
+import { embedSegments } from "./embed_segments.mjs"
+import { embedContent } from "./embed_content.mjs"
+import { getDocumentProperties } from "./get_document_properties.mjs"
+import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 
 const renderArticle = (path, siteData) => {
   const article = siteData.articles.find(article => "src/articles/" + article.path == path)
 
-  if (article) {
-    if (article.frontMatter["embedded-only"] === true) return
+  if (article === undefined) return
+  if (article.frontMatter["embedded-only"] === true) return
 
-    const articleRoot = article.dom.window.document.body.cloneNode(true)
-    expandClassAliases(article.frontMatter, articleRoot)
-    embedComponents(article, articleRoot, siteData, path)
-    return _renderArticle(article, articleRoot, siteData, path)
+  const wrapper = getWrapper(siteData, "articles/" + article.path)
+  const layout = getLayout(siteData, article, wrapper)
+  const documentProperties = getDocumentProperties(article, wrapper, layout, siteData.properties)
+  const articleRoot = makeArticleRoot(article, documentProperties, siteData, path)
+  const headAttrs = { title: getTitle(article.frontMatter, articleRoot) }
+
+  if (wrapper && layout) {
+    const wrapperRoot = applyWrapper(wrapper, articleRoot, documentProperties, siteData, path)
+
+    const layoutRoot =
+      applyLayout(layout, wrapperRoot, articleRoot, documentProperties, siteData, path)
+
+    return renderHTML(layoutRoot, siteData, documentProperties, headAttrs, path)
+  }
+  else if (wrapper) {
+    const wrapperRoot = applyWrapper(wrapper, articleRoot, documentProperties, siteData, path)
+    return renderHTML(wrapperRoot, siteData, documentProperties, headAttrs, path)
+  }
+  else if (layout) {
+    const layoutRoot =
+      applyLayout(layout, articleRoot, articleRoot, documentProperties, siteData, path)
+
+    return renderHTML(layoutRoot, siteData, documentProperties, headAttrs, path)
+  }
+  else {
+    fillInPlaceHolders(articleRoot, undefined, documentProperties)
+    return renderHTML(articleRoot, siteData, documentProperties, headAttrs, path)
   }
 }
 
-const _renderArticle = (article, articleRoot, siteData, path) => {
-  embedComponents(article, articleRoot, siteData, path)
+const makeArticleRoot = (article, documentProperties, siteData, path) => {
+  const articleRoot = article.dom.window.document.body.cloneNode(true)
+  expandClassAliases(articleRoot, article.frontMatter)
+  embedComponents(articleRoot, documentProperties, siteData, path)
   embedLinksToArticles(articleRoot, siteData, path)
+  return articleRoot
+}
 
-  const wrapper = getWrapper(siteData, "articles/" + article.path)
+const applyWrapper = (wrapper, articleRoot, documentProperties, siteData, path) => {
+  const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+  expandClassAliases(wrapperRoot, wrapper.frontMatter)
+  embedComponents(wrapperRoot, documentProperties, siteData, path)
+  embedContent(wrapperRoot, articleRoot)
+  fillInPlaceHolders(wrapperRoot, articleRoot, documentProperties)
+  return wrapperRoot
+}
 
-  if (wrapper) {
-    const wrapperRoot = applyWrapper(article, articleRoot, wrapper, siteData, path)
-    const headAttrs = { title: getTitle(article, wrapperRoot) }
-    const layoutRoot = applyLayout(wrapper, wrapperRoot, siteData, path)
-    return renderHTML(article, layoutRoot, siteData, headAttrs, path)
-  }
-  else {
-    const headAttrs = { title: getTitle(article, articleRoot) }
-    const layoutRoot = applyLayout(article, articleRoot, siteData, path)
-    return renderHTML(article, layoutRoot, siteData, headAttrs, path)
-  }
+const applyLayout = (layout, innerContent, provider, documentProperties, siteData, path) => {
+  const layoutRoot = layout.dom.window.document.body.cloneNode(true)
+  expandClassAliases(layoutRoot, layout.frontMatter)
+  embedSegments(layoutRoot, documentProperties, siteData, path)
+  embedComponents(layoutRoot, documentProperties, siteData, path)
+  embedLinksToArticles(layoutRoot, siteData, path)
+  embedContent(layoutRoot, innerContent)
+  fillInPlaceHolders(layoutRoot, provider, documentProperties)
+  return layoutRoot
 }
 
 export { renderArticle }

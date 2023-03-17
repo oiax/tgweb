@@ -8,8 +8,8 @@ import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { err } from "./err.mjs"
 
-const embedSegments = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-segment")
+const embedSegments = (container, documentProperties, siteData, path) => {
+  const targets = container.querySelectorAll("tg-segment")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -20,21 +20,23 @@ const embedSegments = (template, node, siteData, path) => {
       siteData.segments.find(segment => segment.path == segmentName + ".html")
 
     if (segment) {
-      const segmentRoot = segment.dom.window.document.body.children[0].cloneNode(true)
-      expandClassAliases(segment.frontMatter, segmentRoot)
+      const segmentRoot = segment.dom.window.document.body.cloneNode(true)
+      expandClassAliases(segmentRoot, segment.frontMatter)
       embedContent(segmentRoot, target)
-      embedComponents(segment, segmentRoot, siteData, path)
+      embedComponents(segmentRoot, documentProperties, siteData, path)
       embedArticles(segmentRoot, siteData, path)
       embedArticleLists(segmentRoot, siteData, path)
       embedLinksToArticles(segmentRoot, siteData, path)
-      fillInPlaceHolders(segmentRoot, target, template)
-      target.replaceWith(segmentRoot)
+      fillInPlaceHolders(segmentRoot, target, documentProperties)
+
+      Array.from(segmentRoot.childNodes).forEach(child => target.before(child))
     }
     else {
       err(target, siteData, `No segment named ${target.attrs["name"]} exists.`)
-      target.remove()
     }
   })
+
+  targets.forEach(target => target.remove())
 }
 
 export { embedSegments }

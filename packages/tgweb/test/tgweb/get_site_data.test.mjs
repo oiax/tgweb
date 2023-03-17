@@ -16,9 +16,6 @@ describe("getSiteData", () => {
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "Home")
     assert.equal(page.frontMatter["property-fb:app_id"], "0123456789abced")
-
-    assert.equal(page.frontMatter["property-og:image"],
-      "http://localhost:3000/images/icons/default.png")
   })
 
   it("should process a page without <body> and </body> tags", () => {
@@ -59,8 +56,6 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "FizzBuzz")
-    assert.equal(page.frontMatter["data-current-year"], 2023)
-    assert.equal(page.frontMatter["class-div1"], undefined)
   })
 
   it("should make the page front matter inherit layout properties", () => {
@@ -71,7 +66,6 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["http-equiv-content-security-policy"], "default-src 'self'")
     assert.equal(page.frontMatter["title"], "Home")
-    assert.equal(page.frontMatter["class-grid"], undefined)
   })
 
   it("should interpret the class aliases correctly", () => {
@@ -90,23 +84,6 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     assert.equal(siteData.articles.length, 8)
-  })
-
-  it("should make the article front matter inherit site and wrapper properties", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    const article = siteData.articles.find(article => article.path == "blog/a.html")
-
-    assert.equal(article.frontMatter["layout"], "blog_article")
-    assert.equal(article.frontMatter["title"], "Y")
-    assert.equal(article.frontMatter["data-current-year"], 2023)
-    assert.equal(article.frontMatter["property-og:image"],
-      "http://localhost:3000/images/red_square.png")
-    assert.equal(article.frontMatter["data-w"], 0)
-    assert.equal(article.frontMatter["data-x"], 0)
-    assert.equal(article.frontMatter["data-y"], 2)
-    assert.equal(article.frontMatter["data-z"], 3)
   })
 
   it("should return the site data with dependencies", () => {
@@ -155,7 +132,8 @@ describe("getSiteData", () => {
     assert.equal(siteData.wrappers.length, 2)
 
     const wrapper = siteData.wrappers[0]
-    assert.equal(wrapper.frontMatter["data-current-year"], 2023)
+
+    assert.equal(wrapper.frontMatter["layout"], "blog_article")
   })
 
   it("should return the site data with site properties", () => {
@@ -163,7 +141,6 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     assert.equal(siteData.properties["title"], "No Title")
-    assert.equal(siteData.properties["data-current-year"], 2023)
   })
 
   it("should return the site data with Japanese text", () => {

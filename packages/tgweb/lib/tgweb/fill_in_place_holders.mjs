@@ -34,11 +34,11 @@ const fillInPlaceHolders = (element, provider, frontMatter) => {
 
     if (placeholder.tagName == "TG-PROP") {
       const value = frontMatter[placeholder.attrs["name"]]
-      if (value) placeholder.before(value)
+      if (value !== undefined) placeholder.before(value)
     }
     else if (placeholder.tagName == "TG-DATA") {
       const value = frontMatter["data-" + placeholder.attrs["name"]]
-      if (value) placeholder.before(value)
+      if (value !== undefined) placeholder.before(value)
     }
     else if (placeholder.tagName == "TG-SLOT") {
       const content = slotContents.find(c => c.attrs["name"] == placeholder.attrs["name"])
@@ -53,13 +53,17 @@ const fillInPlaceHolders = (element, provider, frontMatter) => {
   element.querySelectorAll("tg-slot, tg-data, tg-prop").forEach(slot => slot.remove())
 }
 
-const extractSlotContents = element => {
+const extractSlotContents = provider => {
+  if (provider === undefined) return []
+
   const slotContents =
-    Array.from(element.querySelectorAll("tg-insert")).map(elem => {
-      const copy = elem.cloneNode(true)
-      setAttrs(copy)
-      return copy
-    })
+    Array.from(provider.childNodes)
+      .filter(child => child.tagName === "TG-INSERT")
+      .map(child => {
+        const copy = child.cloneNode(true)
+        setAttrs(copy)
+        return copy
+      })
 
   return slotContents
 }

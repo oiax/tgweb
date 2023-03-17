@@ -6,8 +6,8 @@ import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
 import { err } from "./err.mjs"
 
-const embedComponents = (template, node, siteData, path) => {
-  const targets = node.querySelectorAll("tg-component")
+const embedComponents = (container, documentProperties, siteData, path) => {
+  const targets = container.querySelectorAll("tg-component")
 
   targets.forEach(target => {
     setAttrs(target)
@@ -18,19 +18,21 @@ const embedComponents = (template, node, siteData, path) => {
       siteData.components.find(component => component.path == componentName + ".html")
 
     if (component) {
-      const componentRoot = component.dom.window.document.body.children[0].cloneNode(true)
-      const frontMatter = mergeProperties(template.frontMatter, component.frontMatter)
-      expandClassAliases(component.frontMatter, componentRoot)
+      const properties = mergeProperties(component.frontMatter, documentProperties)
+      const componentRoot = component.dom.window.document.body.cloneNode(true)
+      expandClassAliases(componentRoot, component.frontMatter)
       embedContent(componentRoot, target)
       embedLinksToArticles(componentRoot, siteData, path)
-      fillInPlaceHolders(componentRoot, target, frontMatter)
-      target.replaceWith(componentRoot)
+      fillInPlaceHolders(componentRoot, target, properties)
+
+      Array.from(componentRoot.childNodes).forEach(child => target.before(child))
     }
     else {
       err(target, siteData, `No component named ${target.attrs["name"]} exists.`)
-      target.remove()
     }
   })
+
+  targets.forEach(target => target.remove())
 }
 
 export { embedComponents }
