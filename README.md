@@ -8,6 +8,7 @@
 * [Managing Multiple Websites](#managing-multiple-websites)
 * [Pages](#pages)
 * [Front Matter](#front-matter)
+* [Color Scheme](#color-scheme)
 * [Images](#images)
 * [Audios](#audios)
 * [Fonts and Icons](#fonts-and-icons)
@@ -157,7 +158,7 @@ Please note the following:
 * Tailwind CSS scans the HTML files of the `dist` directory, generates a CSS file `tailwind.css`
   on the `dist/css` directory.
 * It makes no sense for the user to rewrite the contents of the `dist` directory.
-* Users are not allowed to change `tailwind.config.js` and `tailwind.css`.
+* Users are not allowed to modify `tailwind.config.js` and `tailwind.css`.
 * Users are not allowed to add their own CSS files to the website.
 * Users are not allowed to add their own javascript files to the website.
 
@@ -228,7 +229,8 @@ If this approach is adopted, the structure of the working directory will look li
     │   │   ├── layouts
     │   │   ├── pages
     │   │   ├── segments
-    │   │   └── tags
+    │   │   ├── tags
+    │   │   └── site.yml
     │   ├── tailwind.config.js
     │   └── tailwind.css
     └── site_1
@@ -241,7 +243,8 @@ If this approach is adopted, the structure of the working directory will look li
         │   ├── layouts
         │   ├── pages
         │   ├── segments
-        │   └── tags
+        │   ├── tags
+        │   └── site.yml
         ├── tailwind.config.js
         └── tailwind.css
 ```
@@ -319,6 +322,57 @@ For example, `src/pages/index.html` is converted to `dist/index.html` and
 
 The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
+
+## Color Scheme
+
+### Cusotom color names
+
+Creating a file named `color_scheme.yml` in the `src` directory allows you to define custom
+color names for Tailwind CSS.
+
+A custom color name is a combination of a _palette_ and a _modifier_.
+The palette is a three-letter alphabet and the modifier is a one-letter alphabet.
+The palette and modifier are joined by a minus sign, like `bas-s` or `neu-d`.
+
+The following is a list of available palette names and their expected uses.
+
+* **bas**: Base color (background color of entire website)
+* **neu**: Neutral color (a quiet color like gray, beige, ivory, etc.)
+* **pri**: Primary color (most frequently used color other than base and neutral colors)
+* **sec**: Secondary color (second most frequently used color other than base and neutral colors)
+* **acc**: Accent color (third most frequently used color other than base and neutral colors)
+* **nav**: Navigation color (background color of navigation bar or sidebar)
+
+The following is a list of modifiers and their expected meaning.
+
+* **s**: Starndard
+* **b**: Brighter
+* **d**: Darker
+* **c**: Contrasting
+
+Here, "contrasting" means a color with good visibility when text is drawn in that color against
+a standard-color background.
+
+`src/color_scheme.yml`
+
+```yaml
+bas-s: "#3d4451"
+bas-c: "#a0aec0"
+pri-s: "#45ba9f"
+sec-s: "#70365d"
+```
+
+The defined custom color names can be used as the names of the colors that make up the Tailwind
+CSS classes. For example, to set the color defined as `pri-s` as the background color of an
+element, specify the `bg-pri-s` class in its `class` attribute.
+
+### daisyUI color names
+
+You can also use the color names provided by [daisyUI](https://daisyui.com/), such as `primary`,
+`secondary`, `success`, `warning`.
+For more information, see [Colors](https://daisyui.com/docs/colors/) in the daisyUI Documentation.
+
+Please note that at this time, tgweb does not support the switching of the daisyUI themes.
 
 ## Front Matter
 
