@@ -19,11 +19,19 @@ const embedComponents = (container, documentProperties, siteData, path) => {
       siteData.components.find(component => component.path == componentName + ".html")
 
     if (component) {
-      const properties = mergeProperties(component.frontMatter, documentProperties)
+      let properties = {}
+
+      Object.keys(target.attrs.data).forEach(key => {
+        properties[`data-${key}`] = target.attrs.data[key]
+      })
+
+      properties = mergeProperties(properties, documentProperties)
+      properties = mergeProperties(component.frontMatter, properties)
+
       const componentRoot = component.dom.window.document.body.cloneNode(true)
-      embedLinksToArticles(componentRoot, component.frontMatter,siteData, path)
+      embedLinksToArticles(componentRoot, component.frontMatter, siteData, path)
       expandClassAliases(componentRoot, component.frontMatter)
-      expandCustomProperties(componentRoot, documentProperties)
+      expandCustomProperties(componentRoot, properties)
       embedContent(componentRoot, target)
       fillInPlaceHolders(componentRoot, target, properties)
 

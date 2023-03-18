@@ -222,6 +222,7 @@ describe("generateHTML", () => {
       '<body class="p-2">',
       '  <header>HEADER</header>',
       '  <div>HERO</div>',
+      '  <img src="images/red_square.png">',
       '  <div>Message</div>',
       '  <h3 class="font-bold text-lg ml-2">Greeting</h3>',
       '  <div class="flex justify-center">',

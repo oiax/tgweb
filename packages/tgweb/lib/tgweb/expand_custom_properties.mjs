@@ -7,6 +7,7 @@ const expandCustomProperties = (node, frontMatter) => {
 
   Object.keys(node.attrs).forEach(key => {
     if (key === "class") return
+    if (key === "data") return
 
     const value = node.attrs[key]
 

@@ -3,7 +3,9 @@ layout: home
 title: Home
 class-h3: "font-bold text-lg ml-2"
 ---
-<tg-segment name="hero"></tg-segment>
+<tg-segment name="hero" data-image-path="red_square.png">
+  <tg-insert name="message"><div>Message</div></tg-insert>
+</tg-segment>
 <h3 class="${h3}">Greeting</h3>
 <div class="flex justify-center">
   Hello, world!
