@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.2.4
+
+* 345583c Pass custom properties to a segment/component via `data-*` attributes
+* 6f22cfc Expand custom property values in HTML element attributes
+* 675267c Bug fix: expand class aliases in embedded articles
+
 ## 0.2.3
 
 * dd1b844 Overhaul the mechanism of property inheritance
