@@ -5,6 +5,7 @@ import { embedComponents } from "./embed_components.mjs"
 import { embedLinksToArticles } from "./embed_links_to_articles.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { sortArticles } from "./sort_articles.mjs"
@@ -22,8 +23,11 @@ const embedArticleLists = (templateRoot, documentProperties, siteData, path) => 
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
+
+      embedLinksToArticles(articleRoot, article.frontMatter, siteData, path)
+      expandClassAliases(articleRoot, article.frontMatter)
+      expandCustomProperties(articleRoot, documentProperties)
       embedComponents(articleRoot, documentProperties, siteData, path)
-      embedLinksToArticles(articleRoot, siteData, path)
 
       const wrapper = getWrapper(siteData, "articles/" + article.path)
 
@@ -31,6 +35,7 @@ const embedArticleLists = (templateRoot, documentProperties, siteData, path) => 
         const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
 
         expandClassAliases(wrapperRoot, wrapper.frontMatter)
+        expandCustomProperties(wrapperRoot, documentProperties)
         embedComponents(wrapperRoot, documentProperties, siteData, path)
         embedContent(wrapperRoot, articleRoot)
         fillInPlaceHolders(wrapperRoot, articleRoot, documentProperties)

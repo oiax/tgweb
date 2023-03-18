@@ -474,6 +474,21 @@ data-message: "Hello, world!"
 </body>
 ```
 
+You can also use the `${...}` notation to embed the value of a custom property into the attribute
+value of an HTML element.
+
+```html
+---
+data-div-id: "special"
+---
+<body>
+  <div id="${div-id}">...</div>
+</body>
+```
+
+However, as we will see shortly, the `${...}` notation used in the `class` attribute of HTML
+elements has a different meaning.
+
 ### Defining an alias to a set of class tokens
 
 A property whose name begins with `class-` can be used to give an alias to a set of class tokens.
@@ -516,7 +531,7 @@ class-card:
 </body>
 ```
 
-Note that the `-` symbol must be preceded by two spaces.
+Note that the `-` symbol should be preceded by two spaces.
 
 ### Site properties
 
@@ -1102,6 +1117,32 @@ location where you want to place it and specify its name in the `name` attribute
 </div>
 ```
 
+### Passing custom properties to a segment
+
+You can pass custom properties to a segment using the `<tg-segment> element's `data-*` attribute.
+
+`src/segment/hero.html`
+
+```html
+<section class="bg-base-200 p-4 border border-rounded">
+  <div class="flex">
+    <img src="/images/${image-path}">
+  </div>
+</section>
+```
+
+`src/pages/index.html`
+
+```html
+<div>
+  <tg-segment name="hero" data-image-path="hello.jpg"></tg-segment>
+
+  <main>
+    ...
+  </main>
+</div>
+```
+
 ### Slots
 
 Like layouts, slots can be placed inside segments. The method of embedding content in the slots
@@ -1170,6 +1211,29 @@ location where you want to place it and specify its name in the `name` attribute
   <tg-component name="smile"></tg-component>
   How are you?
 </p>
+```
+
+You can pass custom properties to a component using the `<tg-component> element's `data-*`
+attribute.
+
+`src/components/avatar.html`
+
+```html
+<div class="bg-gray-200 p-2">
+  <a href="articles/members/${name}.html">
+    <img class="w-24 h-24 rounded-full" src="/images/${name}.png" alt="${name}">
+  </a>
+</div>
+```
+
+`src/pages/index.html`
+
+```html
+<div class="grid grid-rows-2 gap-4">
+  <tg-component name="avatar" data-name="Alice"></tg-component>
+  <tg-component name="avatar" data-name="Bob"></tg-component>
+  <tg-component name="avatar" data-name="Carol"></tg-component>
+</div>
 ```
 
 ### Slots

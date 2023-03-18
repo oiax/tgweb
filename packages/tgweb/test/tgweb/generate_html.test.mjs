@@ -151,6 +151,9 @@ describe("generateHTML", () => {
     const p2 = body.querySelector("div.grid > div:nth-child(2) > p")
     assert.equal(p2.textContent, "I am a computer.")
 
+    const article_h3 = body.querySelector("main > div:nth-child(1) > h3")
+    assert.equal(article_h3.className, "font-bold text-lg ml-2")
+
     const nav = body.querySelector("main > div:nth-child(1) > nav")
     const nav_lines = pretty(nav.outerHTML, {ocd: true}).split("\n")
 
@@ -219,6 +222,7 @@ describe("generateHTML", () => {
       '<body class="p-2">',
       '  <header>HEADER</header>',
       '  <div>HERO</div>',
+      '  <img src="images/red_square.png">',
       '  <div>Message</div>',
       '  <h3 class="font-bold text-lg ml-2">Greeting</h3>',
       '  <div class="flex justify-center">',
@@ -496,11 +500,11 @@ describe("generateHTML", () => {
         '<nav>',
         '  <ul>',
         '    <li>',
-        '      <a href="/articles/blog/a.html">A</a>',
+        '      <a href="/articles/blog/a.html" title="A">A</a>',
         '      (<span>2022-12-31</span>)',
         '    </li>',
         '    <li>',
-        '      <a href="/articles/blog/b.html">B</a>',
+        '      <a href="/articles/blog/b.html" title="B">B</a>',
         '      (<span>2023-01-01</span>)',
         '    </li>',
         '    <li>',
@@ -638,6 +642,27 @@ describe("generateHTML", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
+  it("should expand custom property values in HTML element attributes", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const siteData = getSiteData(wd)
+    const html = generateHTML("src/pages/d.html", siteData)
+    const dom = new JSDOM(html)
+    const body = dom.window.document.body
+
+    const lines = pretty(body.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<body class="p-2" id="baz">',
+      '  <div>',
+      '    <h3>D</h3>',
+      '    <p><a href="https://teamgenik.com">Teamgenik</a></p>',
+      '  </div>',
+      '</body>'
+    ]
+
+    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+  })
+
   it("should embed article list into a layout", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_2")
     const siteData = getSiteData(wd)
@@ -655,7 +680,7 @@ describe("generateHTML", () => {
       '  </div>',
       '  <main class="${g} py-2">',
       '    <h3 class="font-bold text-lg ml-2">BAZ</h3>',
-      '    <p class="${p}">Baz baz baz ...</p>',
+      '    <p class="text-red-500">Baz baz baz ...</p>',
       '  </main>',
       '</body>'
     ]
