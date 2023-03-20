@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.2.6
+
+* 7ea512f Fix `setDepdencies/2` so that it gets layout name from site.yml
+* 06f6451 Do not generate html for embedded-only articles
+
 ## 0.2.5
 
 * 622cd19 Fix `getLayout/3` so that it reads layout name from `site.yml`
