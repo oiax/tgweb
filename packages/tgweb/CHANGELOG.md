@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.5
+
+* 622cd19 Fix `getLayout/3` so that it reads layout name from `site.yml`
+
 ## 0.2.4
 
 * 345583c Pass custom properties to a segment/component via `data-*` attributes
