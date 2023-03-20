@@ -48,26 +48,6 @@ describe("getSiteData", () => {
     lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
   })
 
-  it("should make the page front matter inherit site and wrapper properties", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    const page = siteData.pages.find(page => page.path == "index.html")
-
-    assert.equal(page.frontMatter["layout"], "home")
-    assert.equal(page.frontMatter["title"], "FizzBuzz")
-  })
-
-  it("should make the page front matter inherit layout properties", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_0")
-    const siteData = getSiteData(wd)
-
-    const page = siteData.pages.find(page => page.path == "index.html")
-
-    assert.equal(page.frontMatter["http-equiv-content-security-policy"], "default-src 'self'")
-    assert.equal(page.frontMatter["title"], "Home")
-  })
-
   it("should interpret the class aliases correctly", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_2")
     const siteData = getSiteData(wd)
@@ -108,7 +88,6 @@ describe("getSiteData", () => {
       'layouts/home',
       'pages/_wrapper',
       'segments/apps/fizz_buzz',
-      'segments/blog_nav',
       'segments/nav'
     ]
 

@@ -3,6 +3,7 @@ import { setAttrs } from "./set_attrs.mjs"
 import getTag from "./get_tag.mjs"
 import filterArticles from "./filter_articles.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
+import { getLayout } from "./get_layout.mjs"
 
 const setDependencies = (object, siteData) => {
   const body = object.dom.window.document.body
@@ -36,6 +37,7 @@ const setDependencies = (object, siteData) => {
     if (article) {
       article.dependencies.forEach(dep => {
         if (dep.startsWith("layouts/")) return
+        if (dep.startsWith("segments/")) return
         object.dependencies.push(dep)
       })
     }
@@ -55,6 +57,7 @@ const setDependencies = (object, siteData) => {
 
       article.dependencies.forEach(dep => {
         if (dep.startsWith("layouts/")) return
+        if (dep.startsWith("segments/")) return
         object.dependencies.push(dep)
       })
     })
@@ -74,18 +77,16 @@ const setDependencies = (object, siteData) => {
     })
   })
 
-  const layoutName = object.frontMatter["layout"]
-
-  if (layoutName) {
-    object.dependencies.push("layouts/" + layoutName)
-
-    const layout = siteData.layouts.find(layout => layout.path === layoutName + ".html")
-    if (layout) layout.dependencies.forEach(dep => object.dependencies.push(dep))
-  }
-
   if (object.type === "page" || object.type === "article") {
     const parentDir = object.type === "page" ? "pages" : "articles"
     const wrapper = getWrapper(siteData, PATH.join(parentDir, object.path))
+    const layout = getLayout(siteData, object, wrapper)
+
+    if (layout) {
+      const layoutName = layout.path.replace(/\.html$/, "")
+      object.dependencies.push("layouts/" + layoutName)
+      layout.dependencies.forEach(dep => object.dependencies.push(dep))
+    }
 
     if (wrapper) {
       const wrapperName = wrapper.path.replace(/\.html$/, "")
