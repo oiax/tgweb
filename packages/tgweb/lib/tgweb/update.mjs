@@ -6,6 +6,7 @@ import { dbg, pp } from "./debugging.mjs"
 import * as PATH from "path"
 import fs from "fs"
 import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
+import { getWrapper } from "./get_wrapper.mjs"
 
 // Prevent warnings when functions dbg and pp are not used.
 if (dbg === undefined) { dbg() }
@@ -20,7 +21,8 @@ const update = (path, siteData) => {
     updateHTML(path, siteData)
   }
   else if (type === "article") {
-    updateHTML(path, siteData)
+    const article = siteData.articles.find(article => "src/articles/" + article.path == path)
+    updateArticle(article, siteData)
 
     const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
 
@@ -30,7 +32,7 @@ const update = (path, siteData) => {
   }
   else if (type == "site.yml") {
     siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
-    siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+    siteData.articles.forEach(article => updateArticle(article, siteData))
   }
   else if (type == "color_scheme.yml") {
     const tailwindConfig = generateTailwindConfig(PATH.dirname(path))
@@ -46,8 +48,17 @@ const update = (path, siteData) => {
 
     siteData.articles
       .filter(article => article.dependencies.includes(name))
-      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+      .forEach(article => updateArticle(article, siteData))
   }
+}
+
+const updateArticle = (article, siteData) => {
+  const wrapper = getWrapper(siteData, "articles/" + article.path)
+
+  if (wrapper && wrapper.frontMatter["embedded-only"] === true) return
+  if (article.frontMatter["embedded-only"] === true) return
+
+  updateHTML("src/articles/" + article.path, siteData)
 }
 
 export { update }
