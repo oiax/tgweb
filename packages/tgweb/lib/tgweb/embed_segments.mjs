@@ -37,8 +37,8 @@ const embedSegments = (container, documentProperties, siteData, path) => {
       expandCustomProperties(segmentRoot, properties)
       embedContent(segmentRoot, target)
       embedComponents(segmentRoot, properties, siteData, path)
-      embedArticles(segmentRoot, properties, siteData, path)
-      embedArticleLists(segmentRoot, properties, siteData, path)
+      embedArticles(segmentRoot, siteData, path)
+      embedArticleLists(segmentRoot, siteData, path)
       fillInPlaceHolders(segmentRoot, target, properties)
 
       Array.from(segmentRoot.childNodes).forEach(child => target.before(child))

@@ -237,6 +237,40 @@ describe("generateHTML", () => {
     )
   })
 
+  it("should embed articles to a page", () => {
+    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const siteData = getSiteData(wd)
+
+    const html = generateHTML("src/pages/pickup.html", siteData)
+    const dom = new JSDOM(html)
+    const main = dom.window.document.body.querySelector("main")
+
+    const lines = pretty(main.outerHTML, {ocd: true}).split("\n")
+
+    const expected = [
+      '<main>',
+      '  <div class="bg-gray-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">',
+      '      B',
+      '    </h3>',
+      '    <p>This is B.</p>',
+      '    <div>2023-01-01</div>',
+      '  </div>',
+      '  <div class="bg-gray-100 py-2">',
+      '    <h3 class="font-bold text-lg ml-2">',
+      '      D',
+      '    </h3>',
+      '    <p>This is D.</p>',
+      '    <div>2023-01-03</div>',
+      '  </div>',
+      '</main>'
+    ]
+
+    lines.forEach((line, index) =>
+      assert.equal(line, expected[index], `Line: ${index + 1}`)
+    )
+  })
+
   it("should embed a multi-node component to a page", () => {
     const wd = PATH.resolve(__dirname, "../examples/site_3")
     const siteData = getSiteData(wd)
