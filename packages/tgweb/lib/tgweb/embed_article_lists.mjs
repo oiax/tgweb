@@ -9,8 +9,10 @@ import { expandCustomProperties } from "./expand_custom_properties.mjs"
 import { embedContent } from "./embed_content.mjs"
 import { fillInPlaceHolders } from "./fill_in_place_holders.mjs"
 import { sortArticles } from "./sort_articles.mjs"
+import { mergeProperties } from "./merge_properties.mjs"
+import { getDocumentProperties } from "./get_document_properties.mjs"
 
-const embedArticleLists = (templateRoot, documentProperties, siteData, path) => {
+const embedArticleLists = (templateRoot, siteData, path) => {
   const targets = templateRoot.querySelectorAll("tg-articles")
 
   targets.forEach(target => {
@@ -23,22 +25,24 @@ const embedArticleLists = (templateRoot, documentProperties, siteData, path) => 
 
     articles.forEach(article => {
       const articleRoot = article.dom.window.document.body.cloneNode(true)
+      const properties = mergeProperties(article.frontMatter, siteData.properties)
 
       embedLinksToArticles(articleRoot, article.frontMatter, siteData, path)
       expandClassAliases(articleRoot, article.frontMatter)
-      expandCustomProperties(articleRoot, documentProperties)
-      embedComponents(articleRoot, documentProperties, siteData, path)
+      expandCustomProperties(articleRoot, properties)
+      embedComponents(articleRoot, properties, siteData, path)
 
       const wrapper = getWrapper(siteData, "articles/" + article.path)
 
       if (wrapper) {
         const wrapperRoot = wrapper.dom.window.document.body.cloneNode(true)
+        const properties = getDocumentProperties(article, wrapper, null, siteData.properties)
 
         expandClassAliases(wrapperRoot, wrapper.frontMatter)
-        expandCustomProperties(wrapperRoot, documentProperties)
-        embedComponents(wrapperRoot, documentProperties, siteData, path)
+        expandCustomProperties(wrapperRoot, properties)
+        embedComponents(wrapperRoot, properties, siteData, path)
         embedContent(wrapperRoot, articleRoot)
-        fillInPlaceHolders(wrapperRoot, articleRoot, documentProperties)
+        fillInPlaceHolders(wrapperRoot, articleRoot, properties)
 
         Array.from(wrapperRoot.childNodes).forEach(child => target.before(child))
       }

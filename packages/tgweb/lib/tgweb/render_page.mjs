@@ -54,8 +54,8 @@ const makePageRoot = (page, documentProperties, siteData, path) => {
   expandCustomProperties(pageRoot, documentProperties)
   embedSegments(pageRoot, documentProperties, siteData, path)
   embedComponents(pageRoot, documentProperties, siteData, path)
-  embedArticles(pageRoot, documentProperties, siteData, path)
-  embedArticleLists(pageRoot, documentProperties, siteData, path)
+  embedArticles(pageRoot, siteData, path)
+  embedArticleLists(pageRoot, siteData, path)
   return pageRoot
 }
 
@@ -76,8 +76,8 @@ const applyLayout = (layout, innerContent, provider, documentProperties, siteDat
   expandCustomProperties(layoutRoot, documentProperties)
   embedSegments(layoutRoot, documentProperties, siteData, path)
   embedComponents(layoutRoot, documentProperties, siteData, path)
-  embedArticles(layoutRoot, documentProperties, siteData, path)
-  embedArticleLists(layoutRoot, documentProperties, siteData, path)
+  embedArticles(layoutRoot, siteData, path)
+  embedArticleLists(layoutRoot, siteData, path)
   embedContent(layoutRoot, innerContent)
   fillInPlaceHolders(layoutRoot, provider, documentProperties)
   return layoutRoot
