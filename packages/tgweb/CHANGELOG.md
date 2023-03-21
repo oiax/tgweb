@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.7
+
+* d14f46f Bug fix: article wrappers do not inherit properties from articles
+
 ## 0.2.6
 
 * 7ea512f Fix `setDepdencies/2` so that it gets layout name from site.yml
