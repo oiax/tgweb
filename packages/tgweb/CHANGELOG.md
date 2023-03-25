@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.8
+
+* 0cf590a Fix path handlings for Windows
+
 ## 0.2.7
 
 * d14f46f Bug fix: article wrappers do not inherit properties from articles
