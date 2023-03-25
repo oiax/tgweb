@@ -13,18 +13,21 @@ if (dbg === undefined) { dbg() }
 if (pp === undefined) { pp() }
 
 const update = (path, siteData) => {
-  updateSiteData(siteData, path)
+  const posixPath = slash(path)
+  updateSiteData(siteData, posixPath)
 
-  const type = getType(path)
+  const type = getType(posixPath)
 
   if (type === "page") {
-    updateHTML(path, siteData)
+    updateHTML(posixPath, siteData)
   }
   else if (type === "article") {
-    const article = siteData.articles.find(article => "src/articles/" + article.path == path)
+    const article =
+      siteData.articles.find(article => "src/articles/" + article.path === posixPath)
+
     updateArticle(article, siteData)
 
-    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
+    const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
@@ -35,12 +38,12 @@ const update = (path, siteData) => {
     siteData.articles.forEach(article => updateArticle(article, siteData))
   }
   else if (type == "color_scheme.yml") {
-    const tailwindConfig = generateTailwindConfig(PATH.dirname(path))
+    const tailwindConfig = generateTailwindConfig(PATH.dirname(posixPath))
     if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
     if (process.env.VERBOSE) console.log(`Updated tailwind.config.js`)
   }
   else {
-    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
+    const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
