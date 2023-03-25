@@ -12,19 +12,19 @@ const create = (path, siteData) => {
   const dirname = PATH.dirname(posixPath)
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
-    const distPath = slash(path).replace(/^src\//, "dist/")
+    const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
     const targetDir = PATH.dirname(targetPath)
 
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
-    fs.copyFileSync(path, targetPath)
+    fs.copyFileSync(posixPath, targetPath)
   }
   else {
     updateSiteData(siteData, posixPath)
     const html = generateHTML(posixPath, siteData)
 
     if (html !== undefined) {
-      const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+      const distPath = posixPath.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
       const targetPath = PATH.resolve(distPath)
       const targetDir = PATH.dirname(targetPath)
 
@@ -34,8 +34,8 @@ const create = (path, siteData) => {
       if (process.env.VERBOSE) console.log(`Created ${distPath}.`)
     }
 
-    const type = getType(path)
-    const name = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
+    const type = getType(posixPath)
+    const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     if (type === "page") return
 
