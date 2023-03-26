@@ -532,6 +532,7 @@ describe("generateHTML", () => {
 
     const expected = [
         '<nav>',
+        '  <hr class="border-t-4 border-slate-500 border-dashed">',
         '  <ul>',
         '    <li>',
         '      <a href="/articles/blog/a.html" title="A">A</a>',

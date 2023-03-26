@@ -60,6 +60,7 @@ const getSiteData = directory => {
     siteData.segments = glob.sync("**/*.html").map(path =>
       getTemplate(path, "segment")
     )
+    siteData.segments.map(segment => setDependencies(segment, siteData))
   }
 
   const layoutsDir = PATH.join(directory, "src", "layouts")
