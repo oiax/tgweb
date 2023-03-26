@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.11
+
+* Bug fix: set dependencies for an article twice
+
 ## 0.2.10
 
 * 8934163 Bug fix: import segment deps into page/layout deps
