@@ -53,6 +53,24 @@ const getSiteData = directory => {
     siteData.components = glob.sync("**/*.html").map(path => getTemplate(path, "component"))
   }
 
+  process.chdir(PATH.join(directory, "/src"))
+
+  siteData.wrappers =
+    glob.sync("@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
+
+  siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
+
+  const articlesDir = PATH.join(directory, "src", "articles")
+
+  if (fs.existsSync(articlesDir)) {
+    process.chdir(articlesDir)
+
+    siteData.articles =
+      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
+
+    siteData.articles.map(article => setDependencies(article, siteData))
+  }
+
   const segmentsDir = PATH.join(directory, "src", "segments")
 
   if (fs.existsSync(segmentsDir)) {
@@ -72,24 +90,6 @@ const getSiteData = directory => {
     siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
-  process.chdir(PATH.join(directory, "/src"))
-
-  siteData.wrappers =
-    glob.sync("@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
-
-  siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
-
-  const articlesDir = PATH.join(directory, "src", "articles")
-
-  if (fs.existsSync(articlesDir)) {
-    process.chdir(articlesDir)
-
-    siteData.articles =
-      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
-
-    siteData.articles.map(article => setDependencies(article, siteData))
-  }
-
   const pagesDir = PATH.join(directory, "src", "pages")
 
   if (fs.existsSync(pagesDir)) {
@@ -99,6 +99,16 @@ const getSiteData = directory => {
       glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "page"))
 
     siteData.pages.map(page => setDependencies(page, siteData))
+  }
+
+  // Articles need to be processed again, because they need import their layout's dependencies.
+  if (fs.existsSync(articlesDir)) {
+    process.chdir(articlesDir)
+
+    siteData.articles =
+      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
+
+    siteData.articles.map(article => setDependencies(article, siteData))
   }
 
   process.chdir(cwd)
