@@ -1,0 +1,24 @@
+---
+class-div1: my-4 p-2 bg-blue-100
+---
+<body>
+  <header>Header</header>
+  <div class="${div1}">
+    <tg-content></tg-content>
+    <div>
+      <tg-slot name="x"></tg-slot>
+      <tg-data name="y"></tg-data>
+    </div>
+    <tg-if-complete>
+      <div>
+        <tg-slot name="x"></tg-slot>
+      </div>
+    </tg-if-complete>
+    <tg-if-complete>
+      <div>
+        <tg-slot name="z"></tg-slot>
+      </div>
+    </tg-if-complete>
+  </div>
+  <footer>Footer</footer>
+</body>

@@ -1583,6 +1583,52 @@ layout: home
 
 Note that you cannot assign tags to a page.
 
+### `<tg-links>` with the `component` attribute
+
+When a `<tg-links>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg-links>` element.
+
+For example, suppose there is a `nav_link` component with the following content
+
+`src/components/nav_link.html`
+
+```html
+<li>
+  <a href="#">
+    <tg-prop name="title"></tg-prop>
+    <tg-if-complete>
+      <span class="text-sm">
+        (<tg-slot name="date"></tg-slot>)
+      </span>
+    </tg-if-complete>
+  </a>
+</li>
+```
+
+In this case, we can construct a `<tg-link>` element as follows:
+
+```html
+<tg-link component="nav_link" pattern="blog/*"></tg-link>
+```
+
+The above code is to be interpreted as exactly the same as the following
+
+```html
+
+<tg-links pattern="blog/*">
+  <li>
+    <a href="#">
+      <tg-prop name="title"></tg-prop>
+      <tg-if-complete>
+        <span class="text-sm">
+          (<tg-slot name="date"></tg-slot>)
+        </span>
+      </tg-if-complete>
+    </a>
+  </li>
+</tg-links>
+```
+
 ## Links
 
 ### Links within the website
@@ -1670,64 +1716,39 @@ element.
 </nav>
 ```
 
-### Link components
+### `<tg-link>` with the `component` attribute
 
-A component whose top-level element is the `<tg-link>` element is called a _link component_.
+When a `<tg-link>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg-link>` element.
 
-Normal components are embedded by the `<tg-component>` element, while link components are
-embedded by the `<tg-link>` element with the `component` attribute.
-
-The following is an example of a link component.
+For example, suppose there is a `nav_link` component with the following content
 
 `src/components/nav_link.html`
 
 ```html
-<tg-link>
+<a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
+<tg-if-current>
+  <span class="font-bold"><tg-label></tg-label></span>
+</tg-if-current>
+```
+
+In this case, we can construct a `<tg-link>` element as follows:
+
+```html
+<tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
+```
+
+The above code is to be interpreted as exactly the same as the following
+
+```html
+
+<tg-link href="/articles/about.html" label="About Us">
   <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
   <tg-if-current>
     <span class="font-bold"><tg-label></tg-label></span>
   </tg-if-current>
 </tg-link>
 ```
-
-Note that the top-level `<tg-link>` element does not have `href` and `label` attributes.
-
-This link component can be embedded as follows:
-
-`src/components/nav.html`
-
-```html
-<nav>
-  <tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
-  <tg-link component="nav_link" href="/articles/about.html" label="About Us"></tg-link>
-</nav>
-```
-
-The values of `href` and `label` attributes are _passed_ to the link component.
-
-### `<tg-link>` elements within the `<tg-links`> element
-
-The `<tg-link>` elements can be placed within the `<tg-links`> element:
-
-```html
-<tg-links pattern="proposals/*" order-by="index:asc">
-  <li>
-    <tg-link>
-      <a href="#" class="underline text-blue-500">
-        <tg-slot name="title"></tg-slot>
-      </a>
-      <tg-if-current>
-        <span class="font-bold">
-          <tg-slot name="title"></tg-slot>
-        </span>
-      </tg-if-current>
-    </tg-link>
-  </li>
-</tg-links>
-```
-
-In this case, the `<tg-link>` has no attributes and `<tg-label>` elements cannot be used inside it.
-You should use `<tg-slot`> elements to compose the content of the `<a>` and other elements.
 
 ## Notes on Property Values
 

@@ -2,13 +2,9 @@ import fs from "fs"
 import YAML from "js-yaml"
 import * as PATH from "path"
 import glob from "glob"
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import { getTemplate } from "./get_template.mjs"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
-import { setDependencies } from "./set_dependencies.mjs"
-import { JSDOM } from "jsdom"
 
 const dbg = arg => console.log(arg)
 
@@ -16,8 +12,6 @@ const dbg = arg => console.log(arg)
 if (dbg === undefined) { dbg() }
 
 const getSiteData = directory => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
   const cwd = process.cwd()
 
   const siteData = {
@@ -33,10 +27,6 @@ const getSiteData = directory => {
       port: 3000
     }
   }
-
-  const htmlPath = PATH.resolve(__dirname, "../../resources/document_template.html")
-  const source = fs.readFileSync(htmlPath).toString().replaceAll(/\r/g, "")
-  siteData.documentTemplate = new JSDOM(source)
 
   const site_yaml_path = PATH.join(directory, "src", "site.yml")
 
@@ -58,8 +48,6 @@ const getSiteData = directory => {
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
 
-  siteData.wrappers.map(wrapper => setDependencies(wrapper, siteData))
-
   const articlesDir = PATH.join(directory, "src", "articles")
 
   if (fs.existsSync(articlesDir)) {
@@ -67,8 +55,6 @@ const getSiteData = directory => {
 
     siteData.articles =
       glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
-
-    siteData.articles.map(article => setDependencies(article, siteData))
   }
 
   const segmentsDir = PATH.join(directory, "src", "segments")
@@ -78,7 +64,6 @@ const getSiteData = directory => {
     siteData.segments = glob.sync("**/*.html").map(path =>
       getTemplate(path, "segment")
     )
-    siteData.segments.map(segment => setDependencies(segment, siteData))
   }
 
   const layoutsDir = PATH.join(directory, "src", "layouts")
@@ -87,7 +72,6 @@ const getSiteData = directory => {
     process.chdir(layoutsDir)
 
     siteData.layouts = glob.sync("**/*.html").map(path => getTemplate(path, "layout"))
-    siteData.layouts.map(layout => setDependencies(layout, siteData))
   }
 
   const pagesDir = PATH.join(directory, "src", "pages")
@@ -97,18 +81,6 @@ const getSiteData = directory => {
 
     siteData.pages =
       glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "page"))
-
-    siteData.pages.map(page => setDependencies(page, siteData))
-  }
-
-  // Articles need to be processed again, because they need import their layout's dependencies.
-  if (fs.existsSync(articlesDir)) {
-    process.chdir(articlesDir)
-
-    siteData.articles =
-      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
-
-    siteData.articles.map(article => setDependencies(article, siteData))
   }
 
   process.chdir(cwd)
