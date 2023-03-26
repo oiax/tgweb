@@ -83,6 +83,7 @@ describe("getSiteData", () => {
       'articles/blog/e',
       'articles/technology',
       'components/hello',
+      'components/hr',
       'components/i_am',
       'components/special',
       'layouts/home',
@@ -97,6 +98,7 @@ describe("getSiteData", () => {
 
     const expected2 = [
       'articles/blog/_wrapper',
+      'components/hr',
       'layouts/blog_article',
       'segments/blog_nav'
     ]

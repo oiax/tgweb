@@ -23,6 +23,12 @@ const setDependencies = (object, siteData) => {
     setAttrs(ref)
     const segmentName = "segments/" + ref.attrs["name"]
     object.dependencies.push(segmentName)
+
+    const segment = siteData.segments.find(s => s.path === ref.attrs["name"] + ".html")
+
+    if (segment) {
+      segment.dependencies.forEach(dep => object.dependencies.push(dep))
+    }
   })
 
   const articleRefs = body.querySelectorAll("tg-article")

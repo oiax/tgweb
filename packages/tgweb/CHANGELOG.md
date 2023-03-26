@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.10
+
+* 8934163 Bug fix: import segment deps into page/layout deps
+
 ## 0.2.9
 
 * 7e79485 Bug fix: initialize template with empty dependencies
