@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.2.9
+
+* 7e79485 Bug fix: initialize template with empty dependencies
+
 ## 0.2.8
 
 * 0cf590a Fix path handlings for Windows
