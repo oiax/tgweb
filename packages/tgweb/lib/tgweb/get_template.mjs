@@ -15,13 +15,13 @@ const getTemplate = (path, type) => {
     const html = parts.slice(2).join("---\n")
     const dom = new JSDOM(html)
 
-    return { path, type, frontMatter, dom }
+    return { path, type, frontMatter, dom, dependencies: [] }
   }
   else {
     const frontMatter = {}
     const dom = new JSDOM(source)
 
-    return { path, type, frontMatter, dom }
+    return { path, type, frontMatter, dom, dependencies: [] }
   }
 }
 
