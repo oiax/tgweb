@@ -29,6 +29,7 @@
     "daisyui": "^2.51.2",
     "express": "^4.18.2",
     "glob": "^8.0.3",
+    "htmlparser2": "^8.0.2",
     "js-yaml": "^4.1.0",
     "jsdom": "^21.0.0",
     "material-symbols": "^0.4.5",
