@@ -22,7 +22,7 @@ const update = (path, siteData) => {
   const type = getType(posixPath)
 
   if (type === "site.yml") {
-    siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
+    siteData.pages.forEach(page => updateHTML("src/" + page.path, siteData))
     siteData.articles.forEach(article => updateArticle(article, siteData))
   }
   else if (type === "color_scheme.yml") {
@@ -35,7 +35,7 @@ const update = (path, siteData) => {
   }
   else if (type === "article") {
     const article =
-      siteData.articles.find(article => "src/articles/" + article.path === posixPath)
+      siteData.articles.find(article => "src/" + article.path === posixPath)
 
     updateArticle(article, siteData)
 
@@ -45,7 +45,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => {
         setDependencies(page, siteData)
-        updateHTML("src/pages/" + page.path, siteData)
+        updateHTML("src/" + page.path, siteData)
       })
   }
   else if (type === "segment") {
@@ -55,7 +55,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => {
         setDependencies(page, siteData)
-        updateHTML("src/pages/" + page.path, siteData)
+        updateHTML("src/" + page.path, siteData)
       })
   }
   else if (type === "component") {
@@ -67,7 +67,7 @@ const update = (path, siteData) => {
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
-      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
   }
   else if (type === "wrapper") {
     const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
@@ -83,7 +83,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => {
         setDependencies(page, siteData)
-        updateHTML("src/pages/" + page.path, siteData)
+        updateHTML("src/" + page.path, siteData)
       })
   }
   else if (type === "layout") {
@@ -104,7 +104,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => {
         setDependencies(page, siteData)
-        updateHTML("src/pages/" + page.path, siteData)
+        updateHTML("src/" + page.path, siteData)
       })
   }
   else {
@@ -113,12 +113,12 @@ const update = (path, siteData) => {
 }
 
 const updateArticle = (article, siteData) => {
-  const wrapper = getWrapper(siteData, "articles/" + article.path)
+  const wrapper = getWrapper(siteData, article.path)
 
   if (wrapper && wrapper.frontMatter["embedded-only"] === true) return
   if (article.frontMatter["embedded-only"] === true) return
 
-  updateHTML("src/articles/" + article.path, siteData)
+  updateHTML("src/" + article.path, siteData)
 }
 
 export { update }

@@ -23,7 +23,7 @@ const setDependencies = (object, siteData, deep) => {
   .forEach(ref => {
     if (ref.attribs.name === undefined) return
 
-    const segment = siteData.segments.find(s => s.path === `${ref.attribs.name}.html`)
+    const segment = siteData.segments.find(s => s.path === `segments/${ref.attribs.name}.html`)
 
     if (segment) {
       object.dependencies.push(`segments/${ref.attribs.name}`)
@@ -39,14 +39,14 @@ const setDependencies = (object, siteData, deep) => {
   .forEach(ref => {
     if (ref.attribs.name === undefined) return
 
-    const article = siteData.articles.find(a => a.path === `${ref.attribs.name}.html`)
+    const article = siteData.articles.find(a => a.path === `articles/${ref.attribs.name}.html`)
 
     if (article === undefined) return
 
     object.dependencies.push(`articles/${ref.attribs.name}`)
     article.dependencies.forEach(dep => object.dependencies.push(dep))
 
-    const wrapper = getWrapper(siteData, `articles/${article.path}`)
+    const wrapper = getWrapper(siteData, article.path)
 
     if (wrapper) {
       object.dependencies.push(wrapper.path.replace(/\.html$/, ""))
@@ -66,9 +66,9 @@ const setDependencies = (object, siteData, deep) => {
     const articles = filterArticles(siteData.articles, pattern, tag)
 
     articles.forEach(article => {
-      object.dependencies.push("articles/" + article.path.replace(/\.html$/, ""))
+      object.dependencies.push(article.path.replace(/\.html$/, ""))
 
-      const wrapper = getWrapper(siteData, `articles/${article.path}`)
+      const wrapper = getWrapper(siteData, article.path)
 
       if (wrapper) {
         object.dependencies.push(wrapper.path.replace(/\.html$/, ""))
@@ -100,17 +100,17 @@ const setDependencies = (object, siteData, deep) => {
     const articles = filterArticles(siteData.articles, pattern, tag)
 
     articles.forEach(
-      article => object.dependencies.push("articles/" + article.path.replace(/\.html$/, ""))
+      article => object.dependencies.push(article.path.replace(/\.html$/, ""))
     )
   })
 
   if (object.type === "page") {
-    const wrapper = getWrapper(siteData, `pages/${object.path}`)
+    const wrapper = getWrapper(siteData, object.path)
     const layout = getLayout(siteData, object, wrapper)
 
     if (layout) {
       const layoutName = layout.path.replace(/\.html$/, "")
-      object.dependencies.push(`layouts/${layoutName}`)
+      object.dependencies.push(layoutName)
       layout.dependencies.forEach(dep => object.dependencies.push(dep))
     }
 
@@ -122,14 +122,14 @@ const setDependencies = (object, siteData, deep) => {
   }
 
   if (object.type === "article") {
-    const wrapper = getWrapper(siteData, `articles/${object.path}`)
+    const wrapper = getWrapper(siteData, object.path)
 
     if (deep) {
       const layout = getLayout(siteData, object, wrapper)
 
       if (layout) {
         const layoutName = layout.path.replace(/\.html$/, "")
-        object.dependencies.push(`layouts/${layoutName}`)
+        object.dependencies.push(layoutName)
         layout.dependencies.forEach(dep => object.dependencies.push(dep))
       }
 

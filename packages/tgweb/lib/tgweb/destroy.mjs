@@ -42,11 +42,11 @@ const _destroyTemplate = (path, siteData) => {
   const type = getType(path)
 
   if (type === "page") {
-    const shortPath = slash(path).replace(/^src\/pages\//, "")
+    const shortPath = slash(path).replace(/^src\//, "")
     siteData.pages = siteData.pages.filter(p => p.path !== shortPath)
   }
   else if (type === "article") {
-    const shortPath = slash(path).replace(/^src\/articles\//, "")
+    const shortPath = slash(path).replace(/^src\//, "")
     siteData.articles = siteData.articles.filter(a => a.path !== shortPath)
   }
   else if (type === "wrapper") {
@@ -54,15 +54,15 @@ const _destroyTemplate = (path, siteData) => {
     siteData.wrappers = siteData.wrappers.filter(w => w.path !== shortPath)
   }
   else if (type === "layout") {
-    const shortPath = slash(path).replace(/^src\/layouts\//, "")
+    const shortPath = slash(path).replace(/^src\//, "")
     siteData.layouts = siteData.layouts.filter(l => l.path !== shortPath)
   }
   else if (type === "component") {
-    const shortPath = slash(path).replace(/^src\/components\//, "")
+    const shortPath = slash(path).replace(/^src\//, "")
     siteData.components = siteData.components.filter(c => c.path !== shortPath)
   }
   else if (type === "segment") {
-    const shortPath = slash(path).replace(/^src\/segments\//, "")
+    const shortPath = slash(path).replace(/^src\//, "")
     siteData.segments = siteData.segments.filter(s => s.path !== shortPath)
   }
 }
@@ -74,19 +74,19 @@ const _regenerateFiles = (path, siteData) => {
     return
   }
   else if (type === "site.yml") {
-    siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
-    siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+    siteData.pages.forEach(page => updateHTML("src/" + page.path, siteData))
+    siteData.articles.forEach(article => updateHTML("src/" + article.path, siteData))
   }
   else {
     const depName = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(depName))
-      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(depName))
-      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+      .forEach(article => updateHTML("src/" + article.path, siteData))
   }
 }
 

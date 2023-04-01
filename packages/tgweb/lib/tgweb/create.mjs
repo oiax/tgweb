@@ -27,8 +27,8 @@ const create = (path, siteData) => {
     const type = getType(posixPath)
 
     if (type === "site.yml") {
-      siteData.pages.forEach(page => updateHTML(`src/pages/${page.path}`, siteData))
-      siteData.articles.forEach(article => updateHTML(`src/articles/${article.path}`, siteData))
+      siteData.pages.forEach(page => updateHTML(`src/${page.path}`, siteData))
+      siteData.articles.forEach(article => updateHTML(`src/${article.path}`, siteData))
       return
     }
     else if (type === "color_scheme.yml") {
@@ -52,11 +52,11 @@ const create = (path, siteData) => {
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
-      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(name))
-      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+      .forEach(article => updateHTML("src/" + article.path, siteData))
   }
 }
 

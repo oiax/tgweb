@@ -20,7 +20,7 @@ const renderWebPage = (posixPath, siteData) => {
 }
 
 const renderPage = (posixPath, siteData) => {
-  const relPath = posixPath.replace(/^src\/pages\//, "")
+  const relPath = posixPath.replace(/^src\//, "")
   const page = siteData.pages.find(page => page.path == relPath)
   const state = { path: posixPath, container: undefined, innerContent: [], inserts: [] }
 
@@ -29,7 +29,7 @@ const renderPage = (posixPath, siteData) => {
     return
   }
 
-  const wrapper = getWrapper(siteData, "pages/" + page.path)
+  const wrapper = getWrapper(siteData, page.path)
   const layout = getLayout(siteData, page, wrapper)
   const documentProperties = getDocumentProperties(page, wrapper, layout, siteData.properties)
 
@@ -50,7 +50,7 @@ const renderPage = (posixPath, siteData) => {
 }
 
 const renderArticle = (posixPath, siteData) => {
-  const relPath = posixPath.replace(/^src\/articles\//, "")
+  const relPath = posixPath.replace(/^src\//, "")
   const article = siteData.articles.find(article => article.path == relPath)
 
   if (article === undefined) {
@@ -61,7 +61,7 @@ const renderArticle = (posixPath, siteData) => {
   if (article.frontMatter["embedded-only"] === true) return
 
   const state = {path: posixPath, container: undefined, innerContent: [], inserts: []}
-  const wrapper = getWrapper(siteData, "articles/" + article.path)
+  const wrapper = getWrapper(siteData, article.path)
   const layout = getLayout(siteData, article, wrapper)
   const documentProperties = getDocumentProperties(article, wrapper, layout, siteData.properties)
 
@@ -251,7 +251,7 @@ const renderSegment = (node, siteData, documentProperties, state) => {
   const segmentName = node.attribs.name
 
   if (state.container && (state.container.type === "page" || state.container.type === "layout")) {
-    const segment = siteData.segments.find(c => c.path == `${segmentName}.html`)
+    const segment = siteData.segments.find(c => c.path == `segments/${segmentName}.html`)
 
     if (segment === undefined) return err(render(node))
 
@@ -277,7 +277,7 @@ const renderSegment = (node, siteData, documentProperties, state) => {
 const renderComponent = (node, siteData, documentProperties, state) => {
   const componentName = node.attribs.name
 
-  const component = siteData.components.find(c => c.path == `${componentName}.html`)
+  const component = siteData.components.find(c => c.path == `components/${componentName}.html`)
 
   if (component === undefined) return err(render(node))
 
@@ -382,7 +382,7 @@ const renderEmbeddedArticle = (node, siteData, state) => {
       state.container.type === "page" ||
       state.container.type === "segment" ||
       state.container.type === "layout")) {
-    const article = siteData.articles.find(a => a.path == `${articleName}.html`)
+    const article = siteData.articles.find(a => a.path == `articles/${articleName}.html`)
 
     if (article === undefined) return err(render(node))
 
@@ -414,7 +414,7 @@ const renderEmbeddedArticleList = (node, siteData, state) => {
 const doRenderEmbeddedArticle = (article, siteData, state) => {
   const localState = getLocalState(state, article, undefined)
 
-  const wrapper = getWrapper(siteData, "articles/" + article.path)
+  const wrapper = getWrapper(siteData, article.path)
   const properties = getDocumentProperties(article, wrapper, undefined, siteData.properties)
 
   const articleContent =
@@ -441,7 +441,8 @@ const renderLink = (node, properties, siteData, state) => {
   let children
 
   if (node.attribs.component !== undefined) {
-    const component = siteData.components.find(c => c.path == node.attribs.component + ".html")
+    const component =
+      siteData.components.find(c => c.path == `components/${node.attribs.component}.html`)
 
     if (component) {
       children = component.dom.children
@@ -496,13 +497,14 @@ const renderLinks = (node, documentProperties, siteData, state) => {
 }
 
 const renderArticleLink = (node, article, siteData, state) => {
-  const href = `/articles/${article.path}`.replace(/\/index.html$/, "/")
+  const href = `/${article.path}`.replace(/\/index.html$/, "/")
   const localState = mergeState(state, {targetPath: href, inserts: article.inserts})
 
   let children
 
   if (node.attribs.component !== undefined) {
-    const component = siteData.components.find(c => c.path == node.attribs.component + ".html")
+    const component =
+      siteData.components.find(c => c.path === `components/${node.attribs.component}.html`)
 
     if (component) {
       children = component.dom.children
@@ -515,7 +517,7 @@ const renderArticleLink = (node, article, siteData, state) => {
     children = node.children
   }
 
-  if (`src/articles/${article.path}` === state.path) {
+  if (`src/${article.path}` === state.path) {
     const fallback =
       DomUtils.findOne(
         n => n.constructor.name === "Element" && n.name === "tg-if-current",

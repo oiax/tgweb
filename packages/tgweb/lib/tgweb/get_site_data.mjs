@@ -36,14 +36,14 @@ const getSiteData = directory => {
     normalizeFrontMatter(siteData.properties)
   }
 
+  process.chdir(directory + "/src")
+
   const componentsDir = PATH.join(directory, "src", "components")
 
   if (fs.existsSync(componentsDir)) {
-    process.chdir(componentsDir)
-    siteData.components = glob.sync("**/*.html").map(path => getTemplate(path, "component"))
+    siteData.components =
+      glob.sync("components/**/*.html").map(path => getTemplate(path, "component"))
   }
-
-  process.chdir(PATH.join(directory, "/src"))
 
   siteData.wrappers =
     glob.sync("@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
@@ -51,17 +51,14 @@ const getSiteData = directory => {
   const articlesDir = PATH.join(directory, "src", "articles")
 
   if (fs.existsSync(articlesDir)) {
-    process.chdir(articlesDir)
-
     siteData.articles =
-      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "article"))
+      glob.sync("articles/**/!(_wrapper).html").map(path => getTemplate(path, "article"))
   }
 
   const segmentsDir = PATH.join(directory, "src", "segments")
 
   if (fs.existsSync(segmentsDir)) {
-    process.chdir(segmentsDir)
-    siteData.segments = glob.sync("**/*.html").map(path =>
+    siteData.segments = glob.sync("segments/**/*.html").map(path =>
       getTemplate(path, "segment")
     )
   }
@@ -69,18 +66,14 @@ const getSiteData = directory => {
   const layoutsDir = PATH.join(directory, "src", "layouts")
 
   if (fs.existsSync(layoutsDir)) {
-    process.chdir(layoutsDir)
-
-    siteData.layouts = glob.sync("**/*.html").map(path => getTemplate(path, "layout"))
+    siteData.layouts = glob.sync("layouts/**/*.html").map(path => getTemplate(path, "layout"))
   }
 
   const pagesDir = PATH.join(directory, "src", "pages")
 
   if (fs.existsSync(pagesDir)) {
-    process.chdir(pagesDir)
-
     siteData.pages =
-      glob.sync("**/!(_wrapper).html").map(path => getTemplate(path, "page"))
+      glob.sync("pages/**/!(_wrapper).html").map(path => getTemplate(path, "page"))
   }
 
   process.chdir(cwd)

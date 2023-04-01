@@ -622,7 +622,7 @@ describe("renderWebSite", () => {
       '  </head>',
       '  <body class="p-2">',
       '    <nav>',
-      '      <a href="/index.html" class="underline text-blue-500">Home</a>',
+      '      <span class="font-bold">Home</span>',
       '      <a href="/about.html" class="underline text-blue-500">About Us</a>',
       '    </nav>',
       '    <div class="grid">',
