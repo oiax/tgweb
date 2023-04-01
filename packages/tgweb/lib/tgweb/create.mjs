@@ -1,5 +1,5 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
+import { slash } from "../utils/slash.mjs"
 import fs from "fs"
 import { updateSiteData } from "./update_site_data.mjs"
 import { renderWebPage } from "./render_web_page.mjs"

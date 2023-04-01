@@ -7,9 +7,6 @@ import { fileURLToPath } from "url";
 import fs from "fs"
 import * as PATH from "path"
 import pretty from "pretty"
-import { pp } from "../../lib/tgweb/debugging.mjs"
-
-if (pp == undefined) { pp() }
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 

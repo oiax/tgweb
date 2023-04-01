@@ -1,4 +1,4 @@
-import { slash } from "./slash.mjs"
+import { slash } from "../utils/slash.mjs"
 import { updateSiteData } from "./update_site_data.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
