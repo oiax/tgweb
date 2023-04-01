@@ -1,4 +1,5 @@
 import fs from "fs"
+import * as PATH from "path"
 import YAML from "js-yaml"
 import { parseDocument } from "htmlparser2"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
@@ -11,22 +12,32 @@ const getTemplate = (path, type) => {
   const parts = source.split(separatorRegex)
 
   if (parts[0] === "" && parts[1] !== undefined) {
-    const frontMatter = YAML.load(parts[1])
-    normalizeFrontMatter(frontMatter)
-    const html = parts.slice(2).join("---\n")
-    const dom = parseDocument(html)
-    dom.children.forEach(child => expandClassAliases(child, frontMatter))
-    const inserts = extractInserts(dom)
+    try {
+      const frontMatter = YAML.load(parts[1])
+      normalizeFrontMatter(frontMatter)
+      const html = parts.slice(2).join("---\n")
+      return createTemplate(path, type, html, frontMatter)
+    }
+    catch (error) {
+      const fullPath = PATH.join(process.cwd(), path)
+      console.error(`Could not parse the front matter: ${fullPath} `)
 
-    return { path, type, frontMatter, dom, inserts, dependencies: [] }
+      const frontMatter = {}
+      const html = parts.slice(2).join("---\n")
+      return createTemplate(path, type, html, frontMatter)
+    }
   }
   else {
-    const frontMatter = {}
-    const dom = parseDocument(source)
-    const inserts = extractInserts(dom)
-
-    return { path, type, frontMatter, dom, inserts, dependencies: [] }
+    return createTemplate(path, type, source, {})
   }
+}
+
+const createTemplate = (path, type, html, frontMatter) => {
+  const dom = parseDocument(html)
+  dom.children.forEach(child => expandClassAliases(child, frontMatter))
+  const inserts = extractInserts(dom)
+
+  return { path, type, frontMatter, dom, inserts, dependencies: [] }
 }
 
 const extractInserts = (dom) => {
