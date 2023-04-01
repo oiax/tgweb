@@ -1,5 +1,4 @@
 import fs from "fs"
-import * as PATH from "path"
 import YAML from "js-yaml"
 import { parseDocument } from "htmlparser2"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
@@ -19,8 +18,7 @@ const getTemplate = (path, type) => {
       return createTemplate(path, type, html, frontMatter)
     }
     catch (error) {
-      const fullPath = PATH.join(process.cwd(), path)
-      console.error(`Could not parse the front matter: ${fullPath} `)
+      console.error(`Could not parse the front matter: ${path}`)
 
       const frontMatter = {}
       const html = parts.slice(2).join("---\n")
@@ -36,8 +34,9 @@ const createTemplate = (path, type, html, frontMatter) => {
   const dom = parseDocument(html)
   dom.children.forEach(child => expandClassAliases(child, frontMatter))
   const inserts = extractInserts(dom)
+  const shortPath = path.replace(/^src\//, "")
 
-  return { path, type, frontMatter, dom, inserts, dependencies: [] }
+  return { path: shortPath, type, frontMatter, dom, inserts, dependencies: [] }
 }
 
 const extractInserts = (dom) => {

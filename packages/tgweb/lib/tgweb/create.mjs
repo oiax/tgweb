@@ -11,9 +11,11 @@ import pretty from "pretty"
 
 const create = (path, siteData) => {
   const posixPath = slash(path)
+  const type = getType(posixPath)
+
   const dirname = PATH.dirname(posixPath)
 
-  if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
+  if (dirname.startsWith("images") || dirname.startsWith("audios")) {
     const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
     const targetDir = PATH.dirname(targetPath)
@@ -23,8 +25,6 @@ const create = (path, siteData) => {
   }
   else {
     updateSiteData(siteData, posixPath)
-
-    const type = getType(posixPath)
 
     if (type === "site.yml") {
       siteData.pages.forEach(page => updateHTML(`src/${page.path}`, siteData))

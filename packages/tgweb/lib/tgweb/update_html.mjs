@@ -1,5 +1,4 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
 import fs from "fs"
 import { renderWebPage } from "./render_web_page.mjs"
 import render from "dom-serializer"
@@ -15,7 +14,7 @@ const updateHTML = (path, siteData) => {
   if (dom == undefined) return
 
   const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
-  const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+  const distPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
   const targetPath = PATH.resolve(distPath)
   const targetDir = PATH.dirname(targetPath)
 

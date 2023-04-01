@@ -12,17 +12,17 @@ import { inspectDom } from "../utils/inspect_dom.mjs"
 
 if (inspectDom === undefined) { inspectDom() }
 
-const renderWebPage = (posixPath, siteData) => {
-  const type = getType(posixPath)
+const renderWebPage = (path, siteData) => {
+  const type = getType(path)
 
-  if (type === "page") return renderPage(posixPath, siteData)
-  else if (type === "article") return renderArticle(posixPath, siteData)
+  if (type === "page") return renderPage(path, siteData)
+  else if (type === "article") return renderArticle(path, siteData)
 }
 
-const renderPage = (posixPath, siteData) => {
-  const relPath = posixPath.replace(/^src\//, "")
+const renderPage = (path, siteData) => {
+  const relPath = path.replace(/^src\//, "")
   const page = siteData.pages.find(page => page.path == relPath)
-  const state = { path: posixPath, container: undefined, innerContent: [], inserts: [] }
+  const state = { path, container: undefined, innerContent: [], inserts: [] }
 
   if (page === undefined) {
     console.log(`Page '${relPath}' is not found.`)
@@ -49,8 +49,8 @@ const renderPage = (posixPath, siteData) => {
   }
 }
 
-const renderArticle = (posixPath, siteData) => {
-  const relPath = posixPath.replace(/^src\//, "")
+const renderArticle = (path, siteData) => {
+  const relPath = path.replace(/^src\//, "")
   const article = siteData.articles.find(article => article.path == relPath)
 
   if (article === undefined) {
@@ -60,7 +60,7 @@ const renderArticle = (posixPath, siteData) => {
 
   if (article.frontMatter["embedded-only"] === true) return
 
-  const state = {path: posixPath, container: undefined, innerContent: [], inserts: []}
+  const state = {path, container: undefined, innerContent: [], inserts: []}
   const wrapper = getWrapper(siteData, article.path)
   const layout = getLayout(siteData, article, wrapper)
   const documentProperties = getDocumentProperties(article, wrapper, layout, siteData.properties)

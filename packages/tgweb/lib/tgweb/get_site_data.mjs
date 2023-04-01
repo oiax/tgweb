@@ -1,6 +1,5 @@
 import fs from "fs"
 import YAML from "js-yaml"
-import * as PATH from "path"
 import glob from "glob"
 import { getTemplate } from "./get_template.mjs"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
@@ -28,7 +27,9 @@ const getSiteData = directory => {
     }
   }
 
-  const site_yaml_path = PATH.join(directory, "src", "site.yml")
+  process.chdir(directory)
+
+  const site_yaml_path = "src/site.yml"
 
   if (fs.existsSync(site_yaml_path)) {
     const source = fs.readFileSync(site_yaml_path)
@@ -36,44 +37,32 @@ const getSiteData = directory => {
     normalizeFrontMatter(siteData.properties)
   }
 
-  process.chdir(directory + "/src")
-
-  const componentsDir = PATH.join(directory, "src", "components")
-
-  if (fs.existsSync(componentsDir)) {
+  if (fs.existsSync("src/components")) {
     siteData.components =
-      glob.sync("components/**/*.html").map(path => getTemplate(path, "component"))
+      glob.sync("src/components/**/*.html").map(path => getTemplate(path, "component"))
   }
 
   siteData.wrappers =
-    glob.sync("@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
+    glob.sync("src/@(pages|articles)/**/_wrapper.html").map(path => getTemplate(path, "wrapper"))
 
-  const articlesDir = PATH.join(directory, "src", "articles")
-
-  if (fs.existsSync(articlesDir)) {
+  if (fs.existsSync("src/articles")) {
     siteData.articles =
-      glob.sync("articles/**/!(_wrapper).html").map(path => getTemplate(path, "article"))
+      glob.sync("src/articles/**/!(_wrapper).html").map(path => getTemplate(path, "article"))
   }
 
-  const segmentsDir = PATH.join(directory, "src", "segments")
-
-  if (fs.existsSync(segmentsDir)) {
-    siteData.segments = glob.sync("segments/**/*.html").map(path =>
+  if (fs.existsSync("src/segments")) {
+    siteData.segments = glob.sync("src/segments/**/*.html").map(path =>
       getTemplate(path, "segment")
     )
   }
 
-  const layoutsDir = PATH.join(directory, "src", "layouts")
-
-  if (fs.existsSync(layoutsDir)) {
-    siteData.layouts = glob.sync("layouts/**/*.html").map(path => getTemplate(path, "layout"))
+  if (fs.existsSync("src/layouts")) {
+    siteData.layouts = glob.sync("src/layouts/**/*.html").map(path => getTemplate(path, "layout"))
   }
 
-  const pagesDir = PATH.join(directory, "src", "pages")
-
-  if (fs.existsSync(pagesDir)) {
+  if (fs.existsSync("src/pages")) {
     siteData.pages =
-      glob.sync("pages/**/!(_wrapper).html").map(path => getTemplate(path, "page"))
+      glob.sync("src/pages/**/!(_wrapper).html").map(path => getTemplate(path, "page"))
   }
 
   process.chdir(cwd)
