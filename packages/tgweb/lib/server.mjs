@@ -68,7 +68,10 @@ const run = () => {
     })
     .on("change", path => tgweb.update(path, siteData))
     .on("unlink", path => tgweb.destroy(path, siteData))
-    .on("ready", () => ready = true)
+    .on("ready", () => {
+      tgweb.updateDependencies(siteData)
+      ready = true
+    })
 
   const childProcess = spawn("npx", [
     "tailwindcss",

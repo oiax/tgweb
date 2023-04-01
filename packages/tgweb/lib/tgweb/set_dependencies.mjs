@@ -1,96 +1,116 @@
-import * as PATH from "path"
-import { setAttrs } from "./set_attrs.mjs"
-import getTag from "./get_tag.mjs"
-import filterArticles from "./filter_articles.mjs"
+import { DomUtils } from "htmlparser2"
 import { getWrapper } from "./get_wrapper.mjs"
 import { getLayout } from "./get_layout.mjs"
+import { filterArticles } from "./filter_articles.mjs"
 
-const setDependencies = (object, siteData) => {
-  const body = object.dom.window.document.body
+const setDependencies = (object, siteData, deep) => {
   object.dependencies = []
 
-  const componentRefs = body.querySelectorAll("tg-component")
-
-  componentRefs.forEach(ref => {
-    setAttrs(ref)
-    const componentName = "components/" + ref.attrs["name"]
-    object.dependencies.push(componentName)
+  DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg-component",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    if (ref.attribs.name) object.dependencies.push(`components/${ref.attribs.name}`)
   })
 
-  const segmentRefs = body.querySelectorAll("tg-segment")
+  DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg-segment",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    if (ref.attribs.name === undefined) return
 
-  segmentRefs.forEach(ref => {
-    setAttrs(ref)
-    const segmentName = "segments/" + ref.attrs["name"]
-    object.dependencies.push(segmentName)
-
-    const segment = siteData.segments.find(s => s.path === ref.attrs["name"] + ".html")
+    const segment = siteData.segments.find(s => s.path === `${ref.attribs.name}.html`)
 
     if (segment) {
+      object.dependencies.push(`segments/${ref.attribs.name}`)
       segment.dependencies.forEach(dep => object.dependencies.push(dep))
     }
   })
 
-  const articleRefs = body.querySelectorAll("tg-article")
+  DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg-article",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    if (ref.attribs.name === undefined) return
 
-  articleRefs.forEach(ref => {
-    setAttrs(ref)
-    const articleName = "articles/" + ref.attrs["name"]
-    object.dependencies.push(articleName)
+    const article = siteData.articles.find(a => a.path === `${ref.attribs.name}.html`)
 
-    const article = siteData.articles.find(a => a.path === ref.attrs["name"] + ".html")
+    if (article === undefined) return
 
-    if (article) {
-      article.dependencies.forEach(dep => {
-        if (dep.startsWith("layouts/")) return
-        if (dep.startsWith("segments/")) return
-        object.dependencies.push(dep)
-      })
+    object.dependencies.push(`articles/${ref.attribs.name}`)
+    article.dependencies.forEach(dep => object.dependencies.push(dep))
+
+    const wrapper = getWrapper(siteData, `articles/${article.path}`)
+
+    if (wrapper) {
+      object.dependencies.push(wrapper.path.replace(/\.html$/, ""))
+      wrapper.dependencies.forEach(dep => object.dependencies.push(dep))
     }
   })
 
-  const articleListRefs = body.querySelectorAll("tg-articles")
+  DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg-articles",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    const pattern = ref.attribs.pattern
+    const tag = getTag(ref.attribs.filter)
 
-  articleListRefs.forEach(ref => {
-    setAttrs(ref)
-    const pattern = ref.attrs["pattern"]
-    const tag = getTag(ref)
     const articles = filterArticles(siteData.articles, pattern, tag)
 
     articles.forEach(article => {
-      const articleName = "articles/" + article.path.replace(/\.html$/, "")
-      object.dependencies.push(articleName)
+      object.dependencies.push("articles/" + article.path.replace(/\.html$/, ""))
 
-      article.dependencies.forEach(dep => {
-        if (dep.startsWith("layouts/")) return
-        if (dep.startsWith("segments/")) return
-        object.dependencies.push(dep)
-      })
+      const wrapper = getWrapper(siteData, `articles/${article.path}`)
+
+      if (wrapper) {
+        object.dependencies.push(wrapper.path.replace(/\.html$/, ""))
+        wrapper.dependencies.forEach(dep => object.dependencies.push(dep))
+      }
     })
   })
 
-  const linkListRefs = body.querySelectorAll("tg-links")
+  DomUtils.find(
+    node =>
+      node.constructor.name === "Element" && node.name === "tg-link" && node.attribs.component,
+    object.dom.children,
+    true
+  )
+  .forEach(ref => object.dependencies.push(`components/${ref.attribs.component}`))
 
-  linkListRefs.forEach(ref => {
-    setAttrs(ref)
-    const pattern = ref.attrs["pattern"]
-    const tag = getTag(ref)
+  DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg-links",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    if (ref.attribs.component !== undefined)
+      object.dependencies.push(`components/${ref.attribs.component}`)
+
+    const pattern = ref.attribs.pattern
+    const tag = getTag(ref.attribs.filter)
+
     const articles = filterArticles(siteData.articles, pattern, tag)
 
-    articles.forEach(article => {
-      const articleName = "articles/" + article.path.replace(/\.html$/, "")
-      object.dependencies.push(articleName)
-    })
+    articles.forEach(
+      article => object.dependencies.push("articles/" + article.path.replace(/\.html$/, ""))
+    )
   })
 
-  if (object.type === "page" || object.type === "article") {
-    const parentDir = object.type === "page" ? "pages" : "articles"
-    const wrapper = getWrapper(siteData, PATH.join(parentDir, object.path))
+  if (object.type === "page") {
+    const wrapper = getWrapper(siteData, `pages/${object.path}`)
     const layout = getLayout(siteData, object, wrapper)
 
     if (layout) {
       const layoutName = layout.path.replace(/\.html$/, "")
-      object.dependencies.push("layouts/" + layoutName)
+      object.dependencies.push(`layouts/${layoutName}`)
       layout.dependencies.forEach(dep => object.dependencies.push(dep))
     }
 
@@ -101,7 +121,40 @@ const setDependencies = (object, siteData) => {
     }
   }
 
+  if (object.type === "article") {
+    const wrapper = getWrapper(siteData, `articles/${object.path}`)
+
+    if (deep) {
+      const layout = getLayout(siteData, object, wrapper)
+
+      if (layout) {
+        const layoutName = layout.path.replace(/\.html$/, "")
+        object.dependencies.push(`layouts/${layoutName}`)
+        layout.dependencies.forEach(dep => object.dependencies.push(dep))
+      }
+
+      if (wrapper) {
+        const wrapperName = wrapper.path.replace(/\.html$/, "")
+        object.dependencies.push(wrapperName)
+        wrapper.dependencies.forEach(dep => object.dependencies.push(dep))
+      }
+    }
+    else if (wrapper) {
+      const wrapperName = wrapper.path.replace(/\.html$/, "")
+      object.dependencies.push(wrapperName)
+      wrapper.dependencies.forEach(dep => object.dependencies.push(dep))
+    }
+  }
+
   object.dependencies = Array.from(new Set(object.dependencies)).sort()
+}
+
+const getTag = filter_attr => {
+  if (filter_attr) {
+    const re = /^(tag):(.+)$/
+    const md = re.exec(filter_attr)
+    if (md) return md[2]
+  }
 }
 
 export { setDependencies }

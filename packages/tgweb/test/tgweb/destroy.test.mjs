@@ -2,10 +2,11 @@ import assert from "node:assert/strict"
 import { create } from "../../lib/tgweb/create.mjs"
 import { destroy } from "../../lib/tgweb/destroy.mjs"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
+import { updateDependencies } from "../../lib/tgweb/update_dependencies.mjs"
 import { fileURLToPath } from "url";
 import fs from "fs"
 import * as PATH from "path"
-import { JSDOM } from "jsdom"
+import pretty from "pretty"
 import { pp } from "../../lib/tgweb/debugging.mjs"
 
 if (pp == undefined) { pp() }
@@ -14,10 +15,11 @@ const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
 describe("destroy", () => {
   it("should process the deletion of a page", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const wd = PATH.resolve(__dirname, "../sites/site_1")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
+    updateDependencies(siteData)
     create("src/pages/about.html", siteData)
 
     destroy("src/pages/about.html", siteData)
@@ -30,10 +32,11 @@ describe("destroy", () => {
   })
 
   it("should process the deletion of an article", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
+    const wd = PATH.resolve(__dirname, "../sites/site_1")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
+    updateDependencies(siteData)
     create("src/articles/blog/a.html", siteData)
 
     destroy("src/articles/blog/a.html", siteData)
@@ -52,10 +55,11 @@ describe("destroy", () => {
   })
 
   it("should process the deletion of a page wrapper", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const wd = PATH.resolve(__dirname, "../sites/site_2")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
+    updateDependencies(siteData)
 
     destroy("src/pages/etc/memo/_wrapper.html", siteData)
 
@@ -70,18 +74,38 @@ describe("destroy", () => {
     assert.equal(fs.existsSync(wd + "/dist/etc/memo/memo1.html"), true)
 
     const html = fs.readFileSync(wd + "/dist/etc/memo/memo1.html")
-    const dom = new JSDOM(html)
-    const body = dom.window.document.body
-    const h3 = body.querySelector("h3")
 
-    assert.equal(h3.textContent, "Memo 1")
+    const lines = pretty(html.toString()).split("\n").filter(line => line !== "")
+
+    const expected = [
+      '<html>',
+      '  <head>',
+      '    <meta charset="utf-8">',
+      '    <title>Memo 1</title>',
+      '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <script src="/reload/reload.js" defer></script>',
+      '  </head>',
+      '  <body class="p-2">',
+      '    <header>HEADER</header>',
+      '    <nav><a href="/">Index</a></nav>',
+      '    <main class="py-2">',
+      '      <h3 class="font-bold text-lg ml-2">MEMO</h3>',
+      '      <p>This is a memo.</p>',
+      '    </main>',
+      '    <footer>FOOTER</footer>',
+      '  </body>',
+      '</html>'
+    ]
+
+    assert.deepEqual(lines, expected)
   })
 
   it("should process the deletion of an article wrapper", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const wd = PATH.resolve(__dirname, "../sites/site_2")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
+    updateDependencies(siteData)
 
     destroy("src/articles/foo/_wrapper.html", siteData)
 
@@ -95,16 +119,13 @@ describe("destroy", () => {
     assert(article.dependencies.includes("articles/_wrapper"))
     assert.equal(fs.existsSync(wd + "/dist/articles/foo/bar/baz.html"), true)
 
-    const html = fs.readFileSync(wd + "/dist/articles/foo/bar/baz.html")
-    const dom = new JSDOM(html)
-    const body = dom.window.document.body
-    const main = body.querySelector("main")
+    const html = fs.readFileSync(wd + "/dist/articles/foo/bar/baz.html").toString()
 
-    assert.equal(main.className, "bg-blue-100 py-2")
+    assert.match(html, /bg-blue-100 py-2/)
   })
 
   it("should process the deletion of a layout", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const wd = PATH.resolve(__dirname, "../sites/site_2")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
@@ -117,7 +138,7 @@ describe("destroy", () => {
   })
 
   it("should process the deletion of a component", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+    const wd = PATH.resolve(__dirname, "../sites/site_2")
     process.chdir(wd)
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
@@ -130,12 +151,12 @@ describe("destroy", () => {
   })
 
   it("should process the deletion of the site.yml", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    process.chdir(wd)
+    const wd = PATH.resolve(__dirname, "../sites/site_0")
+    process.chdir(wd + "a")
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
 
-    process.chdir(wd + "c")
+    process.chdir(wd)
 
     destroy("src/site.yml", siteData)
 
@@ -144,6 +165,6 @@ describe("destroy", () => {
     const page = siteData.pages.find(p => p.path === "index.html")
 
     assert.equal(page.frontMatter["data-current-year"], undefined)
-    assert.equal(fs.existsSync(wd + "c/dist/index.html"), true)
+    assert.equal(fs.existsSync(wd + "/dist/index.html"), true)
   })
 })

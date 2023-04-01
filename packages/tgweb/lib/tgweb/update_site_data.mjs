@@ -28,11 +28,7 @@ const updateSiteData = (siteData, path) => {
     const component = siteData.components.find(c => "src/components/" + c.path === posixPath)
 
     if (component) {
-      siteData.components.forEach(component => {
-        if ("src/components/" + component.path === posixPath) {
-          updateTemplate(component, path)
-        }
-      })
+      updateTemplate(component, path)
     }
     else {
       process.chdir("src/components")
@@ -44,11 +40,7 @@ const updateSiteData = (siteData, path) => {
     const segment = siteData.segments.find(s => "src/segments/" + s.path === posixPath)
 
     if (segment) {
-      siteData.segments.forEach(segment => {
-        if ("src/segments/" + segment.path === posixPath) {
-          updateTemplate(segment, path)
-        }
-      })
+      updateTemplate(segment, path)
     }
     else {
       process.chdir("src/segments")
@@ -60,12 +52,8 @@ const updateSiteData = (siteData, path) => {
     const layout = siteData.layouts.find(l => "src/layouts/" + l.path === posixPath)
 
     if (layout) {
-      siteData.layouts.forEach(layout => {
-        if ("src/layouts/" + layout.path == posixPath) {
-          updateTemplate(layout, path)
-          setDependencies(layout, siteData)
-        }
-      })
+      updateTemplate(layout, path)
+      setDependencies(layout, siteData)
     }
     else {
       process.chdir("src/layouts")
@@ -77,13 +65,9 @@ const updateSiteData = (siteData, path) => {
     const article = siteData.articles.find(a => "src/articles/" + a.path === posixPath)
 
     if (article) {
-      siteData.articles.forEach(article => {
-        if ("src/articles/" + article.path == posixPath) {
-          updateTemplate(article, path, siteData.properties)
-          setUrlProperty(article.frontMatter, siteData, "articles/" + posixPath)
-          setDependencies(article, siteData)
-        }
-      })
+      updateTemplate(article, path, siteData.properties)
+      setUrlProperty(article.frontMatter, siteData, "articles/" + posixPath)
+      setDependencies(article, siteData, true)
     }
     else {
       process.chdir("src/articles")
@@ -106,13 +90,9 @@ const updateSiteData = (siteData, path) => {
     const page = siteData.pages.find(p => "src/pages/" + p.path === posixPath)
 
     if (page) {
-      siteData.pages.forEach(page => {
-        if ("src/pages/" + page.path == posixPath) {
-          updateTemplate(page, path)
-          setUrlProperty(page.frontMatter, siteData, posixPath)
-          setDependencies(page, siteData)
-        }
-      })
+      updateTemplate(page, path)
+      setUrlProperty(page.frontMatter, siteData, posixPath)
+      setDependencies(page, siteData)
     }
     else {
       process.chdir("src/pages")
@@ -124,12 +104,8 @@ const updateSiteData = (siteData, path) => {
     const wrapper = siteData.wrappers.find(w => "src/" + w.path === posixPath)
 
     if (wrapper) {
-      siteData.wrappers.forEach(wrapper => {
-        if ("src/" + wrapper.path == posixPath) {
-          updateTemplate(wrapper, path)
-          setDependencies(wrapper, siteData)
-        }
-      })
+      updateTemplate(wrapper, path)
+      setDependencies(wrapper, siteData)
     }
     else {
       process.chdir("src")

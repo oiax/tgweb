@@ -21,4 +21,4 @@ const filterArticles = (articles, pattern, tag) => {
   return sorted
 }
 
-export default filterArticles
+export { filterArticles }

@@ -7,7 +7,7 @@ const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
 describe("generateTailwindConfig", () => {
   it("generate tailwind_config.js", () => {
-    const srcDir = PATH.resolve(__dirname, "../examples/site_0/src")
+    const srcDir = PATH.resolve(__dirname, "../sites/site_0/src")
     const config = generateTailwindConfig(srcDir)
 
     const expected = `/** @type {import('tailwindcss').Config} */

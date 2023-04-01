@@ -2,8 +2,10 @@ import * as PATH from "path"
 import { slash } from "./slash.mjs"
 import fs from "fs"
 import getType from "./get_type.mjs"
-import generateHTML from "./generate_html.mjs"
+import { renderWebPage } from "./render_web_page.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
+import render from "dom-serializer"
+import pretty from "pretty"
 
 const createInitially = (path, siteData) => {
   const posixPath = slash(path)
@@ -32,9 +34,11 @@ const createInitially = (path, siteData) => {
       if (article.frontMatter["embedded-only"] === true) return
     }
 
-    const html = generateHTML(posixPath, siteData)
+    const dom = renderWebPage(posixPath, siteData)
 
-    if (html !== undefined) {
+    if (dom !== undefined) {
+      const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+
       const distPath = posixPath.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
       const targetPath = PATH.resolve(distPath)
       const targetDir = PATH.dirname(targetPath)

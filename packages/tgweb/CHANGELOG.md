@@ -1,8 +1,12 @@
 # tgweb CHANGELOG
 
+## 0.3.0
+
+* 8087e10 Reimplement tgweb using htmlparser2 instead of jsdom
+
 ## 0.2.11
 
-* Bug fix: set dependencies for an article twice
+* e14c091 Bug fix: set dependencies for an article twice
 
 ## 0.2.10
 
