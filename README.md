@@ -1605,10 +1605,10 @@ For example, suppose there is a `nav_link` component with the following content
 </li>
 ```
 
-In this case, we can construct a `<tg-link>` element as follows:
+In this case, we can construct a `<tg-links>` element as follows:
 
 ```html
-<tg-link component="nav_link" pattern="blog/*"></tg-link>
+<tg-links component="nav_link" pattern="blog/*"></tg-links>
 ```
 
 The above code is to be interpreted as exactly the same as the following
