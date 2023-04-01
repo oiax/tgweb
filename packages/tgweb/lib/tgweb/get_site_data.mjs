@@ -5,11 +5,6 @@ import { getTemplate } from "./get_template.mjs"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
 
-const dbg = arg => console.log(arg)
-
-// Prevent warnings when function d is not used.
-if (dbg === undefined) { dbg() }
-
 const getSiteData = directory => {
   const cwd = process.cwd()
 

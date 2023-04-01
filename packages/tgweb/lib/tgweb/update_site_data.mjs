@@ -1,12 +1,9 @@
 import * as PATH from "path"
-import { dbg } from "./debugging.mjs"
 import getType from "./get_type.mjs"
 import { getSiteData } from "./get_site_data.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
 import { setUrlProperty } from "./set_url_property.mjs"
 import { getTemplate } from "./get_template.mjs"
-
-if (dbg === undefined) dbg(undefined)
 
 const updateSiteData = (siteData, path) => {
   const type = getType(path)

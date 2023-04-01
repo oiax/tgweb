@@ -2,18 +2,11 @@ import { slash } from "./slash.mjs"
 import { updateSiteData } from "./update_site_data.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
-import { dbg, pp } from "./debugging.mjs"
 import * as PATH from "path"
 import fs from "fs"
 import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
-import { inspectDom } from "../utils/inspect_dom.mjs"
-
-// Prevent warnings when functions dbg, pp, and inspectDom are not used.
-if (dbg === undefined) { dbg() }
-if (pp === undefined) { pp() }
-if (inspectDom === undefined) { inspectDom() }
 
 const update = (path, siteData) => {
   const posixPath = slash(path)
