@@ -2,13 +2,13 @@ import assert from "node:assert/strict"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
 import { fileURLToPath } from "url";
 import * as PATH from "path"
-import pretty from "pretty"
+import render from "dom-serializer"
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
 describe("getSiteData", () => {
   it("should interpret the front matter correctly", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
     const page = siteData.pages.find(page => page.path == "index.html")
@@ -19,125 +19,176 @@ describe("getSiteData", () => {
   })
 
   it("should process a page without <body> and </body> tags", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
     const page = siteData.pages.find(page => page.path == "div_only.html")
-    const lines = pretty(page.dom.window.document.body.outerHTML, {ocd: true}).split("\n")
 
-    const expected = [
-      '<body>',
-      '  <div>DIV ONLY</div>',
-      '</body>'
-    ]
-
-    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+    const html = render(page.dom)
+    assert.equal(html, "<div>DIV ONLY</div>\n")
   })
 
   it("should process an empty page", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_0")
+    const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
     const page = siteData.pages.find(page => page.path == "empty.html")
-    const lines = pretty(page.dom.window.document.body.outerHTML, {ocd: true}).split("\n")
+
+    const html = render(page.dom)
+    assert.equal(html, "")
+  })
+
+  it("should get site date of 'minimum' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/minimum")
+    const siteData = getSiteData(wd)
+
+    assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
+
+    const page = siteData.pages.find(page => page.path == "index.html")
+    assert.equal(page.path, "index.html")
+
+    const html = render(page.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
 
     const expected = [
-      '<body></body>'
+      '<h1 class="text-xl m-2">Hello, world!</h1>',
+      '<p class="m-1">I am a <em>computer</em>.</p>'
     ]
 
-    lines.forEach((line, index) => assert.equal(line, expected[index], `Line: ${index + 1}`))
+    assert.deepEqual(lines, expected)
   })
 
-  it("should interpret the class aliases correctly", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+  it("should get site date of 'minimum_with_title' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/minimum_with_title")
     const siteData = getSiteData(wd)
+
+    assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
 
     const page = siteData.pages.find(page => page.path == "index.html")
+    assert.equal(page.path, "index.html")
+    assert.equal(page.frontMatter.title, "Greeting")
 
-    assert.equal(page.frontMatter["class-h3"], "font-bold text-lg ml-2")
-    assert.equal(page.frontMatter["class-three-cols"],
-      "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3")
-  })
+    const html = render(page.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
 
-  it("should return the site data with articles", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    assert.equal(siteData.articles.length, 8)
-  })
-
-  it("should return the site data with dependencies", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
-    const siteData = getSiteData(wd)
-
-    const layout = siteData.layouts.find(layout => layout.path == "home.html")
-    assert.equal(layout.dependencies.length, 3)
-
-    const page = siteData.pages.find(page => page.path == "index.html")
-
-    const expected1 = [
-      'articles/blog/_wrapper',
-      'articles/blog/a',
-      'articles/blog/c',
-      'articles/blog/d',
-      'articles/blog/e',
-      'articles/technology',
-      'components/hello',
-      'components/i_am',
-      'components/special',
-      'layouts/home',
-      'pages/_wrapper',
-      'segments/apps/fizz_buzz',
-      'segments/nav'
+    const expected = [
+      '<h1 class="text-xl m-2">Hello, world!</h1>',
+      '<p class="m-1">I am a <em>computer</em>.</p>'
     ]
 
-    assert.deepEqual(page.dependencies, expected1)
-
-    const article = siteData.articles.find(article => article.path == "blog/a.html")
-
-    const expected2 = [
-      'articles/blog/_wrapper',
-      'articles/blog/a',
-      'articles/blog/b',
-      'articles/blog/c',
-      'articles/blog/d',
-      'articles/blog/e',
-      'components/hr',
-      'layouts/blog_article',
-      'segments/blog_nav'
-    ]
-
-    assert.deepEqual(article.dependencies, expected2)
+    assert.deepEqual(lines, expected)
   })
 
-  it("should return the site data with wrappers", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
+  it("should get site date of 'with_layout' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_layout")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.wrappers.length, 2)
+    const layout = siteData.layouts[0]
+    assert.equal(layout.frontMatter["class-div1"], "my-4 p-2 bg-blue-100")
+
+    const html = render(layout.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <tg-content></tg-content>',
+      '    <div>',
+      '      <tg-slot name="x"></tg-slot>',
+      '      <tg-data name="y"></tg-data>',
+      '    </div>',
+      '    <tg-if-complete>',
+      '      <div>',
+      '        <tg-slot name="x"></tg-slot>',
+      '      </div>',
+      '    </tg-if-complete>',
+      '    <tg-if-complete>',
+      '      <div>',
+      '        <tg-slot name="z"></tg-slot>',
+      '      </div>',
+      '    </tg-if-complete>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should get site date of 'with_wrapper' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_wrapper")
+    const siteData = getSiteData(wd)
 
     const wrapper = siteData.wrappers[0]
+    assert.equal(wrapper.frontMatter["class-div1"], "my-4 p-2 bg-green-100 [&>p]:mb-2")
 
-    assert.equal(wrapper.frontMatter["layout"], "blog_article")
+    const html = render(wrapper.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<div class="my-4 p-2 bg-green-100 [&>p]:mb-2">',
+      '  <tg-content></tg-content>',
+      '  <tg-if-complete>',
+      '    <div>',
+      '      <tg-slot name="x"></tg-slot>',
+      '    </div>',
+      '  </tg-if-complete>',
+      '</div>'
+    ]
+
+    assert.deepEqual(lines, expected)
   })
 
-  it("should return the site data with site properties", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_1")
+  it("should get site date of 'with_segment' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_segment")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.properties["title"], "No Title")
+    const segment = siteData.segments[0]
+    assert.equal(segment.path, "hero.html")
   })
 
-  it("should return the site data with Japanese text", () => {
-    const wd = PATH.resolve(__dirname, "../examples/site_2")
+  it("should get site date of 'with_component' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_component")
     const siteData = getSiteData(wd)
 
-    const page = siteData.pages.find(page => page.path == "index_ja.html")
-    assert.equal(page.frontMatter["title"], "ホーム")
+    const component = siteData.components[0]
+    assert.equal(component.path, "badge.html")
 
-    const comp = siteData.components.find(comp => comp.path == "world.html")
+    const span = component.dom.children[0]
+    assert.deepEqual(span.attribs, { class: "badge badge-primary" })
 
-    assert(comp.dom.window.document.body.outerHTML.includes("世界"))
+    const html = render(component.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<span class="badge badge-primary">',
+      '  <tg-data name="mark">?</tg-data>',
+      '  <tg-content></tg-content>',
+      '  <tg-slot name="x"></tg-slot>',
+      '</span>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should get site date of 'with_articles' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_articles")
+    const siteData = getSiteData(wd)
+
+    assert.equal(siteData.articles.length, 7)
+
+    const article = siteData.articles[0]
+    assert.equal(article.path, "about_me.html")
+
+    const html = render(article.dom, {encodeEntities: false})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<h1 class="text-xl m-2">About me</h1>',
+      '<p class="m-1">My name is Alice.</p>'
+    ]
+
+    assert.deepEqual(lines, expected)
   })
 })
-

@@ -1,21 +1,15 @@
-const expandClassAliases = (root, frontMatter) => {
-  if (root.className) doExpandClassAliases(root, frontMatter)
-
-  root.querySelectorAll("[class]").forEach(elem => {
-    doExpandClassAliases(elem, frontMatter)
-  })
+const expandClassAliases = (node, frontMatter) => {
+  if (node.constructor.name !== "Element") return
+  if (node.attribs.class) doExpandClassAliases(node, frontMatter)
+  node.children.forEach(child => expandClassAliases(child, frontMatter))
 }
 
-const doExpandClassAliases = (elem, frontMatter) => {
-  const htmlClass = elem.getAttribute("class")
-
-  const expanded = htmlClass.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, alias) => {
+const doExpandClassAliases = (node, frontMatter) => {
+  node.attribs.class = node.attribs.class.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, alias) => {
     const key = `class-${alias}`
     if (Object.hasOwn(frontMatter, key)) return frontMatter[key]
     else return `\${${alias}}`
   })
-
-  elem.setAttribute("class", expanded)
 }
 
 export { expandClassAliases }

@@ -1,21 +1,28 @@
 import * as PATH from "path"
 import { slash } from "./slash.mjs"
 import fs from "fs"
-import generateHTML from "./generate_html.mjs"
+import { renderWebPage } from "./render_web_page.mjs"
+import render from "dom-serializer"
+import pretty from "pretty"
+import { inspectDom } from "../utils/inspect_dom.mjs"
+
+// Prevent warnings when the function inspectDom is not used.
+if (inspectDom === undefined) { inspectDom() }
 
 const updateHTML = (path, siteData) => {
-  const html = generateHTML(path, siteData)
+  const dom = renderWebPage(path, siteData)
 
-  if (html !== undefined) {
-    const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
-    const targetPath = PATH.resolve(distPath)
-    const targetDir = PATH.dirname(targetPath)
+  if (dom == undefined) return
 
-    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
-    fs.writeFileSync(targetPath, html)
+  const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+  const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+  const targetPath = PATH.resolve(distPath)
+  const targetDir = PATH.dirname(targetPath)
 
-    if (process.env.VERBOSE) console.log(`Updated ${distPath}.`)
-  }
+  if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+  fs.writeFileSync(targetPath, html)
+
+  if (process.env.VERBOSE) console.log(`Updated ${distPath}.`)
 }
 
 export { updateHTML }
