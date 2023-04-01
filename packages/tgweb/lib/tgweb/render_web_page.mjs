@@ -120,7 +120,7 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
       .map(child => renderNode(child, siteData, documentProperties, pageState))
       .flat()
 
-  const localState = getLocalState(state, wrapper, pageContent)
+  const localState = getLocalState(state, wrapper, pageContent, page.inserts)
 
   const renderedWrapper =
     wrapper.dom.children
@@ -423,7 +423,7 @@ const doRenderEmbeddedArticle = (article, siteData, state) => {
       .flat()
 
   if (wrapper) {
-    const localState2 = getLocalState(state, wrapper, articleContent)
+    const localState2 = getLocalState(state, wrapper, articleContent, article.inserts)
 
     return wrapper.dom.children
       .map(child => renderNode(child, siteData, properties, localState2))

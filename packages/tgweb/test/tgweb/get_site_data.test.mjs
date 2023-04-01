@@ -129,6 +129,11 @@ describe("getSiteData", () => {
     const expected = [
       '<div class="my-4 p-2 bg-green-100 [&>p]:mb-2">',
       '  <tg-content></tg-content>',
+      '  <tg-if-complete>',
+      '    <div>',
+      '      <tg-slot name="x"></tg-slot>',
+      '    </div>',
+      '  </tg-if-complete>',
       '</div>'
     ]
 
