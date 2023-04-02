@@ -80,6 +80,7 @@ describe("destroy", () => {
       '    <meta charset="utf-8">',
       '    <title>Memo 1</title>',
       '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <script src="/js/alpine.min.js" defer></script>',
       '    <script src="/reload/reload.js" defer></script>',
       '  </head>',
       '  <body class="p-2">',
