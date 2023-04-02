@@ -551,7 +551,9 @@ const renderElement = (node, siteData, documentProperties, state) => {
   const newNode = parseDocument("<div></div>").children[0]
 
   newNode.name = node.name
-  newNode.attribs = node.attribs
+  newNode.attribs = Object.assign({}, node.attribs)
+  convertAttribs(newNode.attribs, documentProperties)
+  purgeAttribs(newNode.attribs)
 
   newNode.children =
     node.children
@@ -559,6 +561,24 @@ const renderElement = (node, siteData, documentProperties, state) => {
       .flat()
 
   return newNode
+}
+
+const convertAttribs = (attribs, documentProperties) => {
+  Object.keys(attribs).forEach(key => {
+    attribs[key] = expandCustomProperties(attribs[key], documentProperties)
+  })
+}
+
+const expandCustomProperties = (value, documentProperties) =>
+  value.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, propName) => {
+    const key = `data-${propName}`
+    if (Object.hasOwn(documentProperties, key)) return documentProperties[key]
+    else return `\${${propName}}`
+  })
+
+const purgeAttribs = (attribs) => {
+  const keys = Object.keys(attribs).filter(key => key.match(/^(on|tg-|x-|:|@)/))
+  keys.forEach(key => delete attribs[key])
 }
 
 const renderHead = (documentProperties) => {
