@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.3.2
+
+* 91c468a Embed custom property values into attributes of elements
+          Purge attributes whose name starts with `on`, `tg-`, `x-`, `:` or `@`
+* aced9a9 Fix rendewWebPage: render <a> correctly
+
 ## 0.3.1
 
 * 00af55a Introduce Alpine.js

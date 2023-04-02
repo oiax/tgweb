@@ -212,34 +212,10 @@ const renderNode = (node, siteData, documentProperties, state) => {
       return renderLabel(node, state)
     }
     else if (node.name === "a") {
-      if (node.attribs.href === "#" && state.targetPath !== undefined) {
-        const newNode = parseDocument("<a></a>").children[0]
-        newNode.attribs = Object.assign({}, node.attribs)
-        newNode.attribs.href = state.targetPath
-
-        newNode.children =
-          node.children
-            .map(child => renderNode(child, siteData, documentProperties, state))
-            .flat()
-
-        return newNode
-      }
-      else {
-        return node
-      }
+      return renderAnchor(node, siteData, documentProperties, state)
     }
     else {
-      const newNode = parseDocument("<div></div>").children[0]
-
-      newNode.name = node.name
-      newNode.attribs = node.attribs
-
-      newNode.children =
-        node.children
-          .map(child => renderNode(child, siteData, documentProperties, state))
-          .flat()
-
-      return newNode
+      return renderElement(node, siteData, documentProperties, state)
     }
   }
   else {
@@ -551,6 +527,58 @@ const renderLabel = (node, state) => {
   else {
     return err(render(node))
   }
+}
+
+const renderAnchor = (node, siteData, documentProperties, state) => {
+  if (node.attribs.href === "#" && state.targetPath !== undefined) {
+    const newNode = parseDocument("<a></a>").children[0]
+    newNode.attribs = Object.assign({}, node.attribs)
+    newNode.attribs.href = state.targetPath
+
+    newNode.children =
+      node.children
+        .map(child => renderNode(child, siteData, documentProperties, state))
+        .flat()
+
+    return newNode
+  }
+  else {
+    return renderElement(node, siteData, documentProperties, state)
+  }
+}
+
+const renderElement = (node, siteData, documentProperties, state) => {
+  const newNode = parseDocument("<div></div>").children[0]
+
+  newNode.name = node.name
+  newNode.attribs = Object.assign({}, node.attribs)
+  convertAttribs(newNode.attribs, documentProperties)
+  purgeAttribs(newNode.attribs)
+
+  newNode.children =
+    node.children
+      .map(child => renderNode(child, siteData, documentProperties, state))
+      .flat()
+
+  return newNode
+}
+
+const convertAttribs = (attribs, documentProperties) => {
+  Object.keys(attribs).forEach(key => {
+    attribs[key] = expandCustomProperties(attribs[key], documentProperties)
+  })
+}
+
+const expandCustomProperties = (value, documentProperties) =>
+  value.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, propName) => {
+    const key = `data-${propName}`
+    if (Object.hasOwn(documentProperties, key)) return documentProperties[key]
+    else return `\${${propName}}`
+  })
+
+const purgeAttribs = (attribs) => {
+  const keys = Object.keys(attribs).filter(key => key.match(/^(on|tg-|x-|:|@)/))
+  keys.forEach(key => delete attribs[key])
 }
 
 const renderHead = (documentProperties) => {
