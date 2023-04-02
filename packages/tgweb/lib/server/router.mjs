@@ -17,6 +17,10 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
+  router.get("/js/alpine.min.js", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
   router.get("/css/**/*.css", (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })

@@ -25,6 +25,7 @@
   "license": "MIT",
   "main": "index.mjs",
   "dependencies": {
+    "alpinejs": "^3.12.0",
     "chokidar": "^3.5.3",
     "daisyui": "^2.51.2",
     "express": "^4.18.2",

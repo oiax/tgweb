@@ -620,6 +620,7 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
+  children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>>").children[0])
 
   head.children = children
