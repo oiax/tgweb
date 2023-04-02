@@ -543,7 +543,7 @@ const renderAnchor = (node, siteData, documentProperties, state) => {
     return newNode
   }
   else {
-    return node
+    return renderElement(node, siteData, documentProperties, state)
   }
 }
 
