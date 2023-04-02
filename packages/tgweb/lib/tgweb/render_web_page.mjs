@@ -1,4 +1,4 @@
-import { escape } from "html-escaper";
+import { escape } from "html-escaper"
 import render from "dom-serializer"
 import getType from "./get_type.mjs"
 import { parseDocument, DomUtils } from "htmlparser2"
@@ -22,7 +22,9 @@ const renderWebPage = (path, siteData) => {
 const renderPage = (path, siteData) => {
   const relPath = path.replace(/^src\//, "")
   const page = siteData.pages.find(page => page.path == relPath)
-  const state = { path, container: undefined, innerContent: [], inserts: [] }
+
+  const state =
+    { path, container: undefined, innerContent: [], inserts: [], hookName: undefined }
 
   if (page === undefined) {
     console.log(`Page '${relPath}' is not found.`)
@@ -549,15 +551,31 @@ const renderAnchor = (node, siteData, documentProperties, state) => {
 
 const renderElement = (node, siteData, documentProperties, state) => {
   const newNode = parseDocument("<div></div>").children[0]
+  const newState = mergeState(state, {})
 
   newNode.name = node.name
   newNode.attribs = Object.assign({}, node.attribs)
   convertAttribs(newNode.attribs, documentProperties)
   purgeAttribs(newNode.attribs)
 
+  if (newNode.attribs["tg-toggler"] !== undefined && state.hookName === undefined)
+    addTogglerHook(newNode, newState)
+
+  if (newNode.attribs["tg-switcher"] !== undefined && state.hookName === undefined)
+    addSwitcherHook(newNode, newState)
+
+  if (newNode.attribs["tg-rotator"] !== undefined && state.hookName === undefined)
+    addRotatorHook(newNode, newState)
+
+  if (state.hookName === "toggler") addTogglerSubhooks(newNode, documentProperties)
+  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, documentProperties)
+  else if (state.hookName === "rotator") addRotatorSubhooks(newNode, documentProperties)
+
+  removeTgAttribs(newNode.attribs)
+
   newNode.children =
     node.children
-      .map(child => renderNode(child, siteData, documentProperties, state))
+      .map(child => renderNode(child, siteData, documentProperties, newState))
       .flat()
 
   return newNode
@@ -576,8 +594,188 @@ const expandCustomProperties = (value, documentProperties) =>
     else return `\${${propName}}`
   })
 
+// x-data:
+//   f: Flag, a boolean value indicating the on/off state of the toggler
+
+const addTogglerHook = (newNode, newState) => {
+  newNode.attribs["x-data"] = `{ f: false }`
+  newNode.attribs["x-on:click"] = `f = false`
+  newNode.attribs["x-on:click.outside"] = `f = false`
+  newState.hookName = "toggler"
+}
+
+// x-data:
+//   i: Current index number of the switcher
+//   s: Lower limit of index numbers
+//   e: Upper limit of index numbers
+//   v: Interval Id, the return value from `setInterval` function
+
+const addSwitcherHook = (newNode, newState) => {
+  const md = [...newNode.attribs["tg-switcher"].trim().match(/^(\d+)\.\.(\d+)$/)]
+
+  if (md !== null) {
+    const s = parseInt(md[1], 10)
+    const e = parseInt(md[2], 10)
+
+    if (s < e) {
+      newState.hookName = "switcher"
+      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
+
+      if (newNode.attribs["tg-interval"] !== undefined) {
+        const interval = parseInt(newNode.attribs["tg-interval"], 10)
+
+        if (! Number.isNaN(interval)) {
+          const innerScript = "if (i < e) i = i + 1; else clearInterval(v)"
+          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
+          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
+        }
+      }
+    }
+  }
+}
+
+// x-data:
+//   i: Current index number of the rotator
+//   s: Lower limit of index numbers
+//   e: Upper limit of index numbers
+//   v: Interval Id, the return value from `setInterval` function
+
+const addRotatorHook = (newNode, newState) => {
+  const md = [...newNode.attribs["tg-rotator"].trim().match(/^(\d+)\.\.(\d+)$/)]
+
+  if (md !== null) {
+    const s = parseInt(md[1], 10)
+    const e = parseInt(md[2], 10)
+
+    if (s < e) {
+      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
+      newState.hookName = "rotator"
+
+      if (newNode.attribs["tg-interval"] !== undefined) {
+        const interval = parseInt(newNode.attribs["tg-interval"], 10)
+
+        if (! Number.isNaN(interval)) {
+          const innerScript = "if (i < e) i = i + 1; else i = s"
+          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
+          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
+        }
+      }
+    }
+  }
+}
+
+const addTogglerSubhooks = (newNode) => {
+  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg-when"] === "on") {
+    newNode.attribs["x-show"] = `f === true`
+  }
+  else if (newNode.attribs["tg-when"] === "off") newNode.attribs["x-show"] = `f === false`
+
+  if (newNode.attribs["tg-toggle"] === "on") {
+    newNode.attribs["x-on:click.stop"] = "f = true"
+    newNode.attribs["x-bind:class"] = `f === true ? '${disabledClass}' : '${enebledClass}'`
+  }
+  else if (newNode.attribs["tg-toggle"] === "off") {
+    newNode.attribs["x-on:click.stop"] = "f = false"
+    newNode.attribs["x-bind:class"] = `f === false ? '${disabledClass}' : '${enebledClass}'`
+  }
+  else if (newNode.attribs["tg-toggle"] === "") {
+    newNode.attribs["x-on:click.stop"] = "f = !f"
+    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+  }
+}
+
+const addSwitcherSubhooks = (newNode, documentProperties) => {
+  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg-current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg-normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg-when"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg-when"], documentProperties)
+    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+  }
+
+  if (newNode.attribs["tg-first"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : i; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : i; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-last"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg-choose"], documentProperties)
+
+    if (!Number.isNaN(n)) {
+      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
+    }
+  }
+}
+
+const addRotatorSubhooks = (newNode, documentProperties) => {
+  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg-current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg-normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg-when"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg-when"], documentProperties)
+    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+  }
+
+  if (newNode.attribs["tg-first"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : e; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : s; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-last"] !== undefined) {
+    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
+    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg-choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg-choose"], documentProperties)
+
+    if (!Number.isNaN(n)) {
+      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
+    }
+  }
+}
+
 const purgeAttribs = (attribs) => {
-  const keys = Object.keys(attribs).filter(key => key.match(/^(on|tg-|x-|:|@)/))
+  const keys = Object.keys(attribs).filter(key => key.match(/^(on|x-|:|@)/))
+  keys.forEach(key => delete attribs[key])
+}
+
+const removeTgAttribs = (attribs) => {
+  const keys = Object.keys(attribs).filter(key => key.match(/^tg-/))
   keys.forEach(key => delete attribs[key])
 }
 
@@ -663,6 +861,7 @@ const getLocalState = (state, container, innerContent, inserts) => {
   newState.container = container
   newState.innerContent = innerContent
   newState.inserts = inserts || {}
+  newState.hookName = state.hookName
   return newState
 }
 
@@ -682,12 +881,14 @@ const mergeState = (obj1, obj2) => {
   newState.container = obj1.container
   newState.innerContent = obj1.innerContent
   newState.inserts = obj1.inserts
+  newState.hookName = obj1.hookName
 
   if (obj2.targetPath !== undefined) newState.targetPath = obj2.targetPath
   if (obj2.label !== undefined) newState.label = obj2.label
   if (obj2.container !== undefined) newState.container = obj2.container
   if (obj2.innerContent !== undefined) newState.innerContent = obj2.innerContent
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
+  if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
   return newState
 }
 
