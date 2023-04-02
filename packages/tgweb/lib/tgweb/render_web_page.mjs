@@ -212,34 +212,10 @@ const renderNode = (node, siteData, documentProperties, state) => {
       return renderLabel(node, state)
     }
     else if (node.name === "a") {
-      if (node.attribs.href === "#" && state.targetPath !== undefined) {
-        const newNode = parseDocument("<a></a>").children[0]
-        newNode.attribs = Object.assign({}, node.attribs)
-        newNode.attribs.href = state.targetPath
-
-        newNode.children =
-          node.children
-            .map(child => renderNode(child, siteData, documentProperties, state))
-            .flat()
-
-        return newNode
-      }
-      else {
-        return node
-      }
+      return renderAnchor(node, siteData, documentProperties, state)
     }
     else {
-      const newNode = parseDocument("<div></div>").children[0]
-
-      newNode.name = node.name
-      newNode.attribs = node.attribs
-
-      newNode.children =
-        node.children
-          .map(child => renderNode(child, siteData, documentProperties, state))
-          .flat()
-
-      return newNode
+      return renderElement(node, siteData, documentProperties, state)
     }
   }
   else {
@@ -551,6 +527,38 @@ const renderLabel = (node, state) => {
   else {
     return err(render(node))
   }
+}
+
+const renderAnchor = (node, siteData, documentProperties, state) => {
+  if (node.attribs.href === "#" && state.targetPath !== undefined) {
+    const newNode = parseDocument("<a></a>").children[0]
+    newNode.attribs = Object.assign({}, node.attribs)
+    newNode.attribs.href = state.targetPath
+
+    newNode.children =
+      node.children
+        .map(child => renderNode(child, siteData, documentProperties, state))
+        .flat()
+
+    return newNode
+  }
+  else {
+    return node
+  }
+}
+
+const renderElement = (node, siteData, documentProperties, state) => {
+  const newNode = parseDocument("<div></div>").children[0]
+
+  newNode.name = node.name
+  newNode.attribs = node.attribs
+
+  newNode.children =
+    node.children
+      .map(child => renderNode(child, siteData, documentProperties, state))
+      .flat()
+
+  return newNode
 }
 
 const renderHead = (documentProperties) => {
