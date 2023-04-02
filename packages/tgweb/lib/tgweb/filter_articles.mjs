@@ -3,7 +3,7 @@ import { minimatch } from "minimatch"
 const filterArticles = (articles, pattern, tag) => {
   const sorted =
     articles.filter(article => {
-      if (minimatch(article.path, pattern)) {
+      if (minimatch(article.path, "articles/" + pattern)) {
         if (tag) {
           if (typeof article.frontMatter["tags"] === "string") {
             return article.frontMatter["tags"] === tag

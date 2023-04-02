@@ -10,7 +10,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'with_layout' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_layout")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -20,7 +20,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'with_component' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_component")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -30,7 +30,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'with_segment' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_segment")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -40,7 +40,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'with_wrapper_and_layout' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_wrapper_and_layout")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -50,7 +50,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'index.html' of 'with_articles' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_articles")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -75,7 +75,7 @@ describe("updateDependencies", () => {
 
     assert.deepEqual(wrapper.dependencies, ["components/badge"])
 
-    const page = siteData.pages.find(p => p.path === "info.html")
+    const page = siteData.pages.find(p => p.path === "pages/info.html")
 
     const expected = [
       "articles/info/_wrapper",
@@ -92,7 +92,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'index.html' of 'with_links' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_links")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -108,7 +108,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'index.html' of 'with_link_list' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_link_list")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     updateDependencies(siteData)
 
@@ -124,7 +124,7 @@ describe("updateDependencies", () => {
   it("should set dependencies of 'info.html' of 'with_link_list' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_link_list")
     const siteData = getSiteData(wd)
-    const page = siteData.pages.find(p => p.path === "info.html")
+    const page = siteData.pages.find(p => p.path === "pages/info.html")
 
     updateDependencies(siteData)
 

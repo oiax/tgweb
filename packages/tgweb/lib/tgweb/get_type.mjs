@@ -1,8 +1,7 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
 
 const getType = path => {
-  const dirname = slash(PATH.dirname(path))
+  const dirname = PATH.dirname(path)
   const filename = PATH.basename(path)
   const shortDirname = dirname.split("/").slice(0, 2).join("/")
 

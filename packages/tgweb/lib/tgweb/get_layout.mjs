@@ -4,7 +4,7 @@ const getLayout = (siteData, mainTemplate, wrapper) => {
     (wrapper && wrapper.frontMatter["layout"]) ||
     siteData.properties["layout"]
 
-  return siteData.layouts.find(layout => layout.path === `${layoutName}.html`)
+  return siteData.layouts.find(layout => layout.path === `layouts/${layoutName}.html`)
 }
 
 export { getLayout }

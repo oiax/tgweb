@@ -11,7 +11,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
-    const page = siteData.pages.find(page => page.path == "index.html")
+    const page = siteData.pages.find(page => page.path == "pages/index.html")
 
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "Home")
@@ -22,7 +22,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
-    const page = siteData.pages.find(page => page.path == "div_only.html")
+    const page = siteData.pages.find(page => page.path == "pages/div_only.html")
 
     const html = render(page.dom)
     assert.equal(html, "<div>DIV ONLY</div>\n")
@@ -32,7 +32,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
-    const page = siteData.pages.find(page => page.path == "empty.html")
+    const page = siteData.pages.find(page => page.path == "pages/empty.html")
 
     const html = render(page.dom)
     assert.equal(html, "")
@@ -44,8 +44,8 @@ describe("getSiteData", () => {
 
     assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
 
-    const page = siteData.pages.find(page => page.path == "index.html")
-    assert.equal(page.path, "index.html")
+    const page = siteData.pages.find(page => page.path == "pages/index.html")
+    assert.equal(page.path, "pages/index.html")
 
     const html = render(page.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
@@ -64,8 +64,8 @@ describe("getSiteData", () => {
 
     assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
 
-    const page = siteData.pages.find(page => page.path == "index.html")
-    assert.equal(page.path, "index.html")
+    const page = siteData.pages.find(page => page.path == "pages/index.html")
+    assert.equal(page.path, "pages/index.html")
     assert.equal(page.frontMatter.title, "Greeting")
 
     const html = render(page.dom, {encodeEntities: false})
@@ -145,7 +145,7 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const segment = siteData.segments[0]
-    assert.equal(segment.path, "hero.html")
+    assert.equal(segment.path, "segments/hero.html")
   })
 
   it("should get site date of 'with_component' site", () => {
@@ -153,7 +153,7 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const component = siteData.components[0]
-    assert.equal(component.path, "badge.html")
+    assert.equal(component.path, "components/badge.html")
 
     const span = component.dom.children[0]
     assert.deepEqual(span.attribs, { class: "badge badge-primary" })
@@ -179,7 +179,7 @@ describe("getSiteData", () => {
     assert.equal(siteData.articles.length, 7)
 
     const article = siteData.articles[0]
-    assert.equal(article.path, "about_me.html")
+    assert.equal(article.path, "articles/about_me.html")
 
     const html = render(article.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")

@@ -7,9 +7,6 @@ import { fileURLToPath } from "url";
 import fs from "fs"
 import * as PATH from "path"
 import pretty from "pretty"
-import { pp } from "../../lib/tgweb/debugging.mjs"
-
-if (pp == undefined) { pp() }
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
@@ -26,7 +23,7 @@ describe("destroy", () => {
 
     assert.equal(!fs.existsSync(wd + "/dist/about.html"), true)
 
-    const page = siteData.pages.find(p => p.path === "about.html")
+    const page = siteData.pages.find(p => p.path === "pages/about.html")
 
     assert.equal(page, undefined)
   })
@@ -43,11 +40,11 @@ describe("destroy", () => {
 
     assert.equal(!fs.existsSync(wd + "/dist/articles/blog/a.html"), true)
 
-    const article = siteData.articles.find(a => a.path === "blog/a.html")
+    const article = siteData.articles.find(a => a.path === "articles/blog/a.html")
 
     assert.equal(article, undefined)
 
-    const index = siteData.pages.find(p => p.path === "index.html")
+    const index = siteData.pages.find(p => p.path === "pages/index.html")
 
     assert(!index.dependencies.includes("articles/blog/a"))
 
@@ -67,7 +64,7 @@ describe("destroy", () => {
 
     assert.equal(wrapper, undefined)
 
-    const page = siteData.pages.find(p => p.path === "etc/memo/memo1.html")
+    const page = siteData.pages.find(p => p.path === "pages/etc/memo/memo1.html")
 
     assert(!page.dependencies.includes("pages/etc/memo/_wrapper"))
     assert(page.dependencies.includes("pages/etc/_wrapper"))
@@ -113,7 +110,7 @@ describe("destroy", () => {
 
     assert.equal(wrapper, undefined)
 
-    const article = siteData.articles.find(a => a.path === "foo/bar/baz.html")
+    const article = siteData.articles.find(a => a.path === "articles/foo/bar/baz.html")
 
     assert(!article.dependencies.includes("articles/foo/_wrapper"))
     assert(article.dependencies.includes("articles/_wrapper"))
@@ -132,7 +129,7 @@ describe("destroy", () => {
 
     destroy("src/layouts/not_used.html", siteData)
 
-    const layout = siteData.layouts.find(l => l.path === "not_used.html")
+    const layout = siteData.layouts.find(l => l.path === "layouts/not_used.html")
 
     assert.equal(layout, undefined)
   })
@@ -145,7 +142,7 @@ describe("destroy", () => {
 
     destroy("src/components/not_used.html", siteData)
 
-    const component = siteData.components.find(l => l.path === "not_used.html")
+    const component = siteData.components.find(l => l.path === "layouts/not_used.html")
 
     assert.equal(component, undefined)
   })
@@ -162,7 +159,7 @@ describe("destroy", () => {
 
     assert.deepEqual(siteData.properties, {host: "localhost", port: 3000, scheme: "http"})
 
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
 
     assert.equal(page.frontMatter["data-current-year"], undefined)
     assert.equal(fs.existsSync(wd + "/dist/index.html"), true)

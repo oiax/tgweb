@@ -1,5 +1,5 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
+import { slash } from "../utils/slash.mjs"
 import fs from "fs"
 import getType from "./get_type.mjs"
 import { updateSiteData } from "./update_site_data.mjs"
@@ -22,7 +22,7 @@ const destroy = (path, siteData) => {
     }
   }
   else if (posixPath === "src/site.yml") {
-    updateSiteData(siteData, path)
+    updateSiteData(siteData, posixPath)
     _regenerateFiles(posixPath, siteData)
   }
   else if (posixPath === "src/color_scheme.yml") {
@@ -42,27 +42,27 @@ const _destroyTemplate = (path, siteData) => {
   const type = getType(path)
 
   if (type === "page") {
-    const shortPath = slash(path).replace(/^src\/pages\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.pages = siteData.pages.filter(p => p.path !== shortPath)
   }
   else if (type === "article") {
-    const shortPath = slash(path).replace(/^src\/articles\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.articles = siteData.articles.filter(a => a.path !== shortPath)
   }
   else if (type === "wrapper") {
-    const shortPath = slash(path).replace(/^src\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.wrappers = siteData.wrappers.filter(w => w.path !== shortPath)
   }
   else if (type === "layout") {
-    const shortPath = slash(path).replace(/^src\/layouts\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.layouts = siteData.layouts.filter(l => l.path !== shortPath)
   }
   else if (type === "component") {
-    const shortPath = slash(path).replace(/^src\/components\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.components = siteData.components.filter(c => c.path !== shortPath)
   }
   else if (type === "segment") {
-    const shortPath = slash(path).replace(/^src\/segments\//, "")
+    const shortPath = path.replace(/^src\//, "")
     siteData.segments = siteData.segments.filter(s => s.path !== shortPath)
   }
 }
@@ -74,25 +74,25 @@ const _regenerateFiles = (path, siteData) => {
     return
   }
   else if (type === "site.yml") {
-    siteData.pages.forEach(page => updateHTML("src/pages/" + page.path, siteData))
-    siteData.articles.forEach(article => updateHTML("src/articles/" + article.path, siteData))
+    siteData.pages.forEach(page => updateHTML("src/" + page.path, siteData))
+    siteData.articles.forEach(article => updateHTML("src/" + article.path, siteData))
   }
   else {
-    const depName = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
+    const depName = path.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.pages
       .filter(page => page.dependencies.includes(depName))
-      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(depName))
-      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+      .forEach(article => updateHTML("src/" + article.path, siteData))
   }
 }
 
 const _makeDependencies = (path, siteData) => {
   const type = getType(path)
-  const depName = slash(path).replace(/^src\//, "").replace(/\.html$/, "")
+  const depName = path.replace(/^src\//, "").replace(/\.html$/, "")
 
   if (type === "article") {
     siteData.pages.forEach(p => {
@@ -118,7 +118,7 @@ const _removeFile = (path) => {
   const type = getType(path)
 
   if (type === "page" || type === "article") {
-    const distPath = slash(path).replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
+    const distPath = path.replace(/^src\//, "dist/").replace(/^dist\/pages\//, "dist/")
     const targetPath = PATH.resolve(distPath)
 
     if (fs.existsSync(targetPath)) {

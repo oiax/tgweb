@@ -51,7 +51,7 @@ describe("updateSiteData", () => {
 
     updateSiteData(siteData, "src/site.yml")
 
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
     assert(page)
 
     assert.equal(page.frontMatter["title"], "FizzBuzz")
@@ -67,7 +67,7 @@ describe("updateSiteData", () => {
 
     updateSiteData(siteData, "src/pages/index.html")
 
-    const page = siteData.pages.find(p => p.path === "index.html")
+    const page = siteData.pages.find(p => p.path === "pages/index.html")
     assert(page)
 
     const p = DomUtils.find(node => node.name === "p", page.dom.children, true)
@@ -83,7 +83,7 @@ describe("updateSiteData", () => {
 
     updateSiteData(siteData, "src/articles/culture.html")
 
-    const article = siteData.articles.find(a => a.path === "culture.html")
+    const article = siteData.articles.find(a => a.path === "articles/culture.html")
     assert(article)
 
     const p = DomUtils.find(node => node.name === "p", article.dom.children, true)
@@ -119,7 +119,7 @@ describe("updateSiteData", () => {
 
     updateSiteData(siteData, "src/components/hello.html")
 
-    const component = siteData.components.find(c => c.path === "hello.html")
+    const component = siteData.components.find(c => c.path === "components/hello.html")
     assert(component)
 
     const p = DomUtils.findOne(node => node.name === "p", component.dom.children, true)

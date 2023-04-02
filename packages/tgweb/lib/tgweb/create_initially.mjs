@@ -1,5 +1,5 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
+import { slash } from "../utils/slash.mjs"
 import fs from "fs"
 import getType from "./get_type.mjs"
 import { renderWebPage } from "./render_web_page.mjs"
@@ -26,9 +26,9 @@ const createInitially = (path, siteData) => {
 
     if (type === "article") {
       const article =
-        siteData.articles.find(article => "src/articles/" + article.path === posixPath)
+        siteData.articles.find(article => "src/" + article.path === posixPath)
 
-      const wrapper = getWrapper(siteData, "articles/" + article.path)
+      const wrapper = getWrapper(siteData, article.path)
 
       if (wrapper && wrapper.frontMatter["embedded-only"] === true) return
       if (article.frontMatter["embedded-only"] === true) return

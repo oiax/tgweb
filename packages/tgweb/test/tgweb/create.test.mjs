@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { create } from "../../lib/tgweb/create.mjs"
 import { getSiteData } from "../../lib/tgweb/get_site_data.mjs"
+import { updateDependencies } from "../../lib/tgweb/update_dependencies.mjs"
 import { fileURLToPath } from "url";
 import fs from "fs"
 import * as PATH from "path"
@@ -26,7 +27,7 @@ describe("create", () => {
 
     create("src/pages/new.html", siteData)
 
-    const n = siteData.pages.find(p => p.path === "new.html")
+    const n = siteData.pages.find(p => p.path === "pages/new.html")
     assert(n)
 
     assert.equal(fs.existsSync(wd + "c/dist/new.html"), true)
@@ -37,14 +38,16 @@ describe("create", () => {
     process.chdir(wd)
     fs.rmSync(wd + "c/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
+    updateDependencies(siteData)
+
     process.chdir(wd + "c")
 
     create("src/articles/blog/k.html", siteData)
 
-    const k = siteData.articles.find(a => a.path === "blog/k.html")
+    const k = siteData.articles.find(a => a.path === "articles/blog/k.html")
     assert(k)
 
-    const tech = siteData.articles.find(a => a.path === "technology.html")
+    const tech = siteData.articles.find(a => a.path === "articles/technology.html")
     assert(tech.dependencies.includes("articles/blog/k"))
 
     assert.equal(fs.existsSync(wd + "c/dist/articles/blog/k.html"), true)
@@ -60,7 +63,7 @@ describe("create", () => {
 
     create("src/components/x.html", siteData)
 
-    const x = siteData.components.find(c => c.path === "x.html")
+    const x = siteData.components.find(c => c.path === "components/x.html")
     assert(x)
   })
 
@@ -73,7 +76,7 @@ describe("create", () => {
 
     create("src/layouts/simple.html", siteData)
 
-    const s = siteData.layouts.find(l => l.path === "simple.html")
+    const s = siteData.layouts.find(l => l.path === "layouts/simple.html")
     assert(s)
   })
 
@@ -89,7 +92,7 @@ describe("create", () => {
     const w = siteData.wrappers.find(w => w.path === "pages/etc/_wrapper.html")
     assert(w)
 
-    const info = siteData.pages.find(p => p.path === "etc/info.html")
+    const info = siteData.pages.find(p => p.path === "pages/etc/info.html")
     assert(info.dependencies.includes("pages/etc/_wrapper"))
     assert(!info.dependencies.includes("pages/_wrapper"))
 
@@ -108,7 +111,7 @@ describe("create", () => {
     const w = siteData.wrappers.find(w => w.path === "articles/_wrapper.html")
     assert(w)
 
-    const c = siteData.articles.find(a => a.path === "culture.html")
+    const c = siteData.articles.find(a => a.path === "articles/culture.html")
     assert(c.dependencies.includes("articles/_wrapper"))
 
     assert.equal(fs.existsSync(wd + "c/dist/articles/culture.html"), true)

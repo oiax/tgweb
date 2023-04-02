@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.3.1
+
+* 00af55a Introduce Alpine.js
+
 ## 0.3.0
 
 * 8087e10 Reimplement tgweb using htmlparser2 instead of jsdom

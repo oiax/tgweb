@@ -1,5 +1,5 @@
 import * as PATH from "path"
-import { slash } from "./slash.mjs"
+import { slash } from "../utils/slash.mjs"
 import fs from "fs"
 import { updateSiteData } from "./update_site_data.mjs"
 import { renderWebPage } from "./render_web_page.mjs"
@@ -11,9 +11,11 @@ import pretty from "pretty"
 
 const create = (path, siteData) => {
   const posixPath = slash(path)
+  const type = getType(posixPath)
+
   const dirname = PATH.dirname(posixPath)
 
-  if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
+  if (dirname.startsWith("images") || dirname.startsWith("audios")) {
     const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
     const targetDir = PATH.dirname(targetPath)
@@ -24,11 +26,9 @@ const create = (path, siteData) => {
   else {
     updateSiteData(siteData, posixPath)
 
-    const type = getType(posixPath)
-
     if (type === "site.yml") {
-      siteData.pages.forEach(page => updateHTML(`src/pages/${page.path}`, siteData))
-      siteData.articles.forEach(article => updateHTML(`src/articles/${article.path}`, siteData))
+      siteData.pages.forEach(page => updateHTML(`src/${page.path}`, siteData))
+      siteData.articles.forEach(article => updateHTML(`src/${article.path}`, siteData))
       return
     }
     else if (type === "color_scheme.yml") {
@@ -52,11 +52,11 @@ const create = (path, siteData) => {
 
     siteData.pages
       .filter(page => page.dependencies.includes(name))
-      .forEach(page => updateHTML("src/pages/" + page.path, siteData))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(name))
-      .forEach(article => updateHTML("src/articles/" + article.path, siteData))
+      .forEach(article => updateHTML("src/" + article.path, siteData))
   }
 }
 
