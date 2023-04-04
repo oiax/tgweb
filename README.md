@@ -700,19 +700,19 @@ font-material-symbols: true
 Outlined "Home" symbol:
 
 ```html
-<span class="materials-symbols-outlined">Home</span>
+<span class="material-symbols-outlined">home</span>
 ```
 
 Rounded "Delete" symbol:
 
 ```html
-<span class="materials-symbols-rounded">Delete</span>
+<span class="material-symbols-rounded">delete</span>
 ```
 
 Sharp "Shopping Bag" symbol:
 
 ```html
-<span class="materials-symbols-sharp">Shopping Bag</span>
+<span class="material-symbols-sharp">shopping_bag</span>
 ```
 
 ## Layouts
@@ -1749,6 +1749,205 @@ The above code is to be interpreted as exactly the same as the following
   </tg-if-current>
 </tg-link>
 ```
+
+## Making Dynamic Contents
+
+Using tgweb, it is possible to show/hide content and change the style of content according to
+the user's operation.
+
+### Show and hide contents
+
+Specifying the `tg-toggler` attribute on an HTML element makes the following attributes available
+to descendant elements of that element:
+
+* `tg-when`
+* `tg-toggle`
+
+We call an HTML element with the `tg-toggler` attribute a __toggler__.
+A toggler has two states, `on` and `off`. Its initial state is `off`.
+
+An element with a `tg-when` attribute inside a toggler will only be displayed if its value matches
+the state of the toggler.
+
+When the user clicks or taps an element with a `tg-toggle` attribute inside the toggler,
+the toggler's state is set to the value of the the attribute.
+
+Here is an example toggler:
+
+```html
+<div tg-toggler>
+  <button type="button" tg-toggle="on" tg-when="off">Open</button>
+  <div tg-when="on">
+    <button type="button" tg-toggle="off">Close</button>
+    <p>Hello, world!</p>
+  </div>
+</div>
+```
+
+When viewing this example in a browser, initially only the "Open" button is visible to the user.
+When the user clicks or taps this button, the state of the toggler is set to `on`, the "Open" button
+disappears, and a "Close" button and a "Hello, world" paragraph appear instead.
+When the user further clicks or taps the "Close" button, it returns to the initial state.
+
+If the `tg-toggle` attribute's value is omitted, the toggler's state is reversed when the user
+clicks or taps on the element.
+So the above example could be rewritten as:
+
+```html
+<div tg-toggler>
+  <button type="button" tg-toggle tg-when="off">Open</button>
+  <div tg-when="on">
+    <button type="button" tg-toggle>Close</button>
+    <p>Hello, world!</p>
+  </div>
+</div>
+```
+
+### Switch contents
+
+Specifying the `tg-switcher` attribute on an HTML element makes the following attributes available
+to descendant elements of that element:
+
+* `tg-when`
+* `tg-choose`
+* `tg-first`
+* `tg-prev`
+* `tg-next`
+* `tg-last`
+
+We call an HTML element with the `tg-switcher` attribute a _switcher_.
+A switcher has two or more states.
+
+A switcher has a state represented by an integer value. An integer value representing a state is
+called an _index number_.
+The value of the `tg-switcher` attribute is a string of the form `1..5`.
+The value to the left of `..` is interpreted as the lower bound of the index number, and the value
+to the right of `..` is interpreted as the upper bound of the index number.
+
+An element with a `tg-when` attribute inside a switcher will only be displayed if its value
+matches the state of the switcher.
+
+When the user clicks or taps an element with a `tg-choose` attribute inside the switcher,
+the switcher's state is set to the value of the the attribute.
+
+Here is an example switcher:
+
+```html
+<div tg-switcher="1..5">
+  <div tg-when="1">A</div>
+  <div tg-when="2">B</div>
+  <div tg-when="3">C</div>
+  <div tg-when="4">D</div>
+  <div tg-when="5">E</div>
+  <nav>
+    <button type="button" tg-choose="1">a</button>
+    <button type="button" tg-choose="2">b</button>
+    <button type="button" tg-choose="3">c</button>
+    <button type="button" tg-choose="4">d</button>
+    <button type="button" tg-choose="5">e</button>
+  </nav>
+</div>
+```
+
+If the the value of `tg-choose` attribute of a button matches switcher's current index number
+nothing happens when the user clicks or taps this button.
+
+To visually indicate this, use the `tg-current-class` and `tg-normal-class` attributes to
+change the style applied to the button.
+
+```html
+  <button
+    type="button"
+    tg-choose="1"
+    class="btn"
+    tg-current-class="btn-primary"
+    tg-normal-class="btn-secondary">a</button>
+```
+
+You can create a button that change the state of the switcher using special attributes such as
+`tg-first`, `tg-prev`, `tg-next`, `tg-last`, etc. instead of the `tg-choose` attribute.
+
+```html
+<div tg-switcher="1..5">
+  <div tg-when="1">A</div>
+  <div tg-when="2">B</div>
+  <div tg-when="3">C</div>
+  <div tg-when="4">D</div>
+  <div tg-when="5">E</div>
+  <nav>
+    <button type="button" tg-first>First</button>
+    <button type="button" tg-prev>Prev</button>
+    <button type="button" tg-next>Next</button>
+    <button type="button" tg-last>Last</button>
+  </nav>
+</div>
+```
+
+If the switcher's current index number matches the its lower bound,
+nothing happens when the user clicks or taps a button with `tg-first` or `tg-prev` attribute.
+
+Similarly, if the switcher's current index number matches the its upper bound,
+nothing happens when the user clicks or taps a button with `tg-next` or `tg-last` attribute.
+
+To visually indicate this, use the `tg-enabled-class` and `tg-disabled-class` attributes to
+change the style applied to the button.
+
+```html
+  <button
+    type="button"
+    tg-first
+    class="btn"
+    tg-enabled-class="btn-primary"
+    tg-disabled-class="btn-disabled">First</button>
+```
+
+If the switcher has an `tg-interval` attribute, the switcher's index number is incremented
+by 1 at the specified interval (unit: millisecond).
+
+```html
+<div tg-switcher="1..5" tg-interval="2000">
+  ...
+</div>
+```
+
+When the user clicks or taps a button with a `tg-choose` attribute, etc., the switcher's state
+no longer changes automatically.
+
+### Rotate contents
+
+We call an HTML element with the `tg-rotator` attribute a _rotator_.
+
+A rotator behaves exactly like a switcher with three reservations:
+
+* If the user clicks a button with the `tg-next` attribute when the current index number matches
+the upper bound, the index number will be set to its lower bound.
+* If the user clicks a button with the `tg-prev` attribute when the current index number matches
+the lower bound, the index number will be set to its upper bound.
+* When the `tg-interval` attribute is set, when the current index number reaches the upper bound,
+the next time the index number is set to its lower bound.
+
+Here is an example rotator:
+
+```html
+<div tg-rotator="1..5" tg-interval="2000">
+  <div tg-when="1">A</div>
+  <div tg-when="2">B</div>
+  <div tg-when="3">C</div>
+  <div tg-when="4">D</div>
+  <div tg-when="5">E</div>
+  <nav>
+    <button type="button" tg-prev>Prev</button>
+    <button type="button" tg-next>Next</button>
+  </nav>
+</div>
+```
+
+### Notes on Alpine.js
+
+The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content generation.
+However, website authors themselves cannot use attributes derived from Alpine.js such as `x-data`
+, `@click`, and `:class`.
+When those attributes are found in the source HTML files, they will be removed.
 
 ## Notes on Property Values
 

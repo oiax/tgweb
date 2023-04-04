@@ -37,7 +37,8 @@
     "minimatch": "^6.1.6",
     "pretty": "^2.0.0",
     "reload": "^3.2.1",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.2.4",
+    "tcp-port-used": "^1.0.2"
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",
