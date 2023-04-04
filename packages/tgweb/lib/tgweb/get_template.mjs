@@ -1,7 +1,6 @@
 import fs from "fs"
-import YAML from "js-yaml"
+import toml from "toml"
 import { parseDocument } from "htmlparser2"
-import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 
 const separatorRegex = new RegExp("^---\\n", "m")
@@ -12,13 +11,13 @@ const getTemplate = (path, type) => {
 
   if (parts[0] === "" && parts[1] !== undefined) {
     try {
-      const frontMatter = YAML.load(parts[1])
-      normalizeFrontMatter(frontMatter)
+      const frontMatter = toml.parse(parts[1])
       const html = parts.slice(2).join("---\n")
       return createTemplate(path, type, html, frontMatter)
     }
     catch (error) {
       console.error(`Could not parse the front matter: ${path}`)
+      console.error(error)
 
       const frontMatter = {}
       const html = parts.slice(2).join("---\n")

@@ -5,10 +5,20 @@ const expandClassAliases = (node, frontMatter) => {
 }
 
 const doExpandClassAliases = (node, frontMatter) => {
-  node.attribs.class = node.attribs.class.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, alias) => {
-    const key = `class-${alias}`
-    if (Object.hasOwn(frontMatter, key)) return frontMatter[key]
-    else return `\${${alias}}`
+  if (frontMatter.style === undefined) return
+
+  node.attribs.class = node.attribs.class.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, key) => {
+    if (Object.hasOwn(frontMatter.style, key)) {
+      const value = frontMatter.style[key]
+
+      if (typeof value === "string") {
+        return value.trim().replaceAll(/\n/g, " ").replace(/ +/, " ")
+      }
+      else {
+        return `\${${key}}`
+      }
+    }
+    else return `\${${key}}`
   })
 }
 

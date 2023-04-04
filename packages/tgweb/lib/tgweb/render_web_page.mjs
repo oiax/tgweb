@@ -261,9 +261,12 @@ const renderComponent = (node, siteData, documentProperties, state) => {
 
   const properties = Object.assign({}, documentProperties)
 
+  if (properties.data === undefined) properties.data = {}
+
   Object.keys(node.attribs).forEach(key => {
     if (key.startsWith("data-")) {
-      properties[key] = node.attribs[key]
+      const propName = key.slice(5)
+      properties.data[propName] = node.attribs[key]
     }
   })
 
@@ -313,7 +316,9 @@ const renderProp = (node, siteData, documentProperties, state) => {
 }
 
 const renderData = (node, siteData, documentProperties, state) => {
-  const value = documentProperties[`data-${node.attribs.name}`]
+  if (typeof documentProperties.data !== "object") return node
+
+  const value = documentProperties.data[node.attribs.name]
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
@@ -340,7 +345,8 @@ const renderIfComplete = (node, siteData, documentProperties, state) => {
 
   if (placeholders.every(p => {
     if (p.name === "tg-prep") return documentProperties[p.attribs.name] !== undefined
-    if (p.name === "tg-data") return documentProperties[`data-${p.attribs.name}`] !== undefined
+    if (p.name === "tg-data" && documentProperties.data === undefined) return false
+    if (p.name === "tg-data") return documentProperties.data[p.attribs.name] !== undefined
     if (p.name === "tg-slot") return state.inserts[p.attribs.name] !== undefined
     return false
   })) {
@@ -589,8 +595,9 @@ const convertAttribs = (attribs, documentProperties) => {
 
 const expandCustomProperties = (value, documentProperties) =>
   value.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, propName) => {
-    const key = `data-${propName}`
-    if (Object.hasOwn(documentProperties, key)) return documentProperties[key]
+    if (documentProperties.data === undefined) return `\${${propName}}`
+    else if (documentProperties.data[propName] !== undefined)
+      return documentProperties.data[propName]
     else return `\${${propName}}`
   })
 
@@ -792,53 +799,74 @@ const renderHead = (documentProperties) => {
     children.push(doc.children[0])
   }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("meta-")) {
-      const name = key.slice(5)
-      const content = documentProperties[key]
+  if (typeof documentProperties.meta === "object") {
+    Object.keys(documentProperties.meta).forEach(name => {
+      const content = documentProperties.meta[name]
       const doc = parseDocument(`<meta name="${name}" content="${content}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("http-equiv-")) {
-      const name = key.slice(11)
-      const content = documentProperties[key]
-
+  if (typeof documentProperties["http-equiv"] === "object") {
+    Object.keys(documentProperties["http-equiv"]).forEach(name => {
+      const content = documentProperties["http-equiv"][name]
       const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("property-")) {
-      const name = key.slice(9)
-      const content = documentProperties[key]
+  if (typeof documentProperties["meta-property"] === "object") {
+    Object.keys(documentProperties["meta-property"]).forEach(name => {
+      const content = documentProperties["meta-property"][name]
+
+      if (typeof content !== "string") return
 
       const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
-        if (Object.hasOwn(documentProperties, propName)) {
-          return documentProperties[propName]
+        const parts = propName.split(".")
+
+        if (parts.length === 1) {
+          const value = documentProperties[propName]
+
+          if (typeof value === "string") {
+            return value
+          }
+          else {
+            return `\${${propName}}`
+          }
         }
-        else {
-          return `\${${propName}}`
+        else if (parts.length === 2) {
+          const p1 = parts[0]
+          const p2 = parts[2]
+
+          if (typeof documentProperties[p1] === "object") {
+            const value = documentProperties[p1][p2]
+
+            if (typeof value === "string") {
+              return value
+            }
+            else {
+              return `\${${propName}}`
+            }
+          }
+          else {
+            return `\${${propName}}`
+          }
         }
       })
 
       const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("link-")) {
-      const rel = key.slice(5)
+  if (typeof documentProperties["link"] === "object") {
+    Object.keys(documentProperties["link"]).forEach(rel => {
       if (rel == "stylesheet") return
-      const href = documentProperties[key]
+      const href = documentProperties["link"][rel]
       const doc = parseDocument(`<link rel="${rel}" href="${href}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
   if (documentProperties["font-material-symbols"] === true) {
     const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")

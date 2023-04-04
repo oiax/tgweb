@@ -142,7 +142,7 @@ following elements:
 │   ├── pages
 │   ├── segments
 │   ├── tags
-│   └── site.yml
+│   └── site.toml
 ├── package-lock.json
 ├── package.json
 ├── tailwind.config.js
@@ -230,7 +230,7 @@ If this approach is adopted, the structure of the working directory will look li
     │   │   ├── pages
     │   │   ├── segments
     │   │   ├── tags
-    │   │   └── site.yml
+    │   │   └── site.toml
     │   ├── tailwind.config.js
     │   └── tailwind.css
     └── site_1
@@ -244,7 +244,7 @@ If this approach is adopted, the structure of the working directory will look li
         │   ├── pages
         │   ├── segments
         │   ├── tags
-        │   └── site.yml
+        │   └── site.toml
         ├── tailwind.config.js
         └── tailwind.css
 ```
@@ -327,7 +327,7 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 ### Cusotom color names
 
-Creating a file named `color_scheme.yml` in the `src` directory allows you to define custom
+Creating a file named `color_scheme.toml` in the `src` directory allows you to define custom
 color names for Tailwind CSS.
 
 A custom color name is a combination of a _palette_ and a _modifier_.
@@ -353,13 +353,13 @@ The following is a list of modifiers and their expected meaning.
 Here, "contrasting" means a color with good visibility when text is drawn in that color against
 a standard-color background.
 
-`src/color_scheme.yml`
+`src/color_scheme.toml`
 
-```yaml
-bas-s: "#3d4451"
-bas-c: "#a0aec0"
-pri-s: "#45ba9f"
-sec-s: "#70365d"
+```toml
+bas-s = "#3d4451"
+bas-c = "#a0aec0"
+pri-s = "#45ba9f"
+sec-s = "#70365d"
 ```
 
 The defined custom color names can be used as the names of the colors that make up the Tailwind
@@ -384,32 +384,80 @@ the template, the area enclosed by these two lines is called the _front matter b
 In this area you can give values to a set of properties.
 This set of property/value pairs is called _front matter_.
 
-Each line of the front matter block contains the name and value of a property, separated by a
-colon and space ("`: `").
-
-The following example sets the property `title` to the "Our Mission".
+Front matter blocks are written in [TOML](https://toml.io/en/) format.
+Shown next is an example of a front matter block:
 
 ```
-title: Our Mission
+---
+title = "Our Mission"
+
+[data]
+current_year = 2023
+
+[style]
+red-box = "rounded border border-red-600 p-1 md:p-2"
+
+# TODO: Needs to be checked by the boss.
+---
 ```
 
-Normally, values written to the right of a colon and space are interpreted as strings.
+In the example above, the four main components of the front matter block are used.
 
-However, values containing numbers or symbols might be interpreted as something other than
-strings or cause interpretation errors. Enclose such values in single or double quotes.
+* Property definition
+* Section header
+* Comment
+* Black line
+
+Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
+
+### Property definitions
+
+The line `title = "Our Mission"` is an example of a property definition.
+The `title` to the left of the equals sign is the name of the property and the `"Our Mission"` to
+the right is the value of the property.
+
+The property name, equals sign, and value must be on the same line, though some values can be
+broken over multiple lines.
+
+If the property name consists only of uppercase and lowercase letters, numbers, underscores, and
+minus signs, it can be written without quotation marks; otherwise, the name must be enclosed in
+quotation marks, as in the following example.
 
 ```
-title: "You can't miss it"
+"&_p" = "mb-2"
 ```
 
-Also, exceptionally, `true`, `false`, `yes`, `no` and their uppercase versions
-(`True`, `FALSE`, etc.) are interpreted as boolean values.
+Property values are described in different ways depending on their type.
+Strings must always be quoted.
+Integers and floating point numbers should be unquoted, such as `100`,  `-16`, and `3.14`.
+Booleans (`true` and `false`) are also not quoted and should be lowercase.
+Other writing styles will be explained when examples appear.
 
-To have these values interpreted as strings, enclose them in single or double quotes.
+### Table headers
+
+In the previous example, the lines labeled `[data]` and `[style]` are called _table headers_.
+
+A table header marks the beginning of a _table_. The table continues until the next table
+header or until the end of the file.
+
+The following table names are available in the front matter block:
+
+* data
+* style
+* meta
+* http-equiv
+* meta-property
+* link
+
+The first two are described in this section; the other four are described in
+[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element).
 
 ### Predefined properties
 
-There are some predefined properties that have special meaning.
+In the area before the first table header in the front matter block, set the value of
+_predefined properties_.
+
+The following are examples of predefined properties:
 
 * `scheme`: The scheme of the URL of the HTML document. It must be `http` or `https`.
    Default: `localhost`.
@@ -428,7 +476,7 @@ article. Its value is readonly.
 The following three properties are meaningful only in articles:
 
 * `index`: An integer value used to sort the articles.
-* `tags`: A single string or list of strings to classify articles.
+* `tags`: A single string or array of strings to classify articles.
 * `embedded-only`: A boolean value that determines whether a separate HTML document is created
    from an article; if `true`, it will not be created. Default: `false`.
 
@@ -440,7 +488,7 @@ The value of a predefined property can be embedded into a template by the `<tg-p
 
 ```html
 ---
-title: Our Mission
+title = "Our Mission"
 ---
 <body>
   <h1 class="text-2xl font-bold">
@@ -454,15 +502,19 @@ title: Our Mission
 
 ### Custom properties
 
-Properties whose names begin with `data-` are called _custom properties_ and can be freely
-defined by the website author.
+As already noted, `[data]` in the front matter block indicates the beginning of the "data" table.
+
+Within the "data" table, custom properties can be defined. Website authors can set values of any
+type for custom properties of any name.
 
 The value of a custom property can be embedded into a template by the `<tg-data>` element.
 
 ```html
 ---
-title: Our Mission
-data-message: "Hello, world!"
+title = "Our Mission"
+
+[data]
+message: "Hello, world!"
 ---
 <body>
   <h1 class="text-2xl font-bold">
@@ -479,7 +531,8 @@ value of an HTML element.
 
 ```html
 ---
-data-div-id: "special"
+[data]
+div-id = "special"
 ---
 <body>
   <div id="${div-id}">...</div>
@@ -491,13 +544,15 @@ elements has a different meaning.
 
 ### Defining an alias to a set of class tokens
 
-A property whose name begins with `class-` can be used to give an alias to a set of class tokens.
-To expand an alias defined as such in the value of a `class` attribute, use the `${...} `
-notation.
+A property defined with in the "style" table can be used to give an alias to a set of class
+tokens. The value of a property defined in the "style" table must always be a string.
+
+To embed an alias defined as such into the value of a `class` attribute, use the `${...}` notation.
 
 ```html
 ---
-class-blue-square: "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
+[style]
+blue-square = "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
 ---
 <body>
   <div class="${blue-square}">
@@ -516,13 +571,16 @@ Expanding the alias contained in the above template, we get the following:
 </body>
 ```
 
-Using the `-` symbol, a very long sequence of class tokens can be written over several lines:
+A long sequence of class tokens can be written over several lines surrounded by three
+quotation marks.
 
 ```html
 ---
-class-card:
-  - "bg-white dark:bg-slate-900 rounded-lg px-6 py-8"
-  - "ring-1 ring-slate-900/5 shadow-xl"
+[style]
+card = """
+  bg-white dark:bg-slate-900 rounded-lg px-6 py-8
+  ring-1 ring-slate-900/5 shadow-xl
+  """
 ---
 <body>
   <div class="${card}">
@@ -531,20 +589,30 @@ class-card:
 </body>
 ```
 
-Note that the `-` symbol should be preceded by two spaces.
+The three consecutive double quotation marks (`"""`) indicate the beginning and end of a
+multi-line string.
+
+Before being embedded in the `class` attribute of an HTML element, the value of the property is
+converted as follows:
+
+* Any included newline characters are replaced by spaces.
+* Consecutive leading and trailing spaces are removed.
+* Consecutive spaces are replaced by a single space.
 
 ### Site properties
 
-Creating a file named `site.yml` in the `src` directory allows you to set values for properties
+Creating a file named `site.toml` in the `src` directory allows you to set values for properties
 at the site level. The values set here will be the default values for properties set in the
 front matter of each page.
 
-`src/site.yml`
+`src/site.toml`
 
-```yaml
-title: No title
-layout: common
-custom-current-year: "2023"
+```toml
+title = "No title"
+layout = "common"
+
+[data]
+current-year = "2023"
 ```
 
 ### `%{...}` notation
@@ -552,9 +620,10 @@ custom-current-year: "2023"
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
 element using `%{...}` notation:
 
-```yaml
-data-icon-url: "%{images/icons/default.png}"
-data-theme-url: "%{audios/our_theme.mp3}"
+```toml
+[data]
+icon-url = "%{images/icons/default.png}"
+theme-url = "%{audios/our_theme.mp3}"
 ```
 
 See [<meta> elements](#meta-elements) for specific examples of its use.
@@ -687,12 +756,13 @@ URL.
 
 ### Material Symbols
 
-By setting the value of the `font-material-symbols` property to `true` in `sites.yml`,
-[Material Symbols](https://developers.google.com/fonts/docs/material_symbols) provided by
-Google will be available on your website.
+By setting the value of the `material-symbols` property to `true` in the "font" section of
+`sites.yml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
+provided by Google will be available on your website.
 
-```yaml
-font-material-symbols: true
+```toml
+[font]
+material-symbols = true
 ```
 
 #### Examples
@@ -769,7 +839,7 @@ In this case, `common` is the name of the layout.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -826,8 +896,8 @@ using the `<tg-prop>` element.
 
 ```html
 ---
-layout: common
-title: Greeting
+layout = "common"
+title = "Greeting"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -868,8 +938,8 @@ all `<tg-insert>` elements are removed from the page content.
 
 ```html
 ---
-layout: product
-title: Product 1
+layout = "product"
+title = "Product 1"
 ---
 <div>
   <h1>Product 1</h1>
@@ -920,8 +990,8 @@ is used as a fallback content.
 
 ```html
 ---
-layout: message
-title: Home
+layout = "message"
+title = "Home"
 ---
 <h1>Home</h1>
 <p>Hello, world!</p>
@@ -960,7 +1030,7 @@ However, if the following two conditions are not met, the entire element is dele
   <tg-content></tg-content>
   <tg-if-complete>
     <hr class="h-px my-8 bg-gray-200 border-0">
-    <div class="bg-gray-800 text-white p-4">To: <tg-prop name="custom-name"></tg-prop></div>
+    <div class="bg-gray-800 text-white p-4">To: <tg-data name="custom-name"></tg-prop></div>
     <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
   </tg-if-complete>
 </body>
@@ -970,6 +1040,7 @@ However, if the following two conditions are not met, the entire element is dele
 
 ```html
 ---
+[data]
 custom-name: Alice
 ---
 <h1>Home</h1>
@@ -1037,7 +1108,7 @@ The only thing you should do is take the `layout` attribute off the page.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -1058,7 +1129,7 @@ Wrapper property values take precedence over site property values.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <div class="[&_p]:mt-4">
   <tg-content></tg-content>
@@ -1282,7 +1353,8 @@ The `<tg-prop>` and `<tg-data>` elements allow you to embed the value of a prope
 
 ```html
 ---
-data-message: Hi!
+[data]
+message: Hi!
 ---
 <span>
   <i class="fas fa-smile"></i>
@@ -1324,7 +1396,7 @@ Place `<tg-article>` elements where you want to embed articles as follows:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Recent Articles</h1>
@@ -1358,7 +1430,7 @@ The `<tg-articles>` element can be used to embed multiple articles into a page o
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
@@ -1376,7 +1448,7 @@ To sort articles in descending order by their filename, set the `order-by` attri
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
@@ -1391,7 +1463,7 @@ to `"title:asc"` or `"title:desc"`:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
@@ -1411,7 +1483,7 @@ article:
 
 ```html
 ---
-index: 123
+index = 123
 ---
 <article>
   ...
@@ -1423,7 +1495,7 @@ Then, set the `order-by` attribute of the `<tg-articles>` element to `"index:asc
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
@@ -1441,7 +1513,7 @@ The `<tg-links>` element can be used to embed links to articles in any template
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
@@ -1496,8 +1568,8 @@ To sort articles in an arbitrary order, add a `tg-index` attribute to each artic
 
 ```html
 ---
-layout: home
-index 123
+layout = "home"
+index = 123
 ---
 <article>
   ...
@@ -1521,24 +1593,24 @@ a `<tg-links>` element.
 
 You may use _tags_ to classify your articles.
 
-To attach tags to an article, specify their names in the `tags` attribute as an array
+To attach tags to an article, specify their names in the `tags` property as an array
 using `[...]` notation:
 
 ```html
 ---
-tags: [travel, europe]
+tags: [ "travel", "europe" ]
 ---
 <article>
   ...
 </article>
 ```
 
-To attach a single tag to an article, the value of the `tags` attribute may be specified as a
+To attach a single tag to an article, the value of the `tags` property may be specified as a
 string:
 
 ```html
 ---
-tags: anime
+tags = "anime"
 ---
 <article>
   ...
@@ -1549,7 +1621,7 @@ You can use the `filter` attribute to filter articles embedded on the page:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
@@ -1565,7 +1637,7 @@ You can also filter the list of links to articles using the `filter` attribute:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
@@ -1964,31 +2036,34 @@ For example, suppose that the value `"a"` is set to the custom property `data-x`
 matter of a page as follows:
 
 ```
-data-x: "a"
+[data]
+x = "a"
 ```
 
 And suppose the front matter of its wrapper has the following settings:
 
 ```
-data-x: "b"
-data-y: "c"
+[data]
+x = "b"
+y = "c"
 ```
 
-In this case, the value of the property `data-x` for this page is `"a"` and the value of the
-property `data-y` is `"c"`.
+In this case, the value of the custom property `x` for this page is `"a"` and the value of the
+custom property `y` is `"c"`.
 
 In addition, suppose that the front matter of the layout applied to this page has the following
 settings:
 
 ```
-data-z: "d"
+[data]
+z = "d"
 ```
 
-If so, the value of property `data-x` on this page is `"d"`.
+If so, the value of property `z` on this page is `"d"`.
 
 Custom properties as well as predefined properties such as `title` are inherited as well.
-Also, properties with names beginning with `meta`, `http-equiv-`, `og-` or `property-` are
-inherited. However, properties whose name begins with `class-` are _not_ inherited.
+Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" tables are
+inherited. However, properties that belong to "style" table are _not_ inherited.
 
 ### Embedding property values into an article
 
@@ -1996,7 +2071,7 @@ When an article is rendered as an independent HTML document, the property inheri
 exactly the same as that of a page.
 
 When an article is embedded in a page, segment, or layout, it inherits properties from the wrapper
-surrounding it, if any, and `site.yml` but not from the page, segment, or layout that embeds that
+surrounding it, if any, and `site.toml` but not from the page, segment, or layout that embeds that
 article.
 
 ### Embedding property values into a wrapper or layout
@@ -2008,15 +2083,17 @@ properties that the page or article has.
 For example, suppose a page has the following front matter
 
 ```
-data-x: "a"
+[data]
+x = "a"
 ```
 
 And suppose its wrapper has the following front matter and HTML fragment:
 
 ```html
 ---
-data-x: "b"
-data-y: "c"
+[data]
+x = "b"
+y = "c"
 ---
 <header>
   <tg-data name="x"></tg-data>
@@ -2066,7 +2143,7 @@ The title of the HTML document generated from the template below will be "Greeti
 
 ```html
 ---
-title: Greeting
+title = "Greeting"
 ---
 <body>
   <h1>Welcome!</h1>
@@ -2100,23 +2177,24 @@ If the next template is rendered as an HTML document, its title will be "No Titl
 
 ### `<meta>` elements
 
-The `<meta>` elements in the `<head>` element are generated by the values of properties whose
-names begin with `meta-`, `http-equiv-`, `og-`, or `property-`.
+The `<meta>` elements in the `<head>` element are generated by the values of properties that
+belongs to "meta", "http-equiv", or "meta-property" tables.
 
 Note that the `<head>` element of the generated HTML document always contains a
 `<meta charset="utf-8">` element.
 
-#### `meta-*`
+#### `[meta]` table
 
 You can generate a `<meta>` element with a `name` attribute by setting the value to a property
-whose name begins with `meta-`:
+that belongs to the "meta" table:
 
-```yaml
-meta-viewport: "width=device-width, initial-scale=1"
-meta-theme-color: "#2da0a8"
-meta-description: Description
-meta-robots: "index,follow"
-meta-generator: Teamgenik
+```toml
+[meta]
+viewport = "width=device-width, initial-scale=1"
+theme-color = "#2da0a8"
+description = Description
+robots = "index,follow"
+generator = Teamgenik
 ```
 
 Setting the values of the properties as above will produce the following `<meta>` elements:
@@ -2133,10 +2211,9 @@ Setting the values of the properties as above will produce the following `<meta>
 
 If you want to generate multiple `<meta>` elements with the same name, write as follows:
 
-```yaml
-meta-googlebot:
-- "index,follow"
-- notranslate
+```toml
+[meta]
+googlebot = [ "index,follow", "notranslate" ]
 ```
 
 The above will generate the following `<meta>` elements
@@ -2146,17 +2223,18 @@ The above will generate the following `<meta>` elements
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `http-equiv-*`
+#### `[http-equiv]` section
 
 You can generate a `<meta>` element with a `http-equiv` attribute by setting the value to a
-property whose name begins with `http-equiv-`:
+property that belongs to "http-equiv" table.
 
-```yaml
-http-equiv-content-security-policy: "default-src 'self'"
-http-equiv-x-dns-prefetch-control: "off"
+```toml
+[http-equiv]
+content-security-policy = "default-src 'self'"
+x-dns-prefetch-control = "off"
 ```
 
-The above settings will generate the following `<meta>` elements
+The above settings will generate the following `<meta>` elements:
 
 ```html
 <meta http-equiv="content-security-policy" content="default-src 'self'">
@@ -2165,15 +2243,16 @@ The above settings will generate the following `<meta>` elements
 
 Teamgenik converts these paths into URLs appropriately.
 
-#### `property-*`
+#### `[meta-property]` section
 
-```yaml
-property-fb:app_id: "1234567890abcde"
-property-fb:article_style: "default"
-property-fb:use_automatic_ad_placement: "true"
-property-op:markup_version: "v1.0"
-property-al:ios:app_name: "App Links"
-property-al:android:app_name: "App Links"
+```toml
+[meta-property]
+"fb:app_id" = "1234567890abcde"
+"fb:article_style" = "default"
+"fb:use_automatic_ad_placement" = "true"
+"op:markup_version" = "v1.0"
+"al:ios:app_name" = "App Links"
+"al:android:app_name" = "App Links"
 ```
 
 The above settings will generate the following `<meta>` elements
@@ -2190,28 +2269,34 @@ The above settings will generate the following `<meta>` elements
 You can embed the value of a property into the `content` attribute of a `<meta>` element using
 `${...}` notation:
 
-```yaml
-property-og:url: "${url}"
-property-og:title: "${title}"
-property-og:description: "${meta-description}"
+```toml
+[meta-property]
+"og:url" = "${url}"
+"og:title" = "${title}"
+"og:description" = "${meta.description}"
 ```
+
+To refer to the value of a property belonging to the "meta" table, add `meta.` before the property
+name.
 
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
 element using `%{...}` notation:
 
-```yaml
-property-og:image: "%{/images/icon.png}"
-property-og:audio: "%{/audios/theme.mp3}"
+```toml
+[meta-property]
+"og:image" = "%{/images/icon.png}"
+"og:audio" = "%{/audios/theme.mp3}"
 ```
 
 ### `<link>` elements
 
-The `<link>` elements in the `<head>` element are generated by the values of properties whose
-names begin with `link-`:
+The `<link>` elements in the `<head>` element are generated by the values of properties that
+belon to "link" table.
 
-```yaml
-link-archives: "https://example.com/archives/"
-link-license: "%{/copyright.html}"
+```toml
+[link]
+archives = "https://example.com/archives/"
+license = "%{/copyright.html}"
 ```
 
 The above will generate the following `<link>` elements
@@ -2226,7 +2311,7 @@ converted appropriately.
 
 #### Note
 
-The following link element are always inserted within the head element.
+The following `<link>` element are always inserted within the head element.
 
 ```html
 <link href="/css/tailwind.css" rel="stylesheet">
@@ -2238,6 +2323,15 @@ A `<link>` element that refers to another stylesheet cannot be inserted within t
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
+
+#### Note
+
+The following `<script>` elements are always inserted within the head element.
+
+```html
+<script src="/js/alpine.min.js" defer></script>
+<script src="/reload/reload.js" defer></script>
+```
 
 ## TODO List
 
