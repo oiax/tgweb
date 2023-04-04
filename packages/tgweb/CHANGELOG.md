@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.3.3
+
+* 1ef56b3 Introduce togglers, switchers, and rotators
+
 ## 0.3.2
 
 * 91c468a Embed custom property values into attributes of elements
