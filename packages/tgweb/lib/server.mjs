@@ -6,6 +6,7 @@ import express from "express"
 import http from "http"
 import reload from "reload"
 import chokidar from "chokidar"
+import tcpPortUsed from "tcp-port-used"
 import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
 import { installFonts } from "./server/install_fonts.mjs"
@@ -34,10 +35,25 @@ const run = () => {
     process.chdir(targetDirPath)
   }
 
+  let port = 3000
+
+  if (process.env.PORT !== undefined) {
+    port = parseInt(process.env.PORT, 10)
+    if (Number.isNaN(port)) port = 3000
+  }
+
+  tcpPortUsed.waitUntilFree(3000, 250, 500)
+    .then(
+      () => main(workingDir, port),
+      () => console.log(`ERROR: Could not start a web server. Port ${port} is in use.`)
+    )
+}
+
+const main = (workingDir, port) => {
   const app = express()
   const router = getRouter()
 
-  app.set("port", process.env.PORT || 3000)
+  app.set("port", port)
   app.use(router)
 
   const server = http.createServer(app)
