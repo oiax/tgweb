@@ -7,7 +7,7 @@ const setDependencies = (object, siteData, deep) => {
   object.dependencies = []
 
   DomUtils.find(
-    node => node.constructor.name === "Element" && node.name === "tg-component",
+    node => node.constructor.name === "Element" && node.name === "tg:component",
     object.dom.children,
     true
   )
@@ -16,7 +16,7 @@ const setDependencies = (object, siteData, deep) => {
   })
 
   DomUtils.find(
-    node => node.constructor.name === "Element" && node.name === "tg-segment",
+    node => node.constructor.name === "Element" && node.name === "tg:segment",
     object.dom.children,
     true
   )
@@ -32,7 +32,7 @@ const setDependencies = (object, siteData, deep) => {
   })
 
   DomUtils.find(
-    node => node.constructor.name === "Element" && node.name === "tg-article",
+    node => node.constructor.name === "Element" && node.name === "tg:article",
     object.dom.children,
     true
   )
@@ -55,7 +55,7 @@ const setDependencies = (object, siteData, deep) => {
   })
 
   DomUtils.find(
-    node => node.constructor.name === "Element" && node.name === "tg-articles",
+    node => node.constructor.name === "Element" && node.name === "tg:articles",
     object.dom.children,
     true
   )
@@ -79,14 +79,14 @@ const setDependencies = (object, siteData, deep) => {
 
   DomUtils.find(
     node =>
-      node.constructor.name === "Element" && node.name === "tg-link" && node.attribs.component,
+      node.constructor.name === "Element" && node.name === "tg:link" && node.attribs.component,
     object.dom.children,
     true
   )
   .forEach(ref => object.dependencies.push(`components/${ref.attribs.component}`))
 
   DomUtils.find(
-    node => node.constructor.name === "Element" && node.name === "tg-links",
+    node => node.constructor.name === "Element" && node.name === "tg:links",
     object.dom.children,
     true
   )

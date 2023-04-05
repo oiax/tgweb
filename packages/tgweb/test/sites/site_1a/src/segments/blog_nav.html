@@ -3,18 +3,18 @@
 title = "font-bold"
 ---
 <nav>
-  <tg-component name="hr"></tg-component>
+  <tg:component name="hr"></tg:component>
   <ul>
-    <tg-links pattern="blog/*">
+    <tg:links pattern="blog/*">
       <li>
-        <tg-link>
-          <a href="#" title="${tooltip}"><tg-slot name="title"></tg-slot></a>
-          <tg-if-current>
-            <span tg-class="title"><tg-slot name="title"></tg-slot></span>
-          </tg-if-current>
-        </tg-link>
-        <tg-if-complete>(<span><tg-data name="date"></tg-data></span>)</tg-if-complete>
+        <tg:link>
+          <a href="#" title="${tooltip}"><tg:slot name="title"></tg:slot></a>
+          <tg:if-current>
+            <span tg-class="title"><tg:slot name="title"></tg:slot></span>
+          </tg:if-current>
+        </tg:link>
+        <tg:if-complete>(<span><tg:data name="date"></tg:data></span>)</tg:if-complete>
       </li>
-    </tg-links>
+    </tg:links>
   </ul>
 </nav>

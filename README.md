@@ -484,7 +484,7 @@ See [Articles](#articles) for details.
 
 ### Embedding property values in a template
 
-The value of a predefined property can be embedded into a template by the `<tg-prop>` element.
+The value of a predefined property can be embedded into a template by the `<tg:prop>` element.
 
 ```html
 ---
@@ -492,7 +492,7 @@ title = "Our Mission"
 ---
 <body>
   <h1 class="text-2xl font-bold">
-    <tg-prop name="title"></tg-prop>
+    <tg:prop name="title"></tg:prop>
   </h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
@@ -507,7 +507,7 @@ As already noted, `[data]` in the front matter block indicates the beginning of 
 Within the "data" table, custom properties can be defined. Website authors can set values of any
 type for custom properties of any name.
 
-The value of a custom property can be embedded into a template by the `<tg-data>` element.
+The value of a custom property can be embedded into a template by the `<tg:data>` element.
 
 ```html
 ---
@@ -518,10 +518,10 @@ message: "Hello, world!"
 ---
 <body>
   <h1 class="text-2xl font-bold">
-    <tg-prop name="title"></tg-prop>
+    <tg:prop name="title"></tg:prop>
   </h1>
   <div class="bg-green-300 p-4">
-    <p><tg-data name="message"></tg-data></p>
+    <p><tg:data name="message"></tg:data></p>
   </div>
 </body>
 ```
@@ -803,9 +803,9 @@ A layout must satisfy the following three conditions:
 
 1. There is only one top-level element.
 2. The top-level element is a `<body>` element.
-3. The top-level element contains only one `<tg-content>` element within its descendant elements.
+3. The top-level element contains only one `<tg:content>` element within its descendant elements.
 
-The `<tg-content>` element indicates where in the layout the page will be inserted.
+The `<tg:content>` element indicates where in the layout the page will be inserted.
 
 #### Example
 
@@ -817,13 +817,13 @@ The `<tg-content>` element indicates where in the layout the page will be insert
     <div>Example</div>
   </header>
   <main>
-    <tg-content></tg-content>
+    <tg:content></tg:content>
   </main>
   <footer>&copy; Example Inc. 2023</footer>
 </body>
 ```
 
-Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-content>`.
+Note that you _cannot_ write `<tg:content />` instead of `<tg:content></tg:content>`.
 
 ### Applying a layout to a page
 
@@ -873,7 +873,7 @@ the following HTML document is generated:
 ### Embedding property values in layouts
 
 The values of the properties set in the front matter of the page can be embedded in the layout
-using the `<tg-prop>` element.
+using the `<tg:prop>` element.
 
 #### Example
 
@@ -885,10 +885,10 @@ using the `<tg-prop>` element.
     <div>Example</div>
   </header>
   <main>
-    <h1 class="text-3xl"><tg-prop name="title"></tg-prop></h1>
-    <tg-content></tg-content>
+    <h1 class="text-3xl"><tg:prop name="title"></tg:prop></h1>
+    <tg:content></tg:content>
   </main>
-  <footer>&copy; Example Inc. <tg-prop name="year"></tg-prop></footer>
+  <footer>&copy; Example Inc. <tg:prop name="year"></tg:prop></footer>
 </body>
 ```
 
@@ -907,18 +907,18 @@ title = "Greeting"
 
 ### Slots and inserts
 
-The `<tg-slot>` element is a place holder inside a layout that you can fill with a content
+The `<tg:slot>` element is a place holder inside a layout that you can fill with a content
 specified within a page.
-A `name` attribute must be specified for the `<tg-slot>` element.
+A `name` attribute must be specified for the `<tg:slot>` element.
 
-To embed content into a slot in a layout, place a `<tg-insert>` element on the page where the
+To embed content into a slot in a layout, place a `<tg:insert>` element on the page where the
 layout is to be applied.
 
-If you specify the name of the slot as the value of the `name` property of  `<tg-insert>` element,
+If you specify the name of the slot as the value of the `name` property of  `<tg:insert>` element,
 the slot will be replaced with the element's content.
 
-When page content is inserted into a `<tg-content>` element in a layout,
-all `<tg-insert>` elements are removed from the page content.
+When page content is inserted into a `<tg:content>` element in a layout,
+all `<tg:insert>` elements are removed from the page content.
 
 #### Example
 
@@ -926,11 +926,11 @@ all `<tg-insert>` elements are removed from the page content.
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
   <div class="border-2 border-black border-solid p-2">
-    <tg-slot name="remarks"></tg-slot>
+    <tg:slot name="remarks"></tg:slot>
   </div>
-  <div><tg-slot name="badges"></tg-slot></div>
+  <div><tg:slot name="badges"></tg:slot></div>
 </body>
 ```
 
@@ -945,8 +945,8 @@ title = "Product 1"
   <h1>Product 1</h1>
   <p>Description</p>
 </div>
-<tg-insert name="remarks">This product is very <em>fragile</em>.</tg-insert>
-<tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
+<tg:insert name="remarks">This product is very <em>fragile</em>.</tg:insert>
+<tg:insert name="badges"><span>A</span><span>B</span></tg:insert>
 ```
 
 When the layout `product` is applied to the page `product1.html`,
@@ -972,7 +972,7 @@ the following HTML document is generated:
 
 ### Fallback content of slot
 
-If the content to be inserted into the slot is not defined, the content of the `<tg-slot>` element
+If the content to be inserted into the slot is not defined, the content of the `<tg:slot>` element
 is used as a fallback content.
 
 #### Example
@@ -981,8 +981,8 @@ is used as a fallback content.
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
-  <div><tg-slot name="message">No message.</tg-slot></div>
+  <tg:content></tg:content>
+  <div><tg:slot name="message">No message.</tg:slot></div>
 </body>
 ```
 
@@ -1013,13 +1013,13 @@ the following HTML document is generated:
 </html>
 ```
 
-### `<tg-if-complete>`
+### `<tg:if-complete>`
 
-Normally, the `<tg-if-complete>` element in a layout is simply replaced with its content.
+Normally, the `<tg:if-complete>` element in a layout is simply replaced with its content.
 However, if the following two conditions are not met, the entire element is deleted:
 
-* The property values to be inserted for all `<tg-prop>` elements within it are defined.
-* The contents to be inserted for all `<tg-slot>` elements within it are defined.
+* The property values to be inserted for all `<tg:prop>` elements within it are defined.
+* The contents to be inserted for all `<tg:slot>` elements within it are defined.
 
 #### Example
 
@@ -1027,12 +1027,12 @@ However, if the following two conditions are not met, the entire element is dele
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
-  <tg-if-complete>
+  <tg:content></tg:content>
+  <tg:if-complete>
     <hr class="h-px my-8 bg-gray-200 border-0">
-    <div class="bg-gray-800 text-white p-4">To: <tg-data name="custom-name"></tg-prop></div>
-    <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
-  </tg-if-complete>
+    <div class="bg-gray-800 text-white p-4">To: <tg:data name="custom-name"></tg:prop></div>
+    <div class="bg-gray-200 p-4"><tg:slot name="message"></tg:slot></div>
+  </tg:if-complete>
 </body>
 ```
 
@@ -1083,7 +1083,7 @@ the `src/pages/foo/bar` directory or the `src/pages/foo/bar/baz` directory, then
 `src/pages/foo/_wrapper.html` will be the wrapper for `src/pages/foo/bar/baz` directory.
 
 Basically, the wrapper is written the same way as that of the layout.
-The `<tg-content>` element indicates where in the wrapper the page will be inserted.
+The `<tg:content>` element indicates where in the wrapper the page will be inserted.
 
 #### Example
 
@@ -1091,7 +1091,7 @@ The `<tg-content>` element indicates where in the wrapper the page will be inser
 
 ```html
 <div class="[&_p]:mt-4">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
 </div>
 ```
 
@@ -1132,7 +1132,7 @@ Wrapper property values take precedence over site property values.
 layout = "common"
 ---
 <div class="[&_p]:mt-4">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
 </div>
 ```
 
@@ -1173,14 +1173,14 @@ The following is an example of a segment:
 
 ### Embedding segments into a page
 
-To embed a segment into a page, add a `<tg-segment>` element at the
+To embed a segment into a page, add a `<tg:segment>` element at the
 location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <div>
-  <tg-segment name="hero"></tg-segment>
+  <tg:segment name="hero"></tg:segment>
 
   <main>
     ...
@@ -1190,7 +1190,7 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Passing custom properties to a segment
 
-You can pass custom properties to a segment using the `<tg-segment> element's `data-*` attribute.
+You can pass custom properties to a segment using the `<tg:segment> element's `data-*` attribute.
 
 `src/segment/hero.html`
 
@@ -1206,7 +1206,7 @@ You can pass custom properties to a segment using the `<tg-segment> element's `d
 
 ```html
 <div>
-  <tg-segment name="hero" data-image-path="hello.jpg"></tg-segment>
+  <tg:segment name="hero" data-image-path="hello.jpg"></tg:segment>
 
   <main>
     ...
@@ -1229,7 +1229,7 @@ within a segment is similar to that of a layout.
     <img src="/images/hello.jpg">
     <div>
       <h1 class="text-5xl font-bold">Hello, world!</h1>
-      <tg-slot name="paragraph"></tg-slot>
+      <tg:slot name="paragraph"></tg:slot>
     </div>
   </div>
 </section>
@@ -1239,11 +1239,11 @@ within a segment is similar to that of a layout.
 
 ```html
 <div>
-  <tg-segment name="hero">
-    <tg-insert name="paragraph">
+  <tg:segment name="hero">
+    <tg:insert name="paragraph">
       <p>The quick brown fox jumps over the lazy dog.</p>
-    </tg-insert>
-  </tg-segment>
+    </tg:insert>
+  </tg:segment>
 
   <main>
     ...
@@ -1272,19 +1272,19 @@ The following is an example of a component:
 
 ### Embedding components
 
-To embed a component into a page, article, or layout, add a `<tg-component>` element at the
+To embed a component into a page, article, or layout, add a `<tg:component>` element at the
 location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <p>
-  <tg-component name="smile"></tg-component>
+  <tg:component name="smile"></tg:component>
   How are you?
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg-component> element's `data-*`
+You can pass custom properties to a component using the `<tg:component> element's `data-*`
 attribute.
 
 `src/components/avatar.html`
@@ -1301,9 +1301,9 @@ attribute.
 
 ```html
 <div class="grid grid-rows-2 gap-4">
-  <tg-component name="avatar" data-name="Alice"></tg-component>
-  <tg-component name="avatar" data-name="Bob"></tg-component>
-  <tg-component name="avatar" data-name="Carol"></tg-component>
+  <tg:component name="avatar" data-name="Alice"></tg:component>
+  <tg:component name="avatar" data-name="Bob"></tg:component>
+  <tg:component name="avatar" data-name="Carol"></tg:component>
 </div>
 ```
 
@@ -1318,16 +1318,16 @@ in the slots within a component is similar to that of a layout and segment.
 
 ```html
 <h3 class="font-bold text-lg m-2">
-  <tg-slot name="title"></tg-slot>
+  <tg:slot name="title"></tg:slot>
 </h3>
 <div>
-  <tg-slot name="body"></tg-slot>
+  <tg:slot name="body"></tg:slot>
 </div>
-<tg-if-complete>
+<tg:if-complete>
   <divclass="text-right">
-    <tg-slot name="date"></tg-slot>
+    <tg:slot name="date"></tg:slot>
   </div>
-</tg-if-complete>
+</tg:if-complete>
 ```
 
 `src/pages/hello.html`
@@ -1337,19 +1337,19 @@ in the slots within a component is similar to that of a layout and segment.
 layout: home
 ---
 <main class="bg-gray-100 py-2">
-  <tg-component name="blog_item">
-    <tg-insert name="title">Greeting</tg-insert>
-    <tg-insert name="body">
+  <tg:component name="blog_item">
+    <tg:insert name="title">Greeting</tg:insert>
+    <tg:insert name="body">
       <p>Hello.</p>
-    </tg-insert>
-    <tg-insert name="date">2022-12-31</tg-insert>
-  </tg-component>
+    </tg:insert>
+    <tg:insert name="date">2022-12-31</tg:insert>
+  </tg:component>
 </main>
 ```
 
 ### Embedding property values into a component
 
-The `<tg-prop>` and `<tg-data>` elements allow you to embed the value of a property in a component.
+The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a property in a component.
 
 ```html
 ---
@@ -1358,7 +1358,7 @@ message: Hi!
 ---
 <span>
   <i class="fas fa-smile"></i>
-  <tg-data name="message"></tg-data>
+  <tg:data name="message"></tg:data>
 </span>
 ```
 
@@ -1392,7 +1392,7 @@ Articles and pages have exactly the same characteristics in the following respec
 ### Embedding an article in a page or segment
 
 Like components, articles can be embedded in pages or segments.
-Place `<tg-article>` elements where you want to embed articles as follows:
+Place `<tg:article>` elements where you want to embed articles as follows:
 
 ```html
 ---
@@ -1400,12 +1400,12 @@ layout = "home"
 ---
 <main>
   <h1>Our Recent Articles</h1>
-  <tg-article name="blog/got_a_gadget"></tg-article>
-  <tg-article name="blog/happy_new_year"></tg-article>
+  <tg:article name="blog/got_a_gadget"></tg:article>
+  <tg:article name="blog/happy_new_year"></tg:article>
 </main>
 ```
 
-The value of the `name` attribute of the `<tg-article>` element must be the name of the
+The value of the `name` attribute of the `<tg:article>` element must be the name of the
 article file without the extension (`.html`).
 
 Unlike components, articles can only be embedded into a page.
@@ -1426,7 +1426,7 @@ embedded-only: true
 
 ### Embedding articles in a page
 
-The `<tg-articles>` element can be used to embed multiple articles into a page or segment.
+The `<tg:articles>` element can be used to embed multiple articles into a page or segment.
 
 ```html
 ---
@@ -1434,7 +1434,7 @@ layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*"></tg-articles>
+  <tg:articles pattern="proposals/*"></tg:articles>
 </main>
 ```
 
@@ -1444,7 +1444,7 @@ The above example embeds all articles in the `src/articles/proposals` directory 
 By default, articles are sorted in ascending (alphabetically) order by filename.
 
 To sort articles in descending order by their filename, set the `order-by` attribute of the
-`<tg-articles>` element to `"filename:desc"`:
+`<tg:articles>` element to `"filename:desc"`:
 
 ```html
 ---
@@ -1452,13 +1452,13 @@ layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="filename:desc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="filename:desc"></tg:articles>
 </main>
 ```
 
 ### Sorting articles by their title
 
-To sort articles by their title, set the `order-by` attribute of the `<tg-articles>` element
+To sort articles by their title, set the `order-by` attribute of the `<tg:articles>` element
 to `"title:asc"` or `"title:desc"`:
 
 ```html
@@ -1467,7 +1467,7 @@ layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="title:asc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="title:asc"></tg:articles>
 </main>
 ```
 
@@ -1490,7 +1490,7 @@ index = 123
 </article>
 ```
 
-Then, set the `order-by` attribute of the `<tg-articles>` element to `"index:asc"` or
+Then, set the `order-by` attribute of the `<tg:articles>` element to `"index:asc"` or
 `"index:desc"`:
 
 ```html
@@ -1499,7 +1499,7 @@ layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="index:asc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="index:asc"></tg:articles>
 </main>
 ```
 
@@ -1508,7 +1508,7 @@ property.
 
 ### Generating a link list to articles
 
-The `<tg-links>` element can be used to embed links to articles in any template
+The `<tg:links>` element can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
@@ -1518,53 +1518,53 @@ layout = "home"
 <main>
   <h1>Our Proposals</h1>
   <ul>
-    <tg-links pattern="proposals/*">
+    <tg:links pattern="proposals/*">
       <li>
         <a href="#">
-          <tg-prop name="title"></tg-prop>
-          <tg-if-complete>
+          <tg:prop name="title"></tg:prop>
+          <tg:if-complete>
             <span class="text-sm">
-              (<tg-slot name="date"></tg-slot>)
+              (<tg:slot name="date"></tg:slot>)
             </span>
-          </tg-if-complete>
+          </tg:if-complete>
         </a>
       </li>
-    </tg-links>
+    </tg:links>
   </ul>
 </main>
 ```
 
-The `<tg-links>` element contains one or more `<a>` elements and
-zero or more `<tg-prop>`, `<tg-data>` and `<tg-slot>` elements.
+The `<tg:links>` element contains one or more `<a>` elements and
+zero or more `<tg:prop>`, `<tg:data>` and `<tg:slot>` elements.
 
 The values of `href` attribute of `<a>` are replaced by the URL of the article.
-The `<tg-prop>` and `<tg-data>` elements are replaced by the value of a property of the article
+The `<tg:prop>` and `<tg:data>` elements are replaced by the value of a property of the article
 to be embedded.
-The `<tg-slot>` elements are replaced by the content of a `<tg-insert>` element defined in the
+The `<tg:slot>` elements are replaced by the content of a `<tg:insert>` element defined in the
 article to be embedded.
 
-Inside the `<tg-links>` element, `<tg-if-complete>` elements work the same way
+Inside the `<tg:links>` element, `<tg:if-complete>` elements work the same way
 as inside components.
-That is, a `<tg-if-complete>` element will be removed from the output
-unless a value or content is provided for all `<tg-prop>`, `<tg-data>`, and `<tg-slot>` elements
+That is, a `<tg:if-complete>` element will be removed from the output
+unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg:slot>` elements
 within it.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles by their title, set  the `order-by` attribute of the `<tg-links>` element to
+To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
 `"title:asc"` or `"title:desc"`:
 
 ```html
-    <tg-links pattern="proposals/*" order-by="title:asc">
+    <tg:links pattern="proposals/*" order-by="title:asc">
       <li>
         ...
       </li>
-    </tg-links>
+    </tg:links>
 ```
 
 See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
 to be set in the `order-by` attribute.
 
-To sort articles in an arbitrary order, add a `tg-index` attribute to each article:
+To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
 
 ```html
 ---
@@ -1576,18 +1576,18 @@ index = 123
 </article>
 ```
 
-Then, specify the `order-by` attribute of the `<tg-links>` element.
+Then, specify the `order-by` attribute of the `<tg:links>` element.
 
 ```html
-    <tg-links pattern="proposals/*" order-by="index:asc">
+    <tg:links pattern="proposals/*" order-by="index:asc">
       <li>
         ...
       </li>
-    </tg-links>
+    </tg:links>
 ```
 
-Note that the current specification does not allow a `<tg-component>` element to be placed within
-a `<tg-links>` element.
+Note that the current specification does not allow a `<tg:component>` element to be placed within
+a `<tg:links>` element.
 
 ### Filtering articles by tags
 
@@ -1625,7 +1625,7 @@ layout = "home"
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
-  <tg-articles pattern="blog/*" filter="tag:travel"></tg-articles>
+  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
 </main>
 ```
 
@@ -1642,23 +1642,23 @@ layout = "home"
 <main>
   <h1>Articles (tag:travel)</h1>
   <ul>
-    <tg-links pattern="blog/*" filter="tag:travel">
+    <tg:links pattern="blog/*" filter="tag:travel">
       <li>
         <a href="#">
-          <tg-slot name="title"></tg-slot>
+          <tg:slot name="title"></tg:slot>
         </a>
       </li>
-    </tg-links>
+    </tg:links>
   </ul>
 </main>
 ```
 
 Note that you cannot assign tags to a page.
 
-### `<tg-links>` with the `component` attribute
+### `<tg:links>` with the `component` attribute
 
-When a `<tg-links>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg-links>` element.
+When a `<tg:links>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg:links>` element.
 
 For example, suppose there is a `nav_link` component with the following content
 
@@ -1667,38 +1667,38 @@ For example, suppose there is a `nav_link` component with the following content
 ```html
 <li>
   <a href="#">
-    <tg-prop name="title"></tg-prop>
-    <tg-if-complete>
+    <tg:prop name="title"></tg:prop>
+    <tg:if-complete>
       <span class="text-sm">
-        (<tg-slot name="date"></tg-slot>)
+        (<tg:slot name="date"></tg:slot>)
       </span>
-    </tg-if-complete>
+    </tg:if-complete>
   </a>
 </li>
 ```
 
-In this case, we can construct a `<tg-links>` element as follows:
+In this case, we can construct a `<tg:links>` element as follows:
 
 ```html
-<tg-links component="nav_link" pattern="blog/*"></tg-links>
+<tg:links component="nav_link" pattern="blog/*"></tg:links>
 ```
 
 The above code is to be interpreted as exactly the same as the following
 
 ```html
 
-<tg-links pattern="blog/*">
+<tg:links pattern="blog/*">
   <li>
     <a href="#">
-      <tg-prop name="title"></tg-prop>
-      <tg-if-complete>
+      <tg:prop name="title"></tg:prop>
+      <tg:if-complete>
         <span class="text-sm">
-          (<tg-slot name="date"></tg-slot>)
+          (<tg:slot name="date"></tg:slot>)
         </span>
-      </tg-if-complete>
+      </tg:if-complete>
     </a>
   </li>
-</tg-links>
+</tg:links>
 ```
 
 ## Links
@@ -1718,53 +1718,53 @@ the page in its `href` attribute:
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
 
-### `<tg-link>`, `<tg-if-current>` and `<tg-label>`
+### `<tg:link>`, `<tg:if-current>` and `<tg:label>`
 
-The `<tg-link>` is a special element used to conditionally cause the `<a>` element to appear.
+The `<tg:link>` is a special element used to conditionally cause the `<a>` element to appear.
 Basically, the content of this element is just rendered as it is.
 If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
-attribute of the `<tg-link>` element is set to the value of the `href` attribute of that `<a>`
+attribute of the `<tg:link>` element is set to the value of the `href` attribute of that `<a>`
 element.
 
 The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
 
 ```html
-<tg-link href="/articles/goal.html">
+<tg:link href="/articles/goal.html">
   <a href="#">Our Goal</a>
-</tg-link>
+</tg:link>
 ```
 
 However, when an article with the path `/articles/goal.html` contains the above code, this part is
 removed from the generated HTML document.
 
-Zero or one `<tg-if-current>` element may be placed inside the `<tg-link>` element.
-The content of the `<tg-if-current>` element is only rendered if the value of the `href`
-attribute of the `<tg-link>` element matches the path of the HTML document that is being generated.
+Zero or one `<tg:if-current>` element may be placed inside the `<tg:link>` element.
+The content of the `<tg:if-current>` element is only rendered if the value of the `href`
+attribute of the `<tg:link>` element matches the path of the HTML document that is being generated.
 
 The following code is rendered as `<span class="font-bold">Our Goal</span>` when it appears in
 an article with the path `/articles/goal.html`.
 
 ```html
-<tg-link href="/articles/goal.html">
+<tg:link href="/articles/goal.html">
   <a href="#">Our Goal</a>
-  <tg-if-current>
+  <tg:if-current>
     <span class="font-bold">Our Goal</span>
-  </tg-if-current>
-</tg-link>
+  </tg:if-current>
+</tg:link>
 ```
 
-The `<tg-label>` element can be used to remove duplication from the above code.
+The `<tg:label>` element can be used to remove duplication from the above code.
 
 ```html
-<tg-link href="/articles/goal.html" label="Our Goal">
-  <a href="#"><tg-label></tg-label></a>
-  <tg-if-current>
-    <span class="font-bold"><tg-label></tg-label></span>
-  </tg-if-current>
-</tg-link>
+<tg:link href="/articles/goal.html" label="Our Goal">
+  <a href="#"><tg:label></tg:label></a>
+  <tg:if-current>
+    <span class="font-bold"><tg:label></tg:label></span>
+  </tg:if-current>
+</tg:link>
 ```
 
-This element is replaced by the value specified in the `label` attribute of the `<tg-link>`
+This element is replaced by the value specified in the `label` attribute of the `<tg:link>`
 element.
 
 #### Example
@@ -1773,53 +1773,53 @@ element.
 
 ```html
 <nav>
-  <tg-link href="/articles/goal.html" label="Our Goal">
-    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <tg-if-current>
-      <span class="font-bold"><tg-label></tg-label></span>
-    </tg-if-current>
-  </tg-link>
-  <tg-link href="/articles/about.html" label="About Us">
-    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <tg-if-current>
-      <span class="font-bold"><tg-label></tg-label></span>
-    </tg-if-current>
-  </tg-link>
+  <tg:link href="/articles/goal.html" label="Our Goal">
+    <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+    <tg:if-current>
+      <span class="font-bold"><tg:label></tg:label></span>
+    </tg:if-current>
+  </tg:link>
+  <tg:link href="/articles/about.html" label="About Us">
+    <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+    <tg:if-current>
+      <span class="font-bold"><tg:label></tg:label></span>
+    </tg:if-current>
+  </tg:link>
 </nav>
 ```
 
-### `<tg-link>` with the `component` attribute
+### `<tg:link>` with the `component` attribute
 
-When a `<tg-link>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg-link>` element.
+When a `<tg:link>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg:link>` element.
 
 For example, suppose there is a `nav_link` component with the following content
 
 `src/components/nav_link.html`
 
 ```html
-<a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-<tg-if-current>
-  <span class="font-bold"><tg-label></tg-label></span>
-</tg-if-current>
+<a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+<tg:if-current>
+  <span class="font-bold"><tg:label></tg:label></span>
+</tg:if-current>
 ```
 
-In this case, we can construct a `<tg-link>` element as follows:
+In this case, we can construct a `<tg:link>` element as follows:
 
 ```html
-<tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
+<tg:link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg:link>
 ```
 
 The above code is to be interpreted as exactly the same as the following
 
 ```html
 
-<tg-link href="/articles/about.html" label="About Us">
-  <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-  <tg-if-current>
-    <span class="font-bold"><tg-label></tg-label></span>
-  </tg-if-current>
-</tg-link>
+<tg:link href="/articles/about.html" label="About Us">
+  <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+  <tg:if-current>
+    <span class="font-bold"><tg:label></tg:label></span>
+  </tg:if-current>
+</tg:link>
 ```
 
 ## Making Dynamic Contents
@@ -1829,28 +1829,28 @@ the user's operation.
 
 ### Show and hide contents
 
-Specifying the `tg-toggler` attribute on an HTML element makes the following attributes available
+Specifying the `tg:toggler` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
 
-* `tg-when`
-* `tg-toggle`
+* `tg:when`
+* `tg:toggle`
 
-We call an HTML element with the `tg-toggler` attribute a __toggler__.
+We call an HTML element with the `tg:toggler` attribute a __toggler__.
 A toggler has two states, `on` and `off`. Its initial state is `off`.
 
-An element with a `tg-when` attribute inside a toggler will only be displayed if its value matches
+An element with a `tg:when` attribute inside a toggler will only be displayed if its value matches
 the state of the toggler.
 
-When the user clicks or taps an element with a `tg-toggle` attribute inside the toggler,
+When the user clicks or taps an element with a `tg:toggle` attribute inside the toggler,
 the toggler's state is set to the value of the the attribute.
 
 Here is an example toggler:
 
 ```html
-<div tg-toggler>
-  <button type="button" tg-toggle="on" tg-when="off">Open</button>
-  <div tg-when="on">
-    <button type="button" tg-toggle="off">Close</button>
+<div tg:toggler>
+  <button type="button" tg:toggle="on" tg:when="off">Open</button>
+  <div tg:when="on">
+    <button type="button" tg:toggle="off">Close</button>
     <p>Hello, world!</p>
   </div>
 </div>
@@ -1861,15 +1861,15 @@ When the user clicks or taps this button, the state of the toggler is set to `on
 disappears, and a "Close" button and a "Hello, world" paragraph appear instead.
 When the user further clicks or taps the "Close" button, it returns to the initial state.
 
-If the `tg-toggle` attribute's value is omitted, the toggler's state is reversed when the user
+If the `tg:toggle` attribute's value is omitted, the toggler's state is reversed when the user
 clicks or taps on the element.
 So the above example could be rewritten as:
 
 ```html
-<div tg-toggler>
-  <button type="button" tg-toggle tg-when="off">Open</button>
-  <div tg-when="on">
-    <button type="button" tg-toggle>Close</button>
+<div tg:toggler>
+  <button type="button" tg:toggle tg:when="off">Open</button>
+  <div tg:when="on">
+    <button type="button" tg:toggle>Close</button>
     <p>Hello, world!</p>
   </div>
 </div>
@@ -1877,139 +1877,139 @@ So the above example could be rewritten as:
 
 ### Switch contents
 
-Specifying the `tg-switcher` attribute on an HTML element makes the following attributes available
+Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
 
-* `tg-when`
-* `tg-choose`
-* `tg-first`
-* `tg-prev`
-* `tg-next`
-* `tg-last`
+* `tg:when`
+* `tg:choose`
+* `tg:first`
+* `tg:prev`
+* `tg:next`
+* `tg:last`
 
-We call an HTML element with the `tg-switcher` attribute a _switcher_.
+We call an HTML element with the `tg:switcher` attribute a _switcher_.
 A switcher has two or more states.
 
 A switcher has a state represented by an integer value. An integer value representing a state is
 called an _index number_.
-The value of the `tg-switcher` attribute is a string of the form `1..5`.
+The value of the `tg:switcher` attribute is a string of the form `1..5`.
 The value to the left of `..` is interpreted as the lower bound of the index number, and the value
 to the right of `..` is interpreted as the upper bound of the index number.
 
-An element with a `tg-when` attribute inside a switcher will only be displayed if its value
+An element with a `tg:when` attribute inside a switcher will only be displayed if its value
 matches the state of the switcher.
 
-When the user clicks or taps an element with a `tg-choose` attribute inside the switcher,
+When the user clicks or taps an element with a `tg:choose` attribute inside the switcher,
 the switcher's state is set to the value of the the attribute.
 
 Here is an example switcher:
 
 ```html
-<div tg-switcher="1..5">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:switcher="1..5">
+  <div tg:when="1">A</div>
+  <div tg:when="2">B</div>
+  <div tg:when="3">C</div>
+  <div tg:when="4">D</div>
+  <div tg:when="5">E</div>
   <nav>
-    <button type="button" tg-choose="1">a</button>
-    <button type="button" tg-choose="2">b</button>
-    <button type="button" tg-choose="3">c</button>
-    <button type="button" tg-choose="4">d</button>
-    <button type="button" tg-choose="5">e</button>
+    <button type="button" tg:choose="1">a</button>
+    <button type="button" tg:choose="2">b</button>
+    <button type="button" tg:choose="3">c</button>
+    <button type="button" tg:choose="4">d</button>
+    <button type="button" tg:choose="5">e</button>
   </nav>
 </div>
 ```
 
-If the the value of `tg-choose` attribute of a button matches switcher's current index number
+If the the value of `tg:choose` attribute of a button matches switcher's current index number
 nothing happens when the user clicks or taps this button.
 
-To visually indicate this, use the `tg-current-class` and `tg-normal-class` attributes to
+To visually indicate this, use the `tg:current-class` and `tg:normal-class` attributes to
 change the style applied to the button.
 
 ```html
   <button
     type="button"
-    tg-choose="1"
+    tg:choose="1"
     class="btn"
-    tg-current-class="btn-primary"
-    tg-normal-class="btn-secondary">a</button>
+    tg:current-class="btn-primary"
+    tg:normal-class="btn-secondary">a</button>
 ```
 
 You can create a button that change the state of the switcher using special attributes such as
-`tg-first`, `tg-prev`, `tg-next`, `tg-last`, etc. instead of the `tg-choose` attribute.
+`tg:first`, `tg:prev`, `tg:next`, `tg:last`, etc. instead of the `tg:choose` attribute.
 
 ```html
-<div tg-switcher="1..5">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:switcher="1..5">
+  <div tg:when="1">A</div>
+  <div tg:when="2">B</div>
+  <div tg:when="3">C</div>
+  <div tg:when="4">D</div>
+  <div tg:when="5">E</div>
   <nav>
-    <button type="button" tg-first>First</button>
-    <button type="button" tg-prev>Prev</button>
-    <button type="button" tg-next>Next</button>
-    <button type="button" tg-last>Last</button>
+    <button type="button" tg:first>First</button>
+    <button type="button" tg:prev>Prev</button>
+    <button type="button" tg:next>Next</button>
+    <button type="button" tg:last>Last</button>
   </nav>
 </div>
 ```
 
 If the switcher's current index number matches the its lower bound,
-nothing happens when the user clicks or taps a button with `tg-first` or `tg-prev` attribute.
+nothing happens when the user clicks or taps a button with `tg:first` or `tg:prev` attribute.
 
 Similarly, if the switcher's current index number matches the its upper bound,
-nothing happens when the user clicks or taps a button with `tg-next` or `tg-last` attribute.
+nothing happens when the user clicks or taps a button with `tg:next` or `tg:last` attribute.
 
-To visually indicate this, use the `tg-enabled-class` and `tg-disabled-class` attributes to
+To visually indicate this, use the `tg:enabled-class` and `tg:disabled-class` attributes to
 change the style applied to the button.
 
 ```html
   <button
     type="button"
-    tg-first
+    tg:first
     class="btn"
-    tg-enabled-class="btn-primary"
-    tg-disabled-class="btn-disabled">First</button>
+    tg:enabled-class="btn-primary"
+    tg:disabled-class="btn-disabled">First</button>
 ```
 
-If the switcher has an `tg-interval` attribute, the switcher's index number is incremented
+If the switcher has an `tg:interval` attribute, the switcher's index number is incremented
 by 1 at the specified interval (unit: millisecond).
 
 ```html
-<div tg-switcher="1..5" tg-interval="2000">
+<div tg:switcher="1..5" tg:interval="2000">
   ...
 </div>
 ```
 
-When the user clicks or taps a button with a `tg-choose` attribute, etc., the switcher's state
+When the user clicks or taps a button with a `tg:choose` attribute, etc., the switcher's state
 no longer changes automatically.
 
 ### Rotate contents
 
-We call an HTML element with the `tg-rotator` attribute a _rotator_.
+We call an HTML element with the `tg:rotator` attribute a _rotator_.
 
 A rotator behaves exactly like a switcher with three reservations:
 
-* If the user clicks a button with the `tg-next` attribute when the current index number matches
+* If the user clicks a button with the `tg:next` attribute when the current index number matches
 the upper bound, the index number will be set to its lower bound.
-* If the user clicks a button with the `tg-prev` attribute when the current index number matches
+* If the user clicks a button with the `tg:prev` attribute when the current index number matches
 the lower bound, the index number will be set to its upper bound.
-* When the `tg-interval` attribute is set, when the current index number reaches the upper bound,
+* When the `tg:interval` attribute is set, when the current index number reaches the upper bound,
 the next time the index number is set to its lower bound.
 
 Here is an example rotator:
 
 ```html
-<div tg-rotator="1..5" tg-interval="2000">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:rotator="1..5" tg:interval="2000">
+  <div tg:when="1">A</div>
+  <div tg:when="2">B</div>
+  <div tg:when="3">C</div>
+  <div tg:when="4">D</div>
+  <div tg:when="5">E</div>
   <nav>
-    <button type="button" tg-prev>Prev</button>
-    <button type="button" tg-next>Next</button>
+    <button type="button" tg:prev>Prev</button>
+    <button type="button" tg:next>Next</button>
   </nav>
 </div>
 ```
@@ -2077,7 +2077,7 @@ article.
 ### Embedding property values into a wrapper or layout
 
 When a wrapper or layout is applied to a page or article, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that wrapper or layout are the values of
+the `<tg:prop>` and `<tg:data>` elements in that wrapper or layout are the values of
 properties that the page or article has.
 
 For example, suppose a page has the following front matter
@@ -2096,10 +2096,10 @@ x = "b"
 y = "c"
 ---
 <header>
-  <tg-data name="x"></tg-data>
-  <tg-data name="y"></tg-data>
+  <tg:data name="x"></tg:data>
+  <tg:data name="y"></tg:data>
 </header>
-<tg-content></tg-content>
+<tg:content></tg:content>
 ```
 
 Then, the text content of the `<header>` element of the HTML document generated from them will
@@ -2108,17 +2108,17 @@ be "a c" instead of "b c".
 ### Embedding property values into a segment
 
 When a segment is embedded into a page, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
 properties that the page has.
 
 Similarly, when a segment is into a layout, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
 properties of the main template (page or article).
 
 ### Embedding property values into a component
 
 When a component is embedded into a page, article, segment, wrapper, layout,
-the values that are substituted for the `<tg-prop>` and `<tg-data>` elements in that template
+the values that are substituted for the `<tg:prop>` and `<tg:data>` elements in that template
 are the values of properties of the main template (page or article).
 
 ## Managing the Contents of the `<head>` Element

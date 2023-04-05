@@ -94,21 +94,21 @@ describe("getSiteData", () => {
       '<body>',
       '  <header>Header</header>',
       '  <div class="my-4 p-2 bg-blue-100">',
-      '    <tg-content></tg-content>',
+      '    <tg:content></tg:content>',
       '    <div>',
-      '      <tg-slot name="x"></tg-slot>',
-      '      <tg-data name="y"></tg-data>',
+      '      <tg:slot name="x"></tg:slot>',
+      '      <tg:data name="y"></tg:data>',
       '    </div>',
-      '    <tg-if-complete>',
+      '    <tg:if-complete>',
       '      <div>',
-      '        <tg-slot name="x"></tg-slot>',
+      '        <tg:slot name="x"></tg:slot>',
       '      </div>',
-      '    </tg-if-complete>',
-      '    <tg-if-complete>',
+      '    </tg:if-complete>',
+      '    <tg:if-complete>',
       '      <div>',
-      '        <tg-slot name="z"></tg-slot>',
+      '        <tg:slot name="z"></tg:slot>',
       '      </div>',
-      '    </tg-if-complete>',
+      '    </tg:if-complete>',
       '  </div>',
       '  <footer>Footer</footer>',
       '</body>'
@@ -129,12 +129,12 @@ describe("getSiteData", () => {
 
     const expected = [
       '<div class="my-4 p-2 bg-green-100 [&>p]:mb-2">',
-      '  <tg-content></tg-content>',
-      '  <tg-if-complete>',
+      '  <tg:content></tg:content>',
+      '  <tg:if-complete>',
       '    <div>',
-      '      <tg-slot name="x"></tg-slot>',
+      '      <tg:slot name="x"></tg:slot>',
       '    </div>',
-      '  </tg-if-complete>',
+      '  </tg:if-complete>',
       '</div>'
     ]
 
@@ -164,9 +164,9 @@ describe("getSiteData", () => {
 
     const expected = [
       '<span class="badge badge-primary">',
-      '  <tg-data name="mark">?</tg-data>',
-      '  <tg-content></tg-content>',
-      '  <tg-slot name="x"></tg-slot>',
+      '  <tg:data name="mark">?</tg:data>',
+      '  <tg:content></tg:content>',
+      '  <tg:slot name="x"></tg:slot>',
       '</span>'
     ]
 

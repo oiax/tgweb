@@ -14,7 +14,7 @@ describe("getTemplate", () => {
     assert.equal(template.frontMatter.title, "FizzBuzz")
 
     const element0 = template.dom.children[0]
-    assert.equal(element0.name, "tg-segment")
+    assert.equal(element0.name, "tg:segment")
     assert.deepEqual(element0.attribs, { name: "apps/fizz_buzz" })
 
     const text0 = template.dom.children[1]

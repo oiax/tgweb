@@ -5,10 +5,10 @@ data-z: 2
 ---
 <div class="bg-gray-100 py-2">
   <h3 class="font-bold text-lg ml-2">
-    <tg-slot name="title"></tg-slot>
+    <tg:slot name="title"></tg:slot>
   </h3>
-  <tg-content></tg-content>
-  <tg-if-complete>
-    <div><tg-data name="date"></tg-data></div>
-  </tg-if-complete>
+  <tg:content></tg:content>
+  <tg:if-complete>
+    <div><tg:data name="date"></tg:data></div>
+  </tg:if-complete>
 </div>

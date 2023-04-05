@@ -3,15 +3,15 @@
 grid = "grid grid-cols-1 gap-6 x:grid-cols-2 lg:grid-cols-3"
 ---
 <body class="p-2">
-  <tg-segment name="nav"></tg-segment>
+  <tg:segment name="nav"></tg:segment>
   <div tg-class="grid">
-    <tg-component name="hello" data-name="world"></tg-component>
-    <tg-component name="i_am">
-      <tg-insert name="name">computer</tg-insert>
-    </tg-component>
-    <tg-content></tg-content>
+    <tg:component name="hello" data-name="world"></tg:component>
+    <tg:component name="i_am">
+      <tg:insert name="name">computer</tg:insert>
+    </tg:component>
+    <tg:content></tg:content>
   </div>
   <footer>
-    &copy; <tg-data name="current-year"></tg-data> Example Inc.
+    &copy; <tg:data name="current-year"></tg:data> Example Inc.
   </footer>
 </body>

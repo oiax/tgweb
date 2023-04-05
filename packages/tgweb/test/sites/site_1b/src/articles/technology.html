@@ -11,15 +11,15 @@ h3 = """
   <h3 class="${h3}">Technology</h3>
   <nav>
     <ul>
-      <tg-links pattern="blog/*" order-by="title:asc" filter="tag:technology">
+      <tg:links pattern="blog/*" order-by="title:asc" filter="tag:technology">
         <li>
-          <a href="#"><tg-prop name="title"></tg-prop></a>
-          (<span><tg-data name="date"></tg-data></span>)
-          <tg-if-complete>
-            <tg-slot name="extra"></tg-slot>
-          </tg-if-complete>
+          <a href="#"><tg:prop name="title"></tg:prop></a>
+          (<span><tg:data name="date"></tg:data></span>)
+          <tg:if-complete>
+            <tg:slot name="extra"></tg:slot>
+          </tg:if-complete>
         </li>
-      </tg-links>
+      </tg:links>
     </ul>
   </nav>
 </div>

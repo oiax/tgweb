@@ -42,7 +42,7 @@ const extractInserts = (dom) => {
   const inserts = {}
 
   dom.children
-    .filter(child => child.constructor.name === "Element" && child.name === "tg-insert")
+    .filter(child => child.constructor.name === "Element" && child.name === "tg:insert")
     .forEach(child => {
       const name = child.attribs.name
 
@@ -51,7 +51,7 @@ const extractInserts = (dom) => {
 
   dom.children =
     dom.children.filter(child =>
-      child.constructor.name !== "Element" || child.name !== "tg-insert"
+      child.constructor.name !== "Element" || child.name !== "tg:insert"
     )
 
   return inserts
