@@ -539,15 +539,16 @@ div-id = "special"
 </body>
 ```
 
-However, as we will see shortly, the `${...}` notation used in the `class` attribute of HTML
-elements has a different meaning.
+However, the `${...}` notation does not make sense for `class` attributes;
+the method of embedding property values in `class` attributes will be explained shortly.
 
-### Defining an alias to a set of class tokens
+### Defining style aliases
 
-A property defined with in the "style" table can be used to give an alias to a set of class
-tokens. The value of a property defined in the "style" table must always be a string.
+A property defined in the "style" table can be used to give an alias to a set of class tokens.
+We call this a _style alias_. The value of a style alias must always be a string.
 
-To embed an alias defined as such into the value of a `class` attribute, use the `${...}` notation.
+To embed a style alias defined as such into the value of a `class` attribute, use the `tg:class`
+attribute.
 
 ```html
 ---
@@ -555,13 +556,13 @@ To embed an alias defined as such into the value of a `class` attribute, use the
 blue-square = "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
 ---
 <body>
-  <div class="${blue-square}">
+  <div tg:class="blue-square">
     Hello, world!
   </div>
 </body>
 ```
 
-Expanding the alias contained in the above template, we get the following:
+Expanding the alias contained in the above template, we get the following result:
 
 ```html
 <body>
@@ -583,7 +584,7 @@ card = """
   """
 ---
 <body>
-  <div class="${card}">
+  <div tg:class="card">
     Hello, world!
   </div>
 </body>
@@ -598,6 +599,9 @@ converted as follows:
 * Any included newline characters are replaced by spaces.
 * Consecutive leading and trailing spaces are removed.
 * Consecutive spaces are replaced by a single space.
+
+If an element has both the `class` and `tg:class` attributes, the combined value of both become
+the final `class` attribute value.
 
 ### Site properties
 
