@@ -1,6 +1,7 @@
 import * as PATH from "path"
 import fs from "fs"
 import toml from "toml"
+import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
 const template1 = `/** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors')
@@ -52,8 +53,8 @@ const generateTailwindConfig = (srcDir) => {
 
       return template1 + "  " + colors + template2
     }
-    catch (e) {
-      console.log(e)
+    catch (error) {
+      showTomlSytaxError("src/color_scheme.toml", tomlData, error)
     }
   }
   else {

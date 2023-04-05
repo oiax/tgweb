@@ -2,6 +2,7 @@ import fs from "fs"
 import toml from "toml"
 import { parseDocument } from "htmlparser2"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
 const separatorRegex = new RegExp("^---\\n", "m")
 
@@ -16,8 +17,7 @@ const getTemplate = (path, type) => {
       return createTemplate(path, type, html, frontMatter)
     }
     catch (error) {
-      console.error(`Could not parse the front matter: ${path}`)
-      console.error(error)
+      showTomlSytaxError(path, parts[1], error)
 
       const frontMatter = {}
       const html = parts.slice(2).join("---\n")
