@@ -606,36 +606,71 @@ converted as follows:
 If an element has both the `class` and `tg:class` attributes, the combined value of both become
 the final `class` attribute value.
 
-You may want to define the following style aliases using Tailwind CSS's
+### Expansion of modifiers
+
+You may want to define the following style aliases using Tailwind CSS modifiers to achieve the
+[responsive design](https://tailwindcss.com/docs/responsive-design).
+
+```toml
+box = """
+  w-16 h-16 p-1 border border-1 rounded
+  md:w-32 md:h-32 md:p-2 md:rounded-md
+  lg:w-48 md:h-48 lg:p-3 lg:rounded-lg
+  """
+```
+
+If you are bothered by the repetition of modifiers such as `md:` and `lg:`, remove them using the
+`{...}` notation as follows:
+
+```toml
+box = """
+  w-16 h-16 p-1 border border-1 rounded
+  md { w-32 h-32 p-2 rounded-md }
+  lg { w-48 h-48 p-3 rounded-lg }
+  """
+```
+
+The `{...}` notation is especially useful for utilization of
 [arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
 
-```toml
-blog-article = """
-  [&_p]:text-gray-900
-  [&_p]:mb-2
-  [&_p]:mx-1
-  [&_p]:tracking-wide
-  """
-```
-
-The following use of `[...] {...}` notation eliminates the repetition of `[&_p]` in the above
-example.
+Assume that you have created the following style alias `blog-article`:
 
 ```toml
 blog-article = """
-  [&_p] {
-    text-gray-900
-    mb-2
-    mx-1
-    tracking-wide
-  }
+  text-gray-900
+  [&_*]:mb-2
+  [&_*:last-child]:mb-0
+  [&_h2]:text-xl
+  [&_h2]:font-bold
+  [&_h2]:tracking-wide
+  [&_h2]:capitalize
+  [&_p]:font-serif
+  [&_p]:leading-5
   """
 ```
 
-You may write this on a single line as follows:
+Then you can use this as follows:
+
+```html
+<article tg:class="blog-article">
+  <h2>Title</h2>
+  <p>Lorem ipsum dolor sit amet.</p>
+  <p>Consectetur adipiscing elit.</p>
+  <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</article>
+```
+
+The following use of `{...}` notation eliminates the repetition of `[&_h2]` and `[&_p]` in the
+above example.
 
 ```toml
-blog-article = "[&_p] { text-gray-900 mb-2 mx-1 tracking-wide }"
+blog-article = """
+  text-gray-900
+  [&_*]:mb-2
+  [&_*:last-child]:mb-0
+  [&_h2] { text-xl font-bold tracking-wide capitalize }
+  [&_p] { font-serif leading-5 }
+  """
 ```
 
 ### Site properties

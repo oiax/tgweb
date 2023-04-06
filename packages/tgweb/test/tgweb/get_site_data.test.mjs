@@ -122,13 +122,17 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const wrapper = siteData.wrappers[0]
-    assert.equal(wrapper.frontMatter.style["div1"], "my-4 p-2 bg-green-100 [&>p]:mb-2 [&>p]:p-1")
+
+    assert.equal(
+      wrapper.frontMatter.style["div1"],
+      "my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1"
+    )
 
     const html = render(wrapper.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<div class="my-4 p-2 bg-green-100 [&>p]:mb-2 [&>p]:p-1">',
+      '<div class="my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1">',
       '  <tg:content></tg:content>',
       '  <tg:if-complete>',
       '    <div>',
