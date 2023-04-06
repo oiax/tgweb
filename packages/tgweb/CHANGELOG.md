@@ -5,7 +5,7 @@
 * c66e20d Embed style aliases using `tg:class` attribute
 * a0eca2d `<tg-*>` tags and `tg-` attributes should be denoted as `<tg:*>` and `tg:*`d
 * e824074 Front matter block must be written in TOML instead of YAML
-* 3193d01 Introduce `[...] {...}` notation to style aliase definition
+* 3193d01 03efdd0 Introduce `{...}` notation to expand modifiers in the style aliase definition
 
 ## 0.3.3
 
