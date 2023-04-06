@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.4.0
+
+* c66e20d Embed style aliases using `tg:class` attribute
+* a0eca2d `<tg-*>` tags and `tg-` attributes should be denoted as `<tg:*>` and `tg:*`d
+* e824074 Front matter block must be written in TOML instead of YAML
+
 ## 0.3.3
 
 * 1ef56b3 Introduce togglers, switchers, and rotators
