@@ -142,6 +142,7 @@ following elements:
 │   ├── pages
 │   ├── segments
 │   ├── tags
+│   ├── color_scheme.toml
 │   └── site.toml
 ├── package-lock.json
 ├── package.json
@@ -230,6 +231,7 @@ If this approach is adopted, the structure of the working directory will look li
     │   │   ├── pages
     │   │   ├── segments
     │   │   ├── tags
+    │   │   ├── color_scheme.toml
     │   │   └── site.toml
     │   ├── tailwind.config.js
     │   └── tailwind.css
@@ -244,6 +246,7 @@ If this approach is adopted, the structure of the working directory will look li
         │   ├── pages
         │   ├── segments
         │   ├── tags
+        │   ├── color_scheme.toml
         │   └── site.toml
         ├── tailwind.config.js
         └── tailwind.css
@@ -327,14 +330,14 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 ### Cusotom color names
 
-Creating a file named `color_scheme.toml` in the `src` directory allows you to define custom
-color names for Tailwind CSS.
+Editing the `color_scheme.toml` in the `src` directory allows you to define custom color names
+for Tailwind CSS.
 
 A custom color name is a combination of a _palette_ and a _modifier_.
 The palette is a three-letter alphabet and the modifier is a one-letter alphabet.
 The palette and modifier are joined by a minus sign, like `bas-s` or `neu-d`.
 
-The following is a list of available palette names and their expected uses.
+The following is a list of available palettes and their expected uses.
 
 * **bas**: Base color (background color of entire website)
 * **neu**: Neutral color (a quiet color like gray, beige, ivory, etc.)

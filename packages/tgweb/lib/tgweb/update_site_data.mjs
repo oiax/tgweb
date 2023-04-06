@@ -8,7 +8,7 @@ import { getTemplate } from "./get_template.mjs"
 const updateSiteData = (siteData, path) => {
   const type = getType(path)
 
-  if (type == "site.yml") {
+  if (type == "site.toml") {
     const newSiteData = getSiteData(process.cwd())
     siteData.properties = newSiteData.properties
     siteData.pages = newSiteData.pages

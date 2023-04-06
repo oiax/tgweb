@@ -49,7 +49,7 @@ describe("updateSiteData", () => {
 
     process.chdir(wd + "b")
 
-    updateSiteData(siteData, "src/site.yml")
+    updateSiteData(siteData, "src/site.toml")
 
     const page = siteData.pages.find(p => p.path === "pages/index.html")
     assert(page)
