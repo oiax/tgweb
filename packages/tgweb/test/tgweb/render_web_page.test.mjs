@@ -167,7 +167,7 @@ describe("renderWebSite", () => {
       '    <script src="/reload/reload.js" defer></script>',
       '  </head>',
       '  <body>',
-      '    <div class="my-4 p-2 bg-green-100 [&>p]:mb-2">',
+      '    <div class="my-4 p-2 bg-green-100 [&>p]:mb-2 [&>p]:p-1">',
       '      <h1 class="text-xl m-2">Hello, world!</h1>',
       '      <p>I am a <em>computer</em>.</p>',
       '      <div>',

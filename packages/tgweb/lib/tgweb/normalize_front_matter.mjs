@@ -1,12 +1,14 @@
 const normalizeFrontMatter = frontMatter => {
-  Object.keys(frontMatter).forEach(key => {
-    if (key.startsWith("class-")) {
-      const value = frontMatter[key]
+  if (typeof frontMatter.style !== "object") return
 
-      if (Array.isArray(value)) {
-        frontMatter[key] = value.join(" ")
-      }
-    }
+  Object.keys(frontMatter.style).forEach(key => {
+    if (typeof frontMatter.style[key] !== "string") delete frontMatter.style[key]
+
+    frontMatter.style[key] =
+      frontMatter.style[key].replaceAll(/\[([^\]]+)\]\s*\{([^}]+)\}/g, (_, selector, tokens) =>
+        tokens.trim().split(/\s+/).map(token => `[${selector}]:${token}`).join(" ")
+      )
+      .trim().replaceAll(/\s+/g, " ")
   })
 }
 export { normalizeFrontMatter }

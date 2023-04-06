@@ -606,6 +606,38 @@ converted as follows:
 If an element has both the `class` and `tg:class` attributes, the combined value of both become
 the final `class` attribute value.
 
+You may want to define the following style aliases using Tailwind CSS's
+[arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
+
+```toml
+blog-article = """
+  [&_p]:text-gray-900
+  [&_p]:mb-2
+  [&_p]:mx-1
+  [&_p]:tracking-wide
+  """
+```
+
+The following use of `[...] {...}` notation eliminates the repetition of `[&_p]` in the above
+example.
+
+```toml
+blog-article = """
+  [&_p] {
+    text-gray-900
+    mb-2
+    mx-1
+    tracking-wide
+  }
+  """
+```
+
+You may write this on a single line as follows:
+
+```toml
+blog-article = "[&_p] { text-gray-900 mb-2 mx-1 tracking-wide }"
+```
+
 ### Site properties
 
 Creating a file named `site.toml` in the `src` directory allows you to set values for properties

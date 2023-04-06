@@ -3,6 +3,7 @@ import toml from "toml"
 import { parseDocument } from "htmlparser2"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
+import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 
 const separatorRegex = new RegExp("^---\\n", "m")
 
@@ -13,6 +14,7 @@ const getTemplate = (path, type) => {
   if (parts[0] === "" && parts[1] !== undefined) {
     try {
       const frontMatter = toml.parse(parts[1])
+      normalizeFrontMatter(frontMatter)
       const html = parts.slice(2).join("---\n")
       return createTemplate(path, type, html, frontMatter)
     }
