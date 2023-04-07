@@ -42,7 +42,6 @@ const renderPage = (path, siteData) => {
   }
   else {
     if (layout) {
-
       return applyLayout(page, layout, siteData, documentProperties, mergeState(state, {container: layout}))
     }
     else {
@@ -102,6 +101,8 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
     layout.dom.children
       .map(child => renderNode(child, siteData, documentProperties, localState))
       .flat()
+      .map(c => postprocess(c, {}))
+      .flat()
 
   doc.children[0].children.pop()
   rendered.forEach(child => doc.children[0].children.push(child))
@@ -136,6 +137,8 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
       layout.dom.children
         .map(child => renderNode(child, siteData, documentProperties, localState))
         .flat()
+        .map(c => postprocess(c, {}))
+        .flat()
 
     doc.children[0].children.pop()
     rendered.forEach(child => doc.children[0].children.push(child))
@@ -160,6 +163,8 @@ const doRenderPage = (page, siteData, documentProperties, state) => {
   const renderedPage =
     page.dom.children
       .map(child => renderNode(child, siteData, documentProperties, localState))
+      .flat()
+      .map(c => postprocess(c, {}))
       .flat()
 
   doc.children[0].children[1].children = renderedPage
@@ -573,11 +578,13 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:rotator"] !== undefined && state.hookName === undefined)
     addRotatorHook(newNode, newState)
 
+  if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
+    addCarouselHook(newNode, newState)
+
   if (state.hookName === "toggler") addTogglerSubhooks(newNode, documentProperties)
   else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, documentProperties)
   else if (state.hookName === "rotator") addRotatorSubhooks(newNode, documentProperties)
-
-  removeTgAttribs(newNode.attribs)
+  else if (state.hookName === "carousel") addCarouselSubhooks(newNode, documentProperties)
 
   newNode.children =
     node.children
@@ -736,14 +743,14 @@ const addSwitcherSubhooks = (newNode, documentProperties) => {
   }
 }
 
-const addRotatorSubhooks = (newNode, documentProperties) => {
+const addRotatorSubhooks = (newNode) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
   if (newNode.attribs["tg:when"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg:when"], documentProperties)
+    const n = parseInt(newNode.attribs["tg:when"], 10)
     if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
   }
 
@@ -768,13 +775,138 @@ const addRotatorSubhooks = (newNode, documentProperties) => {
   }
 
   if (newNode.attribs["tg:choose"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg:choose"], documentProperties)
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
       newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
+}
+
+// x-data:
+//   i: Current index number of the carousel items
+//   v: Interval Id, the return value from `setInterval` function
+
+const addCarouselHook = (newNode, newState) => {
+  newNode.attribs["x-data"] = "window.tgweb.carousel.data()"
+  newState.hookName = "carousel"
+
+  if (newNode.attribs["tg:interval"] === undefined) return;
+
+  const interval = parseInt(newNode.attribs["tg:interval"], 10)
+  if (Number.isNaN(interval)) return
+
+  let duration = parseInt(newNode.attribs["tg:duration"], 10)
+  if (Number.isNaN(duration)) duration = 100
+
+  newNode.attribs["x-init"] = `window.tgweb.carousel.init($data, $el, ${interval}, ${duration})`
+}
+
+const addCarouselSubhooks = (newNode) => {
+  const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg:frame"] !== undefined) {
+    newNode.attribs["data-carousel-frame"] = ""
+  }
+  else if (newNode.attribs["tg:body"] !== undefined) {
+    newNode.attribs["data-carousel-body"] = ""
+  }
+  else if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-carousel-item"] = ""
+  }
+
+  if (newNode.attribs["tg:prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.carousel.prev($data)"
+    newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg:next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.carousel.next($data)"
+    newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg:choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
+
+    if (!Number.isNaN(n)) {
+      newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+
+      const script = `
+          i % len === ${n} ?
+            '${currentClass}' :
+            (inTransition ? '${disabledClass}' : '${normalClass}')
+        `
+
+      newNode.attribs["x-bind:class"] = script.trim().replaceAll(/\s+/g, " ")
+    }
+  }
+}
+
+const postprocess = (node, state) => {
+  const newState = Object.assign({}, state)
+  const klass = node.constructor.name
+
+  if (klass === "Element") {
+    if (node.attribs["tg:carousel"] !== undefined) {
+      return postprocessCarousel(node, newState)
+    }
+    else if (node.attribs["tg:paginator"] !== undefined) {
+      return postprocessCarouselPaginator(node, newState)
+    }
+    else {
+      node.children = node.children.map(c => postprocess(c, newState)).flat()
+      removeTgAttribs(node.attribs)
+      return node
+    }
+  }
+  else {
+    return node
+  }
+}
+
+const postprocessCarousel = (node, newState) => {
+  const carouselItems =
+    DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+
+  newState.carouselItemCount = carouselItems.length
+
+  node.children = node.children.map(c => postprocess(c, newState)).flat()
+  removeTgAttribs(node.attribs)
+  return node
+}
+
+const postprocessCarouselPaginator = (node, newState) => {
+  const disabledClass = (node.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (node.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (node.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+  const choosers = []
+
+  removeTgAttribs(node.attribs)
+
+  for (let n = 0; n < newState.carouselItemCount; n++) {
+    const newNode = parseDocument("<div></div>").children[0]
+    newNode.name = node.name
+    newNode.children = node.children
+    newNode.attribs = Object.assign({}, node.attribs)
+    newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+
+    const script = `
+        i % len === ${n} ?
+          '${currentClass}' :
+          (inTransition ? '${disabledClass}' : '${normalClass}')
+      `
+
+    newNode.attribs["x-bind:class"] = script.trim().replaceAll(/\s+/g, " ")
+
+    delete newNode.attribs.id
+    choosers.push(newNode)
+  }
+
+  return choosers
 }
 
 const purgeAttribs = (attribs) => {
@@ -875,6 +1007,7 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
+  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>>").children[0])
 

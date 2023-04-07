@@ -2088,9 +2088,211 @@ Here is an example rotator:
 </div>
 ```
 
+### Carousel
+
+#### Carousel Basics
+
+We call an HTML element with the `tg:carousel` attribute a _carousel_.
+
+This allows website authors to display multiple pieces of content sequentially in a slideshow-like
+format.
+
+Inside the carousel, there must always be an element with the `tg:frame` attribute, a _carousel frame_.
+Also, inside the carousel frame, there must be an element with the `tg:body` attribute, a _carousel body_.
+In addition, there must be elements with the `tg:item` attribute, _carousel items_,
+inside the carousel body.
+
+The carousel frame and carousel items must have a fixed width.
+Normally, carousel frames and carousel items have the same width.
+If the width of the carousel frame is larger than the carousel items, some or all of the carousel
+items before and after the active carousel item will be displayed.
+
+The width of the carousel body are automatically adjusted, so there is no need for the
+website author to specify it.
+Its width becomes large enough to allow all carousel items to be aligned horizontally, but only a
+portion of it will be visible to website visitors because of the `overflow: hidden` style of the
+carousel frame.
+The carousel effect is achieved by shifting the carousel body left and right with an embedded
+JavaScript program.
+
+What follows is an example of a carousel:
+
+```html
+---
+[style]
+carousel-frame = "w-[240px] h-[180px]"
+
+carousel-body = """
+  [&>div] { w-[240px] h-[180px] object-cover }
+  [&>div>img] { w-full h-full object-cover object-center}
+  """
+---
+<div tg:carousel>
+  <div tg:frame tg:class="carousel-frame">
+    <div tg:body tg:class="carousel-body">
+      <div tg:item><img src="/images/slides/a.png"></div>
+      <div tg:item><img src="/images/slides/b.png"></div>
+      <div tg:item><img src="/images/slides/c.png"></div>
+      <div tg:item><img src="/images/slides/d.png"></div>
+      <div tg:item><img src="/images/slides/e.png"></div>
+    </div>
+  </div>
+</div>
+```
+
+As with rotators, placing an element with a `tg:prev` or `tg:next` attribute inside the carousel
+allows the user to control the state of the carousel.
+
+```html
+<nav>
+  <button type="button" tg:prev>Prev</button>
+  <button type="button" tg:next>Next</button>
+</nav>
+```
+
+#### Carousel auto-rotation and animation effect
+
+To automatically rotate the carousel items at regular time intervals, specify the
+`tg:interval` attribute for the carousel.
+The numeric sequence specified in this attribute is interpreted as time in milliseconds.
+
+```html
+<div tg:carousel tg:interval="3000">
+```
+
+If you want to add animation effect to the rotation of the carousel, specify the
+`tg:duration` attribute of the carousel.
+
+```html
+<div tg:carousel tg:interval="3000" tg:duration="500">
+```
+
+By default, the horizontal movement of carousel items is linear, i.e., they move at the even speed.
+
+If you want to fine-tune the way they move, specify a class with a name beginning with "ease-" for
+the carousel body.
+
+```html
+<div tg:carousel>
+  <div tg:frame tg:class="carousel-frame">
+    <div tg:body class="ease-in-out" tg:class="carousel-body">
+      ...
+    </div>
+  </div>
+</div>
+```
+
+The `ease-in-out` class moderates the movement near the beginning and near the end of the change.
+See [Transition Timing Function](https://tailwindcss.com/docs/transition-timing-function) for
+details.
+
+If the `tg:duration` attribute is set on the carousel, a user clicking/tapping the "prev" or
+"next" button while the carousel body is shifting horizontally will have no effect.
+To visually indicate this, specify the `tg:enabled-class` and `tg:disabled-class` attributes to
+the buttons.
+
+Class tokens specified in the `tg:enabled-class` attribute are added to the `class` attribute of
+the button when the carousel body is stopped, and class tokens specified in the `tg:disabled-class`
+attribute are added to the `class` attribute of the button when the carousel body is shifting.
+
+```html
+<button
+  type="button"
+  tg:prev
+  class="rounded-full w-12 h-12 opacity-50"
+  tg:enabled-class="bg-teal-400 hover:opacity-75"
+  tg:disabled-class="bg-gray-400 cursor-default"
+>
+  <span class="material-symbols-outlined">arrow_back</span>
+</button>
+```
+
+#### Paginator
+
+Inside the carousel, there may be an element with the `tg:paginator` attribute.
+This element will be a template for a group of buttons that will allow the user to choose the
+a carousel item to be displayed in the center of the carousel frame.
+We call these buttons _pagination buttons_.
+
+For example, if the number of carousel items is five, the following code example generates a
+`<nav>` element with five `<button>` elements inside.
+
+```html
+<div tg:carousel>
+  ...
+  <nav>
+    <button type="button" tg:paginator></button>
+  </nav>
+</div>
+```
+
+Each pagination button corresponds to one of the carousel items.
+
+If desired, you may code individual pagination buttons by specifying the number of the carousel
+item in the `tg:choose` attribute.
+
+The following example generates a `<nav>` element with five `<button>` elements, as in the
+previous example.
+
+```html
+<nav>
+  <button type="button" tg:choose="0"></button>
+  <button type="button" tg:choose="1"></button>
+  <button type="button" tg:choose="2"></button>
+  <button type="button" tg:choose="3"></button>
+  <button type="button" tg:choose="4"></button>
+</nav>
+```
+
+Note that each carousel item is numbered starting with zero.
+
+If you want to give a prominent style to the pagination button corresponding to the carousel item
+displayed in the center of the carousel frame, use the `tg:normal-class` and `tg:current-class`
+attributes.
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+  >
+  </button>
+</nav>
+```
+
+Class tokens specified in the `tg:normal-class` attribute are applied to buttons corresponding to
+carousel items that are not currently displayed in the center of the carousel frame,
+and class tokens specified in the `tg:current-class` attribute are applied to the button
+corresponding to the carousel item that is currently displayed in the center of the carousel frame.
+
+When the `tg:duration` attribute is set on the carousel, a user clicking/tapping the pagination
+buttons while the carousel body is shifting horizontally will have no effect.
+To visually indicate this, specify the `tg:disabled-class` attributes to
+the buttons.
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+    tg:disabled-class="bg-gray-400 cursor-default"
+  >
+  </button>
+</nav>
+```
+
+Class tokens specified in the `tg:disabled-class` attribute are added to the `class` attribute of
+all pagination buttons when the carousel body is shifting.
+
 ### Notes on Alpine.js
 
-The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content generation.
+The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content manipulation.
 However, website authors themselves cannot use attributes derived from Alpine.js such as `x-data`
 , `@click`, and `:class`.
 When those attributes are found in the source HTML files, they will be removed.
