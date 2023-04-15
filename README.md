@@ -1954,37 +1954,35 @@ So the above example could be rewritten as:
 Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
 
-* `tg:when`
+* `tg:item`
 * `tg:choose`
 * `tg:first`
 * `tg:prev`
 * `tg:next`
 * `tg:last`
+* `tg:paginator`
 
 We call an HTML element with the `tg:switcher` attribute a _switcher_.
-A switcher has two or more states.
+There must be more than one element with the `tg:item` attribute in the switcher.
+We call them _switcher items_.
 
-A switcher has a state represented by an integer value. An integer value representing a state is
-called an _index number_.
-The value of the `tg:switcher` attribute is a string of the form `1..5`.
-The value to the left of `..` is interpreted as the lower bound of the index number, and the value
-to the right of `..` is interpreted as the upper bound of the index number.
-
-An element with a `tg:when` attribute inside a switcher will only be displayed if its value
-matches the state of the switcher.
+Swticher items are assigned unique _index numbers_ starting from zero in sequence.
+A switcher has a state represented by an integer value, called an _current index number_.
+A switcher item will only be displayed if its index number matches the current index number of the
+switcher.
 
 When the user clicks or taps an element with a `tg:choose` attribute inside the switcher,
-the switcher's state is set to the value of the the attribute.
+the switcher's current index number is set to the value of the the attribute.
 
 Here is an example switcher:
 
 ```html
-<div tg:switcher="1..5">
-  <div tg:when="1">A</div>
-  <div tg:when="2">B</div>
-  <div tg:when="3">C</div>
-  <div tg:when="4">D</div>
-  <div tg:when="5">E</div>
+<div tg:switcher>
+  <div tg:item>A</div>
+  <div tg:item>B</div>
+  <div tg:item>C</div>
+  <div tg:item>D</div>
+  <div tg:item>E</div>
   <nav>
     <button type="button" tg:choose="1">a</button>
     <button type="button" tg:choose="2">b</button>
@@ -2014,12 +2012,12 @@ You can create a button that change the state of the switcher using special attr
 `tg:first`, `tg:prev`, `tg:next`, `tg:last`, etc. instead of the `tg:choose` attribute.
 
 ```html
-<div tg:switcher="1..5">
-  <div tg:when="1">A</div>
-  <div tg:when="2">B</div>
-  <div tg:when="3">C</div>
-  <div tg:when="4">D</div>
-  <div tg:when="5">E</div>
+<div tg:switcher>
+  <div tg:item>A</div>
+  <div tg:item>B</div>
+  <div tg:item>C</div>
+  <div tg:item>D</div>
+  <div tg:item>E</div>
   <nav>
     <button type="button" tg:first>First</button>
     <button type="button" tg:prev>Prev</button>
@@ -2051,13 +2049,30 @@ If the switcher has an `tg:interval` attribute, the switcher's index number is i
 by 1 at the specified interval (unit: millisecond).
 
 ```html
-<div tg:switcher="1..5" tg:interval="2000">
+<div tg:switcher tg:interval="2000">
   ...
 </div>
 ```
 
 When the user clicks or taps a button with a `tg:choose` attribute, etc., the switcher's state
 no longer changes automatically.
+
+Inside the switcher, there may be an element with the `tg:paginator` attribute.
+This element will be a template for a group of buttons that will allow the user to choose the
+a switcher item to be displayed.
+We call these buttons _pagination buttons_.
+
+For example, if the number of switcher items is five, the following code example generates a
+`<nav>` element with five `<button>` elements inside.
+
+```html
+<div tg:switcher>
+  ...
+  <nav>
+    <button type="button" tg:paginator></button>
+  </nav>
+</div>
+```
 
 ### Rotate contents
 
@@ -2075,7 +2090,7 @@ the next time the index number is set to its lower bound.
 Here is an example rotator:
 
 ```html
-<div tg:rotator="1..5" tg:interval="2000">
+<div tg:rotator tg:interval="2000">
   <div tg:when="1">A</div>
   <div tg:when="2">B</div>
   <div tg:when="3">C</div>

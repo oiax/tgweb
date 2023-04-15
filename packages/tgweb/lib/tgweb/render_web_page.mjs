@@ -581,10 +581,10 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
     addCarouselHook(newNode, newState)
 
-  if (state.hookName === "toggler") addTogglerSubhooks(newNode, documentProperties)
-  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, documentProperties)
-  else if (state.hookName === "rotator") addRotatorSubhooks(newNode, documentProperties)
-  else if (state.hookName === "carousel") addCarouselSubhooks(newNode, documentProperties)
+  if (state.hookName === "toggler") addTogglerSubhooks(newNode)
+  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
+  else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
+  else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
 
   newNode.children =
     node.children
@@ -609,74 +609,13 @@ const expandCustomProperties = (value, documentProperties) =>
     else return `\${${propName}}`
   })
 
-// x-data:
-//   f: Flag, a boolean value indicating the on/off state of the toggler
+// Toggler
 
 const addTogglerHook = (newNode, newState) => {
   newNode.attribs["x-data"] = `{ f: false }`
   newNode.attribs["x-on:click"] = `f = false`
   newNode.attribs["x-on:click.outside"] = `f = false`
   newState.hookName = "toggler"
-}
-
-// x-data:
-//   i: Current index number of the switcher
-//   s: Lower limit of index numbers
-//   e: Upper limit of index numbers
-//   v: Interval Id, the return value from `setInterval` function
-
-const addSwitcherHook = (newNode, newState) => {
-  const md = [...newNode.attribs["tg:switcher"].trim().match(/^(\d+)\.\.(\d+)$/)]
-
-  if (md !== null) {
-    const s = parseInt(md[1], 10)
-    const e = parseInt(md[2], 10)
-
-    if (s < e) {
-      newState.hookName = "switcher"
-      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
-
-      if (newNode.attribs["tg:interval"] !== undefined) {
-        const interval = parseInt(newNode.attribs["tg:interval"], 10)
-
-        if (! Number.isNaN(interval)) {
-          const innerScript = "if (i < e) i = i + 1; else clearInterval(v)"
-          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
-          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
-        }
-      }
-    }
-  }
-}
-
-// x-data:
-//   i: Current index number of the rotator
-//   s: Lower limit of index numbers
-//   e: Upper limit of index numbers
-//   v: Interval Id, the return value from `setInterval` function
-
-const addRotatorHook = (newNode, newState) => {
-  const md = [...newNode.attribs["tg:rotator"].trim().match(/^(\d+)\.\.(\d+)$/)]
-
-  if (md !== null) {
-    const s = parseInt(md[1], 10)
-    const e = parseInt(md[2], 10)
-
-    if (s < e) {
-      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
-      newState.hookName = "rotator"
-
-      if (newNode.attribs["tg:interval"] !== undefined) {
-        const interval = parseInt(newNode.attribs["tg:interval"], 10)
-
-        if (! Number.isNaN(interval)) {
-          const innerScript = "if (i < e) i = i + 1; else i = s"
-          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
-          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
-        }
-      }
-    }
-  }
 }
 
 const addTogglerSubhooks = (newNode) => {
@@ -702,44 +641,86 @@ const addTogglerSubhooks = (newNode) => {
   }
 }
 
-const addSwitcherSubhooks = (newNode, documentProperties) => {
+// Switcher
+
+const addSwitcherHook = (newNode, newState) => {
+  newState.hookName = "switcher"
+  newNode.attribs["x-data"] = "window.tgweb.switcher.data()"
+
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+
+    if (! Number.isNaN(interval)) {
+      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, ${interval})`
+    }
+    else {
+      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+    }
+  }
+  else {
+    newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+  }
+}
+
+const addSwitcherSubhooks = (newNode) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  if (newNode.attribs["tg:when"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg:when"], documentProperties)
-    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+  if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-switcher-item"] = ""
+    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.first($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : i; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.prev($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : i; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.next($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.last($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:choose"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg:choose"], documentProperties)
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-on:click"] = `window.tgweb.switcher.last($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
+  }
+}
+
+// Rotator
+
+const addRotatorHook = (newNode, newState) => {
+  newState.hookName = "rotator"
+  newNode.attribs["x-data"] = "window.tgweb.rotator.data()"
+
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+
+    if (! Number.isNaN(interval)) {
+      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, ${interval})`
+    }
+    else {
+      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
+    }
+  }
+  else {
+    newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
   }
 }
 
@@ -749,44 +730,42 @@ const addRotatorSubhooks = (newNode) => {
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  if (newNode.attribs["tg:when"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg:when"], 10)
-    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+  if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-rotator-item"] = ""
+    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.first($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.prev($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.next($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.last($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:choose"] !== undefined) {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-on:click"] = `window.tgweb.rotator.last($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
 }
 
-// x-data:
-//   i: Current index number of the carousel items
-//   v: Interval Id, the return value from `setInterval` function
+// Carousel
 
 const addCarouselHook = (newNode, newState) => {
   newNode.attribs["x-data"] = "window.tgweb.carousel.data()"

@@ -1,6 +1,82 @@
 const modulo = (v, w) => (v % w + w) % w
 
 window.tgweb = {
+  switcher: {
+    data: () => ({
+      i: 0,
+      len: undefined
+    }),
+    init: (data, el, interval) => {
+      const items = el.querySelectorAll("[data-switcher-item]")
+      data.len = items.length
+      items.forEach((item, n) => item.dataset.index = `${n}`)
+
+      if (interval !== undefined) {
+        data.v = setInterval(() => { window.tgweb.switcher.forward(data) }, interval)
+      }
+    },
+    forward: (data) => {
+      data.i = data.i < data.len - 1 ? data.i + 1 : data.i
+    },
+    first: (data) => {
+      data.i = 0
+      clearInterval(data.v)
+    },
+    prev: (data) => {
+      data.i = data.i > 0 ? data.i - 1 : data.i
+      clearInterval(data.v)
+    },
+    next: (data) => {
+      data.i = data.i < data.len - 1 ? data.i + 1 : data.i
+      clearInterval(data.v)
+    },
+    last: (data) => {
+      data.i = data.len - 1
+      clearInterval(data.v)
+    },
+    choose: (data, n) => {
+      if (n >= 0 && n < data.len) data.i = n
+      clearInterval(data.v)
+    }
+  },
+  rotator: {
+    data: () => ({
+      i: 0,
+      len: undefined
+    }),
+    init: (data, el, interval) => {
+      const items = el.querySelectorAll("[data-rotator-item]")
+      data.len = items.length
+      items.forEach((item, n) => item.dataset.index = `${n}`)
+
+      if (interval !== undefined) {
+        data.v = setInterval(() => { window.tgweb.rotator.forward(data) }, interval)
+      }
+    },
+    forward: (data) => {
+      data.i = data.i < data.len - 1 ? data.i + 1 : 0
+    },
+    first: (data) => {
+      data.i = 0
+      clearInterval(data.v)
+    },
+    prev: (data) => {
+      data.i = data.i > 0 ? data.i - 1 : data.len - 1
+      clearInterval(data.v)
+    },
+    next: (data) => {
+      data.i = data.i < data.len - 1 ? data.i + 1 : 0
+      clearInterval(data.v)
+    },
+    last: (data) => {
+      data.i = data.len - 1
+      clearInterval(data.v)
+    },
+    choose: (data, n) => {
+      if (n >= 0 && n < data.len) data.i = n
+      clearInterval(data.v)
+    }
+  },
   carousel: {
     data: () => ({
       inTransition: false,
@@ -42,7 +118,7 @@ window.tgweb = {
       data.body.style.translate =
         "-" + String(data.itemWidth * 2 - (data.frame.offsetWidth - data.itemWidth) / 2) + "px 0"
 
-      data.body.querySelectorAll("[data-carousel-item]").forEach((item, n) => {
+      items.forEach((item, n) => {
         item.style.order = modulo(n - data.i + 2, data.len * data.repeatCount)
       })
 
