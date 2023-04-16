@@ -9,6 +9,7 @@
 * d76434c Introduce carousel
 * 9b06175 Improve switcher and rotator so that we do not have to specify the number of items and
           we can generate pagination buttons using `tg:paginator` attribute.
+* 5baf7fe Introduce `tg:modal` utility
 
 ## 0.3.3
 
