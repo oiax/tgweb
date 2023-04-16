@@ -581,10 +581,14 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
     addCarouselHook(newNode, newState)
 
+  if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
+    addModalHook(newNode, newState)
+
   if (state.hookName === "toggler") addTogglerSubhooks(newNode)
   else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
   else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
   else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
+  else if (state.hookName === "modal") addModalSubhooks(newNode)
 
   newNode.children =
     node.children
@@ -824,6 +828,29 @@ const addCarouselSubhooks = (newNode) => {
     }
   }
 }
+
+// Modal
+
+const addModalHook = (newNode, newState) => {
+  newNode.attribs["x-data"] = "{ body: undefined, open: false }"
+  newNode.attribs["x-init"] = "body = $el.querySelector('dialog')"
+  newState.hookName = "modal"
+
+  if (newNode.attribs["tg:open"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && !open) body.showModal(); open = true"
+  }
+}
+
+const addModalSubhooks = (newNode) => {
+  if (newNode.attribs["tg:open"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && !open) body.showModal(); open = true"
+  }
+  else if (newNode.attribs["tg:close"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && open) body.close(); open = false"
+  }
+}
+
+// Postprocess
 
 const postprocess = (node, state) => {
   const newState = Object.assign({}, state)

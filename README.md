@@ -19,6 +19,7 @@
 * [Articles](#articles)
 * [Tags](#tags)
 * [Links](#links)
+* [Dynamic Elements](#dynamic-elements)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
@@ -1896,12 +1897,49 @@ The above code is to be interpreted as exactly the same as the following
 </tg:link>
 ```
 
-## Making Dynamic Contents
+## Dynamic Elements
 
-Using tgweb, it is possible to show/hide content and change the style of content according to
-the user's operation.
+This section explains how to introduce dynamic elements such as modals and carousels to your website.
 
-### Show and hide contents
+### Modal
+
+Specifying the `tg:modal` attribute on an HTML element makes the following attributes available
+to descendant elements of that element:
+
+* `tg:open`
+* `tg:close`
+
+We call an HTML element with the `tg:modal` attribute a __modal__.
+A modal has two states, `open` and `close`. Its initial state is `close`.
+
+There must be one `<dialog>` element inside the modal. Initially, this element is not displayed.
+When the user clicks on an element with the `tg:open` attribute, the `<dialog>` element is displayed.
+Conversely, if the user clicks on an element with the `tg:close` attribute, the `<dialog>` element
+will disappear.
+
+What follows is an example of a modal:
+
+```html
+<div tg:modal>
+  <div><button type="button" tg:open>Open</button></div>
+  <dialog class="rounded-2xl bg-white backdrop:bg-gray-800/80 p-4 h-[360px]">
+    <h2>Greetings</h2>
+    <p>Hello, world!</p>
+    <div><button type="button" tg:close>Close</button></div>
+  </dialog>
+</div>
+```
+
+A transparent element of the same size as the viewport, called a "backdrop," is inserted directly
+below the `<dialog>` element.
+The backdrop deactivates all page content except the `<dialog>` element.
+
+The class token `backdrop:bg-gray-800/80` in the value of the `class` attribute of the `<dialog>`
+element applies a translucent dark gray background color to the backdrop.
+See [Dialog Backdrops](https://tailwindcss.com/docs/hover-focus-and-other-states#dialog-backdrops)
+in the Tailwind CSS Documentation for more information.
+
+### Toggler
 
 Specifying the `tg:toggler` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
@@ -1949,7 +1987,7 @@ So the above example could be rewritten as:
 </div>
 ```
 
-### Switch contents
+### Switcher
 
 Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
@@ -2074,7 +2112,7 @@ For example, if the number of switcher items is five, the following code example
 </div>
 ```
 
-### Rotate contents
+### Rotator
 
 We call an HTML element with the `tg:rotator` attribute a _rotator_.
 
