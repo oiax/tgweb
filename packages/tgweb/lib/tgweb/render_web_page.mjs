@@ -746,12 +746,12 @@ const addRotatorSubhooks = (newNode) => {
 
   if (newNode.attribs["tg:prev"] !== undefined) {
     newNode.attribs["x-on:click"] = "window.tgweb.rotator.prev($data)"
-    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
     newNode.attribs["x-on:click"] = "window.tgweb.rotator.next($data)"
-    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
+    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
   }
 
   if (newNode.attribs["tg:last"] !== undefined) {
