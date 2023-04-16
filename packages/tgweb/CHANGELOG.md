@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.4.1
+
+* fc06f94 Fix render_web_page.mjs: Enable always the prev/next buttons of the rotator
+
 ## 0.4.0
 
 * c66e20d Embed style aliases using `tg:class` attribute
