@@ -1,7 +1,0 @@
-meta-viewport: "width=device-width, initial-scale=1.0"
-http-equiv-content-security-policy: "default-src 'self'"
-property-fb:app_id: 0123456789abced
-property-og:type: website
-property-og:url: "${url}"
-property-og:title: "${title}"
-property-og:image: "%{/images/icons/default.png}"

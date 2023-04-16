@@ -1,9 +1,10 @@
 import fs from "fs"
-import YAML from "js-yaml"
+import toml from "toml"
 import glob from "glob"
 import { getTemplate } from "./get_template.mjs"
 import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
+import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
 const getSiteData = directory => {
   const cwd = process.cwd()
@@ -24,12 +25,19 @@ const getSiteData = directory => {
 
   process.chdir(directory)
 
-  const site_yaml_path = "src/site.yml"
+  const site_toml_path = "src/site.toml"
 
-  if (fs.existsSync(site_yaml_path)) {
-    const source = fs.readFileSync(site_yaml_path)
-    siteData.properties = mergeProperties(siteData.properties, YAML.load(source))
-    normalizeFrontMatter(siteData.properties)
+  if (fs.existsSync(site_toml_path)) {
+    const source = fs.readFileSync(site_toml_path)
+
+    try {
+      const properties = toml.parse(source)
+      siteData.properties = mergeProperties(siteData.properties, properties)
+      normalizeFrontMatter(siteData.properties)
+    }
+    catch (error) {
+      showTomlSytaxError(site_toml_path, source, error)
+    }
   }
 
   if (fs.existsSync("src/components")) {

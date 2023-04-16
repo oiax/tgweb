@@ -49,7 +49,7 @@ describe("updateSiteData", () => {
 
     process.chdir(wd + "b")
 
-    updateSiteData(siteData, "src/site.yml")
+    updateSiteData(siteData, "src/site.toml")
 
     const page = siteData.pages.find(p => p.path === "pages/index.html")
     assert(page)
@@ -89,7 +89,7 @@ describe("updateSiteData", () => {
     const p = DomUtils.find(node => node.name === "p", article.dom.children, true)
     assert.equal(DomUtils.textContent(p), "Added paragraph.")
 
-    assert.equal(article.frontMatter["class-div1"], "bg-red-100 py-2")
+    assert.equal(article.frontMatter.style["div1"], "bg-red-100 py-2")
   })
 
   it("should update a wrapper template", () => {
@@ -107,7 +107,7 @@ describe("updateSiteData", () => {
     const p = DomUtils.find(node => node.name === "p", wrapper.dom.children, true)
     assert.equal(DomUtils.textContent(p), "Added paragraph.")
 
-    assert.equal(wrapper.frontMatter["class-div1"], "bg-blue-100 py-2")
+    assert.equal(wrapper.frontMatter.style["div1"], "bg-blue-100 py-2")
   })
 
   it("should update a component template", () => {
@@ -125,6 +125,6 @@ describe("updateSiteData", () => {
     const p = DomUtils.findOne(node => node.name === "p", component.dom.children, true)
     assert.equal(DomUtils.textContent(p), "Added paragraph.")
 
-    assert.equal(component.frontMatter["class-div1"], "bg-blue-100 p-2")
+    assert.equal(component.frontMatter.style["div1"], "bg-blue-100 p-2")
   })
 })

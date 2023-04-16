@@ -1,0 +1,12 @@
+[meta]
+viewport = "width=device-width, initial-scale=1.0"
+
+[http-equiv]
+content-security-policy = "default-src 'self'"
+
+[meta-property]
+"fb:app_id" = "0123456789abced"
+"og:type" = "website"
+"og:url" = "${url}"
+"og:title" = "${title}"
+"og:image" = "%{/images/icons/default.png}"

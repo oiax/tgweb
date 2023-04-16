@@ -1,7 +1,7 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "keywords": [
     "teamgenik",
     "blog",
@@ -27,18 +27,18 @@
   "dependencies": {
     "alpinejs": "^3.12.0",
     "chokidar": "^3.5.3",
-    "daisyui": "^2.51.2",
+    "daisyui": "^2.51.5",
     "express": "^4.18.2",
     "glob": "^8.0.3",
     "html-escaper": "^3.0.3",
     "htmlparser2": "^8.0.2",
-    "js-yaml": "^4.1.0",
     "material-symbols": "^0.4.5",
     "minimatch": "^6.1.6",
     "pretty": "^2.0.0",
     "reload": "^3.2.1",
-    "tailwindcss": "^3.2.4",
-    "tcp-port-used": "^1.0.2"
+    "tailwindcss": "^3.3.1",
+    "tcp-port-used": "^1.0.2",
+    "toml": "^3.0.0"
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",

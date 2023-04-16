@@ -1,5 +1,16 @@
 # tgweb CHANGELOG
 
+## 0.4.0
+
+* c66e20d Embed style aliases using `tg:class` attribute
+* a0eca2d `<tg-*>` tags and `tg-` attributes should be denoted as `<tg:*>` and `tg:*`d
+* e824074 Front matter block must be written in TOML instead of YAML
+* 3193d01 03efdd0 Introduce `{...}` notation to expand modifiers in the style aliase definition
+* d76434c Introduce carousel
+* 9b06175 Improve switcher and rotator so that we do not have to specify the number of items and
+          we can generate pagination buttons using `tg:paginator` attribute.
+* 5baf7fe Introduce `tg:modal` utility
+
 ## 0.3.3
 
 * 1ef56b3 Introduce togglers, switchers, and rotators

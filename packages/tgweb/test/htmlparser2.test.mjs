@@ -15,4 +15,22 @@ describe("parseDocument", () => {
 
     assert.equal(div.attribs["tg-app-code-name"], "alice.oiax/fizz_buzz")
   })
+
+  it("accepts <tg:content></tg:content>", () => {
+    const html = "<div><tg:content></tg:content></div>"
+    const dom = parseDocument(html)
+
+    const div = dom.children[0].children[0]
+
+    assert.equal(div.name, "tg:content")
+  })
+
+  it("accepts <div :class='foo'></div>", () => {
+    const html = "<div :class='foo'></div>"
+    const dom = parseDocument(html)
+
+    const div = dom.children[0]
+
+    assert.equal(div.attribs[":class"], "foo")
+  })
 })

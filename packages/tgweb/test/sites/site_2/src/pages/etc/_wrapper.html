@@ -1,8 +1,10 @@
 ---
-layout: normal
-class-h3: "font-bold text-lg ml-2"
+layout = "normal"
+
+[style]
+h3 = "font-bold text-lg ml-2"
 ---
 <main class="py-2">
-  <h3 class="${h3}">MEMO</h3>
-  <tg-content></tg-content>
+  <h3 tg:class="h3">MEMO</h3>
+  <tg:content></tg:content>
 </main>

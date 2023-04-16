@@ -80,6 +80,7 @@ describe("destroy", () => {
       '    <meta charset="utf-8">',
       '    <title>Memo 1</title>',
       '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <script src="/js/tgweb_utilities.js" defer></script>',
       '    <script src="/js/alpine.min.js" defer></script>',
       '    <script src="/reload/reload.js" defer></script>',
       '  </head>',
@@ -148,7 +149,7 @@ describe("destroy", () => {
     assert.equal(component, undefined)
   })
 
-  it("should process the deletion of the site.yml", () => {
+  it("should process the deletion of the site.toml", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     process.chdir(wd + "a")
     fs.rmSync(wd + "/dist", { force: true, recursive: true })
@@ -156,7 +157,7 @@ describe("destroy", () => {
 
     process.chdir(wd)
 
-    destroy("src/site.yml", siteData)
+    destroy("src/site.toml", siteData)
 
     assert.deepEqual(siteData.properties, {host: "localhost", port: 3000, scheme: "http"})
 

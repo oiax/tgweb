@@ -1,6 +1,7 @@
 import * as PATH from "path"
 import fs from "fs"
-import YAML from "js-yaml"
+import toml from "toml"
+import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
 const template1 = `/** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors')
@@ -33,13 +34,13 @@ const paletteNames = ["pri", "sec", "acc", "neu", "bas", "nav"]
 const modifiers = ["s", "b", "d", "c"]
 
 const generateTailwindConfig = (srcDir) => {
-  const colorSchemePath = PATH.resolve(PATH.join(srcDir, "color_scheme.yml"))
+  const colorSchemePath = PATH.resolve(PATH.join(srcDir, "color_scheme.toml"))
 
   if (fs.existsSync(colorSchemePath)) {
-    const yamlData = fs.readFileSync(colorSchemePath)
+    const tomlData = fs.readFileSync(colorSchemePath)
 
     try {
-      const doc = YAML.load(yamlData)
+      const doc = toml.parse(tomlData)
 
       const keys = Object.keys(doc).filter(key => {
         const parts = key.split("-")
@@ -52,8 +53,8 @@ const generateTailwindConfig = (srcDir) => {
 
       return template1 + "  " + colors + template2
     }
-    catch (e) {
-      console.log(e)
+    catch (error) {
+      showTomlSytaxError("src/color_scheme.toml", tomlData, error)
     }
   }
   else {

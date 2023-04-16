@@ -21,11 +21,11 @@ const destroy = (path, siteData) => {
       if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
     }
   }
-  else if (posixPath === "src/site.yml") {
+  else if (posixPath === "src/site.toml") {
     updateSiteData(siteData, posixPath)
     _regenerateFiles(posixPath, siteData)
   }
-  else if (posixPath === "src/color_scheme.yml") {
+  else if (posixPath === "src/color_scheme.toml") {
     const tailwindConfig = generateTailwindConfig(PATH.dirname(posixPath))
     if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
     if (process.env.VERBOSE) console.log(`Updated tailwind.config.js`)
@@ -73,7 +73,7 @@ const _regenerateFiles = (path, siteData) => {
   if (type === "page") {
     return
   }
-  else if (type === "site.yml") {
+  else if (type === "site.toml") {
     siteData.pages.forEach(page => updateHTML("src/" + page.path, siteData))
     siteData.articles.forEach(article => updateHTML("src/" + article.path, siteData))
   }

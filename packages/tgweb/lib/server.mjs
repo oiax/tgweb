@@ -10,7 +10,9 @@ import tcpPortUsed from "tcp-port-used"
 import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
 import { installFonts } from "./server/install_fonts.mjs"
+import { installUtilities } from "./server/install_utilities.mjs"
 import { installAlpinejs } from "./server/install_alpinejs.mjs"
+import { touchTailwindcss } from "./server/touch_tailwindcss.mjs"
 import { generateTailwindConfig } from "./tgweb/generate_tailwind_config.mjs"
 import tgweb from "./tgweb.mjs"
 
@@ -74,7 +76,9 @@ const main = (workingDir, port) => {
   const siteData = tgweb.getSiteData(process.cwd())
 
   installFonts(siteData, workingDir)
+  installUtilities(workingDir)
   installAlpinejs(workingDir)
+  touchTailwindcss()
 
   const tailwindConfig = generateTailwindConfig(PATH.join(process.cwd(), "src"))
   if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)

@@ -19,6 +19,7 @@
 * [Articles](#articles)
 * [Tags](#tags)
 * [Links](#links)
+* [Dynamic Elements](#dynamic-elements)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
@@ -142,7 +143,8 @@ following elements:
 │   ├── pages
 │   ├── segments
 │   ├── tags
-│   └── site.yml
+│   ├── color_scheme.toml
+│   └── site.toml
 ├── package-lock.json
 ├── package.json
 ├── tailwind.config.js
@@ -230,7 +232,8 @@ If this approach is adopted, the structure of the working directory will look li
     │   │   ├── pages
     │   │   ├── segments
     │   │   ├── tags
-    │   │   └── site.yml
+    │   │   ├── color_scheme.toml
+    │   │   └── site.toml
     │   ├── tailwind.config.js
     │   └── tailwind.css
     └── site_1
@@ -244,7 +247,8 @@ If this approach is adopted, the structure of the working directory will look li
         │   ├── pages
         │   ├── segments
         │   ├── tags
-        │   └── site.yml
+        │   ├── color_scheme.toml
+        │   └── site.toml
         ├── tailwind.config.js
         └── tailwind.css
 ```
@@ -327,14 +331,14 @@ See [below](#managing-the-contents-of-the-head-element) for details.
 
 ### Cusotom color names
 
-Creating a file named `color_scheme.yml` in the `src` directory allows you to define custom
-color names for Tailwind CSS.
+Editing the `color_scheme.toml` in the `src` directory allows you to define custom color names
+for Tailwind CSS.
 
 A custom color name is a combination of a _palette_ and a _modifier_.
 The palette is a three-letter alphabet and the modifier is a one-letter alphabet.
 The palette and modifier are joined by a minus sign, like `bas-s` or `neu-d`.
 
-The following is a list of available palette names and their expected uses.
+The following is a list of available palettes and their expected uses.
 
 * **bas**: Base color (background color of entire website)
 * **neu**: Neutral color (a quiet color like gray, beige, ivory, etc.)
@@ -353,13 +357,13 @@ The following is a list of modifiers and their expected meaning.
 Here, "contrasting" means a color with good visibility when text is drawn in that color against
 a standard-color background.
 
-`src/color_scheme.yml`
+`src/color_scheme.toml`
 
-```yaml
-bas-s: "#3d4451"
-bas-c: "#a0aec0"
-pri-s: "#45ba9f"
-sec-s: "#70365d"
+```toml
+bas-s = "#3d4451"
+bas-c = "#a0aec0"
+pri-s = "#45ba9f"
+sec-s = "#70365d"
 ```
 
 The defined custom color names can be used as the names of the colors that make up the Tailwind
@@ -384,32 +388,80 @@ the template, the area enclosed by these two lines is called the _front matter b
 In this area you can give values to a set of properties.
 This set of property/value pairs is called _front matter_.
 
-Each line of the front matter block contains the name and value of a property, separated by a
-colon and space ("`: `").
-
-The following example sets the property `title` to the "Our Mission".
+Front matter blocks are written in [TOML](https://toml.io/en/) format.
+Shown next is an example of a front matter block:
 
 ```
-title: Our Mission
+---
+title = "Our Mission"
+
+[data]
+current_year = 2023
+
+[style]
+red-box = "rounded border border-red-600 p-1 md:p-2"
+
+# TODO: Needs to be checked by the boss.
+---
 ```
 
-Normally, values written to the right of a colon and space are interpreted as strings.
+In the example above, the four main components of the front matter block are used.
 
-However, values containing numbers or symbols might be interpreted as something other than
-strings or cause interpretation errors. Enclose such values in single or double quotes.
+* Property definition
+* Section header
+* Comment
+* Black line
+
+Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
+
+### Property definitions
+
+The line `title = "Our Mission"` is an example of a property definition.
+The `title` to the left of the equals sign is the name of the property and the `"Our Mission"` to
+the right is the value of the property.
+
+The property name, equals sign, and value must be on the same line, though some values can be
+broken over multiple lines.
+
+If the property name consists only of uppercase and lowercase letters, numbers, underscores, and
+minus signs, it can be written without quotation marks; otherwise, the name must be enclosed in
+quotation marks, as in the following example.
 
 ```
-title: "You can't miss it"
+"&_p" = "mb-2"
 ```
 
-Also, exceptionally, `true`, `false`, `yes`, `no` and their uppercase versions
-(`True`, `FALSE`, etc.) are interpreted as boolean values.
+Property values are described in different ways depending on their type.
+Strings must always be quoted.
+Integers and floating point numbers should be unquoted, such as `100`,  `-16`, and `3.14`.
+Booleans (`true` and `false`) are also not quoted and should be lowercase.
+Other writing styles will be explained when examples appear.
 
-To have these values interpreted as strings, enclose them in single or double quotes.
+### Table headers
+
+In the previous example, the lines labeled `[data]` and `[style]` are called _table headers_.
+
+A table header marks the beginning of a _table_. The table continues until the next table
+header or until the end of the file.
+
+The following table names are available in the front matter block:
+
+* data
+* style
+* meta
+* http-equiv
+* meta-property
+* link
+
+The first two are described in this section; the other four are described in
+[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element).
 
 ### Predefined properties
 
-There are some predefined properties that have special meaning.
+In the area before the first table header in the front matter block, set the value of
+_predefined properties_.
+
+The following are examples of predefined properties:
 
 * `scheme`: The scheme of the URL of the HTML document. It must be `http` or `https`.
    Default: `localhost`.
@@ -428,7 +480,7 @@ article. Its value is readonly.
 The following three properties are meaningful only in articles:
 
 * `index`: An integer value used to sort the articles.
-* `tags`: A single string or list of strings to classify articles.
+* `tags`: A single string or array of strings to classify articles.
 * `embedded-only`: A boolean value that determines whether a separate HTML document is created
    from an article; if `true`, it will not be created. Default: `false`.
 
@@ -436,15 +488,15 @@ See [Articles](#articles) for details.
 
 ### Embedding property values in a template
 
-The value of a predefined property can be embedded into a template by the `<tg-prop>` element.
+The value of a predefined property can be embedded into a template by the `<tg:prop>` element.
 
 ```html
 ---
-title: Our Mission
+title = "Our Mission"
 ---
 <body>
   <h1 class="text-2xl font-bold">
-    <tg-prop name="title"></tg-prop>
+    <tg:prop name="title"></tg:prop>
   </h1>
   <div class="bg-green-300 p-4">
     <p>Hello, world!</p>
@@ -454,22 +506,26 @@ title: Our Mission
 
 ### Custom properties
 
-Properties whose names begin with `data-` are called _custom properties_ and can be freely
-defined by the website author.
+As already noted, `[data]` in the front matter block indicates the beginning of the "data" table.
 
-The value of a custom property can be embedded into a template by the `<tg-data>` element.
+Within the "data" table, custom properties can be defined. Website authors can set values of any
+type for custom properties of any name.
+
+The value of a custom property can be embedded into a template by the `<tg:data>` element.
 
 ```html
 ---
-title: Our Mission
-data-message: "Hello, world!"
+title = "Our Mission"
+
+[data]
+message: "Hello, world!"
 ---
 <body>
   <h1 class="text-2xl font-bold">
-    <tg-prop name="title"></tg-prop>
+    <tg:prop name="title"></tg:prop>
   </h1>
   <div class="bg-green-300 p-4">
-    <p><tg-data name="message"></tg-data></p>
+    <p><tg:data name="message"></tg:data></p>
   </div>
 </body>
 ```
@@ -479,34 +535,38 @@ value of an HTML element.
 
 ```html
 ---
-data-div-id: "special"
+[data]
+div-id = "special"
 ---
 <body>
   <div id="${div-id}">...</div>
 </body>
 ```
 
-However, as we will see shortly, the `${...}` notation used in the `class` attribute of HTML
-elements has a different meaning.
+However, the `${...}` notation does not make sense for `class` attributes;
+the method of embedding property values in `class` attributes will be explained shortly.
 
-### Defining an alias to a set of class tokens
+### Defining style aliases
 
-A property whose name begins with `class-` can be used to give an alias to a set of class tokens.
-To expand an alias defined as such in the value of a `class` attribute, use the `${...} `
-notation.
+A property defined in the "style" table can be used to give an alias to a set of class tokens.
+We call this a _style alias_. The value of a style alias must always be a string.
+
+To embed a style alias defined as such into the value of a `class` attribute, use the `tg:class`
+attribute.
 
 ```html
 ---
-class-blue-square: "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
+[style]
+blue-square = "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
 ---
 <body>
-  <div class="${blue-square}">
+  <div tg:class="blue-square">
     Hello, world!
   </div>
 </body>
 ```
 
-Expanding the alias contained in the above template, we get the following:
+Expanding the alias contained in the above template, we get the following result:
 
 ```html
 <body>
@@ -516,35 +576,118 @@ Expanding the alias contained in the above template, we get the following:
 </body>
 ```
 
-Using the `-` symbol, a very long sequence of class tokens can be written over several lines:
+A long sequence of class tokens can be written over several lines surrounded by three
+quotation marks.
 
 ```html
 ---
-class-card:
-  - "bg-white dark:bg-slate-900 rounded-lg px-6 py-8"
-  - "ring-1 ring-slate-900/5 shadow-xl"
+[style]
+card = """
+  bg-white dark:bg-slate-900 rounded-lg px-6 py-8
+  ring-1 ring-slate-900/5 shadow-xl
+  """
 ---
 <body>
-  <div class="${card}">
+  <div tg:class="card">
     Hello, world!
   </div>
 </body>
 ```
 
-Note that the `-` symbol should be preceded by two spaces.
+The three consecutive double quotation marks (`"""`) indicate the beginning and end of a
+multi-line string.
+
+Before being embedded in the `class` attribute of an HTML element, the value of the property is
+converted as follows:
+
+* Any included newline characters are replaced by spaces.
+* Consecutive leading and trailing spaces are removed.
+* Consecutive spaces are replaced by a single space.
+
+If an element has both the `class` and `tg:class` attributes, the combined value of both become
+the final `class` attribute value.
+
+### Expansion of modifiers
+
+You may want to define the following style aliases using Tailwind CSS modifiers to achieve the
+[responsive design](https://tailwindcss.com/docs/responsive-design).
+
+```toml
+box = """
+  w-16 h-16 p-1 border border-1 rounded
+  md:w-32 md:h-32 md:p-2 md:rounded-md
+  lg:w-48 md:h-48 lg:p-3 lg:rounded-lg
+  """
+```
+
+If you are bothered by the repetition of modifiers such as `md:` and `lg:`, remove them using the
+`{...}` notation as follows:
+
+```toml
+box = """
+  w-16 h-16 p-1 border border-1 rounded
+  md { w-32 h-32 p-2 rounded-md }
+  lg { w-48 h-48 p-3 rounded-lg }
+  """
+```
+
+The `{...}` notation is especially useful for utilization of
+[arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
+
+Assume that you have created the following style alias `blog-article`:
+
+```toml
+blog-article = """
+  text-gray-900
+  [&_*]:mb-2
+  [&_*:last-child]:mb-0
+  [&_h2]:text-xl
+  [&_h2]:font-bold
+  [&_h2]:tracking-wide
+  [&_h2]:capitalize
+  [&_p]:font-serif
+  [&_p]:leading-5
+  """
+```
+
+Then you can use this as follows:
+
+```html
+<article tg:class="blog-article">
+  <h2>Title</h2>
+  <p>Lorem ipsum dolor sit amet.</p>
+  <p>Consectetur adipiscing elit.</p>
+  <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</article>
+```
+
+The following use of `{...}` notation eliminates the repetition of `[&_h2]` and `[&_p]` in the
+above example.
+
+```toml
+blog-article = """
+  text-gray-900
+  [&_*]:mb-2
+  [&_*:last-child]:mb-0
+  [&_h2] { text-xl font-bold tracking-wide capitalize }
+  [&_p] { font-serif leading-5 }
+  """
+```
 
 ### Site properties
 
-Creating a file named `site.yml` in the `src` directory allows you to set values for properties
+Creating a file named `site.toml` in the `src` directory allows you to set values for properties
 at the site level. The values set here will be the default values for properties set in the
 front matter of each page.
 
-`src/site.yml`
+`src/site.toml`
 
-```yaml
-title: No title
-layout: common
-custom-current-year: "2023"
+```toml
+title = "No title"
+layout = "common"
+
+[data]
+current-year = "2023"
 ```
 
 ### `%{...}` notation
@@ -552,9 +695,10 @@ custom-current-year: "2023"
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
 element using `%{...}` notation:
 
-```yaml
-data-icon-url: "%{images/icons/default.png}"
-data-theme-url: "%{audios/our_theme.mp3}"
+```toml
+[data]
+icon-url = "%{images/icons/default.png}"
+theme-url = "%{audios/our_theme.mp3}"
 ```
 
 See [<meta> elements](#meta-elements) for specific examples of its use.
@@ -687,12 +831,13 @@ URL.
 
 ### Material Symbols
 
-By setting the value of the `font-material-symbols` property to `true` in `sites.yml`,
-[Material Symbols](https://developers.google.com/fonts/docs/material_symbols) provided by
-Google will be available on your website.
+By setting the value of the `material-symbols` property to `true` in the "font" section of
+`sites.yml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
+provided by Google will be available on your website.
 
-```yaml
-font-material-symbols: true
+```toml
+[font]
+material-symbols = true
 ```
 
 #### Examples
@@ -733,9 +878,9 @@ A layout must satisfy the following three conditions:
 
 1. There is only one top-level element.
 2. The top-level element is a `<body>` element.
-3. The top-level element contains only one `<tg-content>` element within its descendant elements.
+3. The top-level element contains only one `<tg:content>` element within its descendant elements.
 
-The `<tg-content>` element indicates where in the layout the page will be inserted.
+The `<tg:content>` element indicates where in the layout the page will be inserted.
 
 #### Example
 
@@ -747,13 +892,13 @@ The `<tg-content>` element indicates where in the layout the page will be insert
     <div>Example</div>
   </header>
   <main>
-    <tg-content></tg-content>
+    <tg:content></tg:content>
   </main>
   <footer>&copy; Example Inc. 2023</footer>
 </body>
 ```
 
-Note that you _cannot_ write `<tg-content />` instead of `<tg-content></tg-content>`.
+Note that you _cannot_ write `<tg:content />` instead of `<tg:content></tg:content>`.
 
 ### Applying a layout to a page
 
@@ -769,7 +914,7 @@ In this case, `common` is the name of the layout.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -803,7 +948,7 @@ the following HTML document is generated:
 ### Embedding property values in layouts
 
 The values of the properties set in the front matter of the page can be embedded in the layout
-using the `<tg-prop>` element.
+using the `<tg:prop>` element.
 
 #### Example
 
@@ -815,10 +960,10 @@ using the `<tg-prop>` element.
     <div>Example</div>
   </header>
   <main>
-    <h1 class="text-3xl"><tg-prop name="title"></tg-prop></h1>
-    <tg-content></tg-content>
+    <h1 class="text-3xl"><tg:prop name="title"></tg:prop></h1>
+    <tg:content></tg:content>
   </main>
-  <footer>&copy; Example Inc. <tg-prop name="year"></tg-prop></footer>
+  <footer>&copy; Example Inc. <tg:prop name="year"></tg:prop></footer>
 </body>
 ```
 
@@ -826,8 +971,8 @@ using the `<tg-prop>` element.
 
 ```html
 ---
-layout: common
-title: Greeting
+layout = "common"
+title = "Greeting"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -837,18 +982,18 @@ title: Greeting
 
 ### Slots and inserts
 
-The `<tg-slot>` element is a place holder inside a layout that you can fill with a content
+The `<tg:slot>` element is a place holder inside a layout that you can fill with a content
 specified within a page.
-A `name` attribute must be specified for the `<tg-slot>` element.
+A `name` attribute must be specified for the `<tg:slot>` element.
 
-To embed content into a slot in a layout, place a `<tg-insert>` element on the page where the
+To embed content into a slot in a layout, place a `<tg:insert>` element on the page where the
 layout is to be applied.
 
-If you specify the name of the slot as the value of the `name` property of  `<tg-insert>` element,
+If you specify the name of the slot as the value of the `name` property of  `<tg:insert>` element,
 the slot will be replaced with the element's content.
 
-When page content is inserted into a `<tg-content>` element in a layout,
-all `<tg-insert>` elements are removed from the page content.
+When page content is inserted into a `<tg:content>` element in a layout,
+all `<tg:insert>` elements are removed from the page content.
 
 #### Example
 
@@ -856,11 +1001,11 @@ all `<tg-insert>` elements are removed from the page content.
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
   <div class="border-2 border-black border-solid p-2">
-    <tg-slot name="remarks"></tg-slot>
+    <tg:slot name="remarks"></tg:slot>
   </div>
-  <div><tg-slot name="badges"></tg-slot></div>
+  <div><tg:slot name="badges"></tg:slot></div>
 </body>
 ```
 
@@ -868,15 +1013,15 @@ all `<tg-insert>` elements are removed from the page content.
 
 ```html
 ---
-layout: product
-title: Product 1
+layout = "product"
+title = "Product 1"
 ---
 <div>
   <h1>Product 1</h1>
   <p>Description</p>
 </div>
-<tg-insert name="remarks">This product is very <em>fragile</em>.</tg-insert>
-<tg-insert name="badges"><span>A</span><span>B</span></tg-insert>
+<tg:insert name="remarks">This product is very <em>fragile</em>.</tg:insert>
+<tg:insert name="badges"><span>A</span><span>B</span></tg:insert>
 ```
 
 When the layout `product` is applied to the page `product1.html`,
@@ -902,7 +1047,7 @@ the following HTML document is generated:
 
 ### Fallback content of slot
 
-If the content to be inserted into the slot is not defined, the content of the `<tg-slot>` element
+If the content to be inserted into the slot is not defined, the content of the `<tg:slot>` element
 is used as a fallback content.
 
 #### Example
@@ -911,8 +1056,8 @@ is used as a fallback content.
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
-  <div><tg-slot name="message">No message.</tg-slot></div>
+  <tg:content></tg:content>
+  <div><tg:slot name="message">No message.</tg:slot></div>
 </body>
 ```
 
@@ -920,8 +1065,8 @@ is used as a fallback content.
 
 ```html
 ---
-layout: message
-title: Home
+layout = "message"
+title = "Home"
 ---
 <h1>Home</h1>
 <p>Hello, world!</p>
@@ -943,13 +1088,13 @@ the following HTML document is generated:
 </html>
 ```
 
-### `<tg-if-complete>`
+### `<tg:if-complete>`
 
-Normally, the `<tg-if-complete>` element in a layout is simply replaced with its content.
+Normally, the `<tg:if-complete>` element in a layout is simply replaced with its content.
 However, if the following two conditions are not met, the entire element is deleted:
 
-* The property values to be inserted for all `<tg-prop>` elements within it are defined.
-* The contents to be inserted for all `<tg-slot>` elements within it are defined.
+* The property values to be inserted for all `<tg:prop>` elements within it are defined.
+* The contents to be inserted for all `<tg:slot>` elements within it are defined.
 
 #### Example
 
@@ -957,12 +1102,12 @@ However, if the following two conditions are not met, the entire element is dele
 
 ```html
 <body class="p-2">
-  <tg-content></tg-content>
-  <tg-if-complete>
+  <tg:content></tg:content>
+  <tg:if-complete>
     <hr class="h-px my-8 bg-gray-200 border-0">
-    <div class="bg-gray-800 text-white p-4">To: <tg-prop name="custom-name"></tg-prop></div>
-    <div class="bg-gray-200 p-4"><tg-slot name="message"></tg-slot></div>
-  </tg-if-complete>
+    <div class="bg-gray-800 text-white p-4">To: <tg:data name="custom-name"></tg:prop></div>
+    <div class="bg-gray-200 p-4"><tg:slot name="message"></tg:slot></div>
+  </tg:if-complete>
 </body>
 ```
 
@@ -970,6 +1115,7 @@ However, if the following two conditions are not met, the entire element is dele
 
 ```html
 ---
+[data]
 custom-name: Alice
 ---
 <h1>Home</h1>
@@ -1012,7 +1158,7 @@ the `src/pages/foo/bar` directory or the `src/pages/foo/bar/baz` directory, then
 `src/pages/foo/_wrapper.html` will be the wrapper for `src/pages/foo/bar/baz` directory.
 
 Basically, the wrapper is written the same way as that of the layout.
-The `<tg-content>` element indicates where in the wrapper the page will be inserted.
+The `<tg:content>` element indicates where in the wrapper the page will be inserted.
 
 #### Example
 
@@ -1020,7 +1166,7 @@ The `<tg-content>` element indicates where in the wrapper the page will be inser
 
 ```html
 <div class="[&_p]:mt-4">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
 </div>
 ```
 
@@ -1037,7 +1183,7 @@ The only thing you should do is take the `layout` attribute off the page.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -1058,10 +1204,10 @@ Wrapper property values take precedence over site property values.
 
 ```html
 ---
-layout: common
+layout = "common"
 ---
 <div class="[&_p]:mt-4">
-  <tg-content></tg-content>
+  <tg:content></tg:content>
 </div>
 ```
 
@@ -1102,14 +1248,14 @@ The following is an example of a segment:
 
 ### Embedding segments into a page
 
-To embed a segment into a page, add a `<tg-segment>` element at the
+To embed a segment into a page, add a `<tg:segment>` element at the
 location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <div>
-  <tg-segment name="hero"></tg-segment>
+  <tg:segment name="hero"></tg:segment>
 
   <main>
     ...
@@ -1119,7 +1265,7 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Passing custom properties to a segment
 
-You can pass custom properties to a segment using the `<tg-segment> element's `data-*` attribute.
+You can pass custom properties to a segment using the `<tg:segment> element's `data-*` attribute.
 
 `src/segment/hero.html`
 
@@ -1135,7 +1281,7 @@ You can pass custom properties to a segment using the `<tg-segment> element's `d
 
 ```html
 <div>
-  <tg-segment name="hero" data-image-path="hello.jpg"></tg-segment>
+  <tg:segment name="hero" data-image-path="hello.jpg"></tg:segment>
 
   <main>
     ...
@@ -1158,7 +1304,7 @@ within a segment is similar to that of a layout.
     <img src="/images/hello.jpg">
     <div>
       <h1 class="text-5xl font-bold">Hello, world!</h1>
-      <tg-slot name="paragraph"></tg-slot>
+      <tg:slot name="paragraph"></tg:slot>
     </div>
   </div>
 </section>
@@ -1168,11 +1314,11 @@ within a segment is similar to that of a layout.
 
 ```html
 <div>
-  <tg-segment name="hero">
-    <tg-insert name="paragraph">
+  <tg:segment name="hero">
+    <tg:insert name="paragraph">
       <p>The quick brown fox jumps over the lazy dog.</p>
-    </tg-insert>
-  </tg-segment>
+    </tg:insert>
+  </tg:segment>
 
   <main>
     ...
@@ -1201,19 +1347,19 @@ The following is an example of a component:
 
 ### Embedding components
 
-To embed a component into a page, article, or layout, add a `<tg-component>` element at the
+To embed a component into a page, article, or layout, add a `<tg:component>` element at the
 location where you want to place it and specify its name in the `name` attribute.
 
 #### Example
 
 ```html
 <p>
-  <tg-component name="smile"></tg-component>
+  <tg:component name="smile"></tg:component>
   How are you?
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg-component> element's `data-*`
+You can pass custom properties to a component using the `<tg:component> element's `data-*`
 attribute.
 
 `src/components/avatar.html`
@@ -1230,9 +1376,9 @@ attribute.
 
 ```html
 <div class="grid grid-rows-2 gap-4">
-  <tg-component name="avatar" data-name="Alice"></tg-component>
-  <tg-component name="avatar" data-name="Bob"></tg-component>
-  <tg-component name="avatar" data-name="Carol"></tg-component>
+  <tg:component name="avatar" data-name="Alice"></tg:component>
+  <tg:component name="avatar" data-name="Bob"></tg:component>
+  <tg:component name="avatar" data-name="Carol"></tg:component>
 </div>
 ```
 
@@ -1247,16 +1393,16 @@ in the slots within a component is similar to that of a layout and segment.
 
 ```html
 <h3 class="font-bold text-lg m-2">
-  <tg-slot name="title"></tg-slot>
+  <tg:slot name="title"></tg:slot>
 </h3>
 <div>
-  <tg-slot name="body"></tg-slot>
+  <tg:slot name="body"></tg:slot>
 </div>
-<tg-if-complete>
+<tg:if-complete>
   <divclass="text-right">
-    <tg-slot name="date"></tg-slot>
+    <tg:slot name="date"></tg:slot>
   </div>
-</tg-if-complete>
+</tg:if-complete>
 ```
 
 `src/pages/hello.html`
@@ -1266,27 +1412,28 @@ in the slots within a component is similar to that of a layout and segment.
 layout: home
 ---
 <main class="bg-gray-100 py-2">
-  <tg-component name="blog_item">
-    <tg-insert name="title">Greeting</tg-insert>
-    <tg-insert name="body">
+  <tg:component name="blog_item">
+    <tg:insert name="title">Greeting</tg:insert>
+    <tg:insert name="body">
       <p>Hello.</p>
-    </tg-insert>
-    <tg-insert name="date">2022-12-31</tg-insert>
-  </tg-component>
+    </tg:insert>
+    <tg:insert name="date">2022-12-31</tg:insert>
+  </tg:component>
 </main>
 ```
 
 ### Embedding property values into a component
 
-The `<tg-prop>` and `<tg-data>` elements allow you to embed the value of a property in a component.
+The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a property in a component.
 
 ```html
 ---
-data-message: Hi!
+[data]
+message: Hi!
 ---
 <span>
   <i class="fas fa-smile"></i>
-  <tg-data name="message"></tg-data>
+  <tg:data name="message"></tg:data>
 </span>
 ```
 
@@ -1320,20 +1467,20 @@ Articles and pages have exactly the same characteristics in the following respec
 ### Embedding an article in a page or segment
 
 Like components, articles can be embedded in pages or segments.
-Place `<tg-article>` elements where you want to embed articles as follows:
+Place `<tg:article>` elements where you want to embed articles as follows:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Recent Articles</h1>
-  <tg-article name="blog/got_a_gadget"></tg-article>
-  <tg-article name="blog/happy_new_year"></tg-article>
+  <tg:article name="blog/got_a_gadget"></tg:article>
+  <tg:article name="blog/happy_new_year"></tg:article>
 </main>
 ```
 
-The value of the `name` attribute of the `<tg-article>` element must be the name of the
+The value of the `name` attribute of the `<tg:article>` element must be the name of the
 article file without the extension (`.html`).
 
 Unlike components, articles can only be embedded into a page.
@@ -1354,15 +1501,15 @@ embedded-only: true
 
 ### Embedding articles in a page
 
-The `<tg-articles>` element can be used to embed multiple articles into a page or segment.
+The `<tg:articles>` element can be used to embed multiple articles into a page or segment.
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*"></tg-articles>
+  <tg:articles pattern="proposals/*"></tg:articles>
 </main>
 ```
 
@@ -1372,30 +1519,30 @@ The above example embeds all articles in the `src/articles/proposals` directory 
 By default, articles are sorted in ascending (alphabetically) order by filename.
 
 To sort articles in descending order by their filename, set the `order-by` attribute of the
-`<tg-articles>` element to `"filename:desc"`:
+`<tg:articles>` element to `"filename:desc"`:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="filename:desc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="filename:desc"></tg:articles>
 </main>
 ```
 
 ### Sorting articles by their title
 
-To sort articles by their title, set the `order-by` attribute of the `<tg-articles>` element
+To sort articles by their title, set the `order-by` attribute of the `<tg:articles>` element
 to `"title:asc"` or `"title:desc"`:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="title:asc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="title:asc"></tg:articles>
 </main>
 ```
 
@@ -1411,23 +1558,23 @@ article:
 
 ```html
 ---
-index: 123
+index = 123
 ---
 <article>
   ...
 </article>
 ```
 
-Then, set the `order-by` attribute of the `<tg-articles>` element to `"index:asc"` or
+Then, set the `order-by` attribute of the `<tg:articles>` element to `"index:asc"` or
 `"index:desc"`:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
-  <tg-articles pattern="proposals/*" order-by="index:asc"></tg-articles>
+  <tg:articles pattern="proposals/*" order-by="index:asc"></tg:articles>
 </main>
 ```
 
@@ -1436,109 +1583,109 @@ property.
 
 ### Generating a link list to articles
 
-The `<tg-links>` element can be used to embed links to articles in any template
+The `<tg:links>` element can be used to embed links to articles in any template
 (page, layout, component, article).
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Our Proposals</h1>
   <ul>
-    <tg-links pattern="proposals/*">
+    <tg:links pattern="proposals/*">
       <li>
         <a href="#">
-          <tg-prop name="title"></tg-prop>
-          <tg-if-complete>
+          <tg:prop name="title"></tg:prop>
+          <tg:if-complete>
             <span class="text-sm">
-              (<tg-slot name="date"></tg-slot>)
+              (<tg:slot name="date"></tg:slot>)
             </span>
-          </tg-if-complete>
+          </tg:if-complete>
         </a>
       </li>
-    </tg-links>
+    </tg:links>
   </ul>
 </main>
 ```
 
-The `<tg-links>` element contains one or more `<a>` elements and
-zero or more `<tg-prop>`, `<tg-data>` and `<tg-slot>` elements.
+The `<tg:links>` element contains one or more `<a>` elements and
+zero or more `<tg:prop>`, `<tg:data>` and `<tg:slot>` elements.
 
 The values of `href` attribute of `<a>` are replaced by the URL of the article.
-The `<tg-prop>` and `<tg-data>` elements are replaced by the value of a property of the article
+The `<tg:prop>` and `<tg:data>` elements are replaced by the value of a property of the article
 to be embedded.
-The `<tg-slot>` elements are replaced by the content of a `<tg-insert>` element defined in the
+The `<tg:slot>` elements are replaced by the content of a `<tg:insert>` element defined in the
 article to be embedded.
 
-Inside the `<tg-links>` element, `<tg-if-complete>` elements work the same way
+Inside the `<tg:links>` element, `<tg:if-complete>` elements work the same way
 as inside components.
-That is, a `<tg-if-complete>` element will be removed from the output
-unless a value or content is provided for all `<tg-prop>`, `<tg-data>`, and `<tg-slot>` elements
+That is, a `<tg:if-complete>` element will be removed from the output
+unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg:slot>` elements
 within it.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles by their title, set  the `order-by` attribute of the `<tg-links>` element to
+To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
 `"title:asc"` or `"title:desc"`:
 
 ```html
-    <tg-links pattern="proposals/*" order-by="title:asc">
+    <tg:links pattern="proposals/*" order-by="title:asc">
       <li>
         ...
       </li>
-    </tg-links>
+    </tg:links>
 ```
 
 See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
 to be set in the `order-by` attribute.
 
-To sort articles in an arbitrary order, add a `tg-index` attribute to each article:
+To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
 
 ```html
 ---
-layout: home
-index 123
+layout = "home"
+index = 123
 ---
 <article>
   ...
 </article>
 ```
 
-Then, specify the `order-by` attribute of the `<tg-links>` element.
+Then, specify the `order-by` attribute of the `<tg:links>` element.
 
 ```html
-    <tg-links pattern="proposals/*" order-by="index:asc">
+    <tg:links pattern="proposals/*" order-by="index:asc">
       <li>
         ...
       </li>
-    </tg-links>
+    </tg:links>
 ```
 
-Note that the current specification does not allow a `<tg-component>` element to be placed within
-a `<tg-links>` element.
+Note that the current specification does not allow a `<tg:component>` element to be placed within
+a `<tg:links>` element.
 
 ### Filtering articles by tags
 
 You may use _tags_ to classify your articles.
 
-To attach tags to an article, specify their names in the `tags` attribute as an array
+To attach tags to an article, specify their names in the `tags` property as an array
 using `[...]` notation:
 
 ```html
 ---
-tags: [travel, europe]
+tags: [ "travel", "europe" ]
 ---
 <article>
   ...
 </article>
 ```
 
-To attach a single tag to an article, the value of the `tags` attribute may be specified as a
+To attach a single tag to an article, the value of the `tags` property may be specified as a
 string:
 
 ```html
 ---
-tags: anime
+tags = "anime"
 ---
 <article>
   ...
@@ -1549,11 +1696,11 @@ You can use the `filter` attribute to filter articles embedded on the page:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
-  <tg-articles pattern="blog/*" filter="tag:travel"></tg-articles>
+  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
 </main>
 ```
 
@@ -1565,28 +1712,28 @@ You can also filter the list of links to articles using the `filter` attribute:
 
 ```html
 ---
-layout: home
+layout = "home"
 ---
 <main>
   <h1>Articles (tag:travel)</h1>
   <ul>
-    <tg-links pattern="blog/*" filter="tag:travel">
+    <tg:links pattern="blog/*" filter="tag:travel">
       <li>
         <a href="#">
-          <tg-slot name="title"></tg-slot>
+          <tg:slot name="title"></tg:slot>
         </a>
       </li>
-    </tg-links>
+    </tg:links>
   </ul>
 </main>
 ```
 
 Note that you cannot assign tags to a page.
 
-### `<tg-links>` with the `component` attribute
+### `<tg:links>` with the `component` attribute
 
-When a `<tg-links>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg-links>` element.
+When a `<tg:links>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg:links>` element.
 
 For example, suppose there is a `nav_link` component with the following content
 
@@ -1595,38 +1742,38 @@ For example, suppose there is a `nav_link` component with the following content
 ```html
 <li>
   <a href="#">
-    <tg-prop name="title"></tg-prop>
-    <tg-if-complete>
+    <tg:prop name="title"></tg:prop>
+    <tg:if-complete>
       <span class="text-sm">
-        (<tg-slot name="date"></tg-slot>)
+        (<tg:slot name="date"></tg:slot>)
       </span>
-    </tg-if-complete>
+    </tg:if-complete>
   </a>
 </li>
 ```
 
-In this case, we can construct a `<tg-links>` element as follows:
+In this case, we can construct a `<tg:links>` element as follows:
 
 ```html
-<tg-links component="nav_link" pattern="blog/*"></tg-links>
+<tg:links component="nav_link" pattern="blog/*"></tg:links>
 ```
 
 The above code is to be interpreted as exactly the same as the following
 
 ```html
 
-<tg-links pattern="blog/*">
+<tg:links pattern="blog/*">
   <li>
     <a href="#">
-      <tg-prop name="title"></tg-prop>
-      <tg-if-complete>
+      <tg:prop name="title"></tg:prop>
+      <tg:if-complete>
         <span class="text-sm">
-          (<tg-slot name="date"></tg-slot>)
+          (<tg:slot name="date"></tg:slot>)
         </span>
-      </tg-if-complete>
+      </tg:if-complete>
     </a>
   </li>
-</tg-links>
+</tg:links>
 ```
 
 ## Links
@@ -1646,53 +1793,53 @@ the page in its `href` attribute:
 When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
 elements in it will be converted appropriately.
 
-### `<tg-link>`, `<tg-if-current>` and `<tg-label>`
+### `<tg:link>`, `<tg:if-current>` and `<tg:label>`
 
-The `<tg-link>` is a special element used to conditionally cause the `<a>` element to appear.
+The `<tg:link>` is a special element used to conditionally cause the `<a>` element to appear.
 Basically, the content of this element is just rendered as it is.
 If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
-attribute of the `<tg-link>` element is set to the value of the `href` attribute of that `<a>`
+attribute of the `<tg:link>` element is set to the value of the `href` attribute of that `<a>`
 element.
 
 The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
 
 ```html
-<tg-link href="/articles/goal.html">
+<tg:link href="/articles/goal.html">
   <a href="#">Our Goal</a>
-</tg-link>
+</tg:link>
 ```
 
 However, when an article with the path `/articles/goal.html` contains the above code, this part is
 removed from the generated HTML document.
 
-Zero or one `<tg-if-current>` element may be placed inside the `<tg-link>` element.
-The content of the `<tg-if-current>` element is only rendered if the value of the `href`
-attribute of the `<tg-link>` element matches the path of the HTML document that is being generated.
+Zero or one `<tg:if-current>` element may be placed inside the `<tg:link>` element.
+The content of the `<tg:if-current>` element is only rendered if the value of the `href`
+attribute of the `<tg:link>` element matches the path of the HTML document that is being generated.
 
 The following code is rendered as `<span class="font-bold">Our Goal</span>` when it appears in
 an article with the path `/articles/goal.html`.
 
 ```html
-<tg-link href="/articles/goal.html">
+<tg:link href="/articles/goal.html">
   <a href="#">Our Goal</a>
-  <tg-if-current>
+  <tg:if-current>
     <span class="font-bold">Our Goal</span>
-  </tg-if-current>
-</tg-link>
+  </tg:if-current>
+</tg:link>
 ```
 
-The `<tg-label>` element can be used to remove duplication from the above code.
+The `<tg:label>` element can be used to remove duplication from the above code.
 
 ```html
-<tg-link href="/articles/goal.html" label="Our Goal">
-  <a href="#"><tg-label></tg-label></a>
-  <tg-if-current>
-    <span class="font-bold"><tg-label></tg-label></span>
-  </tg-if-current>
-</tg-link>
+<tg:link href="/articles/goal.html" label="Our Goal">
+  <a href="#"><tg:label></tg:label></a>
+  <tg:if-current>
+    <span class="font-bold"><tg:label></tg:label></span>
+  </tg:if-current>
+</tg:link>
 ```
 
-This element is replaced by the value specified in the `label` attribute of the `<tg-link>`
+This element is replaced by the value specified in the `label` attribute of the `<tg:link>`
 element.
 
 #### Example
@@ -1701,84 +1848,121 @@ element.
 
 ```html
 <nav>
-  <tg-link href="/articles/goal.html" label="Our Goal">
-    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <tg-if-current>
-      <span class="font-bold"><tg-label></tg-label></span>
-    </tg-if-current>
-  </tg-link>
-  <tg-link href="/articles/about.html" label="About Us">
-    <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-    <tg-if-current>
-      <span class="font-bold"><tg-label></tg-label></span>
-    </tg-if-current>
-  </tg-link>
+  <tg:link href="/articles/goal.html" label="Our Goal">
+    <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+    <tg:if-current>
+      <span class="font-bold"><tg:label></tg:label></span>
+    </tg:if-current>
+  </tg:link>
+  <tg:link href="/articles/about.html" label="About Us">
+    <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+    <tg:if-current>
+      <span class="font-bold"><tg:label></tg:label></span>
+    </tg:if-current>
+  </tg:link>
 </nav>
 ```
 
-### `<tg-link>` with the `component` attribute
+### `<tg:link>` with the `component` attribute
 
-When a `<tg-link>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg-link>` element.
+When a `<tg:link>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg:link>` element.
 
 For example, suppose there is a `nav_link` component with the following content
 
 `src/components/nav_link.html`
 
 ```html
-<a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-<tg-if-current>
-  <span class="font-bold"><tg-label></tg-label></span>
-</tg-if-current>
+<a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+<tg:if-current>
+  <span class="font-bold"><tg:label></tg:label></span>
+</tg:if-current>
 ```
 
-In this case, we can construct a `<tg-link>` element as follows:
+In this case, we can construct a `<tg:link>` element as follows:
 
 ```html
-<tg-link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg-link>
+<tg:link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg:link>
 ```
 
 The above code is to be interpreted as exactly the same as the following
 
 ```html
 
-<tg-link href="/articles/about.html" label="About Us">
-  <a href="#" class="underline text-blue-500"><tg-label></tg-label></a>
-  <tg-if-current>
-    <span class="font-bold"><tg-label></tg-label></span>
-  </tg-if-current>
-</tg-link>
+<tg:link href="/articles/about.html" label="About Us">
+  <a href="#" class="underline text-blue-500"><tg:label></tg:label></a>
+  <tg:if-current>
+    <span class="font-bold"><tg:label></tg:label></span>
+  </tg:if-current>
+</tg:link>
 ```
 
-## Making Dynamic Contents
+## Dynamic Elements
 
-Using tgweb, it is possible to show/hide content and change the style of content according to
-the user's operation.
+This section explains how to introduce dynamic elements such as modals and carousels to your website.
 
-### Show and hide contents
+### Modal
 
-Specifying the `tg-toggler` attribute on an HTML element makes the following attributes available
+Specifying the `tg:modal` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
 
-* `tg-when`
-* `tg-toggle`
+* `tg:open`
+* `tg:close`
 
-We call an HTML element with the `tg-toggler` attribute a __toggler__.
+We call an HTML element with the `tg:modal` attribute a __modal__.
+A modal has two states, `open` and `close`. Its initial state is `close`.
+
+There must be one `<dialog>` element inside the modal. Initially, this element is not displayed.
+When the user clicks on an element with the `tg:open` attribute, the `<dialog>` element is displayed.
+Conversely, if the user clicks on an element with the `tg:close` attribute, the `<dialog>` element
+will disappear.
+
+What follows is an example of a modal:
+
+```html
+<div tg:modal>
+  <div><button type="button" tg:open>Open</button></div>
+  <dialog class="rounded-2xl bg-white backdrop:bg-gray-800/80 p-4 h-[360px]">
+    <h2>Greetings</h2>
+    <p>Hello, world!</p>
+    <div><button type="button" tg:close>Close</button></div>
+  </dialog>
+</div>
+```
+
+A transparent element of the same size as the viewport, called a "backdrop," is inserted directly
+below the `<dialog>` element.
+The backdrop deactivates all page content except the `<dialog>` element.
+
+The class token `backdrop:bg-gray-800/80` in the value of the `class` attribute of the `<dialog>`
+element applies a translucent dark gray background color to the backdrop.
+See [Dialog Backdrops](https://tailwindcss.com/docs/hover-focus-and-other-states#dialog-backdrops)
+in the Tailwind CSS Documentation for more information.
+
+### Toggler
+
+Specifying the `tg:toggler` attribute on an HTML element makes the following attributes available
+to descendant elements of that element:
+
+* `tg:when`
+* `tg:toggle`
+
+We call an HTML element with the `tg:toggler` attribute a __toggler__.
 A toggler has two states, `on` and `off`. Its initial state is `off`.
 
-An element with a `tg-when` attribute inside a toggler will only be displayed if its value matches
+An element with a `tg:when` attribute inside a toggler will only be displayed if its value matches
 the state of the toggler.
 
-When the user clicks or taps an element with a `tg-toggle` attribute inside the toggler,
+When the user clicks or taps an element with a `tg:toggle` attribute inside the toggler,
 the toggler's state is set to the value of the the attribute.
 
 Here is an example toggler:
 
 ```html
-<div tg-toggler>
-  <button type="button" tg-toggle="on" tg-when="off">Open</button>
-  <div tg-when="on">
-    <button type="button" tg-toggle="off">Close</button>
+<div tg:toggler>
+  <button type="button" tg:toggle="on" tg:when="off">Open</button>
+  <div tg:when="on">
+    <button type="button" tg:toggle="off">Close</button>
     <p>Hello, world!</p>
   </div>
 </div>
@@ -1789,162 +1973,379 @@ When the user clicks or taps this button, the state of the toggler is set to `on
 disappears, and a "Close" button and a "Hello, world" paragraph appear instead.
 When the user further clicks or taps the "Close" button, it returns to the initial state.
 
-If the `tg-toggle` attribute's value is omitted, the toggler's state is reversed when the user
+If the `tg:toggle` attribute's value is omitted, the toggler's state is reversed when the user
 clicks or taps on the element.
 So the above example could be rewritten as:
 
 ```html
-<div tg-toggler>
-  <button type="button" tg-toggle tg-when="off">Open</button>
-  <div tg-when="on">
-    <button type="button" tg-toggle>Close</button>
+<div tg:toggler>
+  <button type="button" tg:toggle tg:when="off">Open</button>
+  <div tg:when="on">
+    <button type="button" tg:toggle>Close</button>
     <p>Hello, world!</p>
   </div>
 </div>
 ```
 
-### Switch contents
+### Switcher
 
-Specifying the `tg-switcher` attribute on an HTML element makes the following attributes available
+Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
 
-* `tg-when`
-* `tg-choose`
-* `tg-first`
-* `tg-prev`
-* `tg-next`
-* `tg-last`
+* `tg:item`
+* `tg:choose`
+* `tg:first`
+* `tg:prev`
+* `tg:next`
+* `tg:last`
+* `tg:paginator`
 
-We call an HTML element with the `tg-switcher` attribute a _switcher_.
-A switcher has two or more states.
+We call an HTML element with the `tg:switcher` attribute a _switcher_.
+There must be more than one element with the `tg:item` attribute in the switcher.
+We call them _switcher items_.
 
-A switcher has a state represented by an integer value. An integer value representing a state is
-called an _index number_.
-The value of the `tg-switcher` attribute is a string of the form `1..5`.
-The value to the left of `..` is interpreted as the lower bound of the index number, and the value
-to the right of `..` is interpreted as the upper bound of the index number.
+Swticher items are assigned unique _index numbers_ starting from zero in sequence.
+A switcher has a state represented by an integer value, called an _current index number_.
+A switcher item will only be displayed if its index number matches the current index number of the
+switcher.
 
-An element with a `tg-when` attribute inside a switcher will only be displayed if its value
-matches the state of the switcher.
-
-When the user clicks or taps an element with a `tg-choose` attribute inside the switcher,
-the switcher's state is set to the value of the the attribute.
+When the user clicks or taps an element with a `tg:choose` attribute inside the switcher,
+the switcher's current index number is set to the value of the the attribute.
 
 Here is an example switcher:
 
 ```html
-<div tg-switcher="1..5">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:switcher>
+  <div tg:item>A</div>
+  <div tg:item>B</div>
+  <div tg:item>C</div>
+  <div tg:item>D</div>
+  <div tg:item>E</div>
   <nav>
-    <button type="button" tg-choose="1">a</button>
-    <button type="button" tg-choose="2">b</button>
-    <button type="button" tg-choose="3">c</button>
-    <button type="button" tg-choose="4">d</button>
-    <button type="button" tg-choose="5">e</button>
+    <button type="button" tg:choose="1">a</button>
+    <button type="button" tg:choose="2">b</button>
+    <button type="button" tg:choose="3">c</button>
+    <button type="button" tg:choose="4">d</button>
+    <button type="button" tg:choose="5">e</button>
   </nav>
 </div>
 ```
 
-If the the value of `tg-choose` attribute of a button matches switcher's current index number
+If the the value of `tg:choose` attribute of a button matches switcher's current index number
 nothing happens when the user clicks or taps this button.
 
-To visually indicate this, use the `tg-current-class` and `tg-normal-class` attributes to
+To visually indicate this, use the `tg:current-class` and `tg:normal-class` attributes to
 change the style applied to the button.
 
 ```html
   <button
     type="button"
-    tg-choose="1"
+    tg:choose="1"
     class="btn"
-    tg-current-class="btn-primary"
-    tg-normal-class="btn-secondary">a</button>
+    tg:current-class="btn-primary"
+    tg:normal-class="btn-secondary">a</button>
 ```
 
 You can create a button that change the state of the switcher using special attributes such as
-`tg-first`, `tg-prev`, `tg-next`, `tg-last`, etc. instead of the `tg-choose` attribute.
+`tg:first`, `tg:prev`, `tg:next`, `tg:last`, etc. instead of the `tg:choose` attribute.
 
 ```html
-<div tg-switcher="1..5">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:switcher>
+  <div tg:item>A</div>
+  <div tg:item>B</div>
+  <div tg:item>C</div>
+  <div tg:item>D</div>
+  <div tg:item>E</div>
   <nav>
-    <button type="button" tg-first>First</button>
-    <button type="button" tg-prev>Prev</button>
-    <button type="button" tg-next>Next</button>
-    <button type="button" tg-last>Last</button>
+    <button type="button" tg:first>First</button>
+    <button type="button" tg:prev>Prev</button>
+    <button type="button" tg:next>Next</button>
+    <button type="button" tg:last>Last</button>
   </nav>
 </div>
 ```
 
 If the switcher's current index number matches the its lower bound,
-nothing happens when the user clicks or taps a button with `tg-first` or `tg-prev` attribute.
+nothing happens when the user clicks or taps a button with `tg:first` or `tg:prev` attribute.
 
 Similarly, if the switcher's current index number matches the its upper bound,
-nothing happens when the user clicks or taps a button with `tg-next` or `tg-last` attribute.
+nothing happens when the user clicks or taps a button with `tg:next` or `tg:last` attribute.
 
-To visually indicate this, use the `tg-enabled-class` and `tg-disabled-class` attributes to
+To visually indicate this, use the `tg:enabled-class` and `tg:disabled-class` attributes to
 change the style applied to the button.
 
 ```html
   <button
     type="button"
-    tg-first
+    tg:first
     class="btn"
-    tg-enabled-class="btn-primary"
-    tg-disabled-class="btn-disabled">First</button>
+    tg:enabled-class="btn-primary"
+    tg:disabled-class="btn-disabled">First</button>
 ```
 
-If the switcher has an `tg-interval` attribute, the switcher's index number is incremented
+If the switcher has an `tg:interval` attribute, the switcher's index number is incremented
 by 1 at the specified interval (unit: millisecond).
 
 ```html
-<div tg-switcher="1..5" tg-interval="2000">
+<div tg:switcher tg:interval="2000">
   ...
 </div>
 ```
 
-When the user clicks or taps a button with a `tg-choose` attribute, etc., the switcher's state
+When the user clicks or taps a button with a `tg:choose` attribute, etc., the switcher's state
 no longer changes automatically.
 
-### Rotate contents
+Inside the switcher, there may be an element with the `tg:paginator` attribute.
+This element will be a template for a group of buttons that will allow the user to choose the
+a switcher item to be displayed.
+We call these buttons _pagination buttons_.
 
-We call an HTML element with the `tg-rotator` attribute a _rotator_.
+For example, if the number of switcher items is five, the following code example generates a
+`<nav>` element with five `<button>` elements inside.
+
+```html
+<div tg:switcher>
+  ...
+  <nav>
+    <button type="button" tg:paginator></button>
+  </nav>
+</div>
+```
+
+### Rotator
+
+We call an HTML element with the `tg:rotator` attribute a _rotator_.
 
 A rotator behaves exactly like a switcher with three reservations:
 
-* If the user clicks a button with the `tg-next` attribute when the current index number matches
+* If the user clicks a button with the `tg:next` attribute when the current index number matches
 the upper bound, the index number will be set to its lower bound.
-* If the user clicks a button with the `tg-prev` attribute when the current index number matches
+* If the user clicks a button with the `tg:prev` attribute when the current index number matches
 the lower bound, the index number will be set to its upper bound.
-* When the `tg-interval` attribute is set, when the current index number reaches the upper bound,
+* When the `tg:interval` attribute is set, when the current index number reaches the upper bound,
 the next time the index number is set to its lower bound.
 
 Here is an example rotator:
 
 ```html
-<div tg-rotator="1..5" tg-interval="2000">
-  <div tg-when="1">A</div>
-  <div tg-when="2">B</div>
-  <div tg-when="3">C</div>
-  <div tg-when="4">D</div>
-  <div tg-when="5">E</div>
+<div tg:rotator tg:interval="2000">
+  <div tg:when="1">A</div>
+  <div tg:when="2">B</div>
+  <div tg:when="3">C</div>
+  <div tg:when="4">D</div>
+  <div tg:when="5">E</div>
   <nav>
-    <button type="button" tg-prev>Prev</button>
-    <button type="button" tg-next>Next</button>
+    <button type="button" tg:prev>Prev</button>
+    <button type="button" tg:next>Next</button>
   </nav>
 </div>
 ```
 
+### Carousel
+
+#### Carousel Basics
+
+We call an HTML element with the `tg:carousel` attribute a _carousel_.
+
+This allows website authors to display multiple pieces of content sequentially in a slideshow-like
+format.
+
+Inside the carousel, there must always be an element with the `tg:frame` attribute, a _carousel frame_.
+Also, inside the carousel frame, there must be an element with the `tg:body` attribute, a _carousel body_.
+In addition, there must be elements with the `tg:item` attribute, _carousel items_,
+inside the carousel body.
+
+The carousel frame and carousel items must have a fixed width.
+Normally, carousel frames and carousel items have the same width.
+If the width of the carousel frame is larger than the carousel items, some or all of the carousel
+items before and after the active carousel item will be displayed.
+
+The width of the carousel body are automatically adjusted, so there is no need for the
+website author to specify it.
+Its width becomes large enough to allow all carousel items to be aligned horizontally, but only a
+portion of it will be visible to website visitors because of the `overflow: hidden` style of the
+carousel frame.
+The carousel effect is achieved by shifting the carousel body left and right with an embedded
+JavaScript program.
+
+What follows is an example of a carousel:
+
+```html
+---
+[style]
+carousel-frame = "w-[240px] h-[180px]"
+
+carousel-body = """
+  [&>div] { w-[240px] h-[180px] object-cover }
+  [&>div>img] { w-full h-full object-cover object-center}
+  """
+---
+<div tg:carousel>
+  <div tg:frame tg:class="carousel-frame">
+    <div tg:body tg:class="carousel-body">
+      <div tg:item><img src="/images/slides/a.png"></div>
+      <div tg:item><img src="/images/slides/b.png"></div>
+      <div tg:item><img src="/images/slides/c.png"></div>
+      <div tg:item><img src="/images/slides/d.png"></div>
+      <div tg:item><img src="/images/slides/e.png"></div>
+    </div>
+  </div>
+</div>
+```
+
+As with rotators, placing an element with a `tg:prev` or `tg:next` attribute inside the carousel
+allows the user to control the state of the carousel.
+
+```html
+<nav>
+  <button type="button" tg:prev>Prev</button>
+  <button type="button" tg:next>Next</button>
+</nav>
+```
+
+#### Carousel auto-rotation and animation effect
+
+To automatically rotate the carousel items at regular time intervals, specify the
+`tg:interval` attribute for the carousel.
+The numeric sequence specified in this attribute is interpreted as time in milliseconds.
+
+```html
+<div tg:carousel tg:interval="3000">
+```
+
+If you want to add animation effect to the rotation of the carousel, specify the
+`tg:duration` attribute of the carousel.
+
+```html
+<div tg:carousel tg:interval="3000" tg:duration="500">
+```
+
+By default, the horizontal movement of carousel items is linear, i.e., they move at the even speed.
+
+If you want to fine-tune the way they move, specify a class with a name beginning with "ease-" for
+the carousel body.
+
+```html
+<div tg:carousel>
+  <div tg:frame tg:class="carousel-frame">
+    <div tg:body class="ease-in-out" tg:class="carousel-body">
+      ...
+    </div>
+  </div>
+</div>
+```
+
+The `ease-in-out` class moderates the movement near the beginning and near the end of the change.
+See [Transition Timing Function](https://tailwindcss.com/docs/transition-timing-function) for
+details.
+
+If the `tg:duration` attribute is set on the carousel, a user clicking/tapping the "prev" or
+"next" button while the carousel body is shifting horizontally will have no effect.
+To visually indicate this, specify the `tg:enabled-class` and `tg:disabled-class` attributes to
+the buttons.
+
+Class tokens specified in the `tg:enabled-class` attribute are added to the `class` attribute of
+the button when the carousel body is stopped, and class tokens specified in the `tg:disabled-class`
+attribute are added to the `class` attribute of the button when the carousel body is shifting.
+
+```html
+<button
+  type="button"
+  tg:prev
+  class="rounded-full w-12 h-12 opacity-50"
+  tg:enabled-class="bg-teal-400 hover:opacity-75"
+  tg:disabled-class="bg-gray-400 cursor-default"
+>
+  <span class="material-symbols-outlined">arrow_back</span>
+</button>
+```
+
+#### Paginator
+
+Inside the carousel, there may be an element with the `tg:paginator` attribute.
+This element will be a template for a group of buttons that will allow the user to choose the
+a carousel item to be displayed in the center of the carousel frame.
+We call these buttons _pagination buttons_.
+
+For example, if the number of carousel items is five, the following code example generates a
+`<nav>` element with five `<button>` elements inside.
+
+```html
+<div tg:carousel>
+  ...
+  <nav>
+    <button type="button" tg:paginator></button>
+  </nav>
+</div>
+```
+
+Each pagination button corresponds to one of the carousel items.
+
+If desired, you may code individual pagination buttons by specifying the number of the carousel
+item in the `tg:choose` attribute.
+
+The following example generates a `<nav>` element with five `<button>` elements, as in the
+previous example.
+
+```html
+<nav>
+  <button type="button" tg:choose="0"></button>
+  <button type="button" tg:choose="1"></button>
+  <button type="button" tg:choose="2"></button>
+  <button type="button" tg:choose="3"></button>
+  <button type="button" tg:choose="4"></button>
+</nav>
+```
+
+Note that each carousel item is numbered starting with zero.
+
+If you want to give a prominent style to the pagination button corresponding to the carousel item
+displayed in the center of the carousel frame, use the `tg:normal-class` and `tg:current-class`
+attributes.
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+  >
+  </button>
+</nav>
+```
+
+Class tokens specified in the `tg:normal-class` attribute are applied to buttons corresponding to
+carousel items that are not currently displayed in the center of the carousel frame,
+and class tokens specified in the `tg:current-class` attribute are applied to the button
+corresponding to the carousel item that is currently displayed in the center of the carousel frame.
+
+When the `tg:duration` attribute is set on the carousel, a user clicking/tapping the pagination
+buttons while the carousel body is shifting horizontally will have no effect.
+To visually indicate this, specify the `tg:disabled-class` attributes to
+the buttons.
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+    tg:disabled-class="bg-gray-400 cursor-default"
+  >
+  </button>
+</nav>
+```
+
+Class tokens specified in the `tg:disabled-class` attribute are added to the `class` attribute of
+all pagination buttons when the carousel body is shifting.
+
 ### Notes on Alpine.js
 
-The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content generation.
+The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content manipulation.
 However, website authors themselves cannot use attributes derived from Alpine.js such as `x-data`
 , `@click`, and `:class`.
 When those attributes are found in the source HTML files, they will be removed.
@@ -1964,31 +2365,34 @@ For example, suppose that the value `"a"` is set to the custom property `data-x`
 matter of a page as follows:
 
 ```
-data-x: "a"
+[data]
+x = "a"
 ```
 
 And suppose the front matter of its wrapper has the following settings:
 
 ```
-data-x: "b"
-data-y: "c"
+[data]
+x = "b"
+y = "c"
 ```
 
-In this case, the value of the property `data-x` for this page is `"a"` and the value of the
-property `data-y` is `"c"`.
+In this case, the value of the custom property `x` for this page is `"a"` and the value of the
+custom property `y` is `"c"`.
 
 In addition, suppose that the front matter of the layout applied to this page has the following
 settings:
 
 ```
-data-z: "d"
+[data]
+z = "d"
 ```
 
-If so, the value of property `data-x` on this page is `"d"`.
+If so, the value of property `z` on this page is `"d"`.
 
 Custom properties as well as predefined properties such as `title` are inherited as well.
-Also, properties with names beginning with `meta`, `http-equiv-`, `og-` or `property-` are
-inherited. However, properties whose name begins with `class-` are _not_ inherited.
+Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" tables are
+inherited. However, properties that belong to "style" table are _not_ inherited.
 
 ### Embedding property values into an article
 
@@ -1996,33 +2400,35 @@ When an article is rendered as an independent HTML document, the property inheri
 exactly the same as that of a page.
 
 When an article is embedded in a page, segment, or layout, it inherits properties from the wrapper
-surrounding it, if any, and `site.yml` but not from the page, segment, or layout that embeds that
+surrounding it, if any, and `site.toml` but not from the page, segment, or layout that embeds that
 article.
 
 ### Embedding property values into a wrapper or layout
 
 When a wrapper or layout is applied to a page or article, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that wrapper or layout are the values of
+the `<tg:prop>` and `<tg:data>` elements in that wrapper or layout are the values of
 properties that the page or article has.
 
 For example, suppose a page has the following front matter
 
 ```
-data-x: "a"
+[data]
+x = "a"
 ```
 
 And suppose its wrapper has the following front matter and HTML fragment:
 
 ```html
 ---
-data-x: "b"
-data-y: "c"
+[data]
+x = "b"
+y = "c"
 ---
 <header>
-  <tg-data name="x"></tg-data>
-  <tg-data name="y"></tg-data>
+  <tg:data name="x"></tg:data>
+  <tg:data name="y"></tg:data>
 </header>
-<tg-content></tg-content>
+<tg:content></tg:content>
 ```
 
 Then, the text content of the `<header>` element of the HTML document generated from them will
@@ -2031,17 +2437,17 @@ be "a c" instead of "b c".
 ### Embedding property values into a segment
 
 When a segment is embedded into a page, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
 properties that the page has.
 
 Similarly, when a segment is into a layout, the values that are substituted for
-the `<tg-prop>` and `<tg-data>` elements in that segment are the values of
+the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
 properties of the main template (page or article).
 
 ### Embedding property values into a component
 
 When a component is embedded into a page, article, segment, wrapper, layout,
-the values that are substituted for the `<tg-prop>` and `<tg-data>` elements in that template
+the values that are substituted for the `<tg:prop>` and `<tg:data>` elements in that template
 are the values of properties of the main template (page or article).
 
 ## Managing the Contents of the `<head>` Element
@@ -2066,7 +2472,7 @@ The title of the HTML document generated from the template below will be "Greeti
 
 ```html
 ---
-title: Greeting
+title = "Greeting"
 ---
 <body>
   <h1>Welcome!</h1>
@@ -2100,23 +2506,24 @@ If the next template is rendered as an HTML document, its title will be "No Titl
 
 ### `<meta>` elements
 
-The `<meta>` elements in the `<head>` element are generated by the values of properties whose
-names begin with `meta-`, `http-equiv-`, `og-`, or `property-`.
+The `<meta>` elements in the `<head>` element are generated by the values of properties that
+belongs to "meta", "http-equiv", or "meta-property" tables.
 
 Note that the `<head>` element of the generated HTML document always contains a
 `<meta charset="utf-8">` element.
 
-#### `meta-*`
+#### `[meta]` table
 
 You can generate a `<meta>` element with a `name` attribute by setting the value to a property
-whose name begins with `meta-`:
+that belongs to the "meta" table:
 
-```yaml
-meta-viewport: "width=device-width, initial-scale=1"
-meta-theme-color: "#2da0a8"
-meta-description: Description
-meta-robots: "index,follow"
-meta-generator: Teamgenik
+```toml
+[meta]
+viewport = "width=device-width, initial-scale=1"
+theme-color = "#2da0a8"
+description = Description
+robots = "index,follow"
+generator = Teamgenik
 ```
 
 Setting the values of the properties as above will produce the following `<meta>` elements:
@@ -2133,10 +2540,9 @@ Setting the values of the properties as above will produce the following `<meta>
 
 If you want to generate multiple `<meta>` elements with the same name, write as follows:
 
-```yaml
-meta-googlebot:
-- "index,follow"
-- notranslate
+```toml
+[meta]
+googlebot = [ "index,follow", "notranslate" ]
 ```
 
 The above will generate the following `<meta>` elements
@@ -2146,17 +2552,18 @@ The above will generate the following `<meta>` elements
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `http-equiv-*`
+#### `[http-equiv]` section
 
 You can generate a `<meta>` element with a `http-equiv` attribute by setting the value to a
-property whose name begins with `http-equiv-`:
+property that belongs to "http-equiv" table.
 
-```yaml
-http-equiv-content-security-policy: "default-src 'self'"
-http-equiv-x-dns-prefetch-control: "off"
+```toml
+[http-equiv]
+content-security-policy = "default-src 'self'"
+x-dns-prefetch-control = "off"
 ```
 
-The above settings will generate the following `<meta>` elements
+The above settings will generate the following `<meta>` elements:
 
 ```html
 <meta http-equiv="content-security-policy" content="default-src 'self'">
@@ -2165,15 +2572,16 @@ The above settings will generate the following `<meta>` elements
 
 Teamgenik converts these paths into URLs appropriately.
 
-#### `property-*`
+#### `[meta-property]` section
 
-```yaml
-property-fb:app_id: "1234567890abcde"
-property-fb:article_style: "default"
-property-fb:use_automatic_ad_placement: "true"
-property-op:markup_version: "v1.0"
-property-al:ios:app_name: "App Links"
-property-al:android:app_name: "App Links"
+```toml
+[meta-property]
+"fb:app_id" = "1234567890abcde"
+"fb:article_style" = "default"
+"fb:use_automatic_ad_placement" = "true"
+"op:markup_version" = "v1.0"
+"al:ios:app_name" = "App Links"
+"al:android:app_name" = "App Links"
 ```
 
 The above settings will generate the following `<meta>` elements
@@ -2190,28 +2598,34 @@ The above settings will generate the following `<meta>` elements
 You can embed the value of a property into the `content` attribute of a `<meta>` element using
 `${...}` notation:
 
-```yaml
-property-og:url: "${url}"
-property-og:title: "${title}"
-property-og:description: "${meta-description}"
+```toml
+[meta-property]
+"og:url" = "${url}"
+"og:title" = "${title}"
+"og:description" = "${meta.description}"
 ```
+
+To refer to the value of a property belonging to the "meta" table, add `meta.` before the property
+name.
 
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
 element using `%{...}` notation:
 
-```yaml
-property-og:image: "%{/images/icon.png}"
-property-og:audio: "%{/audios/theme.mp3}"
+```toml
+[meta-property]
+"og:image" = "%{/images/icon.png}"
+"og:audio" = "%{/audios/theme.mp3}"
 ```
 
 ### `<link>` elements
 
-The `<link>` elements in the `<head>` element are generated by the values of properties whose
-names begin with `link-`:
+The `<link>` elements in the `<head>` element are generated by the values of properties that
+belon to "link" table.
 
-```yaml
-link-archives: "https://example.com/archives/"
-link-license: "%{/copyright.html}"
+```toml
+[link]
+archives = "https://example.com/archives/"
+license = "%{/copyright.html}"
 ```
 
 The above will generate the following `<link>` elements
@@ -2226,7 +2640,7 @@ converted appropriately.
 
 #### Note
 
-The following link element are always inserted within the head element.
+The following `<link>` element are always inserted within the head element.
 
 ```html
 <link href="/css/tailwind.css" rel="stylesheet">
@@ -2238,6 +2652,15 @@ A `<link>` element that refers to another stylesheet cannot be inserted within t
 
 The `<script>` elements are managed by tgweb. Users are not allowed to insert their own
 `<script>` elements into the `<head>` or `<body>` elements.
+
+#### Note
+
+The following `<script>` elements are always inserted within the head element.
+
+```html
+<script src="/js/alpine.min.js" defer></script>
+<script src="/reload/reload.js" defer></script>
+```
 
 ## TODO List
 

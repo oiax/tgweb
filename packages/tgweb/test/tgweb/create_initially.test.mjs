@@ -30,6 +30,7 @@ describe("createInitially", () => {
       '    <title>Hello, world!</title>',
       '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
       '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <script src="/js/tgweb_utilities.js" defer></script>',
       '    <script src="/js/alpine.min.js" defer></script>',
       '    <script src="/reload/reload.js" defer></script>',
       '  </head>',

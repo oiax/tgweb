@@ -26,12 +26,12 @@ const create = (path, siteData) => {
   else {
     updateSiteData(siteData, posixPath)
 
-    if (type === "site.yml") {
+    if (type === "site.toml") {
       siteData.pages.forEach(page => updateHTML(`src/${page.path}`, siteData))
       siteData.articles.forEach(article => updateHTML(`src/${article.path}`, siteData))
       return
     }
-    else if (type === "color_scheme.yml") {
+    else if (type === "color_scheme.toml") {
       const tailwindConfig = generateTailwindConfig(PATH.dirname(posixPath))
       if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
       if (process.env.VERBOSE) console.log(`Updated tailwind.config.js`)

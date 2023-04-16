@@ -1,8 +1,9 @@
 import fs from "fs"
-import YAML from "js-yaml"
+import toml from "toml"
 import { parseDocument } from "htmlparser2"
-import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
+import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
+import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 
 const separatorRegex = new RegExp("^---\\n", "m")
 
@@ -12,13 +13,13 @@ const getTemplate = (path, type) => {
 
   if (parts[0] === "" && parts[1] !== undefined) {
     try {
-      const frontMatter = YAML.load(parts[1])
+      const frontMatter = toml.parse(parts[1])
       normalizeFrontMatter(frontMatter)
       const html = parts.slice(2).join("---\n")
       return createTemplate(path, type, html, frontMatter)
     }
     catch (error) {
-      console.error(`Could not parse the front matter: ${path}`)
+      showTomlSytaxError(path, parts[1], error)
 
       const frontMatter = {}
       const html = parts.slice(2).join("---\n")
@@ -43,7 +44,7 @@ const extractInserts = (dom) => {
   const inserts = {}
 
   dom.children
-    .filter(child => child.constructor.name === "Element" && child.name === "tg-insert")
+    .filter(child => child.constructor.name === "Element" && child.name === "tg:insert")
     .forEach(child => {
       const name = child.attribs.name
 
@@ -52,7 +53,7 @@ const extractInserts = (dom) => {
 
   dom.children =
     dom.children.filter(child =>
-      child.constructor.name !== "Element" || child.name !== "tg-insert"
+      child.constructor.name !== "Element" || child.name !== "tg:insert"
     )
 
   return inserts

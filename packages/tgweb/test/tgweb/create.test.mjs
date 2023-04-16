@@ -15,7 +15,7 @@ const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 // Only in site_1c/src/pages/etc: _wrapper.html
 // Only in site_1c/src/pages: new.html
 // $ diff -r site_0/src site_0a/src                                                                                                        [~/projects/teamgenik/tgweb/packages/tgweb/test/sites]
-// Only in site_0a/src: site.yml
+// Only in site_0a/src: site.toml
 
 describe("create", () => {
   it("should process a new page", () => {
@@ -117,14 +117,14 @@ describe("create", () => {
     assert.equal(fs.existsSync(wd + "c/dist/articles/culture.html"), true)
   })
 
-  it("should process the addition of site.yml", () => {
+  it("should process the addition of site.toml", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     process.chdir(wd)
     fs.rmSync(wd + "a/dist", { force: true, recursive: true })
     const siteData = getSiteData(wd)
     process.chdir(wd + "a")
 
-    create("src/site.yml", siteData)
+    create("src/site.toml", siteData)
 
     assert.equal(siteData.properties["title"], "Example")
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)

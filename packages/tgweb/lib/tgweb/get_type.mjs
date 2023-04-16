@@ -11,8 +11,8 @@ const getType = path => {
   else if (shortDirname === "src/layouts") return "layout"
   else if (shortDirname === "src/articles") return "article"
   else if (shortDirname === "src/pages") return "page"
-  else if (filename === "site.yml") return "site.yml"
-  else if (filename === "color_scheme.yml") return "color_scheme.yml"
+  else if (filename === "site.toml") return "site.toml"
+  else if (filename === "color_scheme.toml") return "color_scheme.toml"
   else return "unkown"
 }
 

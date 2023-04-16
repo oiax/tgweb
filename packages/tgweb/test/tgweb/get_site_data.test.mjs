@@ -15,7 +15,8 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["layout"], "home")
     assert.equal(page.frontMatter["title"], "Home")
-    assert.equal(page.frontMatter["property-fb:app_id"], "0123456789abced")
+    assert.equal(page.frontMatter["meta"]["viewport"], "width=device-width, initial-scale=1")
+    assert.equal(page.frontMatter["meta-property"]["fb:app_id"], "0123456789abced")
   })
 
   it("should process a page without <body> and </body> tags", () => {
@@ -42,7 +43,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
+    assert.equal(siteData.properties.meta.viewport, "width=device-width, initial-scale=1.0")
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
     assert.equal(page.path, "pages/index.html")
@@ -62,7 +63,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum_with_title")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.properties["meta-viewport"], "width=device-width, initial-scale=1.0")
+    assert.equal(siteData.properties.meta.viewport, "width=device-width, initial-scale=1.0")
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
     assert.equal(page.path, "pages/index.html")
@@ -84,7 +85,7 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const layout = siteData.layouts[0]
-    assert.equal(layout.frontMatter["class-div1"], "my-4 p-2 bg-blue-100")
+    assert.equal(layout.frontMatter.style["div1"], "my-4 p-2 bg-blue-100")
 
     const html = render(layout.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
@@ -93,21 +94,21 @@ describe("getSiteData", () => {
       '<body>',
       '  <header>Header</header>',
       '  <div class="my-4 p-2 bg-blue-100">',
-      '    <tg-content></tg-content>',
+      '    <tg:content></tg:content>',
       '    <div>',
-      '      <tg-slot name="x"></tg-slot>',
-      '      <tg-data name="y"></tg-data>',
+      '      <tg:slot name="x"></tg:slot>',
+      '      <tg:data name="y"></tg:data>',
       '    </div>',
-      '    <tg-if-complete>',
+      '    <tg:if-complete>',
       '      <div>',
-      '        <tg-slot name="x"></tg-slot>',
+      '        <tg:slot name="x"></tg:slot>',
       '      </div>',
-      '    </tg-if-complete>',
-      '    <tg-if-complete>',
+      '    </tg:if-complete>',
+      '    <tg:if-complete>',
       '      <div>',
-      '        <tg-slot name="z"></tg-slot>',
+      '        <tg:slot name="z"></tg:slot>',
       '      </div>',
-      '    </tg-if-complete>',
+      '    </tg:if-complete>',
       '  </div>',
       '  <footer>Footer</footer>',
       '</body>'
@@ -121,19 +122,23 @@ describe("getSiteData", () => {
     const siteData = getSiteData(wd)
 
     const wrapper = siteData.wrappers[0]
-    assert.equal(wrapper.frontMatter["class-div1"], "my-4 p-2 bg-green-100 [&>p]:mb-2")
+
+    assert.equal(
+      wrapper.frontMatter.style["div1"],
+      "my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1"
+    )
 
     const html = render(wrapper.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<div class="my-4 p-2 bg-green-100 [&>p]:mb-2">',
-      '  <tg-content></tg-content>',
-      '  <tg-if-complete>',
+      '<div class="my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1">',
+      '  <tg:content></tg:content>',
+      '  <tg:if-complete>',
       '    <div>',
-      '      <tg-slot name="x"></tg-slot>',
+      '      <tg:slot name="x"></tg:slot>',
       '    </div>',
-      '  </tg-if-complete>',
+      '  </tg:if-complete>',
       '</div>'
     ]
 
@@ -163,9 +168,9 @@ describe("getSiteData", () => {
 
     const expected = [
       '<span class="badge badge-primary">',
-      '  <tg-data name="mark">?</tg-data>',
-      '  <tg-content></tg-content>',
-      '  <tg-slot name="x"></tg-slot>',
+      '  <tg:data name="mark">?</tg:data>',
+      '  <tg:content></tg:content>',
+      '  <tg:slot name="x"></tg:slot>',
       '</span>'
     ]
 

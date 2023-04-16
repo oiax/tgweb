@@ -1,11 +1,18 @@
 ---
-class-div1: "my-4 p-2 bg-green-100 [&>p]:mb-2"
+[style]
+div1 = """
+  my-4
+  p-2
+  bg-green-100
+  md { my-6 p-4 }
+  [&>p] { mb-2 p-1 }
+  """
 ---
-<div class="${div1}">
-  <tg-content></tg-content>
-  <tg-if-complete>
+<div tg:class="div1">
+  <tg:content></tg:content>
+  <tg:if-complete>
     <div>
-      <tg-slot name="x"></tg-slot>
+      <tg:slot name="x"></tg:slot>
     </div>
-  </tg-if-complete>
+  </tg:if-complete>
 </div>

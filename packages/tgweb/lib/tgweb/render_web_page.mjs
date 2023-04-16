@@ -42,7 +42,6 @@ const renderPage = (path, siteData) => {
   }
   else {
     if (layout) {
-
       return applyLayout(page, layout, siteData, documentProperties, mergeState(state, {container: layout}))
     }
     else {
@@ -102,6 +101,8 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
     layout.dom.children
       .map(child => renderNode(child, siteData, documentProperties, localState))
       .flat()
+      .map(c => postprocess(c, {}))
+      .flat()
 
   doc.children[0].children.pop()
   rendered.forEach(child => doc.children[0].children.push(child))
@@ -136,6 +137,8 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
       layout.dom.children
         .map(child => renderNode(child, siteData, documentProperties, localState))
         .flat()
+        .map(c => postprocess(c, {}))
+        .flat()
 
     doc.children[0].children.pop()
     rendered.forEach(child => doc.children[0].children.push(child))
@@ -161,6 +164,8 @@ const doRenderPage = (page, siteData, documentProperties, state) => {
     page.dom.children
       .map(child => renderNode(child, siteData, documentProperties, localState))
       .flat()
+      .map(c => postprocess(c, {}))
+      .flat()
 
   doc.children[0].children[1].children = renderedPage
 
@@ -176,41 +181,41 @@ const renderNode = (node, siteData, documentProperties, state) => {
     console.log("renderNode() does not accept a Document as the first argument.")
   }
   else if (klass === "Element") {
-    if (node.name === "tg-content") {
+    if (node.name === "tg:content") {
       if (state.innerContent !== undefined) return state.innerContent
       return err(render(node))
     }
-    else if (node.name === "tg-segment") {
+    else if (node.name === "tg:segment") {
       return renderSegment(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-component") {
+    else if (node.name === "tg:component") {
       return renderComponent(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-slot") {
+    else if (node.name === "tg:slot") {
       return renderSlot(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-prop") {
+    else if (node.name === "tg:prop") {
       return renderProp(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-data") {
+    else if (node.name === "tg:data") {
       return renderData(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-if-complete") {
+    else if (node.name === "tg:if-complete") {
       return renderIfComplete(node, siteData, documentProperties, state)
     }
-    else if (node.name === "tg-article") {
+    else if (node.name === "tg:article") {
       return renderEmbeddedArticle(node, siteData, state)
     }
-    else if (node.name === "tg-articles") {
+    else if (node.name === "tg:articles") {
       return renderEmbeddedArticleList(node, siteData, state)
     }
-    else if (node.name === "tg-link") {
+    else if (node.name === "tg:link") {
       return renderLink(node, documentProperties, siteData, state)
     }
-    else if (node.name === "tg-links") {
+    else if (node.name === "tg:links") {
       return renderLinks(node, documentProperties, siteData, state)
     }
-    else if (node.name === "tg-label") {
+    else if (node.name === "tg:label") {
       return renderLabel(node, state)
     }
     else if (node.name === "a") {
@@ -261,16 +266,19 @@ const renderComponent = (node, siteData, documentProperties, state) => {
 
   const properties = Object.assign({}, documentProperties)
 
+  if (properties.data === undefined) properties.data = {}
+
   Object.keys(node.attribs).forEach(key => {
     if (key.startsWith("data-")) {
-      properties[key] = node.attribs[key]
+      const propName = key.slice(5)
+      properties.data[propName] = node.attribs[key]
     }
   })
 
   const inserts = {}
 
   node.children
-    .filter(child => child.constructor.name === "Element" && child.name === "tg-insert")
+    .filter(child => child.constructor.name === "Element" && child.name === "tg:insert")
     .forEach(child => {
       const name = child.attribs.name
 
@@ -279,7 +287,7 @@ const renderComponent = (node, siteData, documentProperties, state) => {
 
   const innerContent =
     node.children.filter(child =>
-      child.constructor.name !== "Element" || child.name !== "tg-insert"
+      child.constructor.name !== "Element" || child.name !== "tg:insert"
     )
 
   const localState = getLocalState(state, component, innerContent, inserts)
@@ -313,7 +321,9 @@ const renderProp = (node, siteData, documentProperties, state) => {
 }
 
 const renderData = (node, siteData, documentProperties, state) => {
-  const value = documentProperties[`data-${node.attribs.name}`]
+  if (typeof documentProperties.data !== "object") return node
+
+  const value = documentProperties.data[node.attribs.name]
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
@@ -331,17 +341,18 @@ const renderIfComplete = (node, siteData, documentProperties, state) => {
   const placeholders =
     DomUtils.find(n => {
       if (n.constructor.name === "Element") {
-        if (n.name === "tg-prep") return true
-        if (n.name === "tg-data") return true
-        if (n.name === "tg-slot") return true
+        if (n.name === "tg:prep") return true
+        if (n.name === "tg:data") return true
+        if (n.name === "tg:slot") return true
         return false
       }
     }, node.children, true)
 
   if (placeholders.every(p => {
-    if (p.name === "tg-prep") return documentProperties[p.attribs.name] !== undefined
-    if (p.name === "tg-data") return documentProperties[`data-${p.attribs.name}`] !== undefined
-    if (p.name === "tg-slot") return state.inserts[p.attribs.name] !== undefined
+    if (p.name === "tg:prep") return documentProperties[p.attribs.name] !== undefined
+    if (p.name === "tg:data" && documentProperties.data === undefined) return false
+    if (p.name === "tg:data") return documentProperties.data[p.attribs.name] !== undefined
+    if (p.name === "tg:slot") return state.inserts[p.attribs.name] !== undefined
     return false
   })) {
     return node.children
@@ -438,7 +449,7 @@ const renderLink = (node, properties, siteData, state) => {
   if (node.attribs.href === href) {
     const fallback =
       DomUtils.findOne(
-        n => n.constructor.name === "Element" && n.name === "tg-if-current",
+        n => n.constructor.name === "Element" && n.name === "tg:if-current",
         children,
         true
       )
@@ -452,7 +463,7 @@ const renderLink = (node, properties, siteData, state) => {
   }
   else {
     return children.map(child => {
-      if (child.constructor.name === "Element" && child.name === "tg-if-current") return []
+      if (child.constructor.name === "Element" && child.name === "tg:if-current") return []
       return renderNode(child, siteData, properties, localState)
     })
     .flat()
@@ -498,7 +509,7 @@ const renderArticleLink = (node, article, siteData, state) => {
   if (`src/${article.path}` === state.path) {
     const fallback =
       DomUtils.findOne(
-        n => n.constructor.name === "Element" && n.name === "tg-if-current",
+        n => n.constructor.name === "Element" && n.name === "tg:if-current",
         children,
         true
       )
@@ -512,14 +523,14 @@ const renderArticleLink = (node, article, siteData, state) => {
   }
   else {
     return children.map(child => {
-      if (child.constructor.name === "Element" && child.name === "tg-if-current") return []
+      if (child.constructor.name === "Element" && child.name === "tg:if-current") return []
       return renderNode(child, siteData, article.frontMatter, localState)
     })
   }
 }
 
 const renderLabel = (node, state) => {
-  if (state.container.name === "tg-link" || state.container.name === "tg-links") {
+  if (state.container.name === "tg:link" || state.container.name === "tg:links") {
     if (state.label != "") {
       const textNode = parseDocument("\n").children[0]
       textNode.data = escape(state.label)
@@ -558,20 +569,26 @@ const renderElement = (node, siteData, documentProperties, state) => {
   convertAttribs(newNode.attribs, documentProperties)
   purgeAttribs(newNode.attribs)
 
-  if (newNode.attribs["tg-toggler"] !== undefined && state.hookName === undefined)
+  if (newNode.attribs["tg:toggler"] !== undefined && state.hookName === undefined)
     addTogglerHook(newNode, newState)
 
-  if (newNode.attribs["tg-switcher"] !== undefined && state.hookName === undefined)
+  if (newNode.attribs["tg:switcher"] !== undefined && state.hookName === undefined)
     addSwitcherHook(newNode, newState)
 
-  if (newNode.attribs["tg-rotator"] !== undefined && state.hookName === undefined)
+  if (newNode.attribs["tg:rotator"] !== undefined && state.hookName === undefined)
     addRotatorHook(newNode, newState)
 
-  if (state.hookName === "toggler") addTogglerSubhooks(newNode, documentProperties)
-  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, documentProperties)
-  else if (state.hookName === "rotator") addRotatorSubhooks(newNode, documentProperties)
+  if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
+    addCarouselHook(newNode, newState)
 
-  removeTgAttribs(newNode.attribs)
+  if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
+    addModalHook(newNode, newState)
+
+  if (state.hookName === "toggler") addTogglerSubhooks(newNode)
+  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
+  else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
+  else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
+  else if (state.hookName === "modal") addModalSubhooks(newNode)
 
   newNode.children =
     node.children
@@ -583,19 +600,20 @@ const renderElement = (node, siteData, documentProperties, state) => {
 
 const convertAttribs = (attribs, documentProperties) => {
   Object.keys(attribs).forEach(key => {
+    if (key === "class") return
     attribs[key] = expandCustomProperties(attribs[key], documentProperties)
   })
 }
 
 const expandCustomProperties = (value, documentProperties) =>
   value.replaceAll(/\$\{(\w+(?:-\w+)*)\}/g, (_, propName) => {
-    const key = `data-${propName}`
-    if (Object.hasOwn(documentProperties, key)) return documentProperties[key]
+    if (documentProperties.data === undefined) return `\${${propName}}`
+    else if (documentProperties.data[propName] !== undefined)
+      return documentProperties.data[propName]
     else return `\${${propName}}`
   })
 
-// x-data:
-//   f: Flag, a boolean value indicating the on/off state of the toggler
+// Toggler
 
 const addTogglerHook = (newNode, newState) => {
   newNode.attribs["x-data"] = `{ f: false }`
@@ -604,169 +622,297 @@ const addTogglerHook = (newNode, newState) => {
   newState.hookName = "toggler"
 }
 
-// x-data:
-//   i: Current index number of the switcher
-//   s: Lower limit of index numbers
-//   e: Upper limit of index numbers
-//   v: Interval Id, the return value from `setInterval` function
-
-const addSwitcherHook = (newNode, newState) => {
-  const md = [...newNode.attribs["tg-switcher"].trim().match(/^(\d+)\.\.(\d+)$/)]
-
-  if (md !== null) {
-    const s = parseInt(md[1], 10)
-    const e = parseInt(md[2], 10)
-
-    if (s < e) {
-      newState.hookName = "switcher"
-      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
-
-      if (newNode.attribs["tg-interval"] !== undefined) {
-        const interval = parseInt(newNode.attribs["tg-interval"], 10)
-
-        if (! Number.isNaN(interval)) {
-          const innerScript = "if (i < e) i = i + 1; else clearInterval(v)"
-          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
-          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
-        }
-      }
-    }
-  }
-}
-
-// x-data:
-//   i: Current index number of the rotator
-//   s: Lower limit of index numbers
-//   e: Upper limit of index numbers
-//   v: Interval Id, the return value from `setInterval` function
-
-const addRotatorHook = (newNode, newState) => {
-  const md = [...newNode.attribs["tg-rotator"].trim().match(/^(\d+)\.\.(\d+)$/)]
-
-  if (md !== null) {
-    const s = parseInt(md[1], 10)
-    const e = parseInt(md[2], 10)
-
-    if (s < e) {
-      newNode.attribs["x-data"] = `{ i: ${s}, s: ${s}, e: ${e}, v: undefined }`
-      newState.hookName = "rotator"
-
-      if (newNode.attribs["tg-interval"] !== undefined) {
-        const interval = parseInt(newNode.attribs["tg-interval"], 10)
-
-        if (! Number.isNaN(interval)) {
-          const innerScript = "if (i < e) i = i + 1; else i = s"
-          const script = `v = setInterval(() => { ${innerScript} }, ${interval});`
-          newNode.attribs["x-init"] = script.trim().replaceAll(/\n/g, "")
-        }
-      }
-    }
-  }
-}
-
 const addTogglerSubhooks = (newNode) => {
-  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
-  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
+  const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
 
-  if (newNode.attribs["tg-when"] === "on") {
+  if (newNode.attribs["tg:when"] === "on") {
     newNode.attribs["x-show"] = `f === true`
   }
-  else if (newNode.attribs["tg-when"] === "off") newNode.attribs["x-show"] = `f === false`
+  else if (newNode.attribs["tg:when"] === "off") newNode.attribs["x-show"] = `f === false`
 
-  if (newNode.attribs["tg-toggle"] === "on") {
+  if (newNode.attribs["tg:toggle"] === "on") {
     newNode.attribs["x-on:click.stop"] = "f = true"
     newNode.attribs["x-bind:class"] = `f === true ? '${disabledClass}' : '${enebledClass}'`
   }
-  else if (newNode.attribs["tg-toggle"] === "off") {
+  else if (newNode.attribs["tg:toggle"] === "off") {
     newNode.attribs["x-on:click.stop"] = "f = false"
     newNode.attribs["x-bind:class"] = `f === false ? '${disabledClass}' : '${enebledClass}'`
   }
-  else if (newNode.attribs["tg-toggle"] === "") {
+  else if (newNode.attribs["tg:toggle"] === "") {
     newNode.attribs["x-on:click.stop"] = "f = !f"
     newNode.attribs["x-bind:class"] = `'${enebledClass}'`
   }
 }
 
-const addSwitcherSubhooks = (newNode, documentProperties) => {
-  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
-  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
-  const currentClass = (newNode.attribs["tg-current-class"] || "").replace(/'/, "\\'")
-  const normalClass = (newNode.attribs["tg-normal-class"] || "").replace(/'/, "\\'")
+// Switcher
 
-  if (newNode.attribs["tg-when"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg-when"], documentProperties)
-    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+const addSwitcherHook = (newNode, newState) => {
+  newState.hookName = "switcher"
+  newNode.attribs["x-data"] = "window.tgweb.switcher.data()"
+
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+
+    if (! Number.isNaN(interval)) {
+      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, ${interval})`
+    }
+    else {
+      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+    }
+  }
+  else {
+    newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+  }
+}
+
+const addSwitcherSubhooks = (newNode) => {
+  const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-switcher-item"] = ""
+    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
   }
 
-  if (newNode.attribs["tg-first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:first"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.first($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : i; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.prev($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : i; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.next($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:last"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.switcher.last($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-choose"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg-choose"], documentProperties)
+  if (newNode.attribs["tg:choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-on:click"] = `window.tgweb.switcher.last($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
 }
 
-const addRotatorSubhooks = (newNode, documentProperties) => {
-  const enebledClass = (newNode.attribs["tg-enabled-class"] || "").replace(/'/, "\\'")
-  const disabledClass = (newNode.attribs["tg-disabled-class"] || "").replace(/'/, "\\'")
-  const currentClass = (newNode.attribs["tg-current-class"] || "").replace(/'/, "\\'")
-  const normalClass = (newNode.attribs["tg-normal-class"] || "").replace(/'/, "\\'")
+// Rotator
 
-  if (newNode.attribs["tg-when"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg-when"], documentProperties)
-    if (!Number.isNaN(n)) newNode.attribs["x-show"] = `i === ${n}`
+const addRotatorHook = (newNode, newState) => {
+  newState.hookName = "rotator"
+  newNode.attribs["x-data"] = "window.tgweb.rotator.data()"
+
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+
+    if (! Number.isNaN(interval)) {
+      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, ${interval})`
+    }
+    else {
+      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
+    }
+  }
+  else {
+    newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
+  }
+}
+
+const addRotatorSubhooks = (newNode) => {
+  const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-rotator-item"] = ""
+    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
   }
 
-  if (newNode.attribs["tg-first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === s ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:first"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.first($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i > s ? i - 1 : e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+  if (newNode.attribs["tg:prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.prev($data)"
+    newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = i < e ? i + 1 : s; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `'${enebledClass}'`
+  if (newNode.attribs["tg:next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.next($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "i = e; clearInterval(v)"
-    newNode.attribs["x-bind:class"] = `i === e ? '${disabledClass}' : '${enebledClass}'`
+  if (newNode.attribs["tg:last"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.rotator.last($data)"
+    newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
-  if (newNode.attribs["tg-choose"] !== undefined) {
-    const n = parseInt(newNode.attribs["tg-choose"], documentProperties)
+  if (newNode.attribs["tg:choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `i = ${n}; clearInterval(v)`
+      newNode.attribs["x-on:click"] = `window.tgweb.rotator.last($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
+}
+
+// Carousel
+
+const addCarouselHook = (newNode, newState) => {
+  newNode.attribs["x-data"] = "window.tgweb.carousel.data()"
+  newState.hookName = "carousel"
+
+  if (newNode.attribs["tg:interval"] === undefined) return;
+
+  const interval = parseInt(newNode.attribs["tg:interval"], 10)
+  if (Number.isNaN(interval)) return
+
+  let duration = parseInt(newNode.attribs["tg:duration"], 10)
+  if (Number.isNaN(duration)) duration = 100
+
+  newNode.attribs["x-init"] = `window.tgweb.carousel.init($data, $el, ${interval}, ${duration})`
+}
+
+const addCarouselSubhooks = (newNode) => {
+  const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
+  const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+
+  if (newNode.attribs["tg:frame"] !== undefined) {
+    newNode.attribs["data-carousel-frame"] = ""
+  }
+  else if (newNode.attribs["tg:body"] !== undefined) {
+    newNode.attribs["data-carousel-body"] = ""
+  }
+  else if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-carousel-item"] = ""
+  }
+
+  if (newNode.attribs["tg:prev"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.carousel.prev($data)"
+    newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg:next"] !== undefined) {
+    newNode.attribs["x-on:click"] = "window.tgweb.carousel.next($data)"
+    newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
+  }
+
+  if (newNode.attribs["tg:choose"] !== undefined) {
+    const n = parseInt(newNode.attribs["tg:choose"], 10)
+
+    if (!Number.isNaN(n)) {
+      newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+
+      const script = `
+          i % len === ${n} ?
+            '${currentClass}' :
+            (inTransition ? '${disabledClass}' : '${normalClass}')
+        `
+
+      newNode.attribs["x-bind:class"] = script.trim().replaceAll(/\s+/g, " ")
+    }
+  }
+}
+
+// Modal
+
+const addModalHook = (newNode, newState) => {
+  newNode.attribs["x-data"] = "{ body: undefined, open: false }"
+  newNode.attribs["x-init"] = "body = $el.querySelector('dialog')"
+  newState.hookName = "modal"
+
+  if (newNode.attribs["tg:open"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && !open) body.showModal(); open = true"
+  }
+}
+
+const addModalSubhooks = (newNode) => {
+  if (newNode.attribs["tg:open"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && !open) body.showModal(); open = true"
+  }
+  else if (newNode.attribs["tg:close"] !== undefined) {
+    newNode.attribs["x-on:click.stop"] = "if (body && open) body.close(); open = false"
+  }
+}
+
+// Postprocess
+
+const postprocess = (node, state) => {
+  const newState = Object.assign({}, state)
+  const klass = node.constructor.name
+
+  if (klass === "Element") {
+    if (node.attribs["tg:carousel"] !== undefined) {
+      return postprocessCarousel(node, newState)
+    }
+    else if (node.attribs["tg:paginator"] !== undefined) {
+      return postprocessCarouselPaginator(node, newState)
+    }
+    else {
+      node.children = node.children.map(c => postprocess(c, newState)).flat()
+      removeTgAttribs(node.attribs)
+      return node
+    }
+  }
+  else {
+    return node
+  }
+}
+
+const postprocessCarousel = (node, newState) => {
+  const carouselItems =
+    DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+
+  newState.carouselItemCount = carouselItems.length
+
+  node.children = node.children.map(c => postprocess(c, newState)).flat()
+  removeTgAttribs(node.attribs)
+  return node
+}
+
+const postprocessCarouselPaginator = (node, newState) => {
+  const disabledClass = (node.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
+  const currentClass = (node.attribs["tg:current-class"] || "").replace(/'/, "\\'")
+  const normalClass = (node.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
+  const choosers = []
+
+  removeTgAttribs(node.attribs)
+
+  for (let n = 0; n < newState.carouselItemCount; n++) {
+    const newNode = parseDocument("<div></div>").children[0]
+    newNode.name = node.name
+    newNode.children = node.children
+    newNode.attribs = Object.assign({}, node.attribs)
+    newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+
+    const script = `
+        i % len === ${n} ?
+          '${currentClass}' :
+          (inTransition ? '${disabledClass}' : '${normalClass}')
+      `
+
+    newNode.attribs["x-bind:class"] = script.trim().replaceAll(/\s+/g, " ")
+
+    delete newNode.attribs.id
+    choosers.push(newNode)
+  }
+
+  return choosers
 }
 
 const purgeAttribs = (attribs) => {
@@ -775,7 +921,7 @@ const purgeAttribs = (attribs) => {
 }
 
 const removeTgAttribs = (attribs) => {
-  const keys = Object.keys(attribs).filter(key => key.match(/^tg-/))
+  const keys = Object.keys(attribs).filter(key => key.match(/^tg:/))
   keys.forEach(key => delete attribs[key])
 }
 
@@ -792,53 +938,74 @@ const renderHead = (documentProperties) => {
     children.push(doc.children[0])
   }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("meta-")) {
-      const name = key.slice(5)
-      const content = documentProperties[key]
+  if (typeof documentProperties.meta === "object") {
+    Object.keys(documentProperties.meta).forEach(name => {
+      const content = documentProperties.meta[name]
       const doc = parseDocument(`<meta name="${name}" content="${content}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("http-equiv-")) {
-      const name = key.slice(11)
-      const content = documentProperties[key]
-
+  if (typeof documentProperties["http-equiv"] === "object") {
+    Object.keys(documentProperties["http-equiv"]).forEach(name => {
+      const content = documentProperties["http-equiv"][name]
       const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("property-")) {
-      const name = key.slice(9)
-      const content = documentProperties[key]
+  if (typeof documentProperties["meta-property"] === "object") {
+    Object.keys(documentProperties["meta-property"]).forEach(name => {
+      const content = documentProperties["meta-property"][name]
+
+      if (typeof content !== "string") return
 
       const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
-        if (Object.hasOwn(documentProperties, propName)) {
-          return documentProperties[propName]
+        const parts = propName.split(".")
+
+        if (parts.length === 1) {
+          const value = documentProperties[propName]
+
+          if (typeof value === "string") {
+            return value
+          }
+          else {
+            return `\${${propName}}`
+          }
         }
-        else {
-          return `\${${propName}}`
+        else if (parts.length === 2) {
+          const p1 = parts[0]
+          const p2 = parts[2]
+
+          if (typeof documentProperties[p1] === "object") {
+            const value = documentProperties[p1][p2]
+
+            if (typeof value === "string") {
+              return value
+            }
+            else {
+              return `\${${propName}}`
+            }
+          }
+          else {
+            return `\${${propName}}`
+          }
         }
       })
 
       const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
-  Object.keys(documentProperties).forEach(key => {
-    if (key.startsWith("link-")) {
-      const rel = key.slice(5)
+  if (typeof documentProperties["link"] === "object") {
+    Object.keys(documentProperties["link"]).forEach(rel => {
       if (rel == "stylesheet") return
-      const href = documentProperties[key]
+      const href = documentProperties["link"][rel]
       const doc = parseDocument(`<link rel="${rel}" href="${href}">`)
       children.push(doc.children[0])
-    }
-  })
+    })
+  }
 
   if (documentProperties["font-material-symbols"] === true) {
     const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
@@ -846,6 +1013,7 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
+  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>>").children[0])
 

@@ -120,7 +120,7 @@ describe("update", () => {
     create("src/articles/culture.html", siteData)
     process.chdir(wd + "a")
 
-    update("src/site.yml", siteData)
+    update("src/site.toml", siteData)
 
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
     assert.equal(fs.existsSync(wd + "a/dist/articles/culture.html"), true)
