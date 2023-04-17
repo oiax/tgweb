@@ -246,7 +246,9 @@ const renderSegment = (node, siteData, documentProperties, state) => {
       }
     })
 
-    const localState = getLocalState(state, segment, node.children)
+    const inserts = getInserts(node)
+    const innerContent = removeInserts(node)
+    const localState = getLocalState(state, segment, innerContent, inserts)
 
     return segment.dom.children
       .map(child => renderNode(child, siteData, properties, localState))
@@ -275,6 +277,16 @@ const renderComponent = (node, siteData, documentProperties, state) => {
     }
   })
 
+  const inserts = getInserts(node)
+  const innerContent = removeInserts(node)
+  const localState = getLocalState(state, component, innerContent, inserts)
+
+  return component.dom.children
+    .map(child => renderNode(child, siteData, properties, localState))
+    .flat()
+}
+
+const getInserts = (node) => {
   const inserts = {}
 
   node.children
@@ -285,17 +297,13 @@ const renderComponent = (node, siteData, documentProperties, state) => {
       if (name) inserts[name] = child
     })
 
-  const innerContent =
-    node.children.filter(child =>
-      child.constructor.name !== "Element" || child.name !== "tg:insert"
-    )
-
-  const localState = getLocalState(state, component, innerContent, inserts)
-
-  return component.dom.children
-    .map(child => renderNode(child, siteData, properties, localState))
-    .flat()
+  return inserts
 }
+
+const removeInserts = (node) =>
+  node.children.filter(child =>
+    child.constructor.name !== "Element" || child.name !== "tg:insert"
+  )
 
 const renderSlot = (node, siteData, documentProperties, state) => {
   const insert = state.inserts && state.inserts[node.attribs.name] || node
