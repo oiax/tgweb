@@ -2343,6 +2343,143 @@ the buttons.
 Class tokens specified in the `tg:disabled-class` attribute are added to the `class` attribute of
 all pagination buttons when the carousel body is shifting.
 
+### Tram
+
+#### Basics
+
+_Tram_ is a mechanism for changing the `class` attribute of an HTML element and its descendant
+elements as the positional relationship between the element and the viewport changes.
+
+When a user scrolls a web page on which a tram is placed from top to bottom, the tram progresses
+from bottom to top.
+When the head of the tram touches the bottom of the viewport, we say tram progress is 0.
+When the rear of the tram touches the upper edge of the viewport, we say tram progress is 100.
+
+The following is a simple example of tram configuration:
+
+```html
+<div tg:tram>
+  <div
+    class="w-48 h-48 mx-auto"
+    tg:init="bg-black"
+    tg:forward-50="bg-red"
+  >
+  </div>
+</div>
+```
+
+This tram has one inner `<div>` element. The inner element has the `tg:forward-50` attribute, and
+the presence of this attribute makes this element the _target_ of the tram.
+
+The value of the target's `class` attribute is called the _base class_.
+Initially, the actual value of the class attribute is the base class plus `bg-black` specified in
+the `tg:init` attribute.
+Then, by specifying the attribute `tg:forward-50`, the moment tram progress reaches 50, the base
+class plus `bg-red` is set as the target's `class` attribute.
+Tram progresses, represented by a number such as 50, are called _trigger points_.
+
+Attributes whose names begin with `tg:forward-` are called _forward triggers_, and attributes
+whose names begin with `tg:backward-` are called _backward triggers_.
+Class tokens specified with a forward trigger are added to the target's `class` attribute when
+the tram reaches the trigger point of that trigger while moving forward.
+Class tokens specified with a backward trigger are added to the target's `class` attribute when
+the tram reaches the trigger point of that trigger while moving backward.
+
+Setting multiple triggers to a single target is allowed.
+In the following example, the background color changes from black to red and then from red to green
+as the tram progresses.
+
+```html
+<div tg:tram>
+  <div
+    class="w-48 h-48 mx-auto"
+    tg:init="bg-black"
+    tg:forward-25="bg-red"
+    tg:forward-50="bg-green"
+  >
+  </div>
+</div>
+```
+
+If you want the color change to be gradual, add `transition` and `duration-1000` to the base class:
+
+```html
+<div tg:tram>
+  <div
+    class="w-48 h-48 mx-auto transition duration-1000"
+    tg:init="bg-black"
+    tg:forward-50="bg-red"
+  >
+  </div>
+</div>
+```
+
+This way, when tram advances to the center of the viewport, the background color will switch from
+black to red over 1000 ms.
+
+When a user scrolls a web page from bottom to top, the tram moves backward from the top of the
+screen to the bottom.
+
+If you want the target's `class` attribute to change while tram is moving backward, specify
+the backward triggers:
+
+```html
+<div tg:tram>
+  <div
+    class="w-48 h-48 mx-auto"
+    tg:init="bg-black"
+    tg:forward-50="bg-red"
+    tg:backward-50="bg-black"
+  >
+  </div>
+</div>
+```
+
+In the example above, the target's background color changes from red to black at the moment
+the tram reaches center of the viewport while moving backward.
+
+#### Trigger points
+
+So far we have used _bare_ integers from 0 to 100 to represent trigger points, but by adding
+a _unit_ to integers, we can represent a variety of trigger points.
+
+`100%` represents a trigger point equivalent to a progress equal to the length (height) of the tram.
+For example, class tokens set to the `tg:forward-50%` attribute will be added to the target's `class`
+attribute when the tram advances its half the length from the bottom of the viewport.
+
+In the following example, the target in the tram is initially outside the left edge of the viewport,
+and when the tram advances until its tail touches the bottom edge of the viewport, it takes 1000ms
+to return to its original position.
+
+```html
+<div tg:tram class="overflow-hidden">
+  <div
+    class="w-48 h-48 mx-auto bg-black transition duration-1000"
+    tg:init="translate-x-[-100vw]"
+    tg:forward-100%="translate-x-0"
+  >
+  </div>
+</div>
+```
+
+`100vh` represents a trigger point equivalent to a progress equal to the height of the viewport.
+For example, class tokens set to the `tg:forward-50vh` attribute will be added to the target's `class`
+attribute when the head of the tram is at the same height as the midpoint of the viewport.
+
+`100px` represents the trigger point which corresponds to 100 pixels of progress.
+For example, the `tg:forward-64px` attribute has as its value the class tokens that should be
+applied when the tram advances 64 pixels beyond the bottom edge of the viewport.
+
+It is possible to add an additional suffix, `+` or `-`, to these units.
+The suffix `+` means that tram progress is measured relative to the top of the viewport.
+For example, `50%+` indicates that the tram has advanced from the top of the viewport by half its
+own length.
+
+The suffix `-` means that the tram progress reference is the top edge of the viewport and the
+trigger point is backward away from the top edge of the viewport.
+For example, `64px-` indicates the head of the tram is 64 pixels behind the top edge of the
+viewport.
+
 ### Notes on Alpine.js
 
 The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content manipulation.
