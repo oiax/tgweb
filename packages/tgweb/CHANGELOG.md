@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.4.2
+
+* 1ef6123 Bug fix: `<tg:segment>` should pass inserts to the segment
+
 ## 0.4.1
 
 * fc06f94 Fix render_web_page.mjs: Enable always the prev/next buttons of the rotator
