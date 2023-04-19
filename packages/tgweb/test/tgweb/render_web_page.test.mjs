@@ -244,7 +244,7 @@ describe("renderWebSite", () => {
       '  </head>',
       '  <body>',
       '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '    <div><span class="badge badge-primary">',
+      '    <div><span class="badge-lg badge badge-primary">',
       '  M',
       '  AAA',
       '</span>',

@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.4.3
+
+* 8d339f4 Change the attribute name prefix from `data`- to `tg:data-` for passing data
+          to components and segments
+* b5d1b91 Make `${...}` within the `class` attribute get expanded (#53)
+
 ## 0.4.2
 
 * 1ef6123 Bug fix: `<tg:segment>` should pass inserts to the segment

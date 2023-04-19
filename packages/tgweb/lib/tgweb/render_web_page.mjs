@@ -241,8 +241,9 @@ const renderSegment = (node, siteData, documentProperties, state) => {
     const properties = Object.assign({}, documentProperties)
 
     Object.keys(node.attribs).forEach(key => {
-      if (key.startsWith("data-")) {
-        properties[key] = node.attribs[key]
+      if (key.startsWith("tg:data-")) {
+        const propName = toKebabCase(key.slice(8))
+        properties.data[propName] = node.attribs[key]
       }
     })
 
@@ -271,8 +272,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
   if (properties.data === undefined) properties.data = {}
 
   Object.keys(node.attribs).forEach(key => {
-    if (key.startsWith("data-")) {
-      const propName = key.slice(5)
+    if (key.startsWith("tg:data-")) {
+      const propName = toKebabCase(key.slice(8))
       properties.data[propName] = node.attribs[key]
     }
   })
@@ -608,7 +609,6 @@ const renderElement = (node, siteData, documentProperties, state) => {
 
 const convertAttribs = (attribs, documentProperties) => {
   Object.keys(attribs).forEach(key => {
-    if (key === "class") return
     attribs[key] = expandCustomProperties(attribs[key], documentProperties)
   })
 }
@@ -1075,5 +1075,7 @@ const err = (message) => {
   divNode.children[0].data = escaped
   return divNode
 }
+
+const toKebabCase = (str) => str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase()
 
 export { renderWebPage }
