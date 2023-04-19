@@ -1265,7 +1265,7 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Passing custom properties to a segment
 
-You can pass custom properties to a segment using the `<tg:segment> element's `data-*` attribute.
+You can pass custom properties to a segment using the `<tg:segment> element's `tg:data-*` attribute.
 
 `src/segment/hero.html`
 
@@ -1281,7 +1281,7 @@ You can pass custom properties to a segment using the `<tg:segment> element's `d
 
 ```html
 <div>
-  <tg:segment name="hero" data-image-path="hello.jpg"></tg:segment>
+  <tg:segment name="hero" tg:data-image-path="hello.jpg"></tg:segment>
 
   <main>
     ...
@@ -1359,7 +1359,7 @@ location where you want to place it and specify its name in the `name` attribute
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg:component> element's `data-*`
+You can pass custom properties to a component using the `<tg:component> element's `tg:data-*`
 attribute.
 
 `src/components/avatar.html`
@@ -1376,9 +1376,9 @@ attribute.
 
 ```html
 <div class="grid grid-rows-2 gap-4">
-  <tg:component name="avatar" data-name="Alice"></tg:component>
-  <tg:component name="avatar" data-name="Bob"></tg:component>
-  <tg:component name="avatar" data-name="Carol"></tg:component>
+  <tg:component name="avatar" tg:data-name="Alice"></tg:component>
+  <tg:component name="avatar" tg:data-name="Bob"></tg:component>
+  <tg:component name="avatar" tg:data-name="Carol"></tg:component>
 </div>
 ```
 
@@ -2361,7 +2361,7 @@ will search for a value in the following order:
 2. the front matter of its layout if available
 3. `sites.yml` if available
 
-For example, suppose that the value `"a"` is set to the custom property `data-x` in the front
+For example, suppose that the value `"a"` is set to the custom property `data.x` in the front
 matter of a page as follows:
 
 ```

@@ -161,13 +161,13 @@ describe("getSiteData", () => {
     assert.equal(component.path, "components/badge.html")
 
     const span = component.dom.children[0]
-    assert.deepEqual(span.attribs, { class: "badge badge-primary" })
+    assert.deepEqual(span.attribs, { class: "${class} badge badge-primary" })
 
     const html = render(component.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<span class="badge badge-primary">',
+      '<span class="${class} badge badge-primary">',
       '  <tg:data name="mark">?</tg:data>',
       '  <tg:content></tg:content>',
       '  <tg:slot name="x"></tg:slot>',
