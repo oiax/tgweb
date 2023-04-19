@@ -608,7 +608,6 @@ const renderElement = (node, siteData, documentProperties, state) => {
 
 const convertAttribs = (attribs, documentProperties) => {
   Object.keys(attribs).forEach(key => {
-    if (key === "class") return
     attribs[key] = expandCustomProperties(attribs[key], documentProperties)
   })
 }
