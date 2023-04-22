@@ -35,12 +35,12 @@ const sortArticles = (articles, orderBy) => {
           return 0
         }
         else {
-          return 1
+          return (direction === "asc" ? -1 : 1)
         }
       }
       else {
-        if (j !== undefined) return -1
-        else return 1
+        if (j !== undefined) return (direction === "asc" ? 1 : -1)
+        else return (direction === "asc" ? -1 : 1)
       }
     })
   }
