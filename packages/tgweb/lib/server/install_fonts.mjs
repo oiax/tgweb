@@ -2,7 +2,11 @@ import * as PATH from "path"
 import fs from "fs"
 
 const installFonts = (siteData, workingDir) => {
-  if (siteData.properties["font-material-symbols"] === true) {
+  const fontTable = siteData.properties.font
+
+  if (typeof fontTable !== "object") return
+
+  if (fontTable["material-symbols"] === true) {
     const packageDir = PATH.resolve(PATH.join(workingDir, "node_modules", "material-symbols"))
 
     const filenames = [

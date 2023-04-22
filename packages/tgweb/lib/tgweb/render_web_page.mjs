@@ -1055,7 +1055,8 @@ const renderHead = (documentProperties) => {
     })
   }
 
-  if (documentProperties["font-material-symbols"] === true) {
+  if (typeof documentProperties.font === "object" &&
+    documentProperties.font["material-symbols"] === true) {
     const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
     children.push(doc.children[0])
   }
