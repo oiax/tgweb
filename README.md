@@ -307,7 +307,7 @@ the following names:
 * `tags`
 * `videos`
 
-Every website must have a file named `index.html` in the `pages` directory.
+Every website must have a file named `index.html` in the `src/pages` directory.
 From this page, the _home page_ of the website is generated.
 
 ### Adding a simple page
