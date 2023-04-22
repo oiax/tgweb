@@ -27,7 +27,8 @@ const run = () => {
       return
     }
 
-    const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
+    const adjustedDirName = targetDirName.replace(/^sites\//, "")
+    const targetDirPath = PATH.resolve(process.cwd(), `./sites/${adjustedDirName}`)
 
     if (!fs.existsSync(targetDirPath)) {
       console.log(`A directory named "sites/${targetDirName}" does not exist.`)

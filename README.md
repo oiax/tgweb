@@ -253,6 +253,15 @@ If this approach is adopted, the structure of the working directory will look li
         └── tailwind.css
 ```
 
+You may start the tgweb server with the command with an argument including `sites/` as follows:
+
+```bash
+npx tgweb-server sites/site_0
+```
+
+This will increase the number of characters of the command, but may make it easier to type the
+command with the help of shell completion.
+
 ### Changing the working directory composition
 
 Switching to a multi-site composition
