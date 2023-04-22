@@ -1055,10 +1055,56 @@ const renderHead = (documentProperties) => {
     })
   }
 
-  if (typeof documentProperties.font === "object" &&
-    documentProperties.font["material-symbols"] === true) {
-    const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
-    children.push(doc.children[0])
+  if (typeof documentProperties.font === "object") {
+    if (documentProperties.font["material-symbols"] === true) {
+      const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
+      children.push(doc.children[0])
+    }
+
+    const googleFonts = documentProperties.font["google-fonts"]
+    const validWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900]
+
+    if (typeof googleFonts === "object") {
+      const params =
+        Object.keys(googleFonts).map(fontFamilyName => {
+          const value = googleFonts[fontFamilyName]
+          const escapedFontFamilyName = fontFamilyName.replaceAll(/ /g, "+")
+
+          if (value === true) {
+            return `family=${escapedFontFamilyName}`
+          }
+          else if (Array.isArray(value)) {
+            const weights = value.filter(w => validWeights.includes(w)).join(";")
+            return `family=${escapedFontFamilyName}:wght@${weights}`
+          }
+          else if (typeof value === "object") {
+            const normalWeights =
+              (Array.isArray(value.normal) ? value.normal : [])
+                .filter(w => validWeights.includes(w))
+                .map(w => `0,${w}`)
+
+            const italicWeights =
+              (Array.isArray(value.italic) ? value.italic : [])
+                .filter(w => validWeights.includes(w))
+                .map(w => `1,${w}`)
+
+            const weights = normalWeights.concat(italicWeights).join(";")
+            return `${escapedFontFamilyName}:ital,wght@${weights}`
+          }
+        })
+
+      if (params.length > 0) {
+        children.push(parseDocument(
+          "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
+
+        children.push(parseDocument(
+          "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+
+        const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
+        const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
+        children.push(doc.children[0])
+      }
+    }
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
