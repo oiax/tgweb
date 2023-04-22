@@ -188,5 +188,112 @@ window.tgweb = {
 
         data.inTransition = false
     }
+  },
+  tram: {
+    data: () => ({
+      previousProgress: undefined,
+      targets: []
+    }),
+    init: (data, el) => {
+      data.targets = Array.from(el.querySelectorAll("[data-tram-trigger]"))
+      if (el.dataset.tramTrigger !== undefined) data.targets.push(el)
+
+      data.targets.forEach(target => {
+        target.dataset.tramBaseClass = target.className
+      })
+
+      window.addEventListener("load", () => {
+        window.tgweb.tram._initializeTargets(data, el)
+        window.tgweb.tram._processTriggers(data, el)
+
+        window.document.addEventListener("scroll", () => {
+          window.tgweb.tram._processTriggers(data, el)
+        })
+      })
+    },
+    _initializeTargets: (data, el) => {
+      const tram = el.getBoundingClientRect()
+
+      data.targets.forEach(target => {
+        const progress = window.innerHeight - tram.y
+        const positionPair = window.tgweb.tram._getPositionPair(target, tram, progress, true)
+
+        if (positionPair === undefined) {
+          if (target.dataset.tramInit !== undefined) {
+            const classTokens = target.dataset.tramInit.split(/\s+/)
+            target.classList.add(...classTokens)
+          }
+        }
+        else {
+          const attrValue = target.dataset[positionPair[0]]
+          const additionalClassTokens = attrValue.split(/\s+/)
+
+          target.className = target.dataset.tramBaseClass
+          target.classList.add(...additionalClassTokens)
+        }
+      })
+    },
+    _processTriggers: (data, el) => {
+      const tram = el.getBoundingClientRect()
+      const longDistance = window.innerHeight + tram.height
+      const progress = window.innerHeight - tram.y
+
+      if (window.tgweb.tram._withinRange(progress, data.previousProgress, longDistance)) {
+        const advancing = data.previousProgress === undefined || progress > data.previousProgress
+
+        data.targets.forEach(target => {
+          const positionPair =
+            window.tgweb.tram._getPositionPair(target, tram, progress, advancing)
+
+          if (positionPair === undefined) return
+
+          const attrName = positionPair[0]
+          const attrValue = target.dataset[attrName]
+          const additionalClassTokens = attrValue.split(/\s+/)
+
+          target.className = target.dataset.tramBaseClass
+          target.classList.add(...additionalClassTokens)
+        })
+      }
+
+      data.previousProgress = progress
+    },
+    _getPositionPair: (target, tram, progress, advancing) => {
+      const positionPairs =
+        Object.keys(target.dataset)
+          .map(key => {
+            const md = key.match(/^tram(Forward|Backward)-(\d{1,3})(|%|vh|px)(|[+-])$/)
+            if (md === null) return
+            if (advancing && md[1] === "Backward" || !advancing && md[1] === "Forward") return
+            const realDistance = window.tgweb.tram._getRealDistance(tram, md[2], md[3], md[4])
+            return [key, realDistance]
+          })
+          .filter(pair => pair !== undefined)
+
+      return(
+        advancing ?
+        positionPairs.sort((a, b) => b[1] - a[1]).find(p => p[1] <= progress) :
+        positionPairs.sort((a, b) => a[1] - b[1]).find(p => p[1] >= progress)
+      )
+    },
+    _getRealDistance: (tram, distance, unit, suffix) => {
+      let realDistance
+
+      if (unit === "px") realDistance = distance
+      else if (unit === "%") realDistance = tram.height * distance / 100
+      else if (unit === "vh") realDistance = window.innerHeight * distance / 100
+      else realDistance = (window.innerHeight + tram.height) * distance / 100
+
+      if (suffix === "+") realDistance = window.innerHeight + realDistance
+      else if (suffix === "-") realDistance = window.innerHeight - realDistance
+
+      return realDistance
+    },
+    _withinRange: (progress, previousProgress, longDistance) => {
+      if (progress >= 0 && progress <= longDistance) return true
+      if (previousProgress === undefined) return false
+      if (previousProgress >= 0 && previousProgress <= longDistance) return true
+      return false
+    }
   }
 }

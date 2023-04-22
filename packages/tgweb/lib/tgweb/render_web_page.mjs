@@ -593,11 +593,15 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
     addModalHook(newNode, newState)
 
+  if (newNode.attribs["tg:tram"] !== undefined && state.hookName === undefined)
+    addTramHook(newNode, newState)
+
   if (state.hookName === "toggler") addTogglerSubhooks(newNode)
   else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
   else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
   else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
   else if (state.hookName === "modal") addModalSubhooks(newNode)
+  else if (state.hookName === "tram") addTramSubhooks(newNode)
 
   newNode.children =
     node.children
@@ -856,6 +860,42 @@ const addModalSubhooks = (newNode) => {
   else if (newNode.attribs["tg:close"] !== undefined) {
     newNode.attribs["x-on:click.stop"] = "if (body && open) body.close(); open = false"
   }
+}
+
+// Tram
+
+const addTramHook = (newNode, newState) => {
+  newState.hookName = "tram"
+
+  newNode.attribs["x-data"] = `window.tgweb.tram.data()`
+  newNode.attribs["x-init"] = `window.tgweb.tram.init($data, $el)`
+  addTramSubhooks(newNode)
+}
+
+const addTramSubhooks = (newNode) => {
+  const found =
+    Object.keys(newNode.attribs).some(attrName =>
+      attrName.startsWith("tg:forward-") || attrName.startsWith("tg:backward-")
+    )
+
+  if (!found) return
+
+  newNode.attribs["data-tram-trigger"] = ""
+
+  if (newNode.attribs["tg:init"] !== undefined)
+    newNode.attribs["data-tram-init"] = newNode.attribs["tg:init"]
+
+  Object.keys(newNode.attribs).forEach(attrName => {
+    const md = attrName.match(/^tg:(forward|backward)-(\d{1,3})(|%|vh|px)(|\+|-)$/)
+    if (md === null) return
+    const direction = md[1]
+    const distance = parseInt(md[2], 10)
+    const unit = md[3]
+    const suffix = md[4]
+
+    newNode.attribs[`data-tram-${direction}-${distance}${unit}${suffix}`] =
+      newNode.attribs[attrName]
+  })
 }
 
 // Postprocess
