@@ -137,6 +137,7 @@ const updateSiteData = (siteData, path) => {
 const updateTemplate = (template, path) => {
   const newTemplate = getTemplate(path, undefined)
   template.frontMatter = newTemplate.frontMatter
+  template.inserts = newTemplate.inserts
   template.dom = newTemplate.dom
 }
 
