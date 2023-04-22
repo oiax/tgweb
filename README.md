@@ -841,7 +841,7 @@ URL.
 ### Material Symbols
 
 By setting the value of the `material-symbols` property to `true` in the "font" section of
-`sites.yml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
+`sites.toml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
 provided by Google will be available on your website.
 
 ```toml
@@ -2505,7 +2505,7 @@ will search for a value in the following order:
 
 1. the front matter of its wrapper if available
 2. the front matter of its layout if available
-3. `sites.yml` if available
+3. `sites.toml` if available
 
 For example, suppose that the value `"a"` is set to the custom property `data.x` in the front
 matter of a page as follows:
