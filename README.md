@@ -982,6 +982,7 @@ using the `<tg:prop>` element.
 ---
 layout = "common"
 title = "Greeting"
+year = "2023"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
