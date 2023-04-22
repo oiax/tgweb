@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.4.4
+
+* 589f457 Introduce `tg:tram` utility
+* e3ae94e `tgweb-server` command should accept `sites/<site_name>` as the first argument
+
 ## 0.4.3
 
 * 8d339f4 Change the attribute name prefix from `data`- to `tg:data-` for passing data
