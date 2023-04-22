@@ -66,6 +66,7 @@ const updateSiteData = (siteData, path) => {
       siteData.articles.push(newArticle)
 
       siteData.pages.forEach(p => setDependencies(p, siteData))
+      siteData.segments.forEach(s => setDependencies(s, siteData))
 
       siteData.articles.forEach(a => {
         if (`src/${a.path}` !== path) setDependencies(a, siteData)
