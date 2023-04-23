@@ -25,8 +25,6 @@
 * [TODO List](#todo-list)
 * [License](#license)
 
-## Directory structure
-
 ## Requirements
 
 * Node.js: 16.12 or higher
