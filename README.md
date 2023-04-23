@@ -86,6 +86,27 @@ To start the tgweb server, run the following command:
 npx tgweb-server
 ```
 
+This command tries to start the tgweb server using port 3000.
+If this port is already in use, the following error message will appear:
+
+```
+ERROR: Could not start a web server. Port 3000 is in use.
+```
+
+If you want to use a different port, specify it in the `PORT` environment variable as follows:
+
+```bash
+PORT=4000 npx tgweb-server
+```
+
+When the tgweb server starts successfully, the following message is displayed:
+
+```
+tailwindcss began to monitor the HTML files for changes.
+Web server is listening on port 3000.
+Rebuilding tailwind.css. Done in 761ms.
+```
+
 Then, open `http://localhost:3000` with your browser.
 
 Make sure that the text "Hello, world!" appears in the red background area.
