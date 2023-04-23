@@ -294,6 +294,40 @@ describe("renderWebSite", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should render a page of 'nested_segments' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/nested_segments")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+
+    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<html>',
+      '  <head>',
+      '    <meta charset="utf-8">',
+      '    <title>Greeting</title>',
+      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <script src="/js/tgweb_utilities.js" defer></script>',
+      '    <script src="/js/alpine.min.js" defer></script>',
+      '    <script src="/reload/reload.js" defer></script>',
+      '  </head>',
+      '  <body>',
+      '    <div class="hero">',
+      '      HERO',
+      '    </div>',
+      '    <div>X</div>',
+      '    <div>X</div>',
+      '    <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  </body>',
+      '</html>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render an article of 'with_articles' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_articles")
     const siteData = getSiteData(wd)

@@ -1307,9 +1307,12 @@ layout = "common"
 
 ### Segment files
 
-A _segment_ is a template file that can be embedded in pages or layouts.
-Segments cannot be embedded in templates other than these types, such as articles, segments,
+A _segment_ is a template file that can be embedded in pages, layouts or segments.
+Segments cannot be embedded in templates other than these types, such as articles,
 wrappers or components.
+
+In order to embed one segment into another, certain conditions must be met.
+See [Segment layers](#segment-layers).
 
 Segments are placed in the `src/segments` subdirectory of the working directory.
 
@@ -1407,6 +1410,37 @@ within a segment is similar to that of a layout.
     ...
   </main>
 </div>
+```
+
+### Segment layers
+
+Segments have a property called _layer_. This predefined property controls the hierarchical
+relationship between segments.
+
+The value of this property must be an integer greater than or equal to 0, and its default value is 0.
+To embed one segment A into another segment B, the layer of A must be larger than the layer of B.
+
+#### Example
+
+`src/segment/foo.html`
+
+```html
+---
+layer: 0
+---
+
+<tg:segment name="bar"></tg:segment>
+```
+
+`src/segment/bar.html`
+
+
+```html
+---
+layer: 1
+---
+
+<div>Bar</div>
 ```
 
 ## Components

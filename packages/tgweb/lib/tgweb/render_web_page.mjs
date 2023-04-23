@@ -232,11 +232,16 @@ const renderNode = (node, siteData, documentProperties, state) => {
 
 const renderSegment = (node, siteData, documentProperties, state) => {
   const segmentName = node.attribs.name
+  const allowedTypes = ["page", "layout", "segment"]
 
-  if (state.container && (state.container.type === "page" || state.container.type === "layout")) {
+  if (state.container && allowedTypes.includes(state.container.type)) {
     const segment = siteData.segments.find(c => c.path == `segments/${segmentName}.html`)
 
+    if (segment === undefined) console.log({notFound: segmentName})
     if (segment === undefined) return err(render(node))
+
+    if (state.container.type === "segment" &&
+        state.container.frontMatter.layer >= segment.frontMatter.layer) return err(render(node))
 
     const properties = Object.assign({}, documentProperties)
 
