@@ -1,5 +1,25 @@
 # tgweb CHANGELOG
 
+## 0.4.5
+
+### New features
+
+* ddbc009 Make Google Fonts available
+
+### Spec changes
+
+* a3fbb48 Rename the property that specifies whether to use Google Material Symbols
+          from `font-material-symbols` to `font.material-symbols`
+
+### Bug fixes
+
+* 8518e93 Fix `sort_articles.mjs` so that articles without indexes go to the end of the queue
+* a111ec2 Fix `update_site_data.mjs` so that template.inserts field gets updated
+* ad02599 Fix `get_type.mjs` so that extname of templates are checked
+* dcf756b Fix `update_site_data.mjs` so that it updates deps of siteData.segments
+* 607273c Fix `update_site_data.mjs` so that the dependencies of all templates
+          are updated when the site.toml gets updated
+
 ## 0.4.4
 
 * 589f457 Introduce `tg:tram` utility
