@@ -4,12 +4,14 @@ import { getSiteData } from "./get_site_data.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
 import { setUrlProperty } from "./set_url_property.mjs"
 import { getTemplate } from "./get_template.mjs"
+import { updateDependencies } from "./update_dependencies.mjs"
 
 const updateSiteData = (siteData, path) => {
   const type = getType(path)
 
   if (type == "site.toml") {
     const newSiteData = getSiteData(process.cwd())
+    updateDependencies(newSiteData)
     siteData.properties = newSiteData.properties
     siteData.pages = newSiteData.pages
     siteData.segments = newSiteData.segments
