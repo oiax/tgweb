@@ -21,7 +21,7 @@ const getTemplate = (path, type) => {
     catch (error) {
       showTomlSytaxError(path, parts[1], error)
 
-      const frontMatter = {}
+      const frontMatter = {layer: 0}
       const html = parts.slice(2).join("---\n")
       return createTemplate(path, type, html, frontMatter)
     }

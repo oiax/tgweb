@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.4.6
+
+* 225cc21 Introduce a `layer` property to control the hierarchical relationship
+          between segments and allow one segment to be embedded in another segment
+
 ## 0.4.5
 
 ### New features
