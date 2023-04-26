@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.4.7
+
+* 38c9dc8 Add `@tailwindcss/container-queries` to `package.json`
+* d1d593f Do not put `tailwind.css` initially; generate it by `tgweb-server` command
+
 ## 0.4.6
 
 * 225cc21 Introduce a `layer` property to control the hierarchical relationship

@@ -62,19 +62,15 @@ npx tgweb-init
 
 This command creates two subdirectories, `src` and `dist`, and several files.
 
-### Add content
-
-Create `index.html` in the `src/pages` subdirectory with the following content:
+Initially, `index.html` in the `src/pages` directory has the following contents:
 
 ```html
 <body>
-  <div class="bg-red-300 p-4">
-    <p>Hello, world!</p>
-  </div>
+  <p class="p-2 text-red-500">Hello, world</p>
 </body>
 ```
 
-Note that the `body` element should not be surrounded by `<html>` and `</html>`.
+Notice that the `body` element is not surrounded by `<html>` and `</html>`.
 
 ### Start the tgweb server
 
@@ -131,14 +127,12 @@ Edit `index.html` as follows:
 
 ```html
 <body>
-  <div class="bg-green-300 p-4">
-    <p>Hello, world!</p>
-  </div>
+  <p class="p-2 text-green-500">Hello, world</p>
 </body>
 ```
 
-Confirm that the browser screen is automatically redrawn and the background color of
-"Hello, world!" changes to green.
+Confirm that the browser screen is automatically redrawn and the text color of
+"Hello, world!" changes from red to green.
 
 ### Stop the tgweb server
 
@@ -160,14 +154,13 @@ following elements:
 │   ├── images
 │   ├── layouts
 │   ├── pages
+│   │   └── index.html
 │   ├── segments
 │   ├── tags
 │   ├── color_scheme.toml
 │   └── site.toml
 ├── package-lock.json
-├── package.json
-├── tailwind.config.js
-└── tailwind.css
+└── package.json
 ```
 
 Please note the following:
@@ -179,7 +172,6 @@ Please note the following:
 * Tailwind CSS scans the HTML files of the `dist` directory, generates a CSS file `tailwind.css`
   on the `dist/css` directory.
 * It makes no sense for the user to rewrite the contents of the `dist` directory.
-* Users are not allowed to modify `tailwind.config.js` and `tailwind.css`.
 * Users are not allowed to add their own CSS files to the website.
 * Users are not allowed to add their own javascript files to the website.
 
@@ -242,34 +234,32 @@ If this approach is adopted, the structure of the working directory will look li
 └── sites
     ├── site_0
     │   ├── dist
-    │   ├── src
-    │   │   ├── articles
-    │   │   ├── audios
-    │   │   ├── components
-    │   │   ├── images
-    │   │   ├── layouts
-    │   │   ├── pages
-    │   │   ├── segments
-    │   │   ├── tags
-    │   │   ├── color_scheme.toml
-    │   │   └── site.toml
-    │   ├── tailwind.config.js
-    │   └── tailwind.css
+    │   └── src
+    │       ├── articles
+    │       ├── audios
+    │       ├── color_scheme.toml
+    │       ├── components
+    │       ├── images
+    │       ├── layouts
+    │       ├── pages
+    │       │   └── index.html
+    │       ├── segments
+    │       ├── site.toml
+    │       └── tags
     └── site_1
         ├── dist
-        ├── src
-        │   ├── articles
-        │   ├── audios
-        │   ├── components
-        │   ├── images
-        │   ├── layouts
-        │   ├── pages
-        │   ├── segments
-        │   ├── tags
-        │   ├── color_scheme.toml
-        │   └── site.toml
-        ├── tailwind.config.js
-        └── tailwind.css
+        └── src
+            ├── articles
+            ├── audios
+            ├── color_scheme.toml
+            ├── components
+            ├── images
+            ├── layouts
+            ├── pages
+            │   └── index.html
+            ├── segments
+            ├── site.toml
+            └── tags
 ```
 
 You may start the tgweb server with the command with an argument including `sites/` as follows:
