@@ -59,8 +59,8 @@ const generateSkeleton = (targetDirPath) => {
 
   subdirectories.forEach(subdir => fs.mkdirSync(`${targetDirPath}/src/${subdir}`))
 
-  const stubsDir = PATH.resolve(__dirname, "../stubs")
-  process.chdir(stubsDir)
+  const skelDir = PATH.resolve(__dirname, "../skel")
+  process.chdir(skelDir)
 
   glob.sync("**/*.*").map(path => {
     const dest = PATH.resolve(targetDirPath, `./${path}`)
