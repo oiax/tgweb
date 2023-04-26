@@ -26,7 +26,10 @@ module.exports = {
     extend: {},
     colors: colors
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require('@tailwindcss/container-queries'),
+    require("daisyui")
+  ]
 }
 `
 
