@@ -52,6 +52,12 @@ const run = () => {
     )
 }
 
+const tailwindCss = `
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`
+
 const main = (workingDir, port) => {
   const app = express()
   const router = getRouter()
@@ -83,6 +89,8 @@ const main = (workingDir, port) => {
 
   const tailwindConfig = generateTailwindConfig(PATH.join(process.cwd(), "src"))
   if (tailwindConfig) fs.writeFileSync("tailwind.config.js", tailwindConfig)
+
+  fs.writeFileSync("tailwind.css", tailwindCss.trim() + "\n")
 
   chokidar.watch("src")
     .on("add", path => {

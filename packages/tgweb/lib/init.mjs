@@ -73,7 +73,8 @@ const createGitignore = () => {
     "/node_modules",
     "/dist",
     "/sites/*/dist",
-    "/sites/*/tailwind.config.js"
+    "/sites/*/tailwind.config.js",
+    "/sites/*/tailwind.css"
   ]
 
   const content = lines.join("\n") + "\n"
