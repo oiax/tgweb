@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.4.8
+
+* 9b2545e Fix a bug where the carousel does not work when the `tg:interval` attribute is not
+          specified for the carousel
+
 ## 0.4.7
 
 * 38c9dc8 Add `@tailwindcss/container-queries` to `package.json`
