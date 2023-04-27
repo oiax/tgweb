@@ -122,7 +122,8 @@ window.tgweb = {
         item.style.order = modulo(n - data.i + 2, data.len * data.repeatCount)
       })
 
-      data.v = setInterval(() => { window.tgweb.carousel._forward(data) }, interval)
+      if (interval > 0)
+        data.v = setInterval(() => { window.tgweb.carousel._forward(data) }, interval)
     },
     _forward: (data) => {
       window.tgweb.carousel._shiftPosition(data, "next")
@@ -134,7 +135,7 @@ window.tgweb = {
     },
     prev: (data) => {
       if (data.inTransition) return
-      clearInterval(data.v)
+      if (data.v) clearInterval(data.v)
       window.tgweb.carousel._shiftPosition(data, "prev")
 
       setTimeout(() => {
@@ -144,7 +145,7 @@ window.tgweb = {
     },
     next: (data) => {
       if (data.inTransition) return
-      clearInterval(data.v)
+      if (data.v) clearInterval(data.v)
       window.tgweb.carousel._shiftPosition(data, "next")
 
       setTimeout(() => {
@@ -153,7 +154,7 @@ window.tgweb = {
       }, data.duration + 250)
     },
     choose: (data, n) => {
-      clearInterval(data.v)
+      if (data.v) clearInterval(data.v)
 
       data.i = n
 
