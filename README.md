@@ -2310,9 +2310,9 @@ allows the user to control the state of the carousel.
 
 #### Carousel auto-rotation and animation effect
 
-To automatically rotate the carousel items at regular time intervals, specify the
-`tg:interval` attribute for the carousel.
-The numeric sequence specified in this attribute is interpreted as time in milliseconds.
+To automatically rotate the carousel items at regular time intervals, specify a positive integer
+for the `tg:interval` attribute of the carousel.
+The value specified in this attribute is interpreted as time in milliseconds.
 
 ```html
 <div tg:carousel tg:interval="3000">

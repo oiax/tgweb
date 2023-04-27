@@ -792,10 +792,13 @@ const addCarouselHook = (newNode, newState) => {
   newNode.attribs["x-data"] = "window.tgweb.carousel.data()"
   newState.hookName = "carousel"
 
-  if (newNode.attribs["tg:interval"] === undefined) return;
+  let interval = 0
 
-  const interval = parseInt(newNode.attribs["tg:interval"], 10)
-  if (Number.isNaN(interval)) return
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    interval = parseInt(newNode.attribs["tg:interval"], 10)
+    if (Number.isNaN(interval)) interval = 0
+    if (interval < 0) interval = 0
+  }
 
   let duration = parseInt(newNode.attribs["tg:duration"], 10)
   if (Number.isNaN(duration)) duration = 100
