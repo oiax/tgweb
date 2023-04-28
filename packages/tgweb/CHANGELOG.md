@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.4.9
+
+* cc05439 Fix choose buttons of switcher/rotator so that they call correct javascript functions
+* 3fc11cb Refer to Alpine.js properties using `this` instead of `$data`
+* cae7792 Fix a bug that the carousel does not show the first item in the initial state
+
 ## 0.4.8
 
 * 9b2545e Fix a bug where the carousel does not work when the `tg:interval` attribute is not
