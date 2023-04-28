@@ -718,7 +718,7 @@ const addSwitcherSubhooks = (newNode) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `window.tgweb.switcher.last($data, ${n})`
+      newNode.attribs["x-on:click"] = `window.tgweb.switcher.choose($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
@@ -780,7 +780,7 @@ const addRotatorSubhooks = (newNode) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `window.tgweb.rotator.last($data, ${n})`
+      newNode.attribs["x-on:click"] = `window.tgweb.rotator.choose($data, ${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
