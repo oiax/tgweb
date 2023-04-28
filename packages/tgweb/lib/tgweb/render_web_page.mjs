@@ -666,20 +666,19 @@ const addTogglerSubhooks = (newNode) => {
 
 const addSwitcherHook = (newNode, newState) => {
   newState.hookName = "switcher"
-  newNode.attribs["x-data"] = "window.tgweb.switcher.data()"
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
     }
     else {
-      newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+      newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
     }
   }
   else {
-    newNode.attribs["x-init"] = `window.tgweb.switcher.init($data, $el, undefined)`
+    newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
   }
 }
 
@@ -695,17 +694,17 @@ const addSwitcherSubhooks = (newNode) => {
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.switcher.first($data)"
+    newNode.attribs["x-on:click"] = "first()"
     newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.switcher.prev($data)"
+    newNode.attribs["x-on:click"] = "prev()"
     newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.switcher.next($data)"
+    newNode.attribs["x-on:click"] = "next()"
     newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
@@ -718,7 +717,7 @@ const addSwitcherSubhooks = (newNode) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `window.tgweb.switcher.choose($data, ${n})`
+      newNode.attribs["x-on:click"] = `choose(${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
@@ -728,20 +727,19 @@ const addSwitcherSubhooks = (newNode) => {
 
 const addRotatorHook = (newNode, newState) => {
   newState.hookName = "rotator"
-  newNode.attribs["x-data"] = "window.tgweb.rotator.data()"
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
     }
     else {
-      newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
+      newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
     }
   }
   else {
-    newNode.attribs["x-init"] = `window.tgweb.rotator.init($data, $el, undefined)`
+    newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
   }
 }
 
@@ -757,22 +755,22 @@ const addRotatorSubhooks = (newNode) => {
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.rotator.first($data)"
+    newNode.attribs["x-on:click"] = "first()"
     newNode.attribs["x-bind:class"] = `i === 0 ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.rotator.prev($data)"
+    newNode.attribs["x-on:click"] = "prev()"
     newNode.attribs["x-bind:class"] = `'${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.rotator.next($data)"
+    newNode.attribs["x-on:click"] = "next()"
     newNode.attribs["x-bind:class"] = `'${enebledClass}'`
   }
 
   if (newNode.attribs["tg:last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.rotator.last($data)"
+    newNode.attribs["x-on:click"] = "last()"
     newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
@@ -780,7 +778,7 @@ const addRotatorSubhooks = (newNode) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `window.tgweb.rotator.choose($data, ${n})`
+      newNode.attribs["x-on:click"] = `choose(${n})`
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
@@ -789,7 +787,6 @@ const addRotatorSubhooks = (newNode) => {
 // Carousel
 
 const addCarouselHook = (newNode, newState) => {
-  newNode.attribs["x-data"] = "window.tgweb.carousel.data()"
   newState.hookName = "carousel"
 
   let interval = 0
@@ -803,7 +800,7 @@ const addCarouselHook = (newNode, newState) => {
   let duration = parseInt(newNode.attribs["tg:duration"], 10)
   if (Number.isNaN(duration)) duration = 100
 
-  newNode.attribs["x-init"] = `window.tgweb.carousel.init($data, $el, ${interval}, ${duration})`
+  newNode.attribs["x-data"] = `window.tgweb.carousel($el, ${interval}, ${duration})`
 }
 
 const addCarouselSubhooks = (newNode) => {
@@ -823,12 +820,12 @@ const addCarouselSubhooks = (newNode) => {
   }
 
   if (newNode.attribs["tg:prev"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.carousel.prev($data)"
+    newNode.attribs["x-on:click"] = "prev()"
     newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
   }
 
   if (newNode.attribs["tg:next"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.carousel.next($data)"
+    newNode.attribs["x-on:click"] = "next()"
     newNode.attribs["x-bind:class"] = `inTransition ? '${disabledClass}' : '${enebledClass}'`
   }
 
@@ -836,7 +833,7 @@ const addCarouselSubhooks = (newNode) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+      newNode.attribs["x-on:click"] = `choose(${n})`
 
       const script = `
           i % len === ${n} ?
@@ -874,9 +871,7 @@ const addModalSubhooks = (newNode) => {
 
 const addTramHook = (newNode, newState) => {
   newState.hookName = "tram"
-
-  newNode.attribs["x-data"] = `window.tgweb.tram.data()`
-  newNode.attribs["x-init"] = `window.tgweb.tram.init($data, $el)`
+  newNode.attribs["x-data"] = `window.tgweb.tram($el)`
   addTramSubhooks(newNode)
 }
 
@@ -954,7 +949,7 @@ const postprocessCarouselPaginator = (node, newState) => {
     newNode.name = node.name
     newNode.children = node.children
     newNode.attribs = Object.assign({}, node.attribs)
-    newNode.attribs["x-on:click"] = `window.tgweb.carousel.choose($data, ${n})`
+    newNode.attribs["x-on:click"] = `choose(${n})`
 
     const script = `
         i % len === ${n} ?

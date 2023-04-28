@@ -1,223 +1,255 @@
 const modulo = (v, w) => (v % w + w) % w
 
+const getPositionPair = (target, tram, progress, advancing) => {
+  const positionPairs =
+    Object.keys(target.dataset)
+      .map(key => {
+        const md = key.match(/^tram(Forward|Backward)-(\d{1,3})(|%|vh|px)(|[+-])$/)
+        if (md === null) return
+        if (advancing && md[1] === "Backward" || !advancing && md[1] === "Forward") return
+        const realDistance = _getRealDistance(tram, md[2], md[3], md[4])
+        return [key, realDistance]
+      })
+      .filter(pair => pair !== undefined)
+
+  return(
+    advancing ?
+    positionPairs.sort((a, b) => b[1] - a[1]).find(p => p[1] <= progress) :
+    positionPairs.sort((a, b) => a[1] - b[1]).find(p => p[1] >= progress)
+  )
+}
+
+const _getRealDistance = (tram, distance, unit, suffix) => {
+  let realDistance
+
+  if (unit === "px") realDistance = distance
+  else if (unit === "%") realDistance = tram.height * distance / 100
+  else if (unit === "vh") realDistance = window.innerHeight * distance / 100
+  else realDistance = (window.innerHeight + tram.height) * distance / 100
+
+  if (suffix === "+") realDistance = window.innerHeight + realDistance
+  else if (suffix === "-") realDistance = window.innerHeight - realDistance
+
+  return realDistance
+}
+
+const withinRange = (progress, previousProgress, longDistance) => {
+  if (progress >= 0 && progress <= longDistance) return true
+  if (previousProgress === undefined) return false
+  if (previousProgress >= 0 && previousProgress <= longDistance) return true
+  return false
+}
+
 window.tgweb = {
-  switcher: {
-    data: () => ({
-      i: 0,
-      len: undefined
-    }),
-    init: (data, el, interval) => {
+  switcher: (el, interval) => ({
+    i: 0,
+    len: undefined,
+    v: undefined,
+    interval,
+    init() {
       const items = el.querySelectorAll("[data-switcher-item]")
-      data.len = items.length
+      this.len = items.length
       items.forEach((item, n) => item.dataset.index = `${n}`)
 
-      if (interval !== undefined) {
-        data.v = setInterval(() => { window.tgweb.switcher.forward(data) }, interval)
+      if (this.interval !== undefined) {
+        this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
-    forward: (data) => {
-      data.i = data.i < data.len - 1 ? data.i + 1 : data.i
+    _forward() {
+      this.i = this.i < this.len - 1 ? this.i + 1 : this.i
     },
-    first: (data) => {
-      data.i = 0
-      clearInterval(data.v)
+    first() {
+      this.i = 0
+      clearInterval(this.v)
     },
-    prev: (data) => {
-      data.i = data.i > 0 ? data.i - 1 : data.i
-      clearInterval(data.v)
+    prev() {
+      this.i = this.i > 0 ? this.i - 1 : this.i
+      clearInterval(this.v)
     },
-    next: (data) => {
-      data.i = data.i < data.len - 1 ? data.i + 1 : data.i
-      clearInterval(data.v)
+    next() {
+      this.i = this.i < this.len - 1 ? this.i + 1 : this.i
+      clearInterval(this.v)
     },
-    last: (data) => {
-      data.i = data.len - 1
-      clearInterval(data.v)
-    },
-    choose: (data, n) => {
-      if (n >= 0 && n < data.len) data.i = n
-      clearInterval(data.v)
+    choose: (n) => {
+      if (n >= 0 && n < this.len) this.i = n
+      clearInterval(this.v)
     }
-  },
-  rotator: {
-    data: () => ({
-      i: 0,
-      len: undefined
-    }),
-    init: (data, el, interval) => {
+  }),
+  rotator: (el, interval) => ({
+    i: 0,
+    len: undefined,
+    v: undefined,
+    interval,
+    init() {
       const items = el.querySelectorAll("[data-rotator-item]")
-      data.len = items.length
+      this.len = items.length
       items.forEach((item, n) => item.dataset.index = `${n}`)
 
-      if (interval !== undefined) {
-        data.v = setInterval(() => { window.tgweb.rotator.forward(data) }, interval)
+      if (this.interval !== undefined) {
+        this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
-    forward: (data) => {
-      data.i = data.i < data.len - 1 ? data.i + 1 : 0
+    _forward() {
+      this.i = this.i < this.len - 1 ? this.i + 1 : this.i
     },
-    first: (data) => {
-      data.i = 0
-      clearInterval(data.v)
+    first() {
+      this.i = 0
+      clearInterval(this.v)
     },
-    prev: (data) => {
-      data.i = data.i > 0 ? data.i - 1 : data.len - 1
-      clearInterval(data.v)
+    prev() {
+      this.i = this.i > 0 ? this.i - 1 : this.len - 1
+      clearInterval(this.v)
     },
-    next: (data) => {
-      data.i = data.i < data.len - 1 ? data.i + 1 : 0
-      clearInterval(data.v)
+    next() {
+      this.i = this.i < this.len - 1 ? this.i + 1 : 0
+      clearInterval(this.v)
     },
-    last: (data) => {
-      data.i = data.len - 1
-      clearInterval(data.v)
-    },
-    choose: (data, n) => {
-      if (n >= 0 && n < data.len) data.i = n
-      clearInterval(data.v)
+    choose: (n) => {
+      if (n >= 0 && n < this.len) this.i = n
+      clearInterval(this.v)
     }
-  },
-  carousel: {
-    data: () => ({
-      inTransition: false,
-      i: 0,
-      len: undefined
-    }),
-    init: (data, el, interval, duration) => {
-      data.frame = el.querySelector("[data-carousel-frame]")
-      data.body = el.querySelector("[data-carousel-body]")
+  }),
+  carousel: (el, interval, duration) => ({
+    el,
+    interval,
+    duration,
+    inTransition: false,
+    i: 0,
+    len: undefined,
+    repeatCount: undefined,
+    frame: undefined,
+    body: undefined,
+    init() {
+      this.frame = this.el.querySelector("[data-carousel-frame]")
+      this.body = this.el.querySelector("[data-carousel-body]")
 
-      if (data.frame === undefined) return
-      if (data.body === undefined) return
+      if (this.frame === null) return
+      if (this.body === null) return
 
-      data.frame.style.overflow = "hidden"
+      this.frame.style.overflow = "hidden"
 
-      data.duration = duration
-
-      const items = data.body.querySelectorAll("[data-carousel-item]")
+      const items = this.body.querySelectorAll("[data-carousel-item]")
       const firstItem = items[0]
       if (firstItem === undefined) return
 
-      data.itemWidth = firstItem.offsetWidth
-      data.len = items.length
+      this.itemWidth = firstItem.offsetWidth
+      this.len = items.length
 
-      if (data.len === 1) data.repeatCount = 5
-      else if (data.len === 2) data.repeatCount = 3
-      else if (data.len === 3 || data.len === 4) data.repeatCount = 2
-      else data.repeatCount = 1
+      if (this.len === 1) this.repeatCount = 5
+      else if (this.len === 2) this.repeatCount = 3
+      else if (this.len === 3 || this.len === 4) this.repeatCount = 2
+      else this.repeatCount = 1
 
-      for (let n = 1; n < data.repeatCount; n++) {
+      for (let n = 1; n < this.repeatCount; n++) {
         items.forEach(item => {
           firstItem.before(item.cloneNode(true))
         })
       }
 
-      data.body.style.display = "flex"
-      data.body.style.width = String(data.itemWidth * data.len * data.repeatCount) + "px"
+      this.body.style.display = "flex"
+      this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
 
-      data.body.style.translate =
-        "-" + String(data.itemWidth * 2 - (data.frame.offsetWidth - data.itemWidth) / 2) + "px 0"
+      this.body.style.translate =
+        "-" + String(this.itemWidth * 2 - (this.frame.offsetWidth - this.itemWidth) / 2) + "px 0"
 
       items.forEach((item, n) => {
-        item.style.order = modulo(n - data.i + 2, data.len * data.repeatCount)
+        item.style.order = modulo(n - this.i + 2, this.len * this.repeatCount)
       })
 
-      if (interval > 0)
-        data.v = setInterval(() => { window.tgweb.carousel._forward(data) }, interval)
+      if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
-    _forward: (data) => {
-      window.tgweb.carousel._shiftPosition(data, "next")
+    _forward() {
+      this._shiftPosition("next")
 
       setTimeout(() => {
-        data.i = data.i < data.len - 1 ? data.i + 1 : 0
-        window.tgweb.carousel._resetStyle(data)
-      }, data.duration + 250)
+        this.i = this.i < this.len - 1 ? this.i + 1 : 0
+        this._resetStyle()
+      }, this.duration + 250)
     },
-    prev: (data) => {
-      if (data.inTransition) return
-      if (data.v) clearInterval(data.v)
-      window.tgweb.carousel._shiftPosition(data, "prev")
+    prev() {
+      if (this.inTransition) return
+      if (this.v) clearInterval(this.v)
+      this._shiftPosition("prev")
 
       setTimeout(() => {
-        data.i = data.i > 0 ? data.i - 1 : data.len - 1
-        window.tgweb.carousel._resetStyle(data)
-      }, data.duration + 250)
+        this.i = this.i > 0 ? this.i - 1 : this.len - 1
+        this._resetStyle()
+      }, this.duration + 250)
     },
-    next: (data) => {
-      if (data.inTransition) return
-      if (data.v) clearInterval(data.v)
-      window.tgweb.carousel._shiftPosition(data, "next")
+    next() {
+      if (this.inTransition) return
+      if (this.v) clearInterval(this.v)
+      this._shiftPosition("next")
 
       setTimeout(() => {
-        data.i = data.i < data.len - 1 ? data.i + 1 : 0
-        window.tgweb.carousel._resetStyle(data)
-      }, data.duration + 250)
+        this.i = this.i < this.len - 1 ? this.i + 1 : 0
+        this._resetStyle()
+      }, this.duration + 250)
     },
-    choose: (data, n) => {
-      if (data.v) clearInterval(data.v)
+    choose(n) {
+      if (this.v) clearInterval(this.v)
 
-      data.i = n
+      this.i = n
 
-      data.body.querySelectorAll("[data-carousel-item]").forEach((item, j) => {
-        item.style.order = modulo(j - data.i + 2, data.len * data.repeatCount)
+      this.body.querySelectorAll("[data-carousel-item]").forEach((item, j) => {
+        item.style.order = modulo(j - this.i + 2, this.len * this.repeatCount)
       })
     },
-    _shiftPosition: (data, direction) => {
-      data.body.style.transitionProperty = "translate"
-      data.body.style.transitionDuration = data.duration + "ms"
+    _shiftPosition(direction) {
+      this.body.style.transitionProperty = "translate"
+      this.body.style.transitionDuration = this.duration + "ms"
 
       const translateLength =
         direction === "next" ?
-        data.itemWidth * 3 - (data.frame.offsetWidth - data.itemWidth) / 2 :
-        data.itemWidth * 1 - (data.frame.offsetWidth - data.itemWidth) / 2
+        this.itemWidth * 3 - (this.frame.offsetWidth - this.itemWidth) / 2 :
+        this.itemWidth * 1 - (this.frame.offsetWidth - this.itemWidth) / 2
 
-      data.body.style.translate = `-${translateLength}px 0`
+      this.body.style.translate = `-${translateLength}px 0`
 
-      data.inTransition = true
+      this.inTransition = true
     },
-    _resetStyle: (data) => {
-        data.body.style.transitionProperty = "none"
-        data.body.style.transitionDuration = "0s"
+    _resetStyle() {
+      this.body.style.transitionProperty = "none"
+      this.body.style.transitionDuration = "0s"
 
-        const translateLength = data.itemWidth * 2 - (data.frame.offsetWidth - data.itemWidth) / 2
+      const translateLength = this.itemWidth * 2 - (this.frame.offsetWidth - this.itemWidth) / 2
 
-        data.body.style.translate = `-${translateLength}px 0`
+      this.body.style.translate = `-${translateLength}px 0`
 
-        data.body.querySelectorAll("[data-carousel-item]").forEach((item, n) => {
-          item.style.order = modulo(n - data.i + 2, data.len * data.repeatCount)
-        })
+      this.body.querySelectorAll("[data-carousel-item]").forEach((item, n) => {
+        item.style.order = modulo(n - this.i + 2, this.len * this.repeatCount)
+      })
 
-        data.inTransition = false
+      this.inTransition = false
     }
-  },
-  tram: {
-    data: () => ({
-      previousProgress: undefined,
-      targets: []
-    }),
-    init: (data, el) => {
-      data.targets = Array.from(el.querySelectorAll("[data-tram-trigger]"))
-      if (el.dataset.tramTrigger !== undefined) data.targets.push(el)
+  }),
+  tram: (el) => ({
+    el,
+    previousProgress: undefined,
+    targets: [],
+    init() {
+      this.targets = Array.from(this.el.querySelectorAll("[data-tram-trigger]"))
+      if (this.el.dataset.tramTrigger !== undefined) this.targets.push(el)
 
-      data.targets.forEach(target => {
+      this.targets.forEach(target => {
         target.dataset.tramBaseClass = target.className
       })
 
       window.addEventListener("load", () => {
-        window.tgweb.tram._initializeTargets(data, el)
-        window.tgweb.tram._processTriggers(data, el)
+        this._initializeTargets()
+        this._processTriggers()
 
         window.document.addEventListener("scroll", () => {
-          window.tgweb.tram._processTriggers(data, el)
+          this._processTriggers()
         })
       })
     },
-    _initializeTargets: (data, el) => {
-      const tram = el.getBoundingClientRect()
+    _initializeTargets() {
+      const tram = this.el.getBoundingClientRect()
 
-      data.targets.forEach(target => {
+      this.targets.forEach(target => {
         const progress = window.innerHeight - tram.y
-        const positionPair = window.tgweb.tram._getPositionPair(target, tram, progress, true)
+        const positionPair = getPositionPair(target, tram, progress, true)
 
         if (positionPair === undefined) {
           if (target.dataset.tramInit !== undefined) {
@@ -234,18 +266,16 @@ window.tgweb = {
         }
       })
     },
-    _processTriggers: (data, el) => {
-      const tram = el.getBoundingClientRect()
+    _processTriggers() {
+      const tram = this.el.getBoundingClientRect()
       const longDistance = window.innerHeight + tram.height
       const progress = window.innerHeight - tram.y
 
-      if (window.tgweb.tram._withinRange(progress, data.previousProgress, longDistance)) {
-        const advancing = data.previousProgress === undefined || progress > data.previousProgress
+      if (withinRange(progress, this.previousProgress, longDistance)) {
+        const advancing = this.previousProgress === undefined || progress > this.previousProgress
 
-        data.targets.forEach(target => {
-          const positionPair =
-            window.tgweb.tram._getPositionPair(target, tram, progress, advancing)
-
+        this.targets.forEach(target => {
+          const positionPair = getPositionPair(target, tram, progress, advancing)
           if (positionPair === undefined) return
 
           const attrName = positionPair[0]
@@ -257,44 +287,7 @@ window.tgweb = {
         })
       }
 
-      data.previousProgress = progress
-    },
-    _getPositionPair: (target, tram, progress, advancing) => {
-      const positionPairs =
-        Object.keys(target.dataset)
-          .map(key => {
-            const md = key.match(/^tram(Forward|Backward)-(\d{1,3})(|%|vh|px)(|[+-])$/)
-            if (md === null) return
-            if (advancing && md[1] === "Backward" || !advancing && md[1] === "Forward") return
-            const realDistance = window.tgweb.tram._getRealDistance(tram, md[2], md[3], md[4])
-            return [key, realDistance]
-          })
-          .filter(pair => pair !== undefined)
-
-      return(
-        advancing ?
-        positionPairs.sort((a, b) => b[1] - a[1]).find(p => p[1] <= progress) :
-        positionPairs.sort((a, b) => a[1] - b[1]).find(p => p[1] >= progress)
-      )
-    },
-    _getRealDistance: (tram, distance, unit, suffix) => {
-      let realDistance
-
-      if (unit === "px") realDistance = distance
-      else if (unit === "%") realDistance = tram.height * distance / 100
-      else if (unit === "vh") realDistance = window.innerHeight * distance / 100
-      else realDistance = (window.innerHeight + tram.height) * distance / 100
-
-      if (suffix === "+") realDistance = window.innerHeight + realDistance
-      else if (suffix === "-") realDistance = window.innerHeight - realDistance
-
-      return realDistance
-    },
-    _withinRange: (progress, previousProgress, longDistance) => {
-      if (progress >= 0 && progress <= longDistance) return true
-      if (previousProgress === undefined) return false
-      if (previousProgress >= 0 && previousProgress <= longDistance) return true
-      return false
+      this.previousProgress = progress
     }
-  }
+  })
 }
