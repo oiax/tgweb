@@ -709,7 +709,7 @@ const addSwitcherSubhooks = (newNode) => {
   }
 
   if (newNode.attribs["tg:last"] !== undefined) {
-    newNode.attribs["x-on:click"] = "window.tgweb.switcher.last($data)"
+    newNode.attribs["x-on:click"] = "last()"
     newNode.attribs["x-bind:class"] = `i === len - 1 ? '${disabledClass}' : '${enebledClass}'`
   }
 
