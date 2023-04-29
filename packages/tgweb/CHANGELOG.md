@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.4.10
+
+* eb4dba3 Fix a bug of `tgweb_utilities.js`: `switcher.last()` does not work
+
 ## 0.4.9
 
 * cc05439 Fix choose buttons of switcher/rotator so that they call correct javascript functions
