@@ -24,7 +24,14 @@ const renderPage = (path, siteData) => {
   const page = siteData.pages.find(page => page.path == relPath)
 
   const state =
-    { path, container: undefined, innerContent: [], inserts: [], hookName: undefined }
+    {
+      path,
+      container: undefined,
+      innerContent: [],
+      inserts: [],
+      hookName: undefined,
+      itemIndex: 0
+    }
 
   if (page === undefined) {
     console.log(`Page '${relPath}' is not found.`)
@@ -601,9 +608,11 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:tram"] !== undefined && state.hookName === undefined)
     addTramHook(newNode, newState)
 
+  if (state.hookName === "switcher") console.log({index: state.itemIndex})
+
   if (state.hookName === "toggler") addTogglerSubhooks(newNode)
-  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
-  else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
+  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, state)
+  else if (state.hookName === "rotator") addRotatorSubhooks(newNode, state)
   else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
   else if (state.hookName === "modal") addModalSubhooks(newNode)
   else if (state.hookName === "tram") addTramSubhooks(newNode)
@@ -666,31 +675,36 @@ const addTogglerSubhooks = (newNode) => {
 
 const addSwitcherHook = (newNode, newState) => {
   newState.hookName = "switcher"
+  newState.itemIndex = 0
+
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, newNode.children)
+  const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.switcher(${len}, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
+      newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
+    newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
   }
 }
 
-const addSwitcherSubhooks = (newNode) => {
+const addSwitcherSubhooks = (newNode, state) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
   if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-switcher-item"] = ""
+    newNode.attribs["data-index"] = String(state.itemIndex)
     newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
+    state.itemIndex = state.itemIndex + 1
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
@@ -727,31 +741,36 @@ const addSwitcherSubhooks = (newNode) => {
 
 const addRotatorHook = (newNode, newState) => {
   newState.hookName = "rotator"
+  newState.itemIndex = 0
+
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, newNode.children)
+  const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.rotator(${len}, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
+      newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
+    newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
   }
 }
 
-const addRotatorSubhooks = (newNode) => {
+const addRotatorSubhooks = (newNode, newState) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
   if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-rotator-item"] = ""
+    newNode.attribs["data-index"] = String(newState.itemIndex)
     newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
+    newState.itemIndex = newState.itemIndex + 1
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
@@ -1148,6 +1167,7 @@ const mergeState = (obj1, obj2) => {
   newState.innerContent = obj1.innerContent
   newState.inserts = obj1.inserts
   newState.hookName = obj1.hookName
+  newState.itemIndex = obj1.itemIndex
 
   if (obj2.targetPath !== undefined) newState.targetPath = obj2.targetPath
   if (obj2.label !== undefined) newState.label = obj2.label
@@ -1155,6 +1175,7 @@ const mergeState = (obj1, obj2) => {
   if (obj2.innerContent !== undefined) newState.innerContent = obj2.innerContent
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
   if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
+  if (obj2.itemIndex !== undefined) newState.itemIndex = obj2.itemIndex
   return newState
 }
 
