@@ -594,21 +594,19 @@ const renderElement = (node, siteData, documentProperties, state) => {
     addTogglerHook(newNode, newState)
 
   if (newNode.attribs["tg:switcher"] !== undefined && state.hookName === undefined)
-    addSwitcherHook(newNode, newState)
+    addSwitcherHook(node, newNode, newState)
 
   if (newNode.attribs["tg:rotator"] !== undefined && state.hookName === undefined)
-    addRotatorHook(newNode, newState)
+    addRotatorHook(node, newNode, newState)
 
   if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
-    addCarouselHook(newNode, newState)
+    addCarouselHook(node, newNode, newState)
 
   if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
     addModalHook(newNode, newState)
 
   if (newNode.attribs["tg:tram"] !== undefined && state.hookName === undefined)
     addTramHook(newNode, newState)
-
-  if (state.hookName === "switcher") console.log({index: state.itemIndex})
 
   if (state.hookName === "toggler") addTogglerSubhooks(newNode)
   else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, state)
@@ -673,11 +671,11 @@ const addTogglerSubhooks = (newNode) => {
 
 // Switcher
 
-const addSwitcherHook = (newNode, newState) => {
+const addSwitcherHook = (node, newNode, newState) => {
   newState.hookName = "switcher"
   newState.itemIndex = 0
 
-  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, newNode.children)
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
   const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
@@ -739,11 +737,11 @@ const addSwitcherSubhooks = (newNode, state) => {
 
 // Rotator
 
-const addRotatorHook = (newNode, newState) => {
+const addRotatorHook = (node, newNode, newState) => {
   newState.hookName = "rotator"
   newState.itemIndex = 0
 
-  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, newNode.children)
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
   const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
@@ -805,21 +803,8 @@ const addRotatorSubhooks = (newNode, newState) => {
 
 // Carousel
 
-const addCarouselHook = (newNode, newState) => {
+const addCarouselHook = (node, newNode, newState) => {
   newState.hookName = "carousel"
-
-  let interval = 0
-
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    interval = parseInt(newNode.attribs["tg:interval"], 10)
-    if (Number.isNaN(interval)) interval = 0
-    if (interval < 0) interval = 0
-  }
-
-  let duration = parseInt(newNode.attribs["tg:duration"], 10)
-  if (Number.isNaN(duration)) duration = 100
-
-  newNode.attribs["x-data"] = `window.tgweb.carousel($el, ${interval}, ${duration})`
 }
 
 const addCarouselSubhooks = (newNode) => {
@@ -928,10 +913,19 @@ const postprocess = (node, state) => {
 
   if (klass === "Element") {
     if (node.attribs["tg:carousel"] !== undefined) {
+      newState.hookName = "carousel"
       return postprocessCarousel(node, newState)
     }
-    else if (node.attribs["tg:paginator"] !== undefined) {
-      return postprocessCarouselPaginator(node, newState)
+    else if (state.hookName === "carousel") {
+      if (node.attribs["tg:body"] !== undefined)
+        return postprocessCarouselBody(node, newState)
+      else if (node.attribs["tg:paginator"] !== undefined)
+        return postprocessCarouselPaginator(node, newState)
+      else {
+        node.children = node.children.map(c => postprocess(c, newState)).flat()
+        removeTgAttribs(node.attribs)
+        return node
+      }
     }
     else {
       node.children = node.children.map(c => postprocess(c, newState)).flat()
@@ -948,10 +942,49 @@ const postprocessCarousel = (node, newState) => {
   const carouselItems =
     DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
 
-  newState.carouselItemCount = carouselItems.length
+  let interval = 0
+
+  if (node.attribs["tg:interval"] !== undefined) {
+    interval = parseInt(node.attribs["tg:interval"], 10)
+    if (Number.isNaN(interval)) interval = 0
+    if (interval < 0) interval = 0
+  }
+
+  let duration = parseInt(node.attribs["tg:duration"], 10)
+  if (Number.isNaN(duration)) duration = 0
+
+  const len = carouselItems.length
+  newState.carouselItemCount = len
+
+  let repeatCount
+  if (len === 1) repeatCount = 6
+  else if (len === 2) repeatCount = 4
+  else if (len === 3) repeatCount = 3
+  else repeatCount = 2
+
+  newState.repeatCount = repeatCount
+
+  node.attribs["x-data"] =
+    `window.tgweb.carousel($el, ${len}, ${repeatCount}, ${interval}, ${duration})`
 
   node.children = node.children.map(c => postprocess(c, newState)).flat()
   removeTgAttribs(node.attribs)
+  return node
+}
+
+const postprocessCarouselBody = (node, newState) => {
+  const carouselItems =
+    DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+
+  const children = []
+
+  for (let n = 0; n < newState.repeatCount; n++) {
+    carouselItems.forEach(item => {
+      children.push(item.cloneNode(true))
+    })
+  }
+
+  node.children = children
   return node
 }
 
@@ -981,6 +1014,8 @@ const postprocessCarouselPaginator = (node, newState) => {
     delete newNode.attribs.id
     choosers.push(newNode)
   }
+
+  node.chil
 
   return choosers
 }

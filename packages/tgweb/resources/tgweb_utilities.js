@@ -59,10 +59,12 @@ window.tgweb = {
       clearInterval(this.v)
     },
     prev() {
+      console.log({i: this.i})
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
+      console.log({k: this.i, len})
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
@@ -86,7 +88,7 @@ window.tgweb = {
       }
     },
     _forward() {
-      this.i = this.i < this.len - 1 ? this.i + 1 : this.i
+      this.i = this.i < this.len - 1 ? this.i + 1 : 0
     },
     first() {
       this.i = 0
@@ -109,45 +111,43 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  carousel: (el, interval, duration) => ({
+  carousel: (el, len, repeatCount, interval, duration) => ({
     el,
+    len,
+    repeatCount,
     interval,
     duration,
     inTransition: false,
     i: 0,
-    len: undefined,
-    repeatCount: undefined,
     frame: undefined,
     body: undefined,
+    itemWidth: undefined,
     init() {
       this.frame = this.el.querySelector("[data-carousel-frame]")
       this.body = this.el.querySelector("[data-carousel-body]")
 
-      if (this.frame === null) return
-      if (this.body === null) return
-
-      this.frame.style.overflow = "hidden"
+      if (this.frame === null || this.body === null) {
+        console.error("This carousel does not have frame and body.")
+        return
+      }
 
       const items = this.body.querySelectorAll("[data-carousel-item]")
       const firstItem = items[0]
-      if (firstItem === undefined) return
 
-      this.itemWidth = firstItem.offsetWidth
-      this.len = items.length
-
-      if (this.len === 1) this.repeatCount = 5
-      else if (this.len === 2) this.repeatCount = 3
-      else if (this.len === 3 || this.len === 4) this.repeatCount = 2
-      else this.repeatCount = 1
-
-      for (let n = 1; n < this.repeatCount; n++) {
-        items.forEach(item => {
-          firstItem.before(item.cloneNode(true))
-        })
+      if (firstItem === null) {
+        console.error("This carousel has no item.")
+        return
       }
 
+      this.itemWidth = firstItem.offsetWidth
+      this.frame.style.overflow = "hidden"
       this.body.style.display = "flex"
       this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
+
+      Array.from(items).forEach(item => {
+        item.style.display = "block"
+        item.style.visibility = "visible"
+      })
 
       this._resetStyle()
 
@@ -200,7 +200,6 @@ window.tgweb = {
         this.itemWidth * 1 - (this.frame.offsetWidth - this.itemWidth) / 2
 
       this.body.style.translate = `-${translateLength}px 0`
-
       this.inTransition = true
     },
     _resetStyle() {
