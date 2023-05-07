@@ -1,13 +1,33 @@
 const modulo = (v, w) => (v % w + w) % w
 
-const getPositionPair = (target, tram, progress, advancing) => {
+const getScreenHeight = (kernel) => {
+  if (kernel) {
+    const rect = kernel.getBoundingClientRect()
+    return rect.height
+  }
+  else {
+    return window.innerHeight
+  }
+}
+
+const getTramProgress = (kernel, tram) => {
+  if (kernel) {
+    const rect = kernel.getBoundingClientRect()
+    return rect.height + rect.y - tram.y
+  }
+  else {
+    return window.innerHeight - tram.y
+  }
+}
+
+const getPositionPair = (kernel, target, tram, progress, advancing) => {
   const positionPairs =
     Object.keys(target.dataset)
       .map(key => {
         const md = key.match(/^tram(Forward|Backward)-(\d{1,3})(|%|vh|px)(|[+-])$/)
         if (md === null) return
         if (advancing && md[1] === "Backward" || !advancing && md[1] === "Forward") return
-        const realDistance = _getRealDistance(tram, md[2], md[3], md[4])
+        const realDistance = _getRealDistance(kernel, tram, md[2], md[3], md[4])
         return [key, realDistance]
       })
       .filter(pair => pair !== undefined)
@@ -19,13 +39,14 @@ const getPositionPair = (target, tram, progress, advancing) => {
   )
 }
 
-const _getRealDistance = (tram, distance, unit, suffix) => {
+const _getRealDistance = (kernel, tram, distance, unit, suffix) => {
+  const screenHeight = getScreenHeight(kernel)
   let realDistance
 
   if (unit === "px") realDistance = distance
   else if (unit === "%") realDistance = tram.height * distance / 100
-  else if (unit === "vh") realDistance = window.innerHeight * distance / 100
-  else realDistance = (window.innerHeight + tram.height) * distance / 100
+  else if (unit === "vh") realDistance = screenHeight * distance / 100
+  else realDistance = (screenHeight + tram.height) * distance / 100
 
   if (suffix === "+") realDistance = window.innerHeight + realDistance
   else if (suffix === "-") realDistance = window.innerHeight - realDistance
@@ -219,6 +240,7 @@ window.tgweb = {
   }),
   tram: (el) => ({
     el,
+    kernel: undefined,
     previousProgress: undefined,
     targets: [],
     init() {
@@ -229,21 +251,33 @@ window.tgweb = {
         target.dataset.tramBaseClass = target.className
       })
 
-      window.addEventListener("load", () => {
-        this._initializeTargets()
-        this._processTriggers()
+      this.kernel = window.document.getElementById("tg-preview-area-kernel")
 
-        window.document.addEventListener("scroll", () => {
-          this._processTriggers()
-        })
+      if (this.kernel) {
+        this._doInit()
+      }
+      else {
+        const body = window.document.querySelector("body[phx-hook='Main']")
+        if (body) this._doInit()
+        else window.addEventListener("load", () => this._doInit())
+      }
+    },
+    _doInit() {
+      this._initializeTargets()
+      this._processTriggers()
+
+      const target = this.kernel ? this.kernel : window.document
+
+      target.addEventListener("scroll", () => {
+        this._processTriggers()
       })
     },
     _initializeTargets() {
       const tram = this.el.getBoundingClientRect()
 
       this.targets.forEach(target => {
-        const progress = window.innerHeight - tram.y
-        const positionPair = getPositionPair(target, tram, progress, true)
+        const progress = getTramProgress(this.kernel, tram)
+        const positionPair = getPositionPair(this.kernel, target, tram, progress, true)
 
         if (positionPair === undefined) {
           if (target.dataset.tramInit !== undefined) {
@@ -262,14 +296,14 @@ window.tgweb = {
     },
     _processTriggers() {
       const tram = this.el.getBoundingClientRect()
-      const longDistance = window.innerHeight + tram.height
-      const progress = window.innerHeight - tram.y
+      const longDistance = getScreenHeight(this.kernel) + tram.height
+      const progress = getTramProgress(this.kernel, tram)
 
       if (withinRange(progress, this.previousProgress, longDistance)) {
         const advancing = this.previousProgress === undefined || progress > this.previousProgress
 
         this.targets.forEach(target => {
-          const positionPair = getPositionPair(target, tram, progress, advancing)
+          const positionPair = getPositionPair(this.kernel, target, tram, progress, advancing)
           if (positionPair === undefined) return
 
           const attrName = positionPair[0]
