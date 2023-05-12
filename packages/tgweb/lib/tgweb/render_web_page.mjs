@@ -652,6 +652,7 @@ const addTogglerSubhooks = (newNode) => {
 
   if (newNode.attribs["tg:when"] === "on") {
     newNode.attribs["x-show"] = `f === true`
+    newNode.attribs["x-cloak"] = `x-cloak`
   }
   else if (newNode.attribs["tg:when"] === "off") newNode.attribs["x-show"] = `f === false`
 
@@ -1165,9 +1166,10 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
-  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>>").children[0])
-  children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>>").children[0])
-  children.push(parseDocument("<script src='/reload/reload.js' defer></script>>").children[0])
+  children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
+  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
+  children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
+  children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 
   head.children = children
 
