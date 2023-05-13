@@ -2,7 +2,7 @@ import fs from "fs"
 import toml from "toml"
 import glob from "glob"
 import { getTemplate } from "./get_template.mjs"
-import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
+import { normalizeSiteProperties } from "./normalize_site_properties.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
 import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
@@ -19,7 +19,8 @@ const getSiteData = directory => {
     properties: {
       scheme: "http",
       host: "localhost",
-      port: 3000
+      port: 3000,
+      "root-url": "http://localhost:3000/"
     }
   }
 
@@ -33,7 +34,7 @@ const getSiteData = directory => {
     try {
       const properties = toml.parse(source)
       siteData.properties = mergeProperties(siteData.properties, properties)
-      normalizeFrontMatter(siteData.properties)
+      normalizeSiteProperties(siteData.properties)
     }
     catch (error) {
       showTomlSytaxError(site_toml_path, source, error)
@@ -50,7 +51,9 @@ const getSiteData = directory => {
 
   if (fs.existsSync("src/articles")) {
     siteData.articles =
-      glob.sync("src/articles/**/!(_wrapper).html").map(path => getTemplate(path, "article"))
+      glob.sync("src/articles/**/!(_wrapper).html").map(path =>
+        getTemplate(path, "article", siteData.properties)
+      )
   }
 
   if (fs.existsSync("src/segments")) {
@@ -65,7 +68,9 @@ const getSiteData = directory => {
 
   if (fs.existsSync("src/pages")) {
     siteData.pages =
-      glob.sync("src/pages/**/!(_wrapper).html").map(path => getTemplate(path, "page"))
+      glob.sync("src/pages/**/!(_wrapper).html").map(path =>
+        getTemplate(path, "page", siteData.properties)
+      )
   }
 
   process.chdir(cwd)

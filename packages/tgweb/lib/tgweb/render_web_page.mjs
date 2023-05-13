@@ -1066,7 +1066,7 @@ const renderHead = (documentProperties) => {
 
       if (typeof content !== "string") return
 
-      const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+      let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
         const parts = propName.split(".")
 
         if (parts.length === 1) {
@@ -1099,6 +1099,11 @@ const renderHead = (documentProperties) => {
         }
       })
 
+      converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+        const rootUrl = documentProperties["root-url"]
+        return rootUrl + path.replace(/^\//, "")
+      })
+
       const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
       children.push(doc.children[0])
     })
@@ -1108,7 +1113,13 @@ const renderHead = (documentProperties) => {
     Object.keys(documentProperties["link"]).forEach(rel => {
       if (rel == "stylesheet") return
       const href = documentProperties["link"][rel]
-      const doc = parseDocument(`<link rel="${rel}" href="${href}">`)
+
+      const converted = href.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+        const rootUrl = documentProperties["root-url"]
+        return rootUrl + path.replace(/^\//, "")
+      })
+
+      const doc = parseDocument(`<link rel="${rel}" href="${converted}">`)
       children.push(doc.children[0])
     })
   }

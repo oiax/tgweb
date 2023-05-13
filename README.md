@@ -486,6 +486,7 @@ The following are examples of predefined properties:
 * `host`: The host name of the URL of the HTML document. Default: `localhost`.
 * `port`: The port number of the URL of the HTML document. Default: 3000.
 * `url`: The URL of the HTML document.
+* `root-url`: The root URL of the HTML document.
 * `title`: The title of the HTML document.
 * `layout`: The name of layout to be applied to the template. See [Layouts](#layouts).
 
