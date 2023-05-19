@@ -1,5 +1,12 @@
 # tgweb CHANGELOG
 
+## 0.5.0
+
+* 319c223 Modify switcher/rotator so that they set `data-index` of generated HTML elements
+* a3a0e88 Modify carousel so that it generates HTML fragments beforehand
+* a1c06d4 Modify tram so that it works on the teamgenik.com
+* 4c2cefe Set the "root-url" and "url" property of frontMatter of pages and articles
+
 ## 0.4.10
 
 * eb4dba3 Fix a bug of `tgweb_utilities.js`: `switcher.last()` does not work
