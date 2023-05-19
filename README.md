@@ -2261,20 +2261,19 @@ Also, inside the carousel frame, there must be an element with the `tg:body` att
 In addition, there must be elements with the `tg:item` attribute, _carousel items_,
 inside the carousel body.
 
-The carousel frame and carousel items must have a fixed width.
-Normally, carousel frames and carousel items have the same width.
-If the width of the carousel frame is larger than the carousel items, some or all of the carousel
-items before and after the active carousel item will be displayed.
-
-The width of the carousel body are automatically adjusted, so there is no need for the
-website author to specify it.
+The width of the carousel body is automatically calculated to be an integer multiple of the width
+of the first carousel item, so there is no need for the website author to specify it.
 Its width becomes large enough to allow all carousel items to be aligned horizontally, but only a
 portion of it will be visible to website visitors because of the `overflow: hidden` style of the
 carousel frame.
 The carousel effect is achieved by shifting the carousel body left and right with an embedded
 JavaScript program.
 
-What follows is an example of a carousel:
+The width of the carousel frame should be adjusted by the website author.
+Normally, match the width of the carousel frame and the first carousel item.
+That way, only one carousel item will be displayed in the carousel frame while the carousel remains still.
+If you want to always display multiple carousel items, make the width of the carousel frame larger
+than the width of the first carousel item.
 
 ```html
 ---
