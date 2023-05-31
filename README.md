@@ -20,6 +20,7 @@
 * [Tags](#tags)
 * [Links](#links)
 * [Dynamic Elements](#dynamic-elements)
+* [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
@@ -2591,6 +2592,138 @@ The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content man
 However, website authors themselves cannot use attributes derived from Alpine.js such as `x-data`
 , `@click`, and `:class`.
 When those attributes are found in the source HTML files, they will be removed.
+
+## Embedding Teamgenik Mini-apps
+
+### What is a mini-app?
+
+Teamgenik has an aspect of being a no-code development platform.
+Applications created on Teamgenik are called "mini-apps".
+In the STUDIO space on Teamgenik you can create mini-apps, and in the MARKET space you can acquire
+or purchase mini-apps.
+
+Mini-pps have two uses:
+
+1. You can use them as stand-alone widgets in your BASE space.
+2. You can embed them on your personal or your team's website.
+
+Note that you can only embed the mini-apps on websites that are published on Teamgenik.
+Therefore, it is not possible to run mini-apps on top of the web pages delivered by the web server
+started by the `npx tgweb-server` command.
+However, it is possible to embed placeholders for mini-apps in them.
+You can then upload the website data to Teamgenik with the `npx tgweb-push` command and publish
+the website with the embedded mini-apps.
+
+**Note** The `npx tgweb-push` command is not yet available.
+
+### Settings for mini-apps
+
+To embed mini-app placeholders in your web page, you must specify the default locale of mini-apps
+and register their name, ID, and display name in `site.toml`.
+Shown below is an example of the setup.
+
+```toml
+default-locale = "en"
+
+[[apps]]
+name = "score_board"
+id = "121d0e34-2398-4f7d-a8be-bdc549cd4332"
+display-name = "Score Board"
+
+[[apps]]
+name = "players_list"
+id = "70955db7-75f6-43b2-b46a-50413e43b94f"
+display-name = "Players List"
+```
+
+When the texts in mini-apps are internationalized, they are translated in the locale set in the
+`default-locale` property.
+
+You must place `[[apps]]` on the first line of each mini-app configuration.
+Note that the word "apps" is enclosed in double square brackets.
+
+The `name` property is the name used to identify the mini-app to be configured.
+Its value can be any string, but it must correspond to the `name` attribute of the `<tg:app>` tag
+described below.
+
+The `id` property is the identifier (ID) assigned to the mini-app on Teamgenik.
+Its value has the form of a UUID (Universally Unique IDentifier).
+You can find the ID of each mini-app by visiting the website builder within the Teamgenik PUB space.
+This property is optional.
+
+The ID is necessary to actually run a mini-app on the website published on Teamgenik, but
+if you simply want to embed a its placeholder in a web page in the local environment and
+check its appearance, you can omit it.
+
+The value of `display-name` property is a string that will be displayed within the placeholder.
+If this property is omitted, the value of the `name` property is used instead.
+
+### Embed mini-app placeholders into your webpages
+
+Use the `<tg:app>` element to embed mini-app placeholders into your web page.
+Its value of the `name` attribute must match the `name` property of one of the mini-apps described
+in `site.toml`.
+The following is an example of the use the `<tg:app>` element:
+
+```html
+<tg:app name="score_board"></tg:app>
+```
+
+The `<tg:app>` element can have an `expanded` attribute. This attribute controls the display mode
+of mini-apps.
+
+Mini apps have two display modes: standard mode and expanded mode.
+The layout of the mini-apps in standard mode is optimized for a width of 300 pixels, while the
+mini-apps in expanded mode are optimized for a width of 640 pixels.
+
+The `expanded` attribute is a boolean attribute; if the attribute is present, the mini-app is
+displayed in expanded mode; otherwise, it is displayed in standard mode.
+The following is an example of the use the `expanded` attribute:
+
+```html
+<tg:app name="score_board" expanded></tg:app>
+```
+
+Note that the mini-app placeholder itself does not have a specific width and height.
+Usually, you should fix the width of the placeholder by enclosing it in a `<div>` element like this:
+
+```html
+<div class="w-[300px]">
+  <tg:app name="score_board"></tg:app>
+</div>
+```
+
+Specifying a minimum height as shown below may prevent the web page layout from wobbling when
+the content of the mini-app changes.
+
+```html
+<div class="w-[300px] min-h-[450px]">
+  <tg:app name="score_board"></tg:app>
+</div>
+```
+
+To switch the display mode depending on whether the display width of the browser is 640 pixels or
+more, place two placeholders as follows, surround each with a `<div>` element which has
+an appropriate set of Tailwind CSS class tokens.
+
+```html
+<div class="w-[300px] sm:hidden">
+  <tg:app name="score_board"></tg:app>
+</div>
+<div class="w-[640px] hidden sm:block">
+  <tg:app name="score_board" expanded></tg:app>
+</div>
+```
+
+The `sm:hidden` class hides elements when the browser display width is greater than 640 pixels.
+The `hidden sm:block` class hides the element when the browser display width is less than 640 pixels.
+
+To learn more about the Tailwind CSS class tokens mentioned here, please visit the following pages:
+
+* https://tailwindcss.com/docs/width#arbitrary-values
+* https://tailwindcss.com/docs/min-height#arbitrary-values
+* https://tailwindcss.com/docs/responsive-design
+* https://tailwindcss.com/docs/display
 
 ## Notes on Property Values
 

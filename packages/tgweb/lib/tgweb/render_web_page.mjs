@@ -225,6 +225,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:label") {
       return renderLabel(node, state)
     }
+    else if (node.name === "tg:app") {
+      return renderAppPlaceholder(node, siteData)
+    }
     else if (node.name === "a") {
       return renderAnchor(node, siteData, documentProperties, state)
     }
@@ -556,6 +559,39 @@ const renderLabel = (node, state) => {
       const textNode = parseDocument("\n").children[0]
       textNode.data = escape(state.label)
       return textNode
+    }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
+const renderAppPlaceholder = (node, siteData) => {
+  const appName = node.attribs.name
+
+  if (appName && Array.isArray(siteData.properties.apps)) {
+    const appConfig = siteData.properties.apps.find(app => app.name === appName)
+
+    if (appConfig) {
+      const displayName = appConfig["display-name"] || appName
+      const outerNode = parseDocument(`<div></div>`).children[0]
+      const innerNode = parseDocument(`<div>${displayName}</div>`).children[0]
+
+      outerNode.attribs = {
+        style: `width: 100%; height: 300px; padding: 16px; backdrop-filter: invert(50%);`
+      }
+
+      innerNode.attribs = {
+        style:
+          "width: 100%; height: 100%; background-color: white; opacity: 50%; " +
+          "display: flex; justify-content: center; align-items: center; font-size: 1.5rem;"
+      }
+
+      outerNode.children = [innerNode]
+      return outerNode
+    }
+    else {
+      return err(render(node))
     }
   }
   else {
