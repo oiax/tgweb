@@ -8,7 +8,7 @@ const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 describe("getTemplate", () => {
   it("should return a page template", () => {
     const path = PATH.resolve(__dirname, "../sites/site_1/src/pages/index.html")
-    const template = getTemplate(path, "page")
+    const template = getTemplate(path, "page", {properties: {}})
 
     assert.equal(template.type, "page")
     assert.equal(template.frontMatter.title, "FizzBuzz")

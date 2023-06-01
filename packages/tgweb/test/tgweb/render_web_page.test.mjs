@@ -6,6 +6,7 @@ import * as PATH from "path"
 import render from "dom-serializer"
 import pretty from "pretty"
 import { inspectDom } from "../../lib/utils/inspect_dom.mjs"
+import { DomUtils } from "htmlparser2"
 
 // Prevent warnings when function inspectDom is not used.
 if (inspectDom === undefined) { inspectDom() }
@@ -13,31 +14,51 @@ if (inspectDom === undefined) { inspectDom() }
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
 describe("renderWebSite", () => {
-  it("should render a page of 'minimum' site", () => {
+  it("should render a head of 'minimum' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum")
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
 
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const head = DomUtils.findOne(elem => elem.name === "head", dom.children)
+
+    const html = pretty(render(head, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Hello, world!</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '    <p class="m-1">I am a <em>computer</em>.</p>',
-      '  </body>',
-      '</html>'
+      '<head>',
+      '  <meta charset="utf-8">',
+      '  <title>Hello, world!</title>',
+      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '  <link rel="stylesheet" href="/css/tailwind.css">',
+      '  <style>',
+      '    [x-cloak] {',
+      '      display: none !important;',
+      '    }',
+      '  </style>',
+      '  <script src="/js/tgweb_utilities.js" defer></script>',
+      '  <script src="/js/alpine.min.js" defer></script>',
+      '  <script src="/reload/reload.js" defer></script>',
+      '</head>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render a page of 'minimum' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/minimum")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  <p class="m-1">I am a <em>computer</em>.</p>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -48,26 +69,15 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '    <p class="m-1">I am a <em>computer</em>.</p>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  <p class="m-1">I am a <em>computer</em>.</p>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -78,33 +88,15 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      `    <meta http-equiv="content-security-policy" content="default-src 'self'">`,
-      '    <meta property="fb:app_id" content="0123456789abced">',
-      '    <meta property="og:type" content="website">',
-      '    <meta property="og:url" content="${url}">',
-      '    <meta property="og:title" content="Greeting">',
-      '    <meta property="og:image" content="%{/images/icons/default.png}">',
-      '    <link rel="canonical" href="%{/}">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '    <p class="m-1">I am a <em>computer</em>.</p>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  <p class="m-1">I am a <em>computer</em>.</p>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -115,37 +107,26 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <h1 class="text-xl m-2">Hello, world!</h1>',
-      '      <p class="m-1">I am a <em>computer</em>.</p>',
-      '      <div>',
-      '        <strong>X</strong>',
-      '        Y',
-      '      </div>',
-      '      <div>',
-      '        <strong>X</strong>',
-      '      </div>',
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <h1 class="text-xl m-2">Hello, world!</h1>',
+      '    <p class="m-1">I am a <em>computer</em>.</p>',
+      '    <div>',
+      '      <strong>X</strong>',
+      '      Y',
       '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '    <div>',
+      '      <strong>X</strong>',
+      '    </div>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -156,31 +137,20 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Hello, world!</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <div class="my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1">',
-      '      <h1 class="text-xl m-2">Hello, world!</h1>',
-      '      <p>I am a <em>computer</em>.</p>',
-      '      <div>',
-      '        <em>X</em>',
-      '      </div>',
+      '<body>',
+      '  <div class="my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1">',
+      '    <h1 class="text-xl m-2">Hello, world!</h1>',
+      '    <p>I am a <em>computer</em>.</p>',
+      '    <div>',
+      '      <em>X</em>',
       '    </div>',
-      '  </body>',
-      '</html>'
+      '  </div>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -191,32 +161,21 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Hello, world!</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <main class="my-4 p-2">',
-      '      <div class="my-4 p-2 bg-green-100">',
-      '        <h1 class="text-xl m-2">Hello, world!</h1>',
-      '        <p class="m-1">I am a <em>computer</em>.</p>',
-      '      </div>',
-      '    </main>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>Header</header>',
+      '  <main class="my-4 p-2">',
+      '    <div class="my-4 p-2 bg-green-100">',
+      '      <h1 class="text-xl m-2">Hello, world!</h1>',
+      '      <p class="m-1">I am a <em>computer</em>.</p>',
+      '    </div>',
+      '  </main>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -227,34 +186,23 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '    <div><span class="badge-lg badge badge-primary">',
+      '<body>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  <div><span class="badge-lg badge badge-primary">',
       '  M',
       '  AAA',
       '</span>',
-      '    </div>',
-      '    <div>',
-      '      <h3>Warning</h3>',
-      '      <p>You <em>cannot</em> do it.</p>',
-      '    </div>',
-      '  </body>',
-      '</html>'
+      '  </div>',
+      '  <div>',
+      '    <h3>Warning</h3>',
+      '    <p>You <em>cannot</em> do it.</p>',
+      '  </div>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -265,30 +213,19 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <div class="hero">',
-      '      HERO',
-      '    </div>',
-      '    <div>X</div>',
-      '    <div>X</div>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <div class="hero">',
+      '    HERO',
+      '  </div>',
+      '  <div>X</div>',
+      '  <div>X</div>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -299,30 +236,19 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <div class="hero">',
-      '      HERO',
-      '    </div>',
-      '    <div>X</div>',
-      '    <div>X</div>',
-      '    <h1 class="text-xl m-2">Hello, world!</h1>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <div class="hero">',
+      '    HERO',
+      '  </div>',
+      '  <div>X</div>',
+      '  <div>X</div>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -333,32 +259,21 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/articles/about_me.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>About me</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <article>',
-      '      <h1 class="text-xl m-2">About me</h1>',
-      '      <p class="m-1">My name is Alice.</p>',
-      '      <hr class="border border-gray-500">',
-      '      <div>',
-      '        Comment',
-      '      </div>',
-      '    </article>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <article>',
+      '    <h1 class="text-xl m-2">About me</h1>',
+      '    <p class="m-1">My name is Alice.</p>',
+      '    <hr class="border border-gray-500">',
+      '    <div>',
+      '      Comment',
+      '    </div>',
+      '  </article>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -369,44 +284,33 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <article>',
-      '        <h1 class="text-xl m-2">About me</h1>',
-      '        <p class="m-1">My name is Alice.</p>',
-      '        <hr class="border border-gray-500">',
-      '        <div>',
-      '          Comment',
-      '        </div>',
-      '      </article>',
-      '      <article>',
-      '        <h1 class="text-xl m-2">A</h1>',
-      '        <p class="m-1">The first article.</p>',
-      '      </article>',
-      '      <article>',
-      '        <h1 class="text-xl m-2">B</h1>',
-      '        <p class="m-1">The second article.</p>',
-      '      </article>',
-      '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <article>',
+      '      <h1 class="text-xl m-2">About me</h1>',
+      '      <p class="m-1">My name is Alice.</p>',
+      '      <hr class="border border-gray-500">',
+      '      <div>',
+      '        Comment',
+      '      </div>',
+      '    </article>',
+      '    <article>',
+      '      <h1 class="text-xl m-2">A</h1>',
+      '      <p class="m-1">The first article.</p>',
+      '    </article>',
+      '    <article>',
+      '      <h1 class="text-xl m-2">B</h1>',
+      '      <p class="m-1">The second article.</p>',
+      '    </article>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -417,43 +321,32 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/info.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Info</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <article class="bg-gray-100">',
-      '        <div><span class="badge badge-primary">B</span>',
-      '        </div>',
-      '        <h1>J</h1>',
-      '      </article>',
-      '      <article class="bg-gray-100">',
-      '        <div><span class="badge badge-primary">B</span>',
-      '        </div>',
-      '        <h1>K</h1>',
-      '      </article>',
-      '      <article class="bg-gray-100">',
-      '        <div><span class="badge badge-primary">B</span>',
-      '        </div>',
-      '        <h1>I</h1>',
-      '      </article>',
-      '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <article class="bg-gray-100">',
+      '      <div><span class="badge badge-primary">B</span>',
+      '      </div>',
+      '      <h1>J</h1>',
+      '    </article>',
+      '    <article class="bg-gray-100">',
+      '      <div><span class="badge badge-primary">B</span>',
+      '      </div>',
+      '      <h1>K</h1>',
+      '    </article>',
+      '    <article class="bg-gray-100">',
+      '      <div><span class="badge badge-primary">B</span>',
+      '      </div>',
+      '      <h1>I</h1>',
+      '    </article>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -464,43 +357,32 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Greeting</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <ul>',
-      '        <li>',
-      '          <a href="/articles/blog/a.html">',
-      '            A',
-      '            <span class="text-sm">',
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <ul>',
+      '      <li>',
+      '        <a href="/articles/blog/a.html">',
+      '          A',
+      '          <span class="text-sm">',
       '            (2024-01-01)',
       '          </span>',
-      '          </a>',
-      '        </li>',
-      '        <li>',
-      '          <a href="/articles/blog/b.html">',
-      '            B',
-      '          </a>',
-      '        </li>',
-      '      </ul>',
-      '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '        </a>',
+      '      </li>',
+      '      <li>',
+      '        <a href="/articles/blog/b.html">',
+      '          B',
+      '        </a>',
+      '      </li>',
+      '    </ul>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -511,45 +393,34 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/info.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Info</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <ul>',
-      '        <li>',
-      '          <a href="/articles/info/j.html">',
-      '            J',
-      '          </a>',
-      '        </li>',
-      '        <li>',
-      '          <a href="/articles/info/k.html">',
-      '            K',
-      '          </a>',
-      '        </li>',
-      '        <li>',
-      '          <a href="/articles/info/i.html">',
-      '            I',
-      '          </a>',
-      '        </li>',
-      '      </ul>',
-      '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <ul>',
+      '      <li>',
+      '        <a href="/articles/info/j.html">',
+      '          J',
+      '        </a>',
+      '      </li>',
+      '      <li>',
+      '        <a href="/articles/info/k.html">',
+      '          K',
+      '        </a>',
+      '      </li>',
+      '      <li>',
+      '        <a href="/articles/info/i.html">',
+      '          I',
+      '        </a>',
+      '      </li>',
+      '    </ul>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -560,33 +431,22 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Home</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>Header</header>',
-      '    <div class="my-4 p-2 bg-blue-100">',
-      '      <header>',
-      '        <span class="font-bold">Home</span>',
-      '        <a href="/about.html">About</a>',
-      '      </header>',
-      '      <h2>Home</h2>',
-      '    </div>',
-      '    <footer>Footer</footer>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <header>',
+      '      <span class="font-bold">Home</span>',
+      '      <a href="/about.html">About</a>',
+      '    </header>',
+      '    <h2>Home</h2>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -597,29 +457,56 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/about.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>About Us</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body>',
-      '    <header>',
-      '      <a href="/">Home</a>',
-      '      <span class="font-bold">About</span>',
-      '    </header>',
-      '    <h2>About Us</h2>',
-      '  </body>',
-      '</html>'
+      '<body>',
+      '  <header>',
+      '    <a href="/">Home</a>',
+      '    <span class="font-bold">About</span>',
+      '  </header>',
+      '  <h2>About Us</h2>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render a head of 'site_0' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/site_0")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+
+    const head = DomUtils.findOne(elem => elem.name === "head", dom.children)
+
+    const html = pretty(render(head, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<head>',
+      '  <meta charset="utf-8">',
+      '  <title>Home</title>',
+      '  <meta name="viewport" content="width=device-width, initial-scale=1">',
+      `  <meta http-equiv="content-security-policy" content="default-src 'self'">`,
+      '  <meta property="fb:app_id" content="0123456789abced">',
+      '  <meta property="og:type" content="website">',
+      '  <meta property="og:url" content="http://localhost:3000/">',
+      '  <meta property="og:title" content="Home">',
+      '  <meta property="og:image" content="http://localhost:3000/images/icons/default.png">',
+      '  <link rel="canonical" href="http://localhost:3000/">',
+      '  <link rel="stylesheet" href="/css/tailwind.css">',
+      '  <style>',
+      '    [x-cloak] {',
+      '      display: none !important;',
+      '    }',
+      '  </style>',
+      '  <script src="/js/tgweb_utilities.js" defer></script>',
+      '  <script src="/js/alpine.min.js" defer></script>',
+      '  <script src="/reload/reload.js" defer></script>',
+      '</head>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -630,39 +517,21 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>Home</title>',
-      '    <meta name="viewport" content="width=device-width, initial-scale=1">',
-      `    <meta http-equiv="content-security-policy" content="default-src 'self'">`,
-      '    <meta property="fb:app_id" content="0123456789abced">',
-      '    <meta property="og:type" content="website">',
-      '    <meta property="og:url" content="${url}">',
-      '    <meta property="og:title" content="Home">',
-      '    <meta property="og:image" content="%{/images/icons/default.png}">',
-      '    <link rel="canonical" href="%{/}">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body class="p-2">',
-      '    <div class="grid grid-cols-1 gap-6 x:grid-cols-2 lg:grid-cols-3">',
-      '      <div class="bg-gray-100 py-2">',
-      '        <h3 class="font-bold text-lg ml-2">Greeting</h3>',
-      '        <div class="flex justify-center">',
-      '          Hello, world!',
-      '        </div>',
+      '<body class="p-2">',
+      '  <div class="grid grid-cols-1 gap-6 x:grid-cols-2 lg:grid-cols-3">',
+      '    <div class="bg-gray-100 py-2">',
+      '      <h3 class="font-bold text-lg ml-2">Greeting</h3>',
+      '      <div class="flex justify-center">',
+      '        Hello, world!',
       '      </div>',
       '    </div>',
-      '  </body>',
-      '</html>'
+      '  </div>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)
@@ -673,112 +542,101 @@ describe("renderWebSite", () => {
     const siteData = getSiteData(wd)
 
     const dom = renderWebPage("src/pages/index.html", siteData)
-
-    const html = pretty(render(dom, {encodeEntities: false}), {ocd: true})
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
     const lines = html.trim().split("\n")
 
     const expected = [
-      '<html>',
-      '  <head>',
-      '    <meta charset="utf-8">',
-      '    <title>FizzBuzz</title>',
-      '    <meta property="og:image" content="%{/images/red_square.png}">',
-      '    <link rel="stylesheet" href="/css/tailwind.css">',
-      '    <script src="/js/tgweb_utilities.js" defer></script>',
-      '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/reload/reload.js" defer></script>',
-      '  </head>',
-      '  <body class="p-2">',
-      '    <nav>',
-      '      <span class="font-bold">Home</span>',
-      '      <a href="/about.html" class="underline text-blue-500">About Us</a>',
-      '    </nav>',
-      '    <div class="grid">',
-      '      <div class="bg-gray-100 p-2">',
-      '        <p class="mb-2">Hello, world!</p>',
-      '        <p>',
-      '          Hello, <span class="text-red-800">great</span>',
-      '          <span class="text-green-800">world!</span>',
-      '        </p>',
-      '      </div>',
-      '      <div class="bg-gray-100 p-2">',
-      '        <p>I am a computer.</p>',
-      '      </div>',
-      '      <div class="bg-gray-100 py-2">',
-      '        <h3 class="font-bold text-lg ml-2">FizzBuzz</h3>',
-      '        <div class="flex justify-center">',
-      '          <div></div>',
-      '        </div>',
-      '        <main>',
-      '          <div class="bg-gray-100 py-2">',
-      '            <h3 class="font-bold text-lg ml-2">Technology</h3>',
-      '            <nav>',
-      '              <ul>',
-      '                <li>',
-      '                  <a href="/articles/blog/d.html">X</a>',
-      '                  (<span>2023-01-03</span>)',
-      '                  <span>New</span>',
-      '                </li>',
-      '                <li>',
-      '                  <a href="/articles/blog/a.html">Y</a>',
-      '                  (<span>2022-12-31</span>)',
-      '                </li>',
-      '                <li>',
-      '                  <a href="/articles/blog/c.html">Z</a>',
-      '                  (<span>2023-01-02</span>)',
-      '                </li>',
-      '              </ul>',
-      '            </nav>',
-      '          </div>',
-      '          <div class="bg-gray-100 py-2">',
-      '            <h3 class="font-bold text-lg ml-2">',
-      '              A',
-      '            </h3>',
-      '            <p>',
-      '              <a href="/">Home</a>',
-      '              <a href="/articles/about.html">About</a>',
-      '              <a href="/articles/blogs/c.html">C</a>',
-      '            </p>',
-      '            <div id="custom-props">',
-      '              W',
-      '              X',
-      '              2',
-      '              3',
-      '            </div>',
-      '            <p></p>',
-      '            <div>2022-12-31</div>',
-      '          </div>',
-      '          <div class="bg-gray-100 py-2">',
-      '            <h3 class="font-bold text-lg ml-2">',
-      '              D',
-      '            </h3>',
-      '            <p>This is D.</p>',
-      '            <div>2023-01-03</div>',
-      '          </div>',
-      '          <div class="bg-gray-100 py-2">',
-      '            <h3 class="font-bold text-lg ml-2">',
-      '              C',
-      '            </h3>',
-      '            <p>This is C.</p>',
-      '            <div>2023-01-02</div>',
-      '          </div>',
-      '          <div class="bg-gray-100 py-2">',
-      '            <h3 class="font-bold text-lg ml-2">',
-      '              E',
-      '            </h3>',
-      '            <p>This is E.</p>',
-      '          </div>',
-      '        </main>',
-      '        <aside>',
-      '          <div>Special Content</div>',
-      '        </aside>',
-      '      </div>',
+      '<body class="p-2">',
+      '  <nav>',
+      '    <span class="font-bold">Home</span>',
+      '    <a href="/about.html" class="underline text-blue-500">About Us</a>',
+      '  </nav>',
+      '  <div class="grid">',
+      '    <div class="bg-gray-100 p-2">',
+      '      <p class="mb-2">Hello, world!</p>',
+      '      <p>',
+      '        Hello, <span class="text-red-800">great</span>',
+      '        <span class="text-green-800">world!</span>',
+      '      </p>',
       '    </div>',
-      '    <footer>',
-      '      © 2023 Example Inc.',
-      '    </footer>',
-      '  </body>',
-      '</html>'
+      '    <div class="bg-gray-100 p-2">',
+      '      <p>I am a computer.</p>',
+      '    </div>',
+      '    <div class="bg-gray-100 py-2">',
+      '      <h3 class="font-bold text-lg ml-2">FizzBuzz</h3>',
+      '      <div class="flex justify-center">',
+      '        <div></div>',
+      '      </div>',
+      '      <main>',
+      '        <div class="bg-gray-100 py-2">',
+      '          <h3 class="font-bold text-lg ml-2">Technology</h3>',
+      '          <nav>',
+      '            <ul>',
+      '              <li>',
+      '                <a href="/articles/blog/d.html">X</a>',
+      '                (<span>2023-01-03</span>)',
+      '                <span>New</span>',
+      '              </li>',
+      '              <li>',
+      '                <a href="/articles/blog/a.html">Y</a>',
+      '                (<span>2022-12-31</span>)',
+      '              </li>',
+      '              <li>',
+      '                <a href="/articles/blog/c.html">Z</a>',
+      '                (<span>2023-01-02</span>)',
+      '              </li>',
+      '            </ul>',
+      '          </nav>',
+      '        </div>',
+      '        <div class="bg-gray-100 py-2">',
+      '          <h3 class="font-bold text-lg ml-2">',
+      '            A',
+      '          </h3>',
+      '          <p>',
+      '            <a href="/">Home</a>',
+      '            <a href="/articles/about.html">About</a>',
+      '            <a href="/articles/blogs/c.html">C</a>',
+      '          </p>',
+      '          <div id="custom-props">',
+      '            W',
+      '            X',
+      '            2',
+      '            3',
+      '          </div>',
+      '          <p></p>',
+      '          <div>2022-12-31</div>',
+      '        </div>',
+      '        <div class="bg-gray-100 py-2">',
+      '          <h3 class="font-bold text-lg ml-2">',
+      '            D',
+      '          </h3>',
+      '          <p>This is D.</p>',
+      '          <div>2023-01-03</div>',
+      '        </div>',
+      '        <div class="bg-gray-100 py-2">',
+      '          <h3 class="font-bold text-lg ml-2">',
+      '            C',
+      '          </h3>',
+      '          <p>This is C.</p>',
+      '          <div>2023-01-02</div>',
+      '        </div>',
+      '        <div class="bg-gray-100 py-2">',
+      '          <h3 class="font-bold text-lg ml-2">',
+      '            E',
+      '          </h3>',
+      '          <p>This is E.</p>',
+      '        </div>',
+      '      </main>',
+      '      <aside>',
+      '        <div>Special Content</div>',
+      '      </aside>',
+      '    </div>',
+      '  </div>',
+      '  <footer>',
+      '    © 2023 Example Inc.',
+      '  </footer>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)

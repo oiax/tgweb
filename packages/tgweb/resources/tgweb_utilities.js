@@ -1,13 +1,33 @@
 const modulo = (v, w) => (v % w + w) % w
 
-const getPositionPair = (target, tram, progress, advancing) => {
+const getScreenHeight = (kernel) => {
+  if (kernel) {
+    const rect = kernel.getBoundingClientRect()
+    return rect.height
+  }
+  else {
+    return window.innerHeight
+  }
+}
+
+const getTramProgress = (kernel, tram) => {
+  if (kernel) {
+    const rect = kernel.getBoundingClientRect()
+    return rect.height + rect.y - tram.y
+  }
+  else {
+    return window.innerHeight - tram.y
+  }
+}
+
+const getPositionPair = (kernel, target, tram, progress, advancing) => {
   const positionPairs =
     Object.keys(target.dataset)
       .map(key => {
         const md = key.match(/^tram(Forward|Backward)-(\d{1,3})(|%|vh|px)(|[+-])$/)
         if (md === null) return
         if (advancing && md[1] === "Backward" || !advancing && md[1] === "Forward") return
-        const realDistance = _getRealDistance(tram, md[2], md[3], md[4])
+        const realDistance = _getRealDistance(kernel, tram, md[2], md[3], md[4])
         return [key, realDistance]
       })
       .filter(pair => pair !== undefined)
@@ -19,13 +39,14 @@ const getPositionPair = (target, tram, progress, advancing) => {
   )
 }
 
-const _getRealDistance = (tram, distance, unit, suffix) => {
+const _getRealDistance = (kernel, tram, distance, unit, suffix) => {
+  const screenHeight = getScreenHeight(kernel)
   let realDistance
 
   if (unit === "px") realDistance = distance
   else if (unit === "%") realDistance = tram.height * distance / 100
-  else if (unit === "vh") realDistance = window.innerHeight * distance / 100
-  else realDistance = (window.innerHeight + tram.height) * distance / 100
+  else if (unit === "vh") realDistance = screenHeight * distance / 100
+  else realDistance = (screenHeight + tram.height) * distance / 100
 
   if (suffix === "+") realDistance = window.innerHeight + realDistance
   else if (suffix === "-") realDistance = window.innerHeight - realDistance
@@ -41,16 +62,12 @@ const withinRange = (progress, previousProgress, longDistance) => {
 }
 
 window.tgweb = {
-  switcher: (el, interval) => ({
-    i: 0,
-    len: undefined,
-    v: undefined,
+  switcher: (len, interval) => ({
+    len,
     interval,
+    i: 0,
+    v: undefined,
     init() {
-      const items = el.querySelectorAll("[data-switcher-item]")
-      this.len = items.length
-      items.forEach((item, n) => item.dataset.index = `${n}`)
-
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
@@ -63,10 +80,12 @@ window.tgweb = {
       clearInterval(this.v)
     },
     prev() {
+      console.log({i: this.i})
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
+      console.log({k: this.i, len})
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
@@ -79,22 +98,18 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  rotator: (el, interval) => ({
-    i: 0,
-    len: undefined,
-    v: undefined,
+  rotator: (len, interval) => ({
+    len,
     interval,
+    i: 0,
+    v: undefined,
     init() {
-      const items = el.querySelectorAll("[data-rotator-item]")
-      this.len = items.length
-      items.forEach((item, n) => item.dataset.index = `${n}`)
-
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
     _forward() {
-      this.i = this.i < this.len - 1 ? this.i + 1 : this.i
+      this.i = this.i < this.len - 1 ? this.i + 1 : 0
     },
     first() {
       this.i = 0
@@ -117,45 +132,43 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  carousel: (el, interval, duration) => ({
+  carousel: (el, len, repeatCount, interval, duration) => ({
     el,
+    len,
+    repeatCount,
     interval,
     duration,
     inTransition: false,
     i: 0,
-    len: undefined,
-    repeatCount: undefined,
     frame: undefined,
     body: undefined,
+    itemWidth: undefined,
     init() {
       this.frame = this.el.querySelector("[data-carousel-frame]")
       this.body = this.el.querySelector("[data-carousel-body]")
 
-      if (this.frame === null) return
-      if (this.body === null) return
-
-      this.frame.style.overflow = "hidden"
+      if (this.frame === null || this.body === null) {
+        console.error("This carousel does not have frame and body.")
+        return
+      }
 
       const items = this.body.querySelectorAll("[data-carousel-item]")
       const firstItem = items[0]
-      if (firstItem === undefined) return
 
-      this.itemWidth = firstItem.offsetWidth
-      this.len = items.length
-
-      if (this.len === 1) this.repeatCount = 5
-      else if (this.len === 2) this.repeatCount = 3
-      else if (this.len === 3 || this.len === 4) this.repeatCount = 2
-      else this.repeatCount = 1
-
-      for (let n = 1; n < this.repeatCount; n++) {
-        items.forEach(item => {
-          firstItem.before(item.cloneNode(true))
-        })
+      if (firstItem === null) {
+        console.error("This carousel has no item.")
+        return
       }
 
+      this.itemWidth = firstItem.offsetWidth
+      this.frame.style.overflow = "hidden"
       this.body.style.display = "flex"
       this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
+
+      Array.from(items).forEach(item => {
+        item.style.display = "block"
+        item.style.visibility = "visible"
+      })
 
       this._resetStyle()
 
@@ -208,7 +221,6 @@ window.tgweb = {
         this.itemWidth * 1 - (this.frame.offsetWidth - this.itemWidth) / 2
 
       this.body.style.translate = `-${translateLength}px 0`
-
       this.inTransition = true
     },
     _resetStyle() {
@@ -228,6 +240,7 @@ window.tgweb = {
   }),
   tram: (el) => ({
     el,
+    kernel: undefined,
     previousProgress: undefined,
     targets: [],
     init() {
@@ -238,21 +251,33 @@ window.tgweb = {
         target.dataset.tramBaseClass = target.className
       })
 
-      window.addEventListener("load", () => {
-        this._initializeTargets()
-        this._processTriggers()
+      this.kernel = window.document.getElementById("tg-preview-area-kernel")
 
-        window.document.addEventListener("scroll", () => {
-          this._processTriggers()
-        })
+      if (this.kernel) {
+        this._doInit()
+      }
+      else {
+        const body = window.document.querySelector("body[phx-hook='Main']")
+        if (body) this._doInit()
+        else window.addEventListener("load", () => this._doInit())
+      }
+    },
+    _doInit() {
+      this._initializeTargets()
+      this._processTriggers()
+
+      const target = this.kernel ? this.kernel : window.document
+
+      target.addEventListener("scroll", () => {
+        this._processTriggers()
       })
     },
     _initializeTargets() {
       const tram = this.el.getBoundingClientRect()
 
       this.targets.forEach(target => {
-        const progress = window.innerHeight - tram.y
-        const positionPair = getPositionPair(target, tram, progress, true)
+        const progress = getTramProgress(this.kernel, tram)
+        const positionPair = getPositionPair(this.kernel, target, tram, progress, true)
 
         if (positionPair === undefined) {
           if (target.dataset.tramInit !== undefined) {
@@ -271,14 +296,14 @@ window.tgweb = {
     },
     _processTriggers() {
       const tram = this.el.getBoundingClientRect()
-      const longDistance = window.innerHeight + tram.height
-      const progress = window.innerHeight - tram.y
+      const longDistance = getScreenHeight(this.kernel) + tram.height
+      const progress = getTramProgress(this.kernel, tram)
 
       if (withinRange(progress, this.previousProgress, longDistance)) {
         const advancing = this.previousProgress === undefined || progress > this.previousProgress
 
         this.targets.forEach(target => {
-          const positionPair = getPositionPair(target, tram, progress, advancing)
+          const positionPair = getPositionPair(this.kernel, target, tram, progress, advancing)
           if (positionPair === undefined) return
 
           const attrName = positionPair[0]

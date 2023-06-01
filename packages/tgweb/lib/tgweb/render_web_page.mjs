@@ -24,7 +24,14 @@ const renderPage = (path, siteData) => {
   const page = siteData.pages.find(page => page.path == relPath)
 
   const state =
-    { path, container: undefined, innerContent: [], inserts: [], hookName: undefined }
+    {
+      path,
+      container: undefined,
+      innerContent: [],
+      inserts: [],
+      hookName: undefined,
+      itemIndex: 0
+    }
 
   if (page === undefined) {
     console.log(`Page '${relPath}' is not found.`)
@@ -217,6 +224,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     }
     else if (node.name === "tg:label") {
       return renderLabel(node, state)
+    }
+    else if (node.name === "tg:app") {
+      return renderAppPlaceholder(node, siteData)
     }
     else if (node.name === "a") {
       return renderAnchor(node, siteData, documentProperties, state)
@@ -556,6 +566,39 @@ const renderLabel = (node, state) => {
   }
 }
 
+const renderAppPlaceholder = (node, siteData) => {
+  const appName = node.attribs.name
+
+  if (appName && Array.isArray(siteData.properties.apps)) {
+    const appConfig = siteData.properties.apps.find(app => app.name === appName)
+
+    if (appConfig) {
+      const displayName = appConfig["display-name"] || appName
+      const outerNode = parseDocument(`<div></div>`).children[0]
+      const innerNode = parseDocument(`<div>${displayName}</div>`).children[0]
+
+      outerNode.attribs = {
+        style: `width: 100%; height: 300px; padding: 16px; backdrop-filter: invert(50%);`
+      }
+
+      innerNode.attribs = {
+        style:
+          "width: 100%; height: 100%; background-color: white; opacity: 50%; " +
+          "display: flex; justify-content: center; align-items: center; font-size: 1.5rem;"
+      }
+
+      outerNode.children = [innerNode]
+      return outerNode
+    }
+    else {
+      return err(render(node))
+    }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
 const renderAnchor = (node, siteData, documentProperties, state) => {
   if (node.attribs.href === "#" && state.targetPath !== undefined) {
     const newNode = parseDocument("<a></a>").children[0]
@@ -587,13 +630,13 @@ const renderElement = (node, siteData, documentProperties, state) => {
     addTogglerHook(newNode, newState)
 
   if (newNode.attribs["tg:switcher"] !== undefined && state.hookName === undefined)
-    addSwitcherHook(newNode, newState)
+    addSwitcherHook(node, newNode, newState)
 
   if (newNode.attribs["tg:rotator"] !== undefined && state.hookName === undefined)
-    addRotatorHook(newNode, newState)
+    addRotatorHook(node, newNode, newState)
 
   if (newNode.attribs["tg:carousel"] !== undefined && state.hookName === undefined)
-    addCarouselHook(newNode, newState)
+    addCarouselHook(node, newNode, newState)
 
   if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
     addModalHook(newNode, newState)
@@ -602,8 +645,8 @@ const renderElement = (node, siteData, documentProperties, state) => {
     addTramHook(newNode, newState)
 
   if (state.hookName === "toggler") addTogglerSubhooks(newNode)
-  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode)
-  else if (state.hookName === "rotator") addRotatorSubhooks(newNode)
+  else if (state.hookName === "switcher") addSwitcherSubhooks(newNode, state)
+  else if (state.hookName === "rotator") addRotatorSubhooks(newNode, state)
   else if (state.hookName === "carousel") addCarouselSubhooks(newNode)
   else if (state.hookName === "modal") addModalSubhooks(newNode)
   else if (state.hookName === "tram") addTramSubhooks(newNode)
@@ -645,6 +688,7 @@ const addTogglerSubhooks = (newNode) => {
 
   if (newNode.attribs["tg:when"] === "on") {
     newNode.attribs["x-show"] = `f === true`
+    newNode.attribs["x-cloak"] = `x-cloak`
   }
   else if (newNode.attribs["tg:when"] === "off") newNode.attribs["x-show"] = `f === false`
 
@@ -664,33 +708,38 @@ const addTogglerSubhooks = (newNode) => {
 
 // Switcher
 
-const addSwitcherHook = (newNode, newState) => {
+const addSwitcherHook = (node, newNode, newState) => {
   newState.hookName = "switcher"
+  newState.itemIndex = 0
+
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+  const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.switcher(${len}, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
+      newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
+    newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
   }
 }
 
-const addSwitcherSubhooks = (newNode) => {
+const addSwitcherSubhooks = (newNode, state) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
   if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-switcher-item"] = ""
+    newNode.attribs["data-index"] = String(state.itemIndex)
     newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
+    state.itemIndex = state.itemIndex + 1
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
@@ -725,33 +774,38 @@ const addSwitcherSubhooks = (newNode) => {
 
 // Rotator
 
-const addRotatorHook = (newNode, newState) => {
+const addRotatorHook = (node, newNode, newState) => {
   newState.hookName = "rotator"
+  newState.itemIndex = 0
+
+  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+  const len = items.length
 
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.rotator(${len}, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
+      newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
+    newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
   }
 }
 
-const addRotatorSubhooks = (newNode) => {
+const addRotatorSubhooks = (newNode, newState) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
   if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-rotator-item"] = ""
+    newNode.attribs["data-index"] = String(newState.itemIndex)
     newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
+    newState.itemIndex = newState.itemIndex + 1
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
@@ -786,21 +840,8 @@ const addRotatorSubhooks = (newNode) => {
 
 // Carousel
 
-const addCarouselHook = (newNode, newState) => {
+const addCarouselHook = (node, newNode, newState) => {
   newState.hookName = "carousel"
-
-  let interval = 0
-
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    interval = parseInt(newNode.attribs["tg:interval"], 10)
-    if (Number.isNaN(interval)) interval = 0
-    if (interval < 0) interval = 0
-  }
-
-  let duration = parseInt(newNode.attribs["tg:duration"], 10)
-  if (Number.isNaN(duration)) duration = 100
-
-  newNode.attribs["x-data"] = `window.tgweb.carousel($el, ${interval}, ${duration})`
 }
 
 const addCarouselSubhooks = (newNode) => {
@@ -909,10 +950,19 @@ const postprocess = (node, state) => {
 
   if (klass === "Element") {
     if (node.attribs["tg:carousel"] !== undefined) {
+      newState.hookName = "carousel"
       return postprocessCarousel(node, newState)
     }
-    else if (node.attribs["tg:paginator"] !== undefined) {
-      return postprocessCarouselPaginator(node, newState)
+    else if (state.hookName === "carousel") {
+      if (node.attribs["tg:body"] !== undefined)
+        return postprocessCarouselBody(node, newState)
+      else if (node.attribs["tg:paginator"] !== undefined)
+        return postprocessCarouselPaginator(node, newState)
+      else {
+        node.children = node.children.map(c => postprocess(c, newState)).flat()
+        removeTgAttribs(node.attribs)
+        return node
+      }
     }
     else {
       node.children = node.children.map(c => postprocess(c, newState)).flat()
@@ -929,10 +979,49 @@ const postprocessCarousel = (node, newState) => {
   const carouselItems =
     DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
 
-  newState.carouselItemCount = carouselItems.length
+  let interval = 0
+
+  if (node.attribs["tg:interval"] !== undefined) {
+    interval = parseInt(node.attribs["tg:interval"], 10)
+    if (Number.isNaN(interval)) interval = 0
+    if (interval < 0) interval = 0
+  }
+
+  let duration = parseInt(node.attribs["tg:duration"], 10)
+  if (Number.isNaN(duration)) duration = 0
+
+  const len = carouselItems.length
+  newState.carouselItemCount = len
+
+  let repeatCount
+  if (len === 1) repeatCount = 6
+  else if (len === 2) repeatCount = 4
+  else if (len === 3) repeatCount = 3
+  else repeatCount = 2
+
+  newState.repeatCount = repeatCount
+
+  node.attribs["x-data"] =
+    `window.tgweb.carousel($el, ${len}, ${repeatCount}, ${interval}, ${duration})`
 
   node.children = node.children.map(c => postprocess(c, newState)).flat()
   removeTgAttribs(node.attribs)
+  return node
+}
+
+const postprocessCarouselBody = (node, newState) => {
+  const carouselItems =
+    DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
+
+  const children = []
+
+  for (let n = 0; n < newState.repeatCount; n++) {
+    carouselItems.forEach(item => {
+      children.push(item.cloneNode(true))
+    })
+  }
+
+  node.children = children
   return node
 }
 
@@ -962,6 +1051,8 @@ const postprocessCarouselPaginator = (node, newState) => {
     delete newNode.attribs.id
     choosers.push(newNode)
   }
+
+  node.chil
 
   return choosers
 }
@@ -1011,7 +1102,7 @@ const renderHead = (documentProperties) => {
 
       if (typeof content !== "string") return
 
-      const converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+      let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
         const parts = propName.split(".")
 
         if (parts.length === 1) {
@@ -1044,6 +1135,11 @@ const renderHead = (documentProperties) => {
         }
       })
 
+      converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+        const rootUrl = documentProperties["root-url"]
+        return rootUrl + path.replace(/^\//, "")
+      })
+
       const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
       children.push(doc.children[0])
     })
@@ -1053,7 +1149,13 @@ const renderHead = (documentProperties) => {
     Object.keys(documentProperties["link"]).forEach(rel => {
       if (rel == "stylesheet") return
       const href = documentProperties["link"][rel]
-      const doc = parseDocument(`<link rel="${rel}" href="${href}">`)
+
+      const converted = href.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+        const rootUrl = documentProperties["root-url"]
+        return rootUrl + path.replace(/^\//, "")
+      })
+
+      const doc = parseDocument(`<link rel="${rel}" href="${converted}">`)
       children.push(doc.children[0])
     })
   }
@@ -1111,9 +1213,10 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
-  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>>").children[0])
-  children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>>").children[0])
-  children.push(parseDocument("<script src='/reload/reload.js' defer></script>>").children[0])
+  children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
+  children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
+  children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
+  children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 
   head.children = children
 
@@ -1148,6 +1251,7 @@ const mergeState = (obj1, obj2) => {
   newState.innerContent = obj1.innerContent
   newState.inserts = obj1.inserts
   newState.hookName = obj1.hookName
+  newState.itemIndex = obj1.itemIndex
 
   if (obj2.targetPath !== undefined) newState.targetPath = obj2.targetPath
   if (obj2.label !== undefined) newState.label = obj2.label
@@ -1155,6 +1259,7 @@ const mergeState = (obj1, obj2) => {
   if (obj2.innerContent !== undefined) newState.innerContent = obj2.innerContent
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
   if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
+  if (obj2.itemIndex !== undefined) newState.itemIndex = obj2.itemIndex
   return newState
 }
 

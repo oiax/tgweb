@@ -80,6 +80,11 @@ describe("destroy", () => {
       '    <meta charset="utf-8">',
       '    <title>Memo 1</title>',
       '    <link rel="stylesheet" href="/css/tailwind.css">',
+      '    <style>',
+      '      [x-cloak] {',
+      '        display: none !important;',
+      '      }',
+      '    </style>',
       '    <script src="/js/tgweb_utilities.js" defer></script>',
       '    <script src="/js/alpine.min.js" defer></script>',
       '    <script src="/reload/reload.js" defer></script>',
@@ -159,7 +164,8 @@ describe("destroy", () => {
 
     destroy("src/site.toml", siteData)
 
-    assert.deepEqual(siteData.properties, {host: "localhost", port: 3000, scheme: "http"})
+    assert.deepEqual(siteData.properties,
+      {host: "localhost", port: 3000, "root-url": "http://localhost:3000/", scheme: "http"})
 
     const page = siteData.pages.find(p => p.path === "pages/index.html")
 

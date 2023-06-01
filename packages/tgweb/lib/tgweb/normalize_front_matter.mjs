@@ -1,5 +1,9 @@
 const normalizeFrontMatter = frontMatter => {
-  if (typeof frontMatter.style !== "object") return
+  const tableNames = ["data", "style"]
+
+  tableNames.forEach(tableName => {
+    if (typeof frontMatter[tableName] !== "object") frontMatter[tableName] = {}
+  })
 
   Object.keys(frontMatter.style).forEach(key => {
     if (typeof frontMatter.style[key] !== "string") delete frontMatter.style[key]
@@ -14,4 +18,5 @@ const normalizeFrontMatter = frontMatter => {
   if (! Number.isInteger(frontMatter.layer)) frontMatter.layer = 0
   if (frontMatter.layer < 0) frontMatter.layer = 0
 }
+
 export { normalizeFrontMatter }
