@@ -6,6 +6,7 @@
 * a3a0e88 Modify carousel so that it generates HTML fragments beforehand
 * a1c06d4 Modify tram so that it works on the teamgenik.com
 * 4c2cefe Set the "root-url" and "url" property of frontMatter of pages and articles
+* 68b8c70 Allow Teamgenik mini-app placeholders to be embedded
 
 ## 0.4.10
 
