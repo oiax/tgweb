@@ -15,7 +15,7 @@ const create = (path, siteData) => {
 
   const dirname = PATH.dirname(posixPath)
 
-  if (dirname.startsWith("images") || dirname.startsWith("audios")) {
+  if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
     const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
     const targetDir = PATH.dirname(targetPath)
