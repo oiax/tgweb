@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.1
+
+* b0fc697 Bug fix: Added images/audios are not copied into dist directory
+
 ## 0.5.0
 
 * 319c223 Modify switcher/rotator so that they set `data-index` of generated HTML elements
