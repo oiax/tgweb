@@ -1449,9 +1449,11 @@ The following is an example of a component:
 
 ```html
 <span class="inline-block border-solid border-2 border-black rounded p-2">
-  <i class="fas fa-smile"></i>
+  <span class="material-symbols-outlined">sentiment_satisfied</span>
 </span>
 ```
+Note that you should set the `font.material-symbols` property to `true` in the `sites.toml`
+in order to display the above smile icon. See [Material Symbols](#material-symbols).
 
 ### Embedding components
 
