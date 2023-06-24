@@ -1167,6 +1167,7 @@ Normally, the `<tg:if-complete>` element in a layout is simply replaced with its
 However, if the following two conditions are not met, the entire element is deleted:
 
 * The property values to be inserted for all `<tg:prop>` elements within it are defined.
+* The custom property values to be inserted for all `<tg:data>` elements within it are defined.
 * The contents to be inserted for all `<tg:slot>` elements within it are defined.
 
 #### Example
@@ -1178,7 +1179,7 @@ However, if the following two conditions are not met, the entire element is dele
   <tg:content></tg:content>
   <tg:if-complete>
     <hr class="h-px my-8 bg-gray-200 border-0">
-    <div class="bg-gray-800 text-white p-4">To: <tg:data name="custom-name"></tg:prop></div>
+    <div class="bg-gray-800 text-white p-4">To: <tg:data name="custom-name"></tg:data></div>
     <div class="bg-gray-200 p-4"><tg:slot name="message"></tg:slot></div>
   </tg:if-complete>
 </body>
