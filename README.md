@@ -1189,7 +1189,7 @@ However, if the following two conditions are not met, the entire element is dele
 ```html
 ---
 [data]
-custom-name: Alice
+custom-name = "Alice"
 ---
 <h1>Home</h1>
 ```
@@ -1416,7 +1416,7 @@ To embed one segment A into another segment B, the layer of A must be larger tha
 
 ```html
 ---
-layer: 0
+layer = 0
 ---
 
 <tg:segment name="bar"></tg:segment>
@@ -1427,7 +1427,7 @@ layer: 0
 
 ```html
 ---
-layer: 1
+layer = 1
 ---
 
 <div>Bar</div>
