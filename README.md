@@ -1603,7 +1603,7 @@ into a full HTML file, but is used only for embedding in a page or segment:
 
 ```html
 ---
-embedded-only: true
+embedded-only = true
 ---
 <h3>Greeting</h3>
 <p>Hello, world!</p>
