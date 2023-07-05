@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.2
+
+* ab851ce Enable set class attribute to `<html>` tag
+
 ## 0.5.1
 
 * b0fc697 Bug fix: Added images/audios are not copied into dist directory
