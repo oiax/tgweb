@@ -490,6 +490,7 @@ The following are examples of predefined properties:
 * `root-url`: The root URL of the HTML document.
 * `title`: The title of the HTML document.
 * `layout`: The name of layout to be applied to the template. See [Layouts](#layouts).
+* `html-class`: The value set to the `class` attribute of the `<html>` element.
 
 Normally, it is not necessary to specify values for the `scheme`, `host`, and `port` properties.
 The values of these properties will be set appropriately when the website is published on

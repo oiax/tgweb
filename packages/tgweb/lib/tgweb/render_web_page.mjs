@@ -92,6 +92,10 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
+  if (documentProperties["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  }
+
   doc.children[0].children[0].children = head.children
 
   const pageState = mergeState(state, {container: page})
@@ -120,6 +124,10 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
 const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
+
+  if (documentProperties["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  }
 
   doc.children[0].children[0].children = head.children
 
@@ -162,6 +170,10 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
 const doRenderPage = (page, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
+
+  if (documentProperties["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  }
 
   doc.children[0].children[0].children = head.children
 
