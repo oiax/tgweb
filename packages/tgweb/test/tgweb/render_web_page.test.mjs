@@ -641,4 +641,14 @@ describe("renderWebSite", () => {
 
     assert.deepEqual(lines, expected)
   })
+
+  it("should render a page of 'with_class_for_html' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_class_for_html")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const html = dom.children[0]
+
+    assert.deepEqual(html.attribs, { class: 'scroll-smooth' })
+  })
 })
