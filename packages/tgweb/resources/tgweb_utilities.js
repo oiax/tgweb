@@ -175,7 +175,7 @@ window.tgweb = {
       if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
     _forward() {
-      this._shiftPosition("next")
+      this._shiftPosition(1)
 
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
@@ -185,7 +185,7 @@ window.tgweb = {
     prev() {
       if (this.inTransition) return
       if (this.v) clearInterval(this.v)
-      this._shiftPosition("prev")
+      this._shiftPosition(-1)
 
       setTimeout(() => {
         this.i = this.i > 0 ? this.i - 1 : this.len - 1
@@ -195,7 +195,7 @@ window.tgweb = {
     next() {
       if (this.inTransition) return
       if (this.v) clearInterval(this.v)
-      this._shiftPosition("next")
+      this._shiftPosition(1)
 
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
@@ -203,22 +203,23 @@ window.tgweb = {
       }, this.duration + 250)
     },
     choose(n) {
+      if (this.inTransition) return
+      if (this.i === n) return
       if (this.v) clearInterval(this.v)
 
-      this.i = n
+      this._shiftPosition(n - this.i)
 
-      this.body.querySelectorAll("[data-carousel-item]").forEach((item, j) => {
-        item.style.order = modulo(j - this.i + 2, this.len * this.repeatCount)
-      })
+      setTimeout(() => {
+        this.i = n
+        this._resetStyle()
+      }, this.duration + 250)
     },
-    _shiftPosition(direction) {
+    _shiftPosition(diff) {
       this.body.style.transitionProperty = "translate"
       this.body.style.transitionDuration = this.duration + "ms"
 
       const translateLength =
-        direction === "next" ?
-        this.itemWidth * 3 - (this.frame.offsetWidth - this.itemWidth) / 2 :
-        this.itemWidth * 1 - (this.frame.offsetWidth - this.itemWidth) / 2
+        this.itemWidth * (4 + diff) - (this.frame.offsetWidth - this.itemWidth) / 2
 
       this.body.style.translate = `-${translateLength}px 0`
       this.inTransition = true
@@ -227,12 +228,12 @@ window.tgweb = {
       this.body.style.transitionProperty = "none"
       this.body.style.transitionDuration = "0s"
 
-      const translateLength = this.itemWidth * 2 - (this.frame.offsetWidth - this.itemWidth) / 2
+      const translateLength = this.itemWidth * 4 - (this.frame.offsetWidth - this.itemWidth) / 2
 
       this.body.style.translate = `-${translateLength}px 0`
 
       this.body.querySelectorAll("[data-carousel-item]").forEach((item, n) => {
-        item.style.order = modulo(n - this.i + 2, this.len * this.repeatCount)
+        item.style.order = modulo(n - this.i + 4, this.len * this.repeatCount)
       })
 
       this.inTransition = false
