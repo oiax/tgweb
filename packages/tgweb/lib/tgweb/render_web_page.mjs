@@ -1004,17 +1004,10 @@ const postprocessCarousel = (node, newState) => {
 
   const len = carouselItems.length
   newState.carouselItemCount = len
-
-  let repeatCount
-  if (len === 1) repeatCount = 6
-  else if (len === 2) repeatCount = 4
-  else if (len === 3) repeatCount = 3
-  else repeatCount = 2
-
-  newState.repeatCount = repeatCount
+  newState.repeatCount = 3
 
   node.attribs["x-data"] =
-    `window.tgweb.carousel($el, ${len}, ${repeatCount}, ${interval}, ${duration})`
+    `window.tgweb.carousel($el, ${len}, ${newState.repeatCount}, ${interval}, ${duration})`
 
   node.children = node.children.map(c => postprocess(c, newState)).flat()
   removeTgAttribs(node.attribs)

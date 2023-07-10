@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.3
+
+* 6987825 Make carousel paginator scroll smoothly
+
 ## 0.5.2
 
 * ab851ce Enable set class attribute to `<html>` tag
