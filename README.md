@@ -211,10 +211,15 @@ When a working directory has the `sites` subdirectory, we say that it has a
 _multi-site composition_. Conversely, when a working directory does not have the `sites`
 subdirectory, we say that the it has a _single-site composition_.
 
-### Add content and start the tgweb server
+### Start the tgweb server with the subdirectory name
 
-Just as described in the [Add content](#add-content) subsection, create a file named
-`index.html` under the `sites/site_0/src/pages` subdirectory.
+You can see that tgweb initially generate `index.html` in the `web/sites/site_0/src/pages` directory with the following contents:
+
+```html
+<body>
+  <p class="p-2 text-red-500">Hello, world</p>
+</body>
+```
 
 Then, you can start the tgweb server by executing the following command:
 
