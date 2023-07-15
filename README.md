@@ -104,13 +104,13 @@ Rebuilding tailwind.css. Done in 761ms.
 
 Then, open `http://localhost:3000` with your browser.
 
-Make sure that the text "Hello, world!" appears in the red background area.
+Make sure that the text "Hello, world!" appears with the red text color.
 
-The class tokens `bg-red-300` and `p-4` specified in the `class` attribute of the `<div>`
+The class tokens `text-red-500` and `p-4` specified in the `class` attribute of the `<p>`
 element are provided by [Tailwind CSS](https://tailwindcss.com/).
 
-The token `bg-red-300` specifies light red (`#fca5a5`) as the background color of `<div>` element,
-and the token `p-4` sets the padding of the `<div>` element to scale 4 (16px/1rem).
+The token `text-red-500` specifies coral red (`#ef4444`) as the text color of `<p>` element,
+and the token `p-4` sets the padding of the `<p>` element to scale 4 (16px/1rem).
 
 Also verify that a file named `index.html` has been created in the `dist` directory.
 The contents of that file should be a complete HTML document that contains
@@ -211,10 +211,15 @@ When a working directory has the `sites` subdirectory, we say that it has a
 _multi-site composition_. Conversely, when a working directory does not have the `sites`
 subdirectory, we say that the it has a _single-site composition_.
 
-### Add content and start the tgweb server
+### Start the tgweb server with the subdirectory name
 
-Just as described in the [Add content](#add-content) subsection, create a file named
-`index.html` under the `sites/site_0/src/pages` subdirectory.
+You can see that tgweb initially generate `index.html` in the `web/sites/site_0/src/pages` directory with the following contents:
+
+```html
+<body>
+  <p class="p-2 text-red-500">Hello, world</p>
+</body>
+```
 
 Then, you can start the tgweb server by executing the following command:
 
