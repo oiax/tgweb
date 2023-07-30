@@ -534,8 +534,9 @@ title = "Our Mission"
 
 As already noted, `[data]` in the front matter block indicates the beginning of the "data" table.
 
-Within the "data" table, custom properties can be defined. Website authors can set values of any
-type for custom properties of any name.
+Within the "data" table, custom properties can be defined. Website authors can set values for
+custom properties of any name.
+The value of a custom property must be a string or a number in decimal notation.
 
 The value of a custom property can be embedded into a template by the `<tg:data>` element.
 
@@ -544,7 +545,8 @@ The value of a custom property can be embedded into a template by the `<tg:data>
 title = "Our Mission"
 
 [data]
-message: "Hello, world!"
+message = "Hello, world!"
+year = 2023
 ---
 <body>
   <h1 class="text-2xl font-bold">
@@ -553,6 +555,7 @@ message: "Hello, world!"
   <div class="bg-green-300 p-4">
     <p><tg:data name="message"></tg:data></p>
   </div>
+  <footer>&copy; Example Inc. <tg:data name="year"></tg:prop></footer>
 </body>
 ```
 
@@ -713,7 +716,7 @@ title = "No title"
 layout = "common"
 
 [data]
-current-year = "2023"
+current-year = 2023
 ```
 
 ### `%{...}` notation
@@ -1041,7 +1044,6 @@ using the `<tg:prop>` element.
     <h1 class="text-3xl"><tg:prop name="title"></tg:prop></h1>
     <tg:content></tg:content>
   </main>
-  <footer>&copy; Example Inc. <tg:prop name="year"></tg:prop></footer>
 </body>
 ```
 
@@ -1051,7 +1053,6 @@ using the `<tg:prop>` element.
 ---
 layout = "common"
 title = "Greeting"
-year = "2023"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -1545,7 +1546,7 @@ The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a prope
 ```html
 ---
 [data]
-message: Hi!
+message = "Hi!"
 ---
 <span>
   <i class="fas fa-smile"></i>
