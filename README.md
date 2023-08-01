@@ -2906,9 +2906,9 @@ that belongs to the "meta" table:
 [meta]
 viewport = "width=device-width, initial-scale=1"
 theme-color = "#2da0a8"
-description = Description
+description = "Description"
 robots = "index,follow"
-generator = Teamgenik
+generator = "Teamgenik"
 ```
 
 Setting the values of the properties as above will produce the following `<meta>` elements:
