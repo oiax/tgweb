@@ -2918,8 +2918,6 @@ Setting the values of the properties as above will produce the following `<meta>
 <meta name="theme-color" content="#2da0a8">
 <meta name="description" content="Description">
 <meta name="robots" content="index,follow">
-<meta name="googlebot" content="index,follow">
-<meta name="googlebot" content="notranslate">
 <meta name="generator" content="Teamgenik">
 ```
 
