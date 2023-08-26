@@ -434,7 +434,7 @@ In the example above, the four main components of the front matter block are use
 * Property definition
 * Section header
 * Comment
-* Black line
+* Blank line
 
 Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
 
@@ -487,8 +487,7 @@ _predefined properties_.
 
 The following are examples of predefined properties:
 
-* `scheme`: The scheme of the URL of the HTML document. It must be `http` or `https`.
-   Default: `localhost`.
+* `scheme`: The scheme of the URL of the HTML document. It must be `http` or `https`. Default: `http`.
 * `host`: The host name of the URL of the HTML document. Default: `localhost`.
 * `port`: The port number of the URL of the HTML document. Default: 3000.
 * `url`: The URL of the HTML document.
