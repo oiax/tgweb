@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.4
+
+* 273ba9c Use `data-x` attribute in stead of `tg:data-x` to pass data to articles and components
+
 ## 0.5.3
 
 * 6987825 Make carousel paginator scroll smoothly
