@@ -17,7 +17,6 @@
 * [Segments](#segments)
 * [Components](#components)
 * [Articles](#articles)
-* [Tags](#tags)
 * [Links](#links)
 * [Dynamic Elements](#dynamic-elements)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
@@ -1348,7 +1347,7 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Passing custom properties to a segment
 
-You can pass custom properties to a segment using the `<tg:segment> element's `tg:data-*` attribute.
+You can pass custom properties to a segment using the `<tg:segment>` element's `tg:data-*` attribute.
 
 `src/segment/hero.html`
 
