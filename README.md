@@ -1347,7 +1347,7 @@ location where you want to place it and specify its name in the `name` attribute
 
 ### Passing custom properties to a segment
 
-You can pass custom properties to a segment using the `<tg:segment>` element's `tg:data-*` attribute.
+You can pass custom properties to a segment using the `<tg:segment>` element's `data-*` attribute.
 
 `src/segment/hero.html`
 
@@ -1363,7 +1363,7 @@ You can pass custom properties to a segment using the `<tg:segment>` element's `
 
 ```html
 <div>
-  <tg:segment name="hero" tg:data-image-path="hello.jpg"></tg:segment>
+  <tg:segment name="hero" data-image-path="hello.jpg"></tg:segment>
 
   <main>
     ...
@@ -1474,7 +1474,7 @@ location where you want to place it and specify its name in the `name` attribute
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg:component> element's `tg:data-*`
+You can pass custom properties to a component using the `<tg:component> element's `data-*`
 attribute.
 
 `src/components/avatar.html`
@@ -1491,9 +1491,9 @@ attribute.
 
 ```html
 <div class="grid grid-rows-2 gap-4">
-  <tg:component name="avatar" tg:data-name="Alice"></tg:component>
-  <tg:component name="avatar" tg:data-name="Bob"></tg:component>
-  <tg:component name="avatar" tg:data-name="Carol"></tg:component>
+  <tg:component name="avatar" data-name="Alice"></tg:component>
+  <tg:component name="avatar" data-name="Bob"></tg:component>
+  <tg:component name="avatar" data-name="Carol"></tg:component>
 </div>
 ```
 

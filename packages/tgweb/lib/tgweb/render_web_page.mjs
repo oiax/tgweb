@@ -268,8 +268,8 @@ const renderSegment = (node, siteData, documentProperties, state) => {
     const properties = Object.assign({}, documentProperties)
 
     Object.keys(node.attribs).forEach(key => {
-      if (key.startsWith("tg:data-")) {
-        const propName = toKebabCase(key.slice(8))
+      if (key.startsWith("data-")) {
+        const propName = toKebabCase(key.slice(5))
         properties.data[propName] = node.attribs[key]
       }
     })
@@ -299,8 +299,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
   if (properties.data === undefined) properties.data = {}
 
   Object.keys(node.attribs).forEach(key => {
-    if (key.startsWith("tg:data-")) {
-      const propName = toKebabCase(key.slice(8))
+    if (key.startsWith("data-")) {
+      const propName = toKebabCase(key.slice(5))
       properties.data[propName] = node.attribs[key]
     }
   })
