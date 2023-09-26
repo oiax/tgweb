@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.5
+
+* 39dbcf8 tgweb-server: Support svgz files
+
 ## 0.5.4
 
 * 273ba9c Use `data-x` attribute in stead of `tg:data-x` to pass data to articles and components
