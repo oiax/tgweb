@@ -33,7 +33,7 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
-  router.get(/^\/images\/.*\.(gif|png|jpe?g|svg|avif)$/, (req, res) => {
+  router.get(/^\/images\/.*\.(gif|png|jpe?g|svgz?|avif)$/, (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
