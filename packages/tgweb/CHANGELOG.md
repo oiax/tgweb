@@ -1,6 +1,6 @@
 # tgweb CHANGELOG
 
-## 0.6.6
+## 0.5.6
 
 * 747dc85 tgweb-server: Set "Content-encoding: gzip" for svgz files
 
