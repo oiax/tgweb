@@ -2244,11 +2244,11 @@ Here is an example rotator:
 
 ```html
 <div tg:rotator tg:interval="2000">
-  <div tg:when="1">A</div>
-  <div tg:when="2">B</div>
-  <div tg:when="3">C</div>
-  <div tg:when="4">D</div>
-  <div tg:when="5">E</div>
+  <div tg:item>A</div>
+  <div tg:item>B</div>
+  <div tg:item>C</div>
+  <div tg:item>D</div>
+  <div tg:item>E</div>
   <nav>
     <button type="button" tg:prev>Prev</button>
     <button type="button" tg:next>Next</button>
