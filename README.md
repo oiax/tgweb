@@ -2157,7 +2157,7 @@ change the style applied to the button.
     type="button"
     tg:choose="1"
     class="btn"
-    tg:current-class="btn-primary"
+    tg:current-class="btn-primary cursor-default"
     tg:normal-class="btn-secondary">a</button>
 ```
 

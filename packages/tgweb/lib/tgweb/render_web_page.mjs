@@ -778,8 +778,8 @@ const addSwitcherSubhooks = (newNode, state) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `choose(${n})`
-      newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
+      newNode.attribs["x-on:click"] = `choose(${n - 1})`
+      newNode.attribs["x-bind:class"] = `i == ${n - 1} ? '${currentClass}' : '${normalClass}'`
     }
   }
 }

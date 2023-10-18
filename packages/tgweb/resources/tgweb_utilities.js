@@ -93,7 +93,7 @@ window.tgweb = {
       this.i = this.len - 1
       clearInterval(this.v)
     },
-    choose: (n) => {
+    choose(n) {
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
     }
@@ -127,7 +127,7 @@ window.tgweb = {
       this.i = this.i < this.len - 1 ? this.i + 1 : 0
       clearInterval(this.v)
     },
-    choose: (n) => {
+    choose(n) {
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
     }

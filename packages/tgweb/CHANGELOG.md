@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.7
+
+* fd8e8a6 Bug fix: tg:switcher with tg:choose does not work (#86)
+
 ## 0.5.6
 
 * 747dc85 tgweb-server: Set "Content-encoding: gzip" for svgz files
