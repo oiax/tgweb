@@ -416,6 +416,7 @@ Shown next is an example of a front matter block:
 
 ```
 ---
+[main]
 title = "Our Mission"
 
 [data]
@@ -516,6 +517,7 @@ The value of a predefined property can be embedded into a template by the `<tg:p
 
 ```html
 ---
+[main]
 title = "Our Mission"
 ---
 <body>
@@ -540,6 +542,7 @@ The value of a custom property can be embedded into a template by the `<tg:data>
 
 ```html
 ---
+[main]
 title = "Our Mission"
 
 [data]
@@ -993,6 +996,7 @@ In this case, `common` is the name of the layout.
 
 ```html
 ---
+[main]
 layout = "common"
 ---
 <h1>Welcome!</h1>
@@ -1049,6 +1053,7 @@ using the `<tg:prop>` element.
 
 ```html
 ---
+[main]
 layout = "common"
 title = "Greeting"
 ---
@@ -1091,6 +1096,7 @@ all `<tg:insert>` elements are removed from the page content.
 
 ```html
 ---
+[main]
 layout = "product"
 title = "Product 1"
 ---
@@ -1143,6 +1149,7 @@ is used as a fallback content.
 
 ```html
 ---
+[main]
 layout = "message"
 title = "Home"
 ---
@@ -1262,6 +1269,7 @@ The only thing you should do is take the `layout` attribute off the page.
 
 ```html
 ---
+[main]
 layout = "common"
 ---
 <h1>Welcome!</h1>
@@ -1283,6 +1291,7 @@ Wrapper property values take precedence over site property values.
 
 ```html
 ---
+[main]
 layout = "common"
 ---
 <div class="[&_p]:mt-4">
@@ -1422,6 +1431,7 @@ To embed one segment A into another segment B, the layer of A must be larger tha
 
 ```html
 ---
+[main]
 layer = 0
 ---
 
@@ -1433,6 +1443,7 @@ layer = 0
 
 ```html
 ---
+[main]
 layer = 1
 ---
 
@@ -1514,7 +1525,7 @@ in the slots within a component is similar to that of a layout and segment.
   <tg:slot name="body"></tg:slot>
 </div>
 <tg:if-complete>
-  <divclass="text-right">
+  <div class="text-right">
     <tg:slot name="date"></tg:slot>
   </div>
 </tg:if-complete>
@@ -1524,6 +1535,7 @@ in the slots within a component is similar to that of a layout and segment.
 
 ```html
 ---
+[main]
 layout: home
 ---
 <main class="bg-gray-100 py-2">
@@ -1586,6 +1598,7 @@ Place `<tg:article>` elements where you want to embed articles as follows:
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1608,6 +1621,7 @@ into a full HTML file, but is used only for embedding in a page or segment:
 
 ```html
 ---
+[main]
 embedded-only = true
 ---
 <h3>Greeting</h3>
@@ -1620,6 +1634,7 @@ The `<tg:articles>` element can be used to embed multiple articles into a page o
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1638,6 +1653,7 @@ To sort articles in descending order by their filename, set the `order-by` attri
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1653,6 +1669,7 @@ to `"title:asc"` or `"title:desc"`:
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1673,6 +1690,7 @@ article:
 
 ```html
 ---
+[main]
 index = 123
 ---
 <article>
@@ -1685,6 +1703,7 @@ Then, set the `order-by` attribute of the `<tg:articles>` element to `"index:asc
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1703,6 +1722,7 @@ The `<tg:links>` element can be used to embed links to articles in any template
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1758,6 +1778,7 @@ To sort articles in an arbitrary order, add a `tg:index` attribute to each artic
 
 ```html
 ---
+[main]
 layout = "home"
 index = 123
 ---
@@ -1788,6 +1809,7 @@ using `[...]` notation:
 
 ```html
 ---
+[main]
 tags: [ "travel", "europe" ]
 ---
 <article>
@@ -1800,6 +1822,7 @@ string:
 
 ```html
 ---
+[main]
 tags = "anime"
 ---
 <article>
@@ -1811,6 +1834,7 @@ You can use the `filter` attribute to filter articles embedded on the page:
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1827,6 +1851,7 @@ You can also filter the list of links to articles using the `filter` attribute:
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -2855,6 +2880,7 @@ The title of the HTML document generated from the template below will be "Greeti
 
 ```html
 ---
+[main]
 title = "Greeting"
 ---
 <body>
