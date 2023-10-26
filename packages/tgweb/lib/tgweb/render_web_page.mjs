@@ -9,6 +9,7 @@ import { getLayout } from "./get_layout.mjs"
 import { filterArticles } from "./filter_articles.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 import { inspectDom } from "../utils/inspect_dom.mjs"
+import { mergeProperties } from "./merge_properties.mjs"
 
 if (inspectDom === undefined) { inspectDom() }
 
@@ -265,7 +266,8 @@ const renderSegment = (node, siteData, documentProperties, state) => {
     if (state.container.type === "segment" &&
         state.container.frontMatter.layer >= segment.frontMatter.layer) return err(render(node))
 
-    const properties = Object.assign({}, documentProperties)
+    let properties = Object.assign({}, documentProperties)
+    properties = mergeProperties(documentProperties, segment.frontMatter)
 
     Object.keys(node.attribs).forEach(key => {
       if (key.startsWith("data-")) {
@@ -294,7 +296,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
 
   if (component === undefined) return err(render(node))
 
-  const properties = Object.assign({}, documentProperties)
+  let properties = Object.assign({}, documentProperties)
+  properties = mergeProperties(documentProperties, component.frontMatter)
 
   if (properties.data === undefined) properties.data = {}
 

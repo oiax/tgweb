@@ -195,6 +195,7 @@ describe("renderWebSite", () => {
       '  <h1 class="text-xl m-2">Hello, world!</h1>',
       '  <div><span class="badge-lg badge badge-primary">',
       '  M',
+      '  Z',
       '  AAA',
       '</span>',
       '  </div>',
@@ -220,7 +221,7 @@ describe("renderWebSite", () => {
     const expected = [
       '<body>',
       '  <div class="hero">',
-      '    HERO',
+      '    HERO Z',
       '  </div>',
       '  <div>X</div>',
       '  <div>X</div>',

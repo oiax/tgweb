@@ -169,6 +169,7 @@ describe("getSiteData", () => {
     const expected = [
       '<span class="${class} badge badge-primary">',
       '  <tg:data name="mark">?</tg:data>',
+      '  <tg:data name="letter"></tg:data>',
       '  <tg:content></tg:content>',
       '  <tg:slot name="x"></tg:slot>',
       '</span>'
