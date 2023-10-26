@@ -1,9 +1,15 @@
 ---
 [data]
-y = "Z"
+
+date = 2024-01-01
+datetime = 2024-01-01T12:00:00Z
+time = 12:00:00
 ---
 <div class="hero">
-  HERO <tg:data name="y"></tg:data>
+  HERO
+  (<tg:data name="date"></tg:data>)
+  (<tg:data name="datetime"></tg:data>)
+  (<tg:data name="time"></tg:data>)
 </div>
 <tg:article name="x"></tg:article>
 <tg:articles pattern="*"></tg:articles>

@@ -366,7 +366,26 @@ const renderData = (node, siteData, documentProperties, state) => {
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
-    textNode.data = escape(value)
+
+    if (value.constructor.name === "LocalDate") {
+      const str = value + ""
+      const parts = str.match(/(\d{4})(\d{2})(\d{2})/)
+      textNode.data = parts.slice(1).join("-")
+    }
+    else if (value.constructor.name === "OffsetDateTime") {
+      const dt_value = parseInt(value + "")
+      const dt = new Date(dt_value)
+      textNode.data = dt.toISOString()
+    }
+    else if (value.constructor.name === "LocalTime") {
+      const str = value + ""
+      const parts = str.match(/(\d{2})(\d{2})(\d{2})/)
+      textNode.data = parts.slice(1).join(":")
+    }
+    else {
+      textNode.data = escape(value)
+    }
+
     return textNode
   }
   else {

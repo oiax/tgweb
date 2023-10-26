@@ -221,7 +221,10 @@ describe("renderWebSite", () => {
     const expected = [
       '<body>',
       '  <div class="hero">',
-      '    HERO Z',
+      '    HERO',
+      '    (2024-01-01)',
+      '    (2024-01-01T12:00:00.000Z)',
+      '    (12:00:00)',
       '  </div>',
       '  <div>X</div>',
       '  <div>X</div>',
