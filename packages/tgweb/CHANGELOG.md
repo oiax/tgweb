@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.5.8
+
+* 2577df5 Bug fix: cannot embed a data field in a segment/component template
+* bac2a2d Bug fix: cannot parse local date, local datetime and local time
+
 ## 0.5.7
 
 * fd8e8a6 Bug fix: tg:switcher with tg:choose does not work (#86)
