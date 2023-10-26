@@ -1,5 +1,5 @@
 import fs from "fs"
-import toml from "toml"
+import TOML from "@ltd/j-toml"
 import { parseDocument } from "htmlparser2"
 import { expandClassAliases } from "./expand_class_aliases.mjs"
 import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
@@ -13,7 +13,7 @@ const getTemplate = (path, type, siteProperties) => {
 
   if (parts[0] === "" && parts[1] !== undefined) {
     try {
-      const frontMatter = toml.parse(parts[1])
+      const frontMatter = TOML.parse(parts[1], {joiner: "\n"})
       normalizeFrontMatter(frontMatter)
       const html = parts.slice(2).join("---\n")
       return createTemplate(path, type, html, frontMatter, siteProperties)

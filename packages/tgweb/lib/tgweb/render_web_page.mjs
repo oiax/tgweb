@@ -9,6 +9,7 @@ import { getLayout } from "./get_layout.mjs"
 import { filterArticles } from "./filter_articles.mjs"
 import { sortArticles } from "./sort_articles.mjs"
 import { inspectDom } from "../utils/inspect_dom.mjs"
+import { mergeProperties } from "./merge_properties.mjs"
 
 if (inspectDom === undefined) { inspectDom() }
 
@@ -265,7 +266,8 @@ const renderSegment = (node, siteData, documentProperties, state) => {
     if (state.container.type === "segment" &&
         state.container.frontMatter.layer >= segment.frontMatter.layer) return err(render(node))
 
-    const properties = Object.assign({}, documentProperties)
+    let properties = Object.assign({}, documentProperties)
+    properties = mergeProperties(documentProperties, segment.frontMatter)
 
     Object.keys(node.attribs).forEach(key => {
       if (key.startsWith("data-")) {
@@ -294,7 +296,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
 
   if (component === undefined) return err(render(node))
 
-  const properties = Object.assign({}, documentProperties)
+  let properties = Object.assign({}, documentProperties)
+  properties = mergeProperties(documentProperties, component.frontMatter)
 
   if (properties.data === undefined) properties.data = {}
 
@@ -363,7 +366,26 @@ const renderData = (node, siteData, documentProperties, state) => {
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
-    textNode.data = escape(value)
+
+    if (value.constructor.name === "LocalDate") {
+      const str = value + ""
+      const parts = str.match(/(\d{4})(\d{2})(\d{2})/)
+      textNode.data = parts.slice(1).join("-")
+    }
+    else if (value.constructor.name === "OffsetDateTime") {
+      const dt_value = parseInt(value + "")
+      const dt = new Date(dt_value)
+      textNode.data = dt.toISOString()
+    }
+    else if (value.constructor.name === "LocalTime") {
+      const str = value + ""
+      const parts = str.match(/(\d{2})(\d{2})(\d{2})/)
+      textNode.data = parts.slice(1).join(":")
+    }
+    else {
+      textNode.data = escape(value)
+    }
+
     return textNode
   }
   else {
