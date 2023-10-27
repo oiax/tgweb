@@ -1,6 +1,6 @@
 import * as PATH from "path"
 import fs from "fs"
-import toml from "toml"
+import TOML from "@ltd/j-toml"
 import { showTomlSytaxError } from "./show_toml_syntax_error.mjs"
 
 const template1 = `/** @type {import('tailwindcss').Config} */
@@ -43,7 +43,7 @@ const generateTailwindConfig = (srcDir) => {
     const tomlData = fs.readFileSync(colorSchemePath)
 
     try {
-      const doc = toml.parse(tomlData)
+      const doc = TOML.parse(tomlData)
 
       const keys = Object.keys(doc).filter(key => {
         const parts = key.split("-")
