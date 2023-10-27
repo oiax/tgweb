@@ -1,5 +1,5 @@
 import fs from "fs"
-import toml from "toml"
+import TOML from "@ltd/j-toml"
 import glob from "glob"
 import { getTemplate } from "./get_template.mjs"
 import { normalizeSiteProperties } from "./normalize_site_properties.mjs"
@@ -32,7 +32,7 @@ const getSiteData = directory => {
     const source = fs.readFileSync(site_toml_path)
 
     try {
-      const properties = toml.parse(source)
+      const properties = TOML.parse(source)
       siteData.properties = mergeProperties(siteData.properties, properties)
       normalizeSiteProperties(siteData.properties)
     }

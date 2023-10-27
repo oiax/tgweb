@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.5.9
+
+* bc3cc70 Quick and emergency fix: `toml` -> `@ltd/j-toml`
+
 ## 0.5.8
 
 * 2577df5 Bug fix: cannot embed a data field in a segment/component template
