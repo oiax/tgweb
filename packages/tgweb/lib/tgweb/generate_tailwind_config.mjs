@@ -43,7 +43,7 @@ const generateTailwindConfig = (srcDir) => {
     const tomlData = fs.readFileSync(colorSchemePath)
 
     try {
-      const doc = TOML.parse(tomlData)
+      const doc = TOML.parse(tomlData, {joiner: "\n", bigint: false})
 
       const keys = Object.keys(doc).filter(key => {
         const parts = key.split("-")

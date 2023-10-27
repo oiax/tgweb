@@ -12,22 +12,22 @@ const getTemplate = (path, type, siteProperties) => {
   const parts = source.split(separatorRegex)
 
   if (parts[0] === "" && parts[1] !== undefined) {
+    let frontMatter
     try {
-      const frontMatter = TOML.parse(parts[1], {joiner: "\n"})
+      frontMatter = TOML.parse(parts[1], {joiner: "\n", bigint: false})
       normalizeFrontMatter(frontMatter)
-      const html = parts.slice(2).join("---\n")
-      return createTemplate(path, type, html, frontMatter, siteProperties)
     }
     catch (error) {
       showTomlSytaxError(path, parts[1], error)
-
-      const frontMatter = {layer: 0}
-      const html = parts.slice(2).join("---\n")
-      return createTemplate(path, type, html, frontMatter, siteProperties)
+      frontMatter = normalizeFrontMatter({ main: { layer: 0 } })
     }
+
+    const html = parts.slice(2).join("---\n")
+    return createTemplate(path, type, html, frontMatter, siteProperties)
   }
   else {
-    return createTemplate(path, type, source, {}, siteProperties)
+    const frontMatter = normalizeFrontMatter({})
+    return createTemplate(path, type, source, frontMatter, siteProperties)
   }
 }
 
@@ -37,11 +37,11 @@ const createTemplate = (path, type, html, frontMatter, siteProperties) => {
   const inserts = extractInserts(dom)
   const shortPath = path.replace(/^src\//, "")
 
-  if (type === "page" || type === "article" && frontMatter["embedded-only"] !== true) {
+  if (type === "page" || type === "article" && frontMatter.main["embedded-only"] !== true) {
     const canonicalPath =
       shortPath.replace(/^pages\//, "").replace(/\/index.html$/, "/").replace(/^index.html$/, "")
 
-    frontMatter["url"] = siteProperties["root-url"] + canonicalPath
+    frontMatter.main.url = siteProperties.main["root-url"] + canonicalPath
   }
 
   return { path: shortPath, type, frontMatter, dom, inserts, dependencies: [] }

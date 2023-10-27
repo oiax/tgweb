@@ -23,8 +23,8 @@ const sortArticles = (articles, orderBy) => {
   }
   else if (criteria === "index") {
     articles.sort((a, b) => {
-      const i = a.frontMatter["index"]
-      const j = b.frontMatter["index"]
+      const i = a.frontMatter.main && a.frontMatter.main["index"]
+      const j = b.frontMatter.main && b.frontMatter.main["index"]
 
       if (i !== undefined) {
         if (j !== undefined) {

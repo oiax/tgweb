@@ -126,7 +126,7 @@ describe("create", () => {
 
     create("src/site.toml", siteData)
 
-    assert.equal(siteData.properties["title"], "Example")
+    assert.equal(siteData.properties["main"]["title"], "Example")
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
   })
 })

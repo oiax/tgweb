@@ -6,6 +6,8 @@ const showTomlSytaxError = (path, tomlSource, error) => {
   console.error(`Found a syntax error in the front matter block: ${path}`)
   console.error("-".repeat(77))
 
+  console.log({line: error.line})
+
   if (error.line <= NUMBER_OF_LINES) {
     for (let i = 0; i <= error.line - 1; i++) {
       console.error(getLineNumber(i + 1) + lines[i])

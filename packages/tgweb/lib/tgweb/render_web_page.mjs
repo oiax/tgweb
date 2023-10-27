@@ -67,7 +67,10 @@ const renderArticle = (path, siteData) => {
     return
   }
 
-  if (article.frontMatter["embedded-only"] === true) return
+  const mainSection =
+    typeof article.frontMatter.main === "object" ? article.frontMatter.main : {}
+
+  if (mainSection["embedded-only"] === true) return
 
   const state = {path, container: undefined, innerContent: [], inserts: []}
   const wrapper = getWrapper(siteData, article.path)
@@ -93,8 +96,8 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -126,8 +129,8 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -172,8 +175,8 @@ const doRenderPage = (page, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -345,7 +348,7 @@ const renderSlot = (node, siteData, documentProperties, state) => {
 }
 
 const renderProp = (node, siteData, documentProperties, state) => {
-  const value = documentProperties[node.attribs.name]
+  const value = documentProperties.main[node.attribs.name]
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
@@ -1133,7 +1136,7 @@ const renderHead = (documentProperties) => {
         const parts = propName.split(".")
 
         if (parts.length === 1) {
-          const value = documentProperties[propName]
+          const value = documentProperties.main[propName]
 
           if (typeof value === "string") {
             return value
@@ -1146,8 +1149,8 @@ const renderHead = (documentProperties) => {
           const p1 = parts[0]
           const p2 = parts[2]
 
-          if (typeof documentProperties[p1] === "object") {
-            const value = documentProperties[p1][p2]
+          if (typeof documentProperties.main[p1] === "object") {
+            const value = documentProperties.main[p1][p2]
 
             if (typeof value === "string") {
               return value
@@ -1163,7 +1166,7 @@ const renderHead = (documentProperties) => {
       })
 
       converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties["root-url"]
+        const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
       })
 
@@ -1172,13 +1175,13 @@ const renderHead = (documentProperties) => {
     })
   }
 
-  if (typeof documentProperties["link"] === "object") {
-    Object.keys(documentProperties["link"]).forEach(rel => {
+  if (typeof documentProperties.link === "object") {
+    Object.keys(documentProperties.link).forEach(rel => {
       if (rel == "stylesheet") return
-      const href = documentProperties["link"][rel]
+      const href = documentProperties.link[rel]
 
       const converted = href.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties["root-url"]
+        const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
       })
 

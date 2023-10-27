@@ -1,5 +1,5 @@
 const normalizeSiteProperties = properties => {
-  const tableNames = ["data", "font", "meta", "http-equiv", "meta-property", "link"]
+  const tableNames = ["main", "data", "font", "meta", "http-equiv", "meta-property", "link"]
 
   tableNames.forEach(tableName => {
     if (typeof properties[tableName] !== "object") properties[tableName] = {}
@@ -7,13 +7,15 @@ const normalizeSiteProperties = properties => {
 
   if (typeof properties.font["google-fonts"] !== "object") properties.font["google-fonts"] = {}
 
-  if (properties.scheme === "http" && properties.port === 80)
-    properties["root-url"] = `http://${properties.host}/`
-  else if (properties.scheme === "https" && properties.port === 443)
-    properties["root-url"] = `https://${properties.host}/`
+  if (properties.main.scheme === "http" && properties.main.port === 80)
+    properties.main["root-url"] = `http://${properties.main.host}/`
+  else if (properties.scheme === "https" && properties.main.port === 443)
+    properties.main["root-url"] = `https://${properties.main.host}/`
   else
-    properties["root-url"] =
-      `${properties.scheme}://${properties.host}:${properties.port}/`
+    properties.main["root-url"] =
+      `${properties.main.scheme}://${properties.main.host}:${properties.main.port}/`
+
+  return properties
 }
 
 export { normalizeSiteProperties }

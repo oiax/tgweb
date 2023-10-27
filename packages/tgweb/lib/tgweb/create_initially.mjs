@@ -25,13 +25,13 @@ const createInitially = (path, siteData) => {
     if (type !== "page" && type !== "article") return
 
     if (type === "article") {
-      const article =
-        siteData.articles.find(article => "src/" + article.path === posixPath)
+      const article = siteData.articles.find(article => "src/" + article.path === posixPath)
+
+      if (article.frontMatter.main["embedded-only"] === true) return
 
       const wrapper = getWrapper(siteData, article.path)
 
-      if (wrapper && wrapper.frontMatter["embedded-only"] === true) return
-      if (article.frontMatter["embedded-only"] === true) return
+      if (wrapper && wrapper.frontMatter.main["embedded-only"] === true) return
     }
 
     const dom = renderWebPage(posixPath, siteData)

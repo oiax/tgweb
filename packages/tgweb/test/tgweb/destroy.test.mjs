@@ -164,7 +164,7 @@ describe("destroy", () => {
 
     destroy("src/site.toml", siteData)
 
-    assert.deepEqual(siteData.properties,
+    assert.deepEqual(siteData.properties.main,
       {host: "localhost", port: 3000, "root-url": "http://localhost:3000/", scheme: "http"})
 
     const page = siteData.pages.find(p => p.path === "pages/index.html")

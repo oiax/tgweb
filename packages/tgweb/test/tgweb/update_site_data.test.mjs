@@ -54,8 +54,8 @@ describe("updateSiteData", () => {
     const page = siteData.pages.find(p => p.path === "pages/index.html")
     assert(page)
 
-    assert.equal(page.frontMatter["title"], "FizzBuzz")
-    assert.equal(page.frontMatter["layout"], "home")
+    assert.equal(page.frontMatter["main"]["title"], "FizzBuzz")
+    assert.equal(page.frontMatter["main"]["layout"], "home")
   })
 
   it("should update a page template", () => {
