@@ -1614,6 +1614,9 @@ article file without the extension (`.html`).
 Unlike components, articles can only be embedded into a page.
 Articles cannot be embedded in other articles or layouts.
 
+Like layouts and segments, slots can be placed inside articles.
+You can also pass custom properties to an article using the `<tg:article>` element's `data-*` attribute.
+
 ### `embedded-only` property
 
 When the value of the `embedded-only` property of an article is set to `true`, it is not converted
@@ -1661,6 +1664,8 @@ layout = "home"
   <tg:articles pattern="proposals/*" order-by="filename:desc"></tg:articles>
 </main>
 ```
+
+You can pass custom properties to an article using the `<tg:articles>` element's `data-*` attribute.
 
 ### Sorting articles by their title
 

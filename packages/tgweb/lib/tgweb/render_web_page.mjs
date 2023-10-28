@@ -436,7 +436,7 @@ const renderEmbeddedArticle = (node, siteData, state) => {
 
     if (article === undefined) return err(render(node))
 
-    return doRenderEmbeddedArticle(article, siteData, state)
+    return doRenderEmbeddedArticle(article, node, siteData, state)
   }
   else {
     return err(render(node))
@@ -454,18 +454,27 @@ const renderEmbeddedArticleList = (node, siteData, state) => {
       state.container.type === "layout")) {
     const articles = filterArticles(siteData.articles, pattern, tag)
     sortArticles(articles, orderBy)
-    return articles.map(article => doRenderEmbeddedArticle(article, siteData, state)).flat()
+    return articles.map(article => doRenderEmbeddedArticle(article, node, siteData, state)).flat()
   }
   else {
     return err(render(node))
   }
 }
 
-const doRenderEmbeddedArticle = (article, siteData, state) => {
-  const localState = getLocalState(state, article, undefined)
+const doRenderEmbeddedArticle = (article, parent, siteData, state) => {
+  const inserts = getInserts(parent)
+  const innerContent = removeInserts(parent)
+  const localState = getLocalState(state, article, innerContent, inserts)
 
   const wrapper = getWrapper(siteData, article.path)
   const properties = getDocumentProperties(article, wrapper, undefined, siteData.properties)
+
+  Object.keys(parent.attribs).forEach(key => {
+    if (key.startsWith("data-")) {
+      const propName = toKebabCase(key.slice(5))
+      properties.data[propName] = parent.attribs[key]
+    }
+  })
 
   const articleContent =
     article.dom.children
