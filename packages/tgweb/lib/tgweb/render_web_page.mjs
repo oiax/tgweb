@@ -30,6 +30,7 @@ const renderPage = (path, siteData) => {
       container: undefined,
       innerContent: [],
       inserts: [],
+      referencedComponentNames: [],
       hookName: undefined,
       itemIndex: 0
     }
@@ -295,6 +296,8 @@ const renderSegment = (node, siteData, documentProperties, state) => {
 const renderComponent = (node, siteData, documentProperties, state) => {
   const componentName = node.attribs.name
 
+  if (state.referencedComponentNames.includes(componentName)) return err(render(node))
+
   const component = siteData.components.find(c => c.path == `components/${componentName}.html`)
 
   if (component === undefined) return err(render(node))
@@ -314,6 +317,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
   const inserts = getInserts(node)
   const innerContent = removeInserts(node)
   const localState = getLocalState(state, component, innerContent, inserts)
+
+  localState.referencedComponentNames.push(componentName)
 
   return component.dom.children
     .map(child => renderNode(child, siteData, properties, localState))
@@ -1270,6 +1275,7 @@ const getLocalState = (state, container, innerContent, inserts) => {
   newState.innerContent = innerContent
   newState.inserts = inserts || {}
   newState.hookName = state.hookName
+  newState.referencedComponentNames = state.referencedComponentNames
   return newState
 }
 
@@ -1291,6 +1297,7 @@ const mergeState = (obj1, obj2) => {
   newState.inserts = obj1.inserts
   newState.hookName = obj1.hookName
   newState.itemIndex = obj1.itemIndex
+  newState.referencedComponentNames = obj1.referencedComponentNames
 
   if (obj2.targetPath !== undefined) newState.targetPath = obj2.targetPath
   if (obj2.label !== undefined) newState.label = obj2.label
@@ -1299,6 +1306,10 @@ const mergeState = (obj1, obj2) => {
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
   if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
   if (obj2.itemIndex !== undefined) newState.itemIndex = obj2.itemIndex
+
+  if (obj2.referencedComponentNames !== undefined)
+    newState.referencedComponentNames = obj2.referencedComponentNames
+
   return newState
 }
 

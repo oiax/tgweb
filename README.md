@@ -1454,8 +1454,8 @@ layer = 1
 
 ### Component files
 
-A _components_ is a template file that can be embedded in pages, segments, articles and layouts.
-However, embedding a component in another is not allowed.
+A _components_ is a template file that can be embedded in pages, segments, components, articles
+and layouts.
 
 Components are placed in the `src/components` subdirectory of the working directory.
 
@@ -1468,8 +1468,13 @@ The following is an example of a component:
   <span class="material-symbols-outlined">sentiment_satisfied</span>
 </span>
 ```
+
 Note that you should set the `font.material-symbols` property to `true` in the `sites.toml`
 in order to display the above smile icon. See [Material Symbols](#material-symbols).
+
+When embedding a component into another component, care should be taken to avoid circular
+references. If a circular reference is detected, an error message will be inserted in the
+generated HTML.
 
 ### Embedding components
 
