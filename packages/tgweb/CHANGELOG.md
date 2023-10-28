@@ -1,5 +1,12 @@
 # tgweb CHANGELOG
 
+# 0.6.0
+
+* 46b5b08 Introduce the main section in the front matter and site properties (#94)
+* 7f381ba Enable data and inserts to be injected to an article (#102)
+* c6d4d83 Enable a component to be embedded in another (#108)
+* 0ef62b5 Abolish main.layer property (#109)
+
 ## 0.5.9
 
 * bc3cc70 Quick and emergency fix: `toml` -> `@ltd/j-toml`
