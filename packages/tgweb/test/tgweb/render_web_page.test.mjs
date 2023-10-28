@@ -273,9 +273,36 @@ describe("renderWebSite", () => {
       '  <div class="hero">',
       '    HERO',
       '  </div>',
-      '  <div>X</div>',
-      '  <div>X</div>',
+      '  <div>',
+      '    <div>',
+      '      Y',
+      '    </div>',
+      '  </div>',
       '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should detect a circular reference of segments", () => {
+    const wd = PATH.resolve(__dirname, "../sites/nested_segments")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/circular_reference.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <div>',
+      '      <div>',
+      '        <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:segment name=&quot;a&quot;&gt;&lt;/tg:segment&gt;</span>',
+      '      </div>',
+      '    </div>',
+      '  </div>',
       '</body>'
     ]
 

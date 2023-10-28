@@ -15,9 +15,6 @@ const normalizeFrontMatter = frontMatter => {
       .trim().replaceAll(/\s+/g, " ")
   })
 
-  if (! Number.isInteger(frontMatter.main.layer)) frontMatter.main.layer = 0
-  if (frontMatter.main.layer < 0) frontMatter.main.layer = 0
-
   return frontMatter
 }
 

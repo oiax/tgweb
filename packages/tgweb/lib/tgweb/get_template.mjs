@@ -19,7 +19,7 @@ const getTemplate = (path, type, siteProperties) => {
     }
     catch (error) {
       showTomlSytaxError(path, parts[1], error)
-      frontMatter = normalizeFrontMatter({ main: { layer: 0 } })
+      frontMatter = normalizeFrontMatter({})
     }
 
     const html = parts.slice(2).join("---\n")
