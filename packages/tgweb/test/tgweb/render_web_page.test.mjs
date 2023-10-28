@@ -209,6 +209,30 @@ describe("renderWebSite", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should detect a circular reference of components", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_component")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/circular_reference.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <div>',
+      '      <div>',
+      '        <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:component name=&quot;x&quot;&gt;&lt;/tg:component&gt;</span>',
+      '      </div>',
+      '    </div>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render a page of 'with_segment' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_segment")
     const siteData = getSiteData(wd)
@@ -249,9 +273,36 @@ describe("renderWebSite", () => {
       '  <div class="hero">',
       '    HERO',
       '  </div>',
-      '  <div>X</div>',
-      '  <div>X</div>',
+      '  <div>',
+      '    <div>',
+      '      Y',
+      '    </div>',
+      '  </div>',
       '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should detect a circular reference of segments", () => {
+    const wd = PATH.resolve(__dirname, "../sites/nested_segments")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/circular_reference.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <div>',
+      '      <div>',
+      '        <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:segment name=&quot;a&quot;&gt;&lt;/tg:segment&gt;</span>',
+      '      </div>',
+      '    </div>',
+      '  </div>',
       '</body>'
     ]
 
@@ -347,6 +398,33 @@ describe("renderWebSite", () => {
       '      <div><span class="badge badge-primary">B</span>',
       '      </div>',
       '      <h1>I</h1>',
+      '    </article>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should inject data and inserts into an article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_articles")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/injection.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <article>',
+      '      <div>',
+      '        x',
+      '        <span>y</span>',
+      '      </div>',
       '    </article>',
       '  </div>',
       '  <footer>Footer</footer>',

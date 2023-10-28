@@ -106,10 +106,19 @@ const update = (path, siteData) => {
 }
 
 const updateArticle = (article, siteData) => {
+  const mainSection =
+    typeof article.frontMatter.main === "object" ? article.frontMatter.main : {}
+
+  if (mainSection["embedded-only"] === true) return
+
   const wrapper = getWrapper(siteData, article.path)
 
-  if (wrapper && wrapper.frontMatter["embedded-only"] === true) return
-  if (article.frontMatter["embedded-only"] === true) return
+  if (wrapper) {
+    const wrapperMainSection =
+      typeof wrapper.frontMatter.main === "object" ? wrapper.frontMatter.main : {}
+
+    if (wrapperMainSection["embedded-only"] === true) return
+  }
 
   updateHTML("src/" + article.path, siteData)
 }

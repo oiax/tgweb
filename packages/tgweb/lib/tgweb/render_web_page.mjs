@@ -30,6 +30,8 @@ const renderPage = (path, siteData) => {
       container: undefined,
       innerContent: [],
       inserts: [],
+      referencedComponentNames: [],
+      referencedSegmentNames: [],
       hookName: undefined,
       itemIndex: 0
     }
@@ -67,7 +69,10 @@ const renderArticle = (path, siteData) => {
     return
   }
 
-  if (article.frontMatter["embedded-only"] === true) return
+  const mainSection =
+    typeof article.frontMatter.main === "object" ? article.frontMatter.main : {}
+
+  if (mainSection["embedded-only"] === true) return
 
   const state = {path, container: undefined, innerContent: [], inserts: []}
   const wrapper = getWrapper(siteData, article.path)
@@ -93,8 +98,8 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -126,8 +131,8 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -172,8 +177,8 @@ const doRenderPage = (page, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
   const head = renderHead(documentProperties)
 
-  if (documentProperties["html-class"] !== undefined) {
-    doc.children[0].attribs = {class: documentProperties["html-class"]}
+  if (documentProperties.main["html-class"] !== undefined) {
+    doc.children[0].attribs = {class: documentProperties.main["html-class"]}
   }
 
   doc.children[0].children[0].children = head.children
@@ -255,6 +260,10 @@ const renderNode = (node, siteData, documentProperties, state) => {
 
 const renderSegment = (node, siteData, documentProperties, state) => {
   const segmentName = node.attribs.name
+
+  if (state.referencedSegmentNames && state.referencedSegmentNames.includes(segmentName))
+    return err(render(node))
+
   const allowedTypes = ["page", "layout", "segment"]
 
   if (state.container && allowedTypes.includes(state.container.type)) {
@@ -262,9 +271,6 @@ const renderSegment = (node, siteData, documentProperties, state) => {
 
     if (segment === undefined) console.log({notFound: segmentName})
     if (segment === undefined) return err(render(node))
-
-    if (state.container.type === "segment" &&
-        state.container.frontMatter.layer >= segment.frontMatter.layer) return err(render(node))
 
     let properties = Object.assign({}, documentProperties)
     properties = mergeProperties(documentProperties, segment.frontMatter)
@@ -280,6 +286,8 @@ const renderSegment = (node, siteData, documentProperties, state) => {
     const innerContent = removeInserts(node)
     const localState = getLocalState(state, segment, innerContent, inserts)
 
+    if (localState.referencedSegmentNames) localState.referencedSegmentNames.push(segmentName)
+
     return segment.dom.children
       .map(child => renderNode(child, siteData, properties, localState))
       .flat()
@@ -291,6 +299,9 @@ const renderSegment = (node, siteData, documentProperties, state) => {
 
 const renderComponent = (node, siteData, documentProperties, state) => {
   const componentName = node.attribs.name
+
+  if (state.referencedComponentNames && state.referencedComponentNames.includes(componentName))
+    return err(render(node))
 
   const component = siteData.components.find(c => c.path == `components/${componentName}.html`)
 
@@ -311,6 +322,8 @@ const renderComponent = (node, siteData, documentProperties, state) => {
   const inserts = getInserts(node)
   const innerContent = removeInserts(node)
   const localState = getLocalState(state, component, innerContent, inserts)
+
+  if (localState.referencedComponentNames) localState.referencedComponentNames.push(componentName)
 
   return component.dom.children
     .map(child => renderNode(child, siteData, properties, localState))
@@ -345,7 +358,7 @@ const renderSlot = (node, siteData, documentProperties, state) => {
 }
 
 const renderProp = (node, siteData, documentProperties, state) => {
-  const value = documentProperties[node.attribs.name]
+  const value = documentProperties.main[node.attribs.name]
 
   if (value) {
     const textNode = parseDocument("\n").children[0]
@@ -433,7 +446,7 @@ const renderEmbeddedArticle = (node, siteData, state) => {
 
     if (article === undefined) return err(render(node))
 
-    return doRenderEmbeddedArticle(article, siteData, state)
+    return doRenderEmbeddedArticle(article, node, siteData, state)
   }
   else {
     return err(render(node))
@@ -451,18 +464,27 @@ const renderEmbeddedArticleList = (node, siteData, state) => {
       state.container.type === "layout")) {
     const articles = filterArticles(siteData.articles, pattern, tag)
     sortArticles(articles, orderBy)
-    return articles.map(article => doRenderEmbeddedArticle(article, siteData, state)).flat()
+    return articles.map(article => doRenderEmbeddedArticle(article, node, siteData, state)).flat()
   }
   else {
     return err(render(node))
   }
 }
 
-const doRenderEmbeddedArticle = (article, siteData, state) => {
-  const localState = getLocalState(state, article, undefined)
+const doRenderEmbeddedArticle = (article, parent, siteData, state) => {
+  const inserts = getInserts(parent)
+  const innerContent = removeInserts(parent)
+  const localState = getLocalState(state, article, innerContent, inserts)
 
   const wrapper = getWrapper(siteData, article.path)
   const properties = getDocumentProperties(article, wrapper, undefined, siteData.properties)
+
+  Object.keys(parent.attribs).forEach(key => {
+    if (key.startsWith("data-")) {
+      const propName = toKebabCase(key.slice(5))
+      properties.data[propName] = parent.attribs[key]
+    }
+  })
 
   const articleContent =
     article.dom.children
@@ -1133,7 +1155,7 @@ const renderHead = (documentProperties) => {
         const parts = propName.split(".")
 
         if (parts.length === 1) {
-          const value = documentProperties[propName]
+          const value = documentProperties.main[propName]
 
           if (typeof value === "string") {
             return value
@@ -1146,8 +1168,8 @@ const renderHead = (documentProperties) => {
           const p1 = parts[0]
           const p2 = parts[2]
 
-          if (typeof documentProperties[p1] === "object") {
-            const value = documentProperties[p1][p2]
+          if (typeof documentProperties.main[p1] === "object") {
+            const value = documentProperties.main[p1][p2]
 
             if (typeof value === "string") {
               return value
@@ -1163,7 +1185,7 @@ const renderHead = (documentProperties) => {
       })
 
       converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties["root-url"]
+        const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
       })
 
@@ -1172,13 +1194,13 @@ const renderHead = (documentProperties) => {
     })
   }
 
-  if (typeof documentProperties["link"] === "object") {
-    Object.keys(documentProperties["link"]).forEach(rel => {
+  if (typeof documentProperties.link === "object") {
+    Object.keys(documentProperties.link).forEach(rel => {
       if (rel == "stylesheet") return
-      const href = documentProperties["link"][rel]
+      const href = documentProperties.link[rel]
 
       const converted = href.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties["root-url"]
+        const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
       })
 
@@ -1258,6 +1280,13 @@ const getLocalState = (state, container, innerContent, inserts) => {
   newState.innerContent = innerContent
   newState.inserts = inserts || {}
   newState.hookName = state.hookName
+
+  if (state.referencedComponentNames !== undefined)
+    newState.referencedComponentNames = [...state.referencedComponentNames]
+
+  if (state.referencedSegmentNames !== undefined)
+    newState.referencedSegmentNames = [...state.referencedSegmentNames]
+
   return newState
 }
 
@@ -1280,6 +1309,12 @@ const mergeState = (obj1, obj2) => {
   newState.hookName = obj1.hookName
   newState.itemIndex = obj1.itemIndex
 
+  if (obj1.referencedComponentNames !== undefined)
+    newState.referencedComponentNames = [...obj1.referencedComponentNames]
+
+  if (obj1.referencedSegmentNames !== undefined)
+    newState.referencedSegmentNames = [...obj1.referencedSegmentNames]
+
   if (obj2.targetPath !== undefined) newState.targetPath = obj2.targetPath
   if (obj2.label !== undefined) newState.label = obj2.label
   if (obj2.container !== undefined) newState.container = obj2.container
@@ -1287,6 +1322,13 @@ const mergeState = (obj1, obj2) => {
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
   if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
   if (obj2.itemIndex !== undefined) newState.itemIndex = obj2.itemIndex
+
+  if (obj2.referencedComponentNames !== undefined)
+    newState.referencedComponentNames = [...obj2.referencedComponentNames]
+
+  if (obj2.referencedSegmentNames !== undefined)
+    newState.referencedSegmentNames = [...obj2.referencedSegmentNames]
+
   return newState
 }
 

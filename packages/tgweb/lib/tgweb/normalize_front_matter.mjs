@@ -1,5 +1,5 @@
 const normalizeFrontMatter = frontMatter => {
-  const tableNames = ["data", "style"]
+  const tableNames = ["main", "data", "style"]
 
   tableNames.forEach(tableName => {
     if (typeof frontMatter[tableName] !== "object") frontMatter[tableName] = {}
@@ -15,8 +15,7 @@ const normalizeFrontMatter = frontMatter => {
       .trim().replaceAll(/\s+/g, " ")
   })
 
-  if (! Number.isInteger(frontMatter.layer)) frontMatter.layer = 0
-  if (frontMatter.layer < 0) frontMatter.layer = 0
+  return frontMatter
 }
 
 export { normalizeFrontMatter }

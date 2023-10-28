@@ -17,10 +17,12 @@ const getSiteData = directory => {
     articles: [],
     components: [],
     properties: {
-      scheme: "http",
-      host: "localhost",
-      port: 3000,
-      "root-url": "http://localhost:3000/"
+      main: {
+        scheme: "http",
+        host: "localhost",
+        port: 3000,
+        "root-url": "http://localhost:3000/"
+      }
     }
   }
 
@@ -32,14 +34,15 @@ const getSiteData = directory => {
     const source = fs.readFileSync(site_toml_path)
 
     try {
-      const properties = TOML.parse(source)
+      const properties = TOML.parse(source, {joiner: "\n", bigint: false})
       siteData.properties = mergeProperties(siteData.properties, properties)
-      normalizeSiteProperties(siteData.properties)
     }
     catch (error) {
       showTomlSytaxError(site_toml_path, source, error)
     }
   }
+
+  normalizeSiteProperties(siteData.properties)
 
   if (fs.existsSync("src/components")) {
     siteData.components =

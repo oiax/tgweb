@@ -7,14 +7,21 @@ import render from "dom-serializer"
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
 describe("getSiteData", () => {
+  it("should interpret the site.toml correctly", () => {
+    const wd = PATH.resolve(__dirname, "../sites/site_1")
+    const siteData = getSiteData(wd)
+
+    assert.equal(siteData.properties.main.layout, "home")
+  })
+
   it("should interpret the front matter correctly", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_0")
     const siteData = getSiteData(wd)
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
 
-    assert.equal(page.frontMatter["layout"], "home")
-    assert.equal(page.frontMatter["title"], "Home")
+    assert.equal(page.frontMatter["main"]["layout"], "home")
+    assert.equal(page.frontMatter["main"]["title"], "Home")
     assert.equal(page.frontMatter["meta"]["viewport"], "width=device-width, initial-scale=1")
     assert.equal(page.frontMatter["meta-property"]["fb:app_id"], "0123456789abced")
   })
@@ -67,7 +74,7 @@ describe("getSiteData", () => {
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
     assert.equal(page.path, "pages/index.html")
-    assert.equal(page.frontMatter.title, "Greeting")
+    assert.equal(page.frontMatter.main.title, "Greeting")
 
     const html = render(page.dom, {encodeEntities: false})
     const lines = html.trim().split("\n")
@@ -182,7 +189,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_articles")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 7)
+    assert.equal(siteData.articles.length, 8)
 
     const article = siteData.articles[0]
     assert.equal(article.path, "articles/about_me.html")

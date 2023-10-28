@@ -1,7 +1,7 @@
 import { DomUtils } from "htmlparser2"
 
 const getTitle = (documentProperties, element) => {
-  if (documentProperties["title"]) return documentProperties["title"]
+  if (documentProperties.main.title) return documentProperties.main.title
 
   const h1 = DomUtils.findOne((elem) => elem.name == "h1", element.children, true)
   if (h1) return DomUtils.textContent(h1)

@@ -1454,8 +1454,8 @@ layer = 1
 
 ### Component files
 
-A _components_ is a template file that can be embedded in pages, segments, articles and layouts.
-However, embedding a component in another is not allowed.
+A _components_ is a template file that can be embedded in pages, segments, components, articles
+and layouts.
 
 Components are placed in the `src/components` subdirectory of the working directory.
 
@@ -1468,8 +1468,13 @@ The following is an example of a component:
   <span class="material-symbols-outlined">sentiment_satisfied</span>
 </span>
 ```
+
 Note that you should set the `font.material-symbols` property to `true` in the `sites.toml`
 in order to display the above smile icon. See [Material Symbols](#material-symbols).
+
+When embedding a component into another component, care should be taken to avoid circular
+references. If a circular reference is detected, an error message will be inserted in the
+generated HTML.
 
 ### Embedding components
 
@@ -1614,6 +1619,9 @@ article file without the extension (`.html`).
 Unlike components, articles can only be embedded into a page.
 Articles cannot be embedded in other articles or layouts.
 
+Like layouts and segments, slots can be placed inside articles.
+You can also pass custom properties to an article using the `<tg:article>` element's `data-*` attribute.
+
 ### `embedded-only` property
 
 When the value of the `embedded-only` property of an article is set to `true`, it is not converted
@@ -1661,6 +1669,8 @@ layout = "home"
   <tg:articles pattern="proposals/*" order-by="filename:desc"></tg:articles>
 </main>
 ```
+
+You can pass custom properties to an article using the `<tg:articles>` element's `data-*` attribute.
 
 ### Sorting articles by their title
 

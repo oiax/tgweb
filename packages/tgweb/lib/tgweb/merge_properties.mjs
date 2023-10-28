@@ -1,5 +1,5 @@
-const tableNames1 = ["data", "meta", "http-equiv", "meta-property", "link"]
-const tableNames2 = ["data", "style", "meta", "http-equiv", "meta-property", "link"]
+const tableNames1 = ["main", "data", "meta", "http-equiv", "meta-property", "link"]
+const tableNames2 = ["main", "data", "style", "meta", "http-equiv", "meta-property", "link"]
 
 const mergeProperties = (target, source) => {
   const properties = {}
