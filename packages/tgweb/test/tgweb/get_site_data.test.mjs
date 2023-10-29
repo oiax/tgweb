@@ -199,7 +199,11 @@ describe("getSiteData", () => {
 
     const expected = [
       '<h1 class="text-xl m-2">About me</h1>',
-      '<p class="m-1">My name is Alice.</p>'
+      '<p class="m-1">My name is Alice.</p>',
+      '<div>',
+      '  <tg:if-embedded>X</tg:if-embedded>',
+      '  <tg:unless-embedded>Y</tg:unless-embedded>',
+      '</div>'
     ]
 
     assert.deepEqual(lines, expected)

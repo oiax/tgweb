@@ -1640,6 +1640,14 @@ layout = "home"
 
 You can pass custom properties to an article using the `<tg:articles>` element's `data-*` attribute.
 
+### `<tg:if-embedded>` and `<tg:unless-embedded>`
+
+The `<tg:if-embedded>` element is used within an article's template and is rendered only when the
+article is embedded within another page or segment.
+
+The `<tg:unless-embedded>` element is used within an article's template and is rendered only when
+the article is generated as a separate web page.
+
 ### Sorting articles by their title
 
 To sort articles by their title, set the `order-by` attribute of the `<tg:articles>` element

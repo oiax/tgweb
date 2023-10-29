@@ -234,6 +234,12 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:articles") {
       return renderEmbeddedArticleList(node, siteData, state)
     }
+    else if (node.name === "tg:if-embedded") {
+      return renderIfEmbedded(node, documentProperties, siteData, state)
+    }
+    else if (node.name === "tg:unless-embedded") {
+      return renderUnlessEmbedded(node, documentProperties, siteData, state)
+    }
     else if (node.name === "tg:link") {
       return renderLink(node, documentProperties, siteData, state)
     }
@@ -500,6 +506,38 @@ const doRenderEmbeddedArticle = (article, parent, siteData, state) => {
   }
   else {
     return articleContent
+  }
+}
+
+const renderIfEmbedded = (node, properties, siteData, state) => {
+  if (state.container.path.startsWith("articles")) {
+    if (state.path.startsWith("src/articles/")) {
+      return []
+    }
+    else {
+      return node.children
+        .map(child => renderNode(child, siteData, properties, state))
+        .flat()
+    }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
+const renderUnlessEmbedded = (node, properties, siteData, state) => {
+  if (state.container.path.startsWith("articles")) {
+    if (state.path.startsWith("src/articles/")) {
+      return node.children
+        .map(child => renderNode(child, siteData, properties, state))
+        .flat()
+    }
+    else {
+      return []
+    }
+  }
+  else {
+    return err(render(node))
   }
 }
 
