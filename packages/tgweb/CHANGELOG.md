@@ -1,6 +1,12 @@
 # tgweb CHANGELOG
 
-# 0.6.0
+## 0.6.1
+
+* f3790e3 Allow `<link>` elements with attributes other than `href` to be rendered (#93)
+* ede3e13 Allow a `<tg:if-current>` element to be placed under the `<tg:links>` elements (#101)
+* 6bc99e2 Introduce `<tg:if-embedded>` and `<tg:unless-embedded>` elements (#111)
+
+## 0.6.0
 
 * 46b5b08 Introduce the main section in the front matter and site properties (#94)
 * 7f381ba Enable data and inserts to be injected to an article (#102)
