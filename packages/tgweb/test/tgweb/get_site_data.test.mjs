@@ -189,7 +189,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_articles")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 8)
+    assert.equal(siteData.articles.length, 10)
 
     const article = siteData.articles[0]
     assert.equal(article.path, "articles/about_me.html")
@@ -199,7 +199,11 @@ describe("getSiteData", () => {
 
     const expected = [
       '<h1 class="text-xl m-2">About me</h1>',
-      '<p class="m-1">My name is Alice.</p>'
+      '<p class="m-1">My name is Alice.</p>',
+      '<div>',
+      '  <tg:if-embedded>X</tg:if-embedded>',
+      '  <tg:unless-embedded>Y</tg:unless-embedded>',
+      '</div>'
     ]
 
     assert.deepEqual(lines, expected)

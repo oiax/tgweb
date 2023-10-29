@@ -234,6 +234,12 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:articles") {
       return renderEmbeddedArticleList(node, siteData, state)
     }
+    else if (node.name === "tg:if-embedded") {
+      return renderIfEmbedded(node, documentProperties, siteData, state)
+    }
+    else if (node.name === "tg:unless-embedded") {
+      return renderUnlessEmbedded(node, documentProperties, siteData, state)
+    }
     else if (node.name === "tg:link") {
       return renderLink(node, documentProperties, siteData, state)
     }
@@ -503,6 +509,38 @@ const doRenderEmbeddedArticle = (article, parent, siteData, state) => {
   }
 }
 
+const renderIfEmbedded = (node, properties, siteData, state) => {
+  if (state.container.path.startsWith("articles")) {
+    if (state.path.startsWith("src/articles/")) {
+      return []
+    }
+    else {
+      return node.children
+        .map(child => renderNode(child, siteData, properties, state))
+        .flat()
+    }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
+const renderUnlessEmbedded = (node, properties, siteData, state) => {
+  if (state.container.path.startsWith("articles")) {
+    if (state.path.startsWith("src/articles/")) {
+      return node.children
+        .map(child => renderNode(child, siteData, properties, state))
+        .flat()
+    }
+    else {
+      return []
+    }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
 const renderLink = (node, properties, siteData, state) => {
   const localState =
     mergeState(state, {container: node, targetPath: node.attribs.href, label: node.attribs.label})
@@ -558,7 +596,10 @@ const renderLinks = (node, documentProperties, siteData, state) => {
   if (state.container && (state.container.type !== "links")) {
     const articles = filterArticles(siteData.articles, pattern, tag)
     if (orderBy !== undefined) sortArticles(articles, orderBy)
-    return articles.map(article => renderArticleLink(node, article, siteData, state)).flat()
+    return articles
+      .map(article => renderArticleLink(node, article, siteData, state))
+      .flat()
+      .filter(node => !Array.isArray(node))
   }
   else {
     return err(render(node))
@@ -1124,13 +1165,14 @@ const renderHead = (documentProperties) => {
   children.push(parseDocument("<meta charset='utf-8'>").children[0])
 
   if (documentProperties["title"] !== undefined) {
-    const title = documentProperties["title"]
+    const title = escape(documentProperties["title"])
     const doc = parseDocument(`<title>${title}</title>`)
     children.push(doc.children[0])
   }
 
   if (typeof documentProperties.meta === "object") {
     Object.keys(documentProperties.meta).forEach(name => {
+      if (name.match(/"/) !== null) return
       const content = documentProperties.meta[name]
       const doc = parseDocument(`<meta name="${name}" content="${content}">`)
       children.push(doc.children[0])
@@ -1139,6 +1181,7 @@ const renderHead = (documentProperties) => {
 
   if (typeof documentProperties["http-equiv"] === "object") {
     Object.keys(documentProperties["http-equiv"]).forEach(name => {
+      if (name.match(/"/) !== null) return
       const content = documentProperties["http-equiv"][name]
       const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
       children.push(doc.children[0])
@@ -1147,6 +1190,8 @@ const renderHead = (documentProperties) => {
 
   if (typeof documentProperties["meta-property"] === "object") {
     Object.keys(documentProperties["meta-property"]).forEach(name => {
+      if (name.match(/"/) !== null) return
+
       const content = documentProperties["meta-property"][name]
 
       if (typeof content !== "string") return
@@ -1187,7 +1232,7 @@ const renderHead = (documentProperties) => {
       converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
         const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
-      })
+      }).replace(/"/g, "&#34")
 
       const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
       children.push(doc.children[0])
@@ -1197,15 +1242,34 @@ const renderHead = (documentProperties) => {
   if (typeof documentProperties.link === "object") {
     Object.keys(documentProperties.link).forEach(rel => {
       if (rel == "stylesheet") return
+      if (rel.match(/^[a-z]+$/) === null) return
+
       const href = documentProperties.link[rel]
 
       const converted = href.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
         const rootUrl = documentProperties.main["root-url"]
         return rootUrl + path.replace(/^\//, "")
-      })
+      }).replace(/"/g, "&#34")
 
       const doc = parseDocument(`<link rel="${rel}" href="${converted}">`)
       children.push(doc.children[0])
+    })
+  }
+
+  if (Array.isArray(documentProperties.links)) {
+    documentProperties.links.forEach(link => {
+      if (typeof link === "object") {
+        const attrs =
+          Object.keys(link).filter(key =>
+            key.match(/^[a-z]+$/) !== null && typeof link[key] === "string"
+          ).map(key => {
+            const value = link[key].replace(/"/g, "&#34")
+            return `${key}="${value}"`
+          }).join(" ")
+
+        const doc = parseDocument(`<link ${attrs}>`)
+        children.push(doc.children[0])
+      }
     })
   }
 

@@ -323,6 +323,9 @@ describe("renderWebSite", () => {
       '  <article>',
       '    <h1 class="text-xl m-2">About me</h1>',
       '    <p class="m-1">My name is Alice.</p>',
+      '    <div>',
+      '      Y',
+      '    </div>',
       '    <hr class="border border-gray-500">',
       '    <div>',
       '      Comment',
@@ -350,6 +353,9 @@ describe("renderWebSite", () => {
       '    <article>',
       '      <h1 class="text-xl m-2">About me</h1>',
       '      <p class="m-1">My name is Alice.</p>',
+      '      <div>',
+      '        X',
+      '      </div>',
       '      <hr class="border border-gray-500">',
       '      <div>',
       '        Comment',
@@ -428,6 +434,32 @@ describe("renderWebSite", () => {
       '    </article>',
       '  </div>',
       '  <footer>Footer</footer>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render an article with links to other aricles", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_articles")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/articles/notes/n.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <article>',
+      '    <h1>N</h1>',
+      '  </article>',
+      '  <nav>',
+      '    <ul>',
+      '      <li><a href="/articles/notes/m.html">M</a></li>',
+      '      <li class="font-bold">N</li>',
+      '    </ul>',
+      '  </nav>',
       '</body>'
     ]
 
@@ -579,6 +611,7 @@ describe("renderWebSite", () => {
       '  <meta property="og:title" content="Home">',
       '  <meta property="og:image" content="http://localhost:3000/images/icons/default.png">',
       '  <link rel="canonical" href="http://localhost:3000/">',
+      '  <link blocking="render" href="example.woff2" as="font">',
       '  <link rel="stylesheet" href="/css/tailwind.css">',
       '  <style>',
       '    [x-cloak] {',
