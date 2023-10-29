@@ -1,0 +1,13 @@
+<article>
+  <tg:content></tg:content>
+</article>
+<nav>
+  <ul>
+    <tg:links pattern="notes/*" order-by="title:asc">
+      <li><a href="#"><tg:prop name="title"></tg:prop></a></li>
+      <tg:if-current>
+        <li class="font-bold"><tg:prop name="title"></tg:prop></li>
+      </tg:if-current>
+    </tg:links>
+  </ul>
+</nav>

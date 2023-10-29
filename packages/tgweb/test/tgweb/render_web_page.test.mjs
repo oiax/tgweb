@@ -434,6 +434,32 @@ describe("renderWebSite", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should render an article with links to other aricles", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_articles")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/articles/notes/n.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <article>',
+      '    <h1>N</h1>',
+      '  </article>',
+      '  <nav>',
+      '    <ul>',
+      '      <li><a href="/articles/notes/m.html">M</a></li>',
+      '      <li class="font-bold">N</li>',
+      '    </ul>',
+      '  </nav>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render 'index.html' of 'with_link_list' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_link_list")
     const siteData = getSiteData(wd)

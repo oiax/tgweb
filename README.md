@@ -1778,6 +1778,10 @@ Then, specify the `order-by` attribute of the `<tg:links>` element.
 Note that the current specification does not allow a `<tg:component>` element to be placed within
 a `<tg:links>` element.
 
+Zero or one `<tg:if-current>` element may be placed inside the `<tg:links>` element.
+The content of the `<tg:if-current>` element is only rendered if the path of the article the path
+of the HTML document that is being generated.
+
 ### Filtering articles by tags
 
 You may use _tags_ to classify your articles.

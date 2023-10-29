@@ -558,7 +558,10 @@ const renderLinks = (node, documentProperties, siteData, state) => {
   if (state.container && (state.container.type !== "links")) {
     const articles = filterArticles(siteData.articles, pattern, tag)
     if (orderBy !== undefined) sortArticles(articles, orderBy)
-    return articles.map(article => renderArticleLink(node, article, siteData, state)).flat()
+    return articles
+      .map(article => renderArticleLink(node, article, siteData, state))
+      .flat()
+      .filter(node => !Array.isArray(node))
   }
   else {
     return err(render(node))

@@ -189,7 +189,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_articles")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.articles.length, 8)
+    assert.equal(siteData.articles.length, 10)
 
     const article = siteData.articles[0]
     assert.equal(article.path, "articles/about_me.html")
