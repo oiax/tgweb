@@ -579,6 +579,7 @@ describe("renderWebSite", () => {
       '  <meta property="og:title" content="Home">',
       '  <meta property="og:image" content="http://localhost:3000/images/icons/default.png">',
       '  <link rel="canonical" href="http://localhost:3000/">',
+      '  <link blocking="render" href="example.woff2" as="font">',
       '  <link rel="stylesheet" href="/css/tailwind.css">',
       '  <style>',
       '    [x-cloak] {',
