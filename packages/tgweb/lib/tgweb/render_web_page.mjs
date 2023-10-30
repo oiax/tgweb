@@ -497,12 +497,19 @@ const doRenderEmbeddedArticle = (article, parent, siteData, state) => {
       .map(child => renderNode(child, siteData, properties, localState))
       .flat()
 
+  state.itemIndex = localState.itemIndex
+
   if (wrapper) {
     const localState2 = getLocalState(state, wrapper, articleContent, article.inserts)
 
-    return wrapper.dom.children
-      .map(child => renderNode(child, siteData, properties, localState2))
-      .flat()
+    const content =
+      wrapper.dom.children
+        .map(child => renderNode(child, siteData, properties, localState2))
+        .flat()
+
+    state.itemIndex = localState2.itemIndex
+
+    return content
   }
   else {
     return articleContent
