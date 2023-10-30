@@ -80,12 +80,10 @@ window.tgweb = {
       clearInterval(this.v)
     },
     prev() {
-      console.log({i: this.i})
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
-      console.log({k: this.i, len})
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
