@@ -172,6 +172,16 @@ window.tgweb = {
 
       this._resetStyle()
 
+      window.onresize = () => {
+        this.body.style.display = "block"
+        this.body.style.width = "auto"
+
+        this.itemWidth = firstItem.offsetWidth
+        this.body.style.display = "flex"
+        this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
+        this._resetStyle()
+      }
+
       if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
     _forward() {
