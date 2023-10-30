@@ -1,5 +1,15 @@
 # tgweb CHANGELOG
 
+## 0.6.2
+
+* 4a74abb Add `window.onresize` to `tgweb_utilities.js` so that carousel body width is adjusted
+          automatically
+* 9c6f48a Fix `getLocalState`: copy `itemIndex` field value
+* 811de60 Fix `doRenderEmbeddedArticle`: copy `itemIndex` field value
+* 2d0a76d Fix switcher and rotator: find length of items on the JS side
+* 09d6712 Introduce `tg:transition-duration` attribute to switcher and rotator
+* 40ee889 Rename `tg:duration` attrbute of carousel to `tg:transition-duration`
+
 ## 0.6.1
 
 * f3790e3 Allow `<link>` elements with attributes other than `href` to be rendered (#93)
