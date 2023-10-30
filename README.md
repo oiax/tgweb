@@ -2131,8 +2131,10 @@ to descendant elements of that element:
 * `tg:paginator`
 
 We call an HTML element with the `tg:switcher` attribute a _switcher_.
-There must be more than one element with the `tg:item` attribute in the switcher.
-We call them _switcher items_.
+
+Inside the switcher, there must always be an element with the `tg:body` attribute, a _switcher body_.
+In addition, there must be elements with the `tg:item` attribute, _switcher items_,
+inside the switcher body.
 
 Swticher items are assigned unique _index numbers_ starting from zero in sequence.
 A switcher has a state represented by an integer value, called an _current index number_.
@@ -2146,17 +2148,19 @@ Here is an example switcher:
 
 ```html
 <div tg:switcher>
-  <div tg:item>A</div>
-  <div tg:item>B</div>
-  <div tg:item>C</div>
-  <div tg:item>D</div>
-  <div tg:item>E</div>
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
-    <button type="button" tg:choose="1">a</button>
-    <button type="button" tg:choose="2">b</button>
-    <button type="button" tg:choose="3">c</button>
-    <button type="button" tg:choose="4">d</button>
-    <button type="button" tg:choose="5">e</button>
+    <button type="button" tg:choose="0">a</button>
+    <button type="button" tg:choose="1">b</button>
+    <button type="button" tg:choose="2">c</button>
+    <button type="button" tg:choose="3">d</button>
+    <button type="button" tg:choose="4">e</button>
   </nav>
 </div>
 ```
@@ -2170,7 +2174,7 @@ change the style applied to the button.
 ```html
   <button
     type="button"
-    tg:choose="1"
+    tg:choose="0"
     class="btn"
     tg:current-class="btn-primary cursor-default"
     tg:normal-class="btn-secondary">a</button>
@@ -2181,11 +2185,13 @@ You can create a button that change the state of the switcher using special attr
 
 ```html
 <div tg:switcher>
-  <div tg:item>A</div>
-  <div tg:item>B</div>
-  <div tg:item>C</div>
-  <div tg:item>D</div>
-  <div tg:item>E</div>
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
     <button type="button" tg:first>First</button>
     <button type="button" tg:prev>Prev</button>
@@ -2218,6 +2224,16 @@ by 1 at the specified interval (unit: millisecond).
 
 ```html
 <div tg:switcher tg:interval="2000">
+  ...
+</div>
+```
+
+If you want to add a fade-in/fade-out effect to the switcher, specify the time in milliseconds
+required for the fade-in or fade-out effect to complete in the `tg:transition-duration` attribute
+of the switcher.
+
+```html
+<div tg:switcher tg:interval="2000" tg:transition-duration="200">
   ...
 </div>
 ```
@@ -2450,7 +2466,7 @@ carousel items that are not currently displayed in the center of the carousel fr
 and class tokens specified in the `tg:current-class` attribute are applied to the button
 corresponding to the carousel item that is currently displayed in the center of the carousel frame.
 
-When the `tg:duration` attribute is set on the carousel, a user clicking/tapping the pagination
+When the `tg:transition-duration` attribute is set on the carousel, a user clicking/tapping the pagination
 buttons while the carousel body is shifting horizontally will have no effect.
 To visually indicate this, specify the `tg:disabled-class` attributes to
 the buttons.

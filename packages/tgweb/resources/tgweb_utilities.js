@@ -69,7 +69,18 @@ window.tgweb = {
     i: 0,
     v: undefined,
     init() {
-      this.len = this.el.querySelectorAll("[data-index]").length
+      this.body = this.el.querySelector("[data-switcher-body]")
+
+      if (this.body === null) {
+        console.error("This switcher does not have body.")
+        return
+      }
+
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+
+      this.len = this.el.querySelectorAll("[data-item-index]").length
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
@@ -106,7 +117,18 @@ window.tgweb = {
     i: 0,
     v: undefined,
     init() {
-      this.len = this.el.querySelectorAll("[data-index]").length
+      this.body = this.el.querySelector("[data-rotator-body]")
+
+      if (this.body === null) {
+        console.error("This rotator does not have body.")
+        return
+      }
+
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+
+      this.len = this.el.querySelectorAll("[data-item-index]").length
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)

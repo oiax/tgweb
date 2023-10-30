@@ -816,18 +816,29 @@ const addSwitcherHook = (node, newNode, newState) => {
   newState.hookName = "switcher"
   newState.itemIndex = 0
 
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+  let interval
+  let transitionDuration
 
-    if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
-    }
-    else {
-      newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
-    }
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    interval = parseInt(newNode.attribs["tg:interval"], 10)
+  }
+
+  if (newNode.attribs["tg:transition-duration"] !== undefined) {
+    transitionDuration = parseInt(newNode.attribs["tg:transition-duration"], 10)
+  }
+
+  if (! Number.isNaN(interval)) {
+    newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
   }
   else {
     newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
+  }
+
+  if (! Number.isNaN(transitionDuration)) {
+    newState.transitionDuration = transitionDuration
+  }
+  else {
+    newState.transitionDuration = 0
   }
 }
 
@@ -837,9 +848,19 @@ const addSwitcherSubhooks = (newNode, state) => {
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-index"] = String(state.itemIndex)
-    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
+  const commonStyle = `position: absolute; transition: opacity ${state.transitionDuration}ms`
+  const style0 = `opacity: 1; order: 0; ${commonStyle}`
+  const style1 = `opacity: 0; order: -1; ${commonStyle}`
+
+  if (newNode.attribs["tg:body"] !== undefined) {
+    newNode.attribs["data-switcher-body"] = ""
+  }
+  else if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-item-index"] = String(state.itemIndex)
+
+    newNode.attribs["x-bind:style"] =
+      `$el.dataset.itemIndex === String(i) ? '${style0}' : '${style1}'`
+
     state.itemIndex = state.itemIndex + 1
   }
 
@@ -867,8 +888,8 @@ const addSwitcherSubhooks = (newNode, state) => {
     const n = parseInt(newNode.attribs["tg:choose"], 10)
 
     if (!Number.isNaN(n)) {
-      newNode.attribs["x-on:click"] = `choose(${n - 1})`
-      newNode.attribs["x-bind:class"] = `i == ${n - 1} ? '${currentClass}' : '${normalClass}'`
+      newNode.attribs["x-on:click"] = `choose(${n})`
+      newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
 }
@@ -879,31 +900,52 @@ const addRotatorHook = (node, newNode, newState) => {
   newState.hookName = "rotator"
   newState.itemIndex = 0
 
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    const interval = parseInt(newNode.attribs["tg:interval"], 10)
+  let interval
+  let transitionDuration
 
-    if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
-    }
-    else {
-      newNode.attribs["x-data"] = `window.tgweb.rotator($el`
-    }
+  if (newNode.attribs["tg:interval"] !== undefined) {
+    interval = parseInt(newNode.attribs["tg:interval"], 10)
+  }
+
+  if (newNode.attribs["tg:transition-duration"] !== undefined) {
+    transitionDuration = parseInt(newNode.attribs["tg:transition-duration"], 10)
+  }
+
+  if (! Number.isNaN(interval)) {
+    newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.rotator($el`
+    newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
+  }
+
+  if (! Number.isNaN(transitionDuration)) {
+    newState.transitionDuration = transitionDuration
+  }
+  else {
+    newState.transitionDuration = 0
   }
 }
 
-const addRotatorSubhooks = (newNode, newState) => {
+const addRotatorSubhooks = (newNode, state) => {
   const enebledClass = (newNode.attribs["tg:enabled-class"] || "").replace(/'/, "\\'")
   const disabledClass = (newNode.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  if (newNode.attribs["tg:item"] !== undefined) {
-    newNode.attribs["data-index"] = String(newState.itemIndex)
-    newNode.attribs["x-show"] = `$el.dataset.index === String(i)`
-    newState.itemIndex = newState.itemIndex + 1
+  const commonStyle = `position: absolute; transition: opacity ${state.transitionDuration}ms`
+  const style0 = `opacity: 1; order: 0; ${commonStyle}`
+  const style1 = `opacity: 0; order: -1; ${commonStyle}`
+
+  if (newNode.attribs["tg:body"] !== undefined) {
+    newNode.attribs["data-rotator-body"] = ""
+  }
+  else if (newNode.attribs["tg:item"] !== undefined) {
+    newNode.attribs["data-item-index"] = String(state.itemIndex)
+
+    newNode.attribs["x-bind:style"] =
+      `$el.dataset.itemIndex === String(i) ? '${style0}' : '${style1}'`
+
+    state.itemIndex = state.itemIndex + 1
   }
 
   if (newNode.attribs["tg:first"] !== undefined) {
@@ -1346,6 +1388,7 @@ const getLocalState = (state, container, innerContent, inserts) => {
   newState.inserts = inserts || {}
   newState.hookName = state.hookName
   newState.itemIndex = state.itemIndex
+  newState.transitionDuration = state.transitionDuration
 
   if (state.referencedComponentNames !== undefined)
     newState.referencedComponentNames = [...state.referencedComponentNames]
@@ -1374,6 +1417,7 @@ const mergeState = (obj1, obj2) => {
   newState.inserts = obj1.inserts
   newState.hookName = obj1.hookName
   newState.itemIndex = obj1.itemIndex
+  newState.transitionDuration = obj1.transitionDuration
 
   if (obj1.referencedComponentNames !== undefined)
     newState.referencedComponentNames = [...obj1.referencedComponentNames]
@@ -1388,6 +1432,7 @@ const mergeState = (obj1, obj2) => {
   if (obj2.inserts !== undefined) newState.inserts = obj2.inserts
   if (obj2.hookName !== undefined) newState.hookName = obj2.hookName
   if (obj2.itemIndex !== undefined) newState.itemIndex = obj2.itemIndex
+  if (obj2.transitionDuration !== undefined) newState.transitionDuration = obj2.transitionDuration
 
   if (obj2.referencedComponentNames !== undefined)
     newState.referencedComponentNames = [...obj2.referencedComponentNames]
