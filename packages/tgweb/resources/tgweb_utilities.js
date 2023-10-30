@@ -62,12 +62,15 @@ const withinRange = (progress, previousProgress, longDistance) => {
 }
 
 window.tgweb = {
-  switcher: (len, interval) => ({
-    len,
+  switcher: (el, interval) => ({
+    el,
     interval,
+    len: undefined,
     i: 0,
     v: undefined,
     init() {
+      this.len = this.el.querySelectorAll("[data-index]").length
+
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
@@ -96,12 +99,15 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  rotator: (len, interval) => ({
-    len,
+  rotator: (el, interval) => ({
+    el,
     interval,
+    len: undefined,
     i: 0,
     v: undefined,
     init() {
+      this.len = this.el.querySelectorAll("[data-index]").length
+
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }

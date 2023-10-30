@@ -816,21 +816,18 @@ const addSwitcherHook = (node, newNode, newState) => {
   newState.hookName = "switcher"
   newState.itemIndex = 0
 
-  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
-  const len = items.length
-
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.switcher(${len}, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
+      newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.switcher(${len})`
+    newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
   }
 }
 
@@ -882,21 +879,18 @@ const addRotatorHook = (node, newNode, newState) => {
   newState.hookName = "rotator"
   newState.itemIndex = 0
 
-  const items = DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
-  const len = items.length
-
   if (newNode.attribs["tg:interval"] !== undefined) {
     const interval = parseInt(newNode.attribs["tg:interval"], 10)
 
     if (! Number.isNaN(interval)) {
-      newNode.attribs["x-data"] = `window.tgweb.rotator(${len}, ${interval})`
+      newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
     }
     else {
-      newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
+      newNode.attribs["x-data"] = `window.tgweb.rotator($el`
     }
   }
   else {
-    newNode.attribs["x-data"] = `window.tgweb.rotator(${len})`
+    newNode.attribs["x-data"] = `window.tgweb.rotator($el`
   }
 }
 
