@@ -62,12 +62,26 @@ const withinRange = (progress, previousProgress, longDistance) => {
 }
 
 window.tgweb = {
-  switcher: (len, interval) => ({
-    len,
+  switcher: (el, interval) => ({
+    el,
     interval,
+    len: undefined,
     i: 0,
     v: undefined,
     init() {
+      this.body = this.el.querySelector("[data-switcher-body]")
+
+      if (this.body === null) {
+        console.error("This switcher does not have body.")
+        return
+      }
+
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+
+      this.len = this.el.querySelectorAll("[data-item-index]").length
+
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
@@ -80,12 +94,10 @@ window.tgweb = {
       clearInterval(this.v)
     },
     prev() {
-      console.log({i: this.i})
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
-      console.log({k: this.i, len})
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
@@ -98,12 +110,26 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  rotator: (len, interval) => ({
-    len,
+  rotator: (el, interval) => ({
+    el,
     interval,
+    len: undefined,
     i: 0,
     v: undefined,
     init() {
+      this.body = this.el.querySelector("[data-rotator-body]")
+
+      if (this.body === null) {
+        console.error("This rotator does not have body.")
+        return
+      }
+
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+
+      this.len = this.el.querySelectorAll("[data-item-index]").length
+
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
@@ -132,12 +158,12 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  carousel: (el, len, repeatCount, interval, duration) => ({
+  carousel: (el, len, repeatCount, interval, transitionDuration) => ({
     el,
     len,
     repeatCount,
     interval,
-    duration,
+    transitionDuration,
     inTransition: false,
     i: 0,
     frame: undefined,
@@ -172,6 +198,16 @@ window.tgweb = {
 
       this._resetStyle()
 
+      window.onresize = () => {
+        this.body.style.display = "block"
+        this.body.style.width = "auto"
+
+        this.itemWidth = firstItem.offsetWidth
+        this.body.style.display = "flex"
+        this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
+        this._resetStyle()
+      }
+
       if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
     _forward() {
@@ -180,7 +216,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     prev() {
       if (this.inTransition) return
@@ -190,7 +226,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i > 0 ? this.i - 1 : this.len - 1
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     next() {
       if (this.inTransition) return
@@ -200,7 +236,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     choose(n) {
       if (this.inTransition) return
@@ -212,11 +248,11 @@ window.tgweb = {
       setTimeout(() => {
         this.i = n
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     _shiftPosition(diff) {
       this.body.style.transitionProperty = "translate"
-      this.body.style.transitionDuration = this.duration + "ms"
+      this.body.style.transitionDuration = this.transitionDuration + "ms"
 
       const translateLength =
         this.itemWidth * (4 + diff) - (this.frame.offsetWidth - this.itemWidth) / 2
