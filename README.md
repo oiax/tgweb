@@ -2359,10 +2359,10 @@ The value specified in this attribute is interpreted as time in milliseconds.
 ```
 
 If you want to add animation effect to the rotation of the carousel, specify the
-`tg:duration` attribute of the carousel.
+`tg:transition-duration` attribute of the carousel.
 
 ```html
-<div tg:carousel tg:interval="3000" tg:duration="500">
+<div tg:carousel tg:interval="3000" tg:transition-duration="500">
 ```
 
 By default, the horizontal movement of carousel items is linear, i.e., they move at the even speed.
@@ -2384,8 +2384,8 @@ The `ease-in-out` class moderates the movement near the beginning and near the e
 See [Transition Timing Function](https://tailwindcss.com/docs/transition-timing-function) for
 details.
 
-If the `tg:duration` attribute is set on the carousel, a user clicking/tapping the "prev" or
-"next" button while the carousel body is shifting horizontally will have no effect.
+If the `tg:transition-duration` attribute is set on the carousel, a user clicking/tapping the
+"prev" or "next" button while the carousel body is shifting horizontally will have no effect.
 To visually indicate this, specify the `tg:enabled-class` and `tg:disabled-class` attributes to
 the buttons.
 

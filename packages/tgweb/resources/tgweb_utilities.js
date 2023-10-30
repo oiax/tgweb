@@ -158,12 +158,12 @@ window.tgweb = {
       clearInterval(this.v)
     }
   }),
-  carousel: (el, len, repeatCount, interval, duration) => ({
+  carousel: (el, len, repeatCount, interval, transitionDuration) => ({
     el,
     len,
     repeatCount,
     interval,
-    duration,
+    transitionDuration,
     inTransition: false,
     i: 0,
     frame: undefined,
@@ -216,7 +216,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     prev() {
       if (this.inTransition) return
@@ -226,7 +226,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i > 0 ? this.i - 1 : this.len - 1
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     next() {
       if (this.inTransition) return
@@ -236,7 +236,7 @@ window.tgweb = {
       setTimeout(() => {
         this.i = this.i < this.len - 1 ? this.i + 1 : 0
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     choose(n) {
       if (this.inTransition) return
@@ -248,11 +248,11 @@ window.tgweb = {
       setTimeout(() => {
         this.i = n
         this._resetStyle()
-      }, this.duration + 250)
+      }, this.transitionDuration + 250)
     },
     _shiftPosition(diff) {
       this.body.style.transitionProperty = "translate"
-      this.body.style.transitionDuration = this.duration + "ms"
+      this.body.style.transitionDuration = this.transitionDuration + "ms"
 
       const translateLength =
         this.itemWidth * (4 + diff) - (this.frame.offsetWidth - this.itemWidth) / 2
