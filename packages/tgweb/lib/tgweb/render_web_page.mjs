@@ -1344,6 +1344,7 @@ const getLocalState = (state, container, innerContent, inserts) => {
   newState.innerContent = innerContent
   newState.inserts = inserts || {}
   newState.hookName = state.hookName
+  newState.itemIndex = state.itemIndex
 
   if (state.referencedComponentNames !== undefined)
     newState.referencedComponentNames = [...state.referencedComponentNames]
