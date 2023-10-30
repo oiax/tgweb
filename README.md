@@ -2223,7 +2223,7 @@ If the switcher has an `tg:interval` attribute, the switcher's index number is i
 by 1 at the specified interval (unit: millisecond).
 
 ```html
-<div tg:switcher tg:interval="2000">
+<div tg:switcher tg:interval="5000">
   ...
 </div>
 ```
@@ -2233,7 +2233,7 @@ required for the fade-in or fade-out effect to complete in the `tg:transition-du
 of the switcher.
 
 ```html
-<div tg:switcher tg:interval="2000" tg:transition-duration="200">
+<div tg:switcher tg:interval="5000" tg:transition-duration="750">
   ...
 </div>
 ```
@@ -2274,12 +2274,14 @@ the next time the index number is set to its lower bound.
 Here is an example rotator:
 
 ```html
-<div tg:rotator tg:interval="2000">
-  <div tg:item>A</div>
-  <div tg:item>B</div>
-  <div tg:item>C</div>
-  <div tg:item>D</div>
-  <div tg:item>E</div>
+<div tg:rotator tg:interval="5000" tg:transition-duration="750">
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
     <button type="button" tg:prev>Prev</button>
     <button type="button" tg:next>Next</button>
