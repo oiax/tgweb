@@ -816,22 +816,10 @@ const addSwitcherHook = (node, newNode, newState) => {
   newState.hookName = "switcher"
   newState.itemIndex = 0
 
-  let interval
   let transitionDuration
-
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    interval = parseInt(newNode.attribs["tg:interval"], 10)
-  }
 
   if (newNode.attribs["tg:transition-duration"] !== undefined) {
     transitionDuration = parseInt(newNode.attribs["tg:transition-duration"], 10)
-  }
-
-  if (! Number.isNaN(interval)) {
-    newNode.attribs["x-data"] = `window.tgweb.switcher($el, ${interval})`
-  }
-  else {
-    newNode.attribs["x-data"] = `window.tgweb.switcher($el)`
   }
 
   if (! Number.isNaN(transitionDuration)) {
@@ -900,22 +888,10 @@ const addRotatorHook = (node, newNode, newState) => {
   newState.hookName = "rotator"
   newState.itemIndex = 0
 
-  let interval
   let transitionDuration
-
-  if (newNode.attribs["tg:interval"] !== undefined) {
-    interval = parseInt(newNode.attribs["tg:interval"], 10)
-  }
 
   if (newNode.attribs["tg:transition-duration"] !== undefined) {
     transitionDuration = parseInt(newNode.attribs["tg:transition-duration"], 10)
-  }
-
-  if (! Number.isNaN(interval)) {
-    newNode.attribs["x-data"] = `window.tgweb.rotator($el, ${interval})`
-  }
-  else {
-    newNode.attribs["x-data"] = `window.tgweb.rotator($el)`
   }
 
   if (! Number.isNaN(transitionDuration)) {
@@ -1091,13 +1067,30 @@ const postprocess = (node, state) => {
   if (klass === "Element") {
     if (node.attribs["tg:carousel"] !== undefined) {
       newState.hookName = "carousel"
-      return postprocessCarousel(node, newState)
+      return postprocessHook(node, newState)
     }
     else if (state.hookName === "carousel") {
       if (node.attribs["tg:body"] !== undefined)
         return postprocessCarouselBody(node, newState)
       else if (node.attribs["tg:paginator"] !== undefined)
-        return postprocessCarouselPaginator(node, newState)
+        return postprocessPaginator(node, newState)
+      else {
+        node.children = node.children.map(c => postprocess(c, newState)).flat()
+        removeTgAttribs(node.attribs)
+        return node
+      }
+    }
+    else if (node.attribs["tg:switcher"] !== undefined) {
+      newState.hookName = "switcher"
+      return postprocessHook(node, newState)
+    }
+    else if (node.attribs["tg:rotator"] !== undefined) {
+      newState.hookName = "rotator"
+      return postprocessHook(node, newState)
+    }
+    else if (state.hookName === "switcher" || state.hookName === "rotator") {
+      if (node.attribs["tg:paginator"] !== undefined)
+        return postprocessPaginator(node, newState)
       else {
         node.children = node.children.map(c => postprocess(c, newState)).flat()
         removeTgAttribs(node.attribs)
@@ -1115,8 +1108,8 @@ const postprocess = (node, state) => {
   }
 }
 
-const postprocessCarousel = (node, newState) => {
-  const carouselItems =
+const postprocessHook = (node, newState) => {
+  const items =
     DomUtils.findAll(elem => elem.attribs["tg:item"] !== undefined, node.children)
 
   let interval = 0
@@ -1130,12 +1123,18 @@ const postprocessCarousel = (node, newState) => {
   let transitionDuration = parseInt(node.attribs["tg:transition-duration"], 10)
   if (Number.isNaN(transitionDuration)) transitionDuration = 0
 
-  const len = carouselItems.length
-  newState.carouselItemCount = len
-  newState.repeatCount = 3
+  newState.itemCount = items.length
 
-  node.attribs["x-data"] =
-    `window.tgweb.carousel($el, ${len}, ${newState.repeatCount}, ${interval}, ${transitionDuration})`
+  if (newState.hookName === "carousel") {
+    newState.repeatCount = 3
+
+    node.attribs["x-data"] =
+      `window.tgweb.carousel($el, ${items.length}, ${newState.repeatCount}, ${interval}, ${transitionDuration})`
+  }
+  else {
+    node.attribs["x-data"] =
+      `window.tgweb.${newState.hookName}($el, ${interval}, ${transitionDuration})`
+  }
 
   node.children = node.children.map(c => postprocess(c, newState)).flat()
   removeTgAttribs(node.attribs)
@@ -1158,7 +1157,7 @@ const postprocessCarouselBody = (node, newState) => {
   return node
 }
 
-const postprocessCarouselPaginator = (node, newState) => {
+const postprocessPaginator = (node, newState) => {
   const disabledClass = (node.attribs["tg:disabled-class"] || "").replace(/'/, "\\'")
   const currentClass = (node.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (node.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
@@ -1166,7 +1165,7 @@ const postprocessCarouselPaginator = (node, newState) => {
 
   removeTgAttribs(node.attribs)
 
-  for (let n = 0; n < newState.carouselItemCount; n++) {
+  for (let n = 0; n < newState.itemCount; n++) {
     const newNode = parseDocument("<div></div>").children[0]
     newNode.name = node.name
     newNode.children = node.children
@@ -1184,8 +1183,6 @@ const postprocessCarouselPaginator = (node, newState) => {
     delete newNode.attribs.id
     choosers.push(newNode)
   }
-
-  node.chil
 
   return choosers
 }

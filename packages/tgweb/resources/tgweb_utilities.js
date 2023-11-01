@@ -62,13 +62,17 @@ const withinRange = (progress, previousProgress, longDistance) => {
 }
 
 window.tgweb = {
-  switcher: (el, interval) => ({
+  switcher: (el, interval, transitionDuration) => ({
     el,
     interval,
+    transitionDuration,
     len: undefined,
+    inTransition: false,
     i: 0,
     v: undefined,
     init() {
+      console.log({transitionDuration})
+
       this.body = this.el.querySelector("[data-switcher-body]")
 
       if (this.body === null) {
@@ -87,33 +91,48 @@ window.tgweb = {
       }
     },
     _forward() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
+      if (this.i == this.len - 1) clearInterval(this.v)
     },
     first() {
+      this._transition()
       this.i = 0
       clearInterval(this.v)
     },
     prev() {
+      this._transition()
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
     last() {
+      this._transition()
       this.i = this.len - 1
       clearInterval(this.v)
     },
     choose(n) {
+      this._transition()
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
+    },
+    _transition() {
+      if (this.transitionDuration > 0) {
+        this.inTransition = true
+        setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
+      }
     }
   }),
-  rotator: (el, interval) => ({
+  rotator: (el, interval, transitionDuration) => ({
     el,
     interval,
+    transitionDuration,
     len: undefined,
+    inTransition: false,
     i: 0,
     v: undefined,
     init() {
@@ -135,27 +154,39 @@ window.tgweb = {
       }
     },
     _forward() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : 0
     },
     first() {
+      this._transition()
       this.i = 0
       clearInterval(this.v)
     },
     last() {
+      this._transition()
       this.i = this.len - 1
       clearInterval(this.v)
     },
     prev() {
+      this._transition()
       this.i = this.i > 0 ? this.i - 1 : this.len - 1
       clearInterval(this.v)
     },
     next() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : 0
       clearInterval(this.v)
     },
     choose(n) {
+      this._transition()
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
+    },
+    _transition() {
+      if (this.transitionDuration > 0) {
+        this.inTransition = true
+        setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
+      }
     }
   }),
   carousel: (el, len, repeatCount, interval, transitionDuration) => ({
