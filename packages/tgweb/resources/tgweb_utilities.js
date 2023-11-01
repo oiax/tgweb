@@ -80,11 +80,31 @@ window.tgweb = {
         return
       }
 
+      const items = this.body.querySelectorAll("[data-item-index]")
+      const firstItem = items[0]
+
+      if (firstItem === null) {
+        console.error("This switcher has no item.")
+        return
+      }
+
       this.body.style.display = "flex"
       this.body.style.flexDirection = "column"
       this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth
+      this.body.style.height = firstItem.offsetHeight
 
       this.len = this.el.querySelectorAll("[data-item-index]").length
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
+        this.body.style.width = firstItem.offsetWidth
+        this.body.style.height = firstItem.offsetHeight
+      }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
@@ -143,11 +163,31 @@ window.tgweb = {
         return
       }
 
+      const items = this.body.querySelectorAll("[data-item-index]")
+      const firstItem = items[0]
+
+      if (firstItem === null) {
+        console.error("This switcher has no item.")
+        return
+      }
+
       this.body.style.display = "flex"
       this.body.style.flexDirection = "column"
       this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth
+      this.body.style.height = firstItem.offsetHeight
 
       this.len = this.el.querySelectorAll("[data-item-index]").length
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
+        this.body.style.width = firstItem.offsetWidth
+        this.body.style.height = firstItem.offsetHeight
+      }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
@@ -229,7 +269,7 @@ window.tgweb = {
 
       this._resetStyle()
 
-      window.onresize = () => {
+      const windowResizeHandler = () => {
         this.body.style.display = "block"
         this.body.style.width = "auto"
 
@@ -238,6 +278,8 @@ window.tgweb = {
         this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
         this._resetStyle()
       }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
@@ -385,5 +427,10 @@ window.tgweb = {
 
       this.previousProgress = progress
     }
-  })
+  }),
+  windowResizeHandlers: []
+}
+
+window.onresize= () => {
+  this.tgweb.windowResizeHandlers.forEach(handler => handler())
 }
