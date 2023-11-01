@@ -62,13 +62,17 @@ const withinRange = (progress, previousProgress, longDistance) => {
 }
 
 window.tgweb = {
-  switcher: (el, interval) => ({
+  switcher: (el, interval, transitionDuration) => ({
     el,
     interval,
+    transitionDuration,
     len: undefined,
+    inTransition: false,
     i: 0,
     v: undefined,
     init() {
+      console.log({transitionDuration})
+
       this.body = this.el.querySelector("[data-switcher-body]")
 
       if (this.body === null) {
@@ -76,44 +80,79 @@ window.tgweb = {
         return
       }
 
+      const items = this.body.querySelectorAll("[data-item-index]")
+      const firstItem = items[0]
+
+      if (firstItem === null) {
+        console.error("This switcher has no item.")
+        return
+      }
+
       this.body.style.display = "flex"
       this.body.style.flexDirection = "column"
       this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth
+      this.body.style.height = firstItem.offsetHeight
 
       this.len = this.el.querySelectorAll("[data-item-index]").length
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
+        this.body.style.width = firstItem.offsetWidth
+        this.body.style.height = firstItem.offsetHeight
+      }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
     _forward() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
+      if (this.i == this.len - 1) clearInterval(this.v)
     },
     first() {
+      this._transition()
       this.i = 0
       clearInterval(this.v)
     },
     prev() {
+      this._transition()
       this.i = this.i > 0 ? this.i - 1 : this.i
       clearInterval(this.v)
     },
     next() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : this.i
       clearInterval(this.v)
     },
     last() {
+      this._transition()
       this.i = this.len - 1
       clearInterval(this.v)
     },
     choose(n) {
+      this._transition()
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
+    },
+    _transition() {
+      if (this.transitionDuration > 0) {
+        this.inTransition = true
+        setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
+      }
     }
   }),
-  rotator: (el, interval) => ({
+  rotator: (el, interval, transitionDuration) => ({
     el,
     interval,
+    transitionDuration,
     len: undefined,
+    inTransition: false,
     i: 0,
     v: undefined,
     init() {
@@ -124,38 +163,70 @@ window.tgweb = {
         return
       }
 
+      const items = this.body.querySelectorAll("[data-item-index]")
+      const firstItem = items[0]
+
+      if (firstItem === null) {
+        console.error("This switcher has no item.")
+        return
+      }
+
       this.body.style.display = "flex"
       this.body.style.flexDirection = "column"
       this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth
+      this.body.style.height = firstItem.offsetHeight
 
       this.len = this.el.querySelectorAll("[data-item-index]").length
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
+        this.body.style.width = firstItem.offsetWidth
+        this.body.style.height = firstItem.offsetHeight
+      }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval !== undefined) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
     _forward() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : 0
     },
     first() {
+      this._transition()
       this.i = 0
       clearInterval(this.v)
     },
     last() {
+      this._transition()
       this.i = this.len - 1
       clearInterval(this.v)
     },
     prev() {
+      this._transition()
       this.i = this.i > 0 ? this.i - 1 : this.len - 1
       clearInterval(this.v)
     },
     next() {
+      this._transition()
       this.i = this.i < this.len - 1 ? this.i + 1 : 0
       clearInterval(this.v)
     },
     choose(n) {
+      this._transition()
       if (n >= 0 && n < this.len) this.i = n
       clearInterval(this.v)
+    },
+    _transition() {
+      if (this.transitionDuration > 0) {
+        this.inTransition = true
+        setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
+      }
     }
   }),
   carousel: (el, len, repeatCount, interval, transitionDuration) => ({
@@ -198,7 +269,7 @@ window.tgweb = {
 
       this._resetStyle()
 
-      window.onresize = () => {
+      const windowResizeHandler = () => {
         this.body.style.display = "block"
         this.body.style.width = "auto"
 
@@ -207,6 +278,8 @@ window.tgweb = {
         this.body.style.width = String(this.itemWidth * this.len * this.repeatCount) + "px"
         this._resetStyle()
       }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval > 0) this.v = setInterval(() => { this._forward() }, this.interval)
     },
@@ -354,5 +427,10 @@ window.tgweb = {
 
       this.previousProgress = progress
     }
-  })
+  }),
+  windowResizeHandlers: []
+}
+
+window.onresize= () => {
+  this.tgweb.windowResizeHandlers.forEach(handler => handler())
 }
