@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.6.3
+
+* 4e0e128 Implement tg:paginator for switcher/rotator (#114)
+* ce4d035 Adjust the size of switcher/rotator body automatically (#115)
+
 ## 0.6.2
 
 * 4a74abb Add `window.onresize` to `tgweb_utilities.js` so that carousel body width is adjusted
