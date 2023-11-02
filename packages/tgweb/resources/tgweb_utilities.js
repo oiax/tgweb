@@ -67,12 +67,11 @@ window.tgweb = {
     interval,
     transitionDuration,
     len: undefined,
+    initial: true,
     inTransition: false,
     i: 0,
     v: undefined,
     init() {
-      console.log({transitionDuration})
-
       this.body = this.el.querySelector("[data-switcher-body]")
 
       if (this.body === null) {
@@ -94,7 +93,7 @@ window.tgweb = {
       this.body.style.width = firstItem.offsetWidth
       this.body.style.height = firstItem.offsetHeight
 
-      this.len = this.el.querySelectorAll("[data-item-index]").length
+      this.len = items.length
 
       const windowResizeHandler = () => {
         const items = this.body.querySelectorAll("[data-item-index]")
@@ -142,6 +141,7 @@ window.tgweb = {
     },
     _transition() {
       if (this.transitionDuration > 0) {
+        this.initial = false
         this.inTransition = true
         setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
       }
@@ -152,6 +152,7 @@ window.tgweb = {
     interval,
     transitionDuration,
     len: undefined,
+    initial: true,
     inTransition: false,
     i: 0,
     v: undefined,
@@ -177,7 +178,7 @@ window.tgweb = {
       this.body.style.width = firstItem.offsetWidth
       this.body.style.height = firstItem.offsetHeight
 
-      this.len = this.el.querySelectorAll("[data-item-index]").length
+      this.len = items.length
 
       const windowResizeHandler = () => {
         const items = this.body.querySelectorAll("[data-item-index]")
@@ -224,6 +225,7 @@ window.tgweb = {
     },
     _transition() {
       if (this.transitionDuration > 0) {
+        this.initial = false
         this.inTransition = true
         setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
       }

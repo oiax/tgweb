@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.6.4
+
+* 480d2ab Show the first switcher/rotator item without transition (#117)
+
 ## 0.6.3
 
 * 4e0e128 Implement tg:paginator for switcher/rotator (#114)

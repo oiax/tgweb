@@ -836,19 +836,12 @@ const addSwitcherSubhooks = (newNode, state) => {
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  const commonStyle = `position: absolute; transition: opacity ${state.transitionDuration}ms`
-  const style0 = `opacity: 1; order: 0; ${commonStyle}`
-  const style1 = `opacity: 0; order: -1; ${commonStyle}`
-
   if (newNode.attribs["tg:body"] !== undefined) {
     newNode.attribs["data-switcher-body"] = ""
   }
   else if (newNode.attribs["tg:item"] !== undefined) {
     newNode.attribs["data-item-index"] = String(state.itemIndex)
-
-    newNode.attribs["x-bind:style"] =
-      `$el.dataset.itemIndex === String(i) ? '${style0}' : '${style1}'`
-
+    addTransitionEffect(newNode, state)
     state.itemIndex = state.itemIndex + 1
   }
 
@@ -908,19 +901,12 @@ const addRotatorSubhooks = (newNode, state) => {
   const currentClass = (newNode.attribs["tg:current-class"] || "").replace(/'/, "\\'")
   const normalClass = (newNode.attribs["tg:normal-class"] || "").replace(/'/, "\\'")
 
-  const commonStyle = `position: absolute; transition: opacity ${state.transitionDuration}ms`
-  const style0 = `opacity: 1; order: 0; ${commonStyle}`
-  const style1 = `opacity: 0; order: -1; ${commonStyle}`
-
   if (newNode.attribs["tg:body"] !== undefined) {
     newNode.attribs["data-rotator-body"] = ""
   }
   else if (newNode.attribs["tg:item"] !== undefined) {
     newNode.attribs["data-item-index"] = String(state.itemIndex)
-
-    newNode.attribs["x-bind:style"] =
-      `$el.dataset.itemIndex === String(i) ? '${style0}' : '${style1}'`
-
+    addTransitionEffect(newNode, state)
     state.itemIndex = state.itemIndex + 1
   }
 
@@ -952,6 +938,17 @@ const addRotatorSubhooks = (newNode, state) => {
       newNode.attribs["x-bind:class"] = `i == ${n} ? '${currentClass}' : '${normalClass}'`
     }
   }
+}
+
+const addTransitionEffect = (newNode, state) => {
+  const transitionStyle = `transition: opacity ${state.transitionDuration}ms`
+  const style00 = `position: absolute; opacity: 1; order: 0`
+  const style01 = `position: absolute; opacity: 0; order: -1`
+  const style10 = `position: absolute; opacity: 1; order: 0; ${transitionStyle}`
+  const style11 = `position: absolute; opacity: 0; order: -1; ${transitionStyle}`
+  const expr0 = `($el.dataset.itemIndex === '0' ? '${style00}' : '${style01}')`
+  const expr1 = `($el.dataset.itemIndex === String(i) ? '${style10}' : '${style11}')`
+  newNode.attribs["x-bind:style"] = `initial ? ${expr0} : ${expr1}`
 }
 
 // Carousel
