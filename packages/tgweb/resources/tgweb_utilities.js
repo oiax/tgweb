@@ -105,7 +105,7 @@ window.tgweb = {
 
       window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
-      if (this.interval !== undefined) {
+      if (this.interval > 0) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
@@ -140,8 +140,9 @@ window.tgweb = {
       clearInterval(this.v)
     },
     _transition() {
+      this.initial = false
+
       if (this.transitionDuration > 0) {
-        this.initial = false
         this.inTransition = true
         setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
       }
@@ -190,7 +191,7 @@ window.tgweb = {
 
       window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
-      if (this.interval !== undefined) {
+      if (this.interval > 0) {
         this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
@@ -224,8 +225,9 @@ window.tgweb = {
       clearInterval(this.v)
     },
     _transition() {
+      this.initial = false
+
       if (this.transitionDuration > 0) {
-        this.initial = false
         this.inTransition = true
         setTimeout(() => { this.inTransition = false }, this.transitionDuration + 250)
       }
