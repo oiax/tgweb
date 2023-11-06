@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.6.5
+
+* 3b4b354 Bug fix: switcher and rotator does not work when interval or transition duration is not
+          set.
+
 ## 0.6.4
 
 * 480d2ab Show the first switcher/rotator item without transition (#117)
