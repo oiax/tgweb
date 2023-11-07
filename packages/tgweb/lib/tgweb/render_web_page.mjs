@@ -952,10 +952,7 @@ const addTransitionEffect = (newNode, state) => {
     newNode.attribs["x-bind:style"] = `initial ? ${expr0} : ${expr1}`
   }
   else {
-    const style0 = `position: absolute; opacity: 1; order: 0`
-    const style1 = `position: absolute; opacity: 0; order: -1`
-    const expr = `($el.dataset.itemIndex === String(i) ? '${style0}' : '${style1}')`
-    newNode.attribs["x-bind:style"] = expr
+    newNode.attribs["x-show"] = `$el.dataset.itemIndex === String(i)`
   }
 }
 

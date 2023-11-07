@@ -87,23 +87,25 @@ window.tgweb = {
         return
       }
 
-      this.body.style.display = "flex"
-      this.body.style.flexDirection = "column"
-      this.body.style.position = "relative"
-      this.body.style.width = firstItem.offsetWidth
-      this.body.style.height = firstItem.offsetHeight
-
       this.len = items.length
 
-      const windowResizeHandler = () => {
-        const items = this.body.querySelectorAll("[data-item-index]")
-        const firstItem = items[0]
-
+      if (transitionDuration !== undefined && transitionDuration > 0) {
+        this.body.style.display = "flex"
+        this.body.style.flexDirection = "column"
+        this.body.style.position = "relative"
         this.body.style.width = firstItem.offsetWidth
         this.body.style.height = firstItem.offsetHeight
-      }
 
-      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+        const windowResizeHandler = () => {
+          const items = this.body.querySelectorAll("[data-item-index]")
+          const firstItem = items[0]
+
+          this.body.style.width = firstItem.offsetWidth
+          this.body.style.height = firstItem.offsetHeight
+        }
+
+        window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+      }
 
       if (this.interval > 0) {
         this.v = setInterval(() => { this._forward() }, this.interval)
@@ -173,26 +175,28 @@ window.tgweb = {
         return
       }
 
-      this.body.style.display = "flex"
-      this.body.style.flexDirection = "column"
-      this.body.style.position = "relative"
-      this.body.style.width = firstItem.offsetWidth
-      this.body.style.height = firstItem.offsetHeight
-
       this.len = items.length
 
-      const windowResizeHandler = () => {
-        const items = this.body.querySelectorAll("[data-item-index]")
-        const firstItem = items[0]
-
+      if (transitionDuration !== undefined && transitionDuration > 0) {
+        this.body.style.display = "flex"
+        this.body.style.flexDirection = "column"
+        this.body.style.position = "relative"
         this.body.style.width = firstItem.offsetWidth
         this.body.style.height = firstItem.offsetHeight
-      }
 
-      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+        const windowResizeHandler = () => {
+          const items = this.body.querySelectorAll("[data-item-index]")
+          const firstItem = items[0]
 
-      if (this.interval > 0) {
-        this.v = setInterval(() => { this._forward() }, this.interval)
+          this.body.style.width = firstItem.offsetWidth
+          this.body.style.height = firstItem.offsetHeight
+        }
+
+        window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+
+        if (this.interval > 0) {
+          this.v = setInterval(() => { this._forward() }, this.interval)
+        }
       }
     },
     _forward() {
