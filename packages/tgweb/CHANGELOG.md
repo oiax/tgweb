@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.6.6
+
+* 7e8f192 Do not adjust the size of body when switcher/rotator does not have `transition-duration`
+          attribute.
+
 ## 0.6.5
 
 * 3b4b354 Bug fix: switcher and rotator does not work when interval or transition duration is not
