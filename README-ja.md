@@ -835,33 +835,87 @@ URL.
 
 ### Material Symbols
 
-By setting the value of the `material-symbols` property to `true` in the "font" section of
-`sites.toml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
-provided by Google will be available on your website.
+`sites.toml` の `font.material-symbols` テーブルの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [Material Symbols](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
 
 ```toml
-[font]
-material-symbols = true
+[font.material-symbols]
+outlined = true
+rounded = true
+sharp = true
 ```
 
-#### Examples
+このように書くことで、すべてのスタイルの Material Symbols が利用できるようになります。
+ただし、一部のスタイルしか使用しない場合は、未使用のスタイル名を持つプロパティに `false` を指定することで、ウェブサイト訪問者の負荷を軽減すべきです。
 
-Outlined "Home" symbol:
+```toml
+[font.material-symbols]
+outlined = false
+rounded = false
+sharp = true
+```
+
+あるいは、未使用のスタイル名を持つプロパティ自体を site.toml から削除しても構いません。
+
+```toml
+[font.material-symbols]
+sharp = true
+```
+
+#### 変数の調整
+
+Material Symbols には書体を調整するための4つの変数が用意されています。
+これらを指定するには、次のように記述してください:
+
+```toml
+[font.material-symbols]
+rounded = { fill: 1, wght: 200, grad: 0, opsz: 24 }
+sharp = { fill: 0, wght: 300, grad: 200, opsz: 40 }
+```
+
+`fill` は塗りつぶしの有無を制御する変数です。0 なら「なし」、1 なら「あり」を意味します。デフォルト値は0です。
+
+`wght` はアイコンの「太さ（weight）」を決定する変数です。100, 200, 300, 400, 500, 600, 700 のいずれかを指定できます。100が最も細く、700が最も太くなります。デフォルト値は400です。
+
+`grad` はアイコンの「グレード（grade）」を決定する変数です。この変数の値を変更することで、アイコンの太さを微調整できます。指定できる値は -25, 0, 200 のいずれかです。デフォルト値は0です。負の値を指定するとアイコンの線がより細くなり、正の値を指定するとアイコンの線がより太くなります。
+
+`opsz` はアイコンの「光学サイズ（optical size）」を決定する変数です。光学サイズとは、アイコンの推奨表示サイズを示します。20, 24, 40, 48 のいずれかを指定できます。デフォルト値は24です。一般に、光学サイズの値を大きくすると、線がより細く、空間がより狭く、x-height （ベースラインと書体の小文字の平均線との間の距離）がより短くなります。
+
+### 異体
+
+ひとつのスタイルに対して変数の値が異なる複数の異体（variants）を用意したい場合は、次のようにスタイル名の後にドットと異体名を加えてください。
+
+```toml
+[font.material-symbols]
+outlined = true
+rounded = { fill: 0, wght: 200, grad: 0, opsz: 24 }
+rounded.strong = { fill: 1, wght: 400, grad: 0, opsz: 24 }
+rounded.bold = { fill: 0, wght: 700, grad: 0, opsz: 24 }
+```
+
+#### 利用例
+
+「ホーム」アイコン（outlined）:
 
 ```html
 <span class="material-symbols-outlined">home</span>
 ```
 
-Rounded "Delete" symbol:
+「削除」アイコン（rounded）:
 
 ```html
 <span class="material-symbols-rounded">delete</span>
 ```
 
-Sharp "Shopping Bag" symbol:
+「買い物かご」アイコン（sharp）:
 
 ```html
 <span class="material-symbols-sharp">shopping_bag</span>
+```
+
+「星」アイコン（rounded）の異体「strong」:
+
+```html
+<span class="material-symbols-rounded.strong">star</span>
 ```
 
 ### Google Fonts

@@ -1321,16 +1321,73 @@ const renderHead = (documentProperties) => {
   }
 
   if (typeof documentProperties.font === "object") {
-    if (documentProperties.font["material-symbols"] === true) {
-      const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
-      children.push(doc.children[0])
+    let params1 = []
+    let params2 = []
+
+    if (typeof documentProperties.font["material-symbols"] === "object") {
+      const materialSymbols = documentProperties.font["material-symbols"]
+      const symbolStyles = ["outlined", "rounded", "sharp"]
+      const validWieghts = [100, 200, 300, 400, 500, 600, 700]
+
+      const collector =
+        Object.keys(materialSymbols).reduce((acc, key) =>
+          {
+            const parts = key.split(".")
+            let style
+
+            if (parts.length === 1) style = key
+            else if (parts.length === 2) style = parts[0]
+
+            const value = materialSymbols[key]
+
+            let values
+
+            if (value === true) {
+              values = "24,400,0,0"
+            }
+            else if (typeof value === "object") {
+              let fill = value.fill
+              let wght = value.wght
+              let grad = value.grad
+              let opsz = value.opsz
+
+              if (![0, 1].includes(fill)) fill = 0
+              if (!validWieghts.includes(wght)) wght = 400
+              if (![-25, 0, 200].includes(grad)) grad = 0
+              if (![20, 24, 40, 48].includes(opsz)) opsz = 24
+
+              values = `${opsz},${wght},${fill},${grad}`
+            }
+
+            if (symbolStyles.includes(style)) {
+              acc[style].push(values)
+            }
+
+            return acc
+          },
+          {"outlined": [], "rounded": [], "sharp": []}
+        );
+
+      params1 =
+        Object.keys(collector).map(style => {
+          const value = collector[style]
+
+          if (value.length > 0) {
+            const capitalized = style.charAt(0).toUpperCase() + style.slice(1)
+            const params = `family=Material+Symbols+${capitalized}:opsz,wght,FILL,GRAD@`
+
+            return params + value.join(";")
+          }
+        })
+
+      params1 = params1.filter((p) => p != undefined)
     }
 
     const googleFonts = documentProperties.font["google-fonts"]
     const validWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900]
 
     if (typeof googleFonts === "object") {
-      const params =
+      params2 =
         Object.keys(googleFonts).map(fontFamilyName => {
           const value = googleFonts[fontFamilyName]
           const escapedFontFamilyName = fontFamilyName.replaceAll(/ /g, "+")
@@ -1354,21 +1411,25 @@ const renderHead = (documentProperties) => {
                 .map(w => `1,${w}`)
 
             const weights = normalWeights.concat(italicWeights).join(";")
-            return `${escapedFontFamilyName}:ital,wght@${weights}`
+            return `family=${escapedFontFamilyName}:ital,wght@${weights}`
           }
         })
 
-      if (params.length > 0) {
-        children.push(parseDocument(
-          "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
+      params2 = params2.filter((p) => p != undefined)
+    }
 
-        children.push(parseDocument(
-          "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+    if (params1.length > 0 || params2.length > 0) {
+      children.push(parseDocument(
+        "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
 
-        const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
-        const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
-        children.push(doc.children[0])
-      }
+      children.push(parseDocument(
+        "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+
+      const params = params1.concat(params2)
+
+      const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
+      const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
+      children.push(doc.children[0])
     }
   }
 
