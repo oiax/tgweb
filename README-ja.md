@@ -18,7 +18,7 @@
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
-* [Links](#links)
+* [リンク](#リンク)
 * [Dynamic Elements](#dynamic-elements)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
 * [Notes on Property Values](#notes-on-property-values)
@@ -1875,12 +1875,11 @@ The above code is to be interpreted as exactly the same as the following
 </tg:links>
 ```
 
-## Links
+## リンク
 
-### Links within the website
+### ウェブサイト内のリンク
 
-When linking to a page within your website using the `<a>` element, specify the _absolute_ path to
-the page in its `href` attribute:
+`<a>` 要素を使ってウェブサイト内のページにリンクする場合は、`href` 属性でページの _絶対_ パスを指定します:
 
 ```html
 <nav>
@@ -1889,18 +1888,16 @@ the page in its `href` attribute:
 </nav>
 ```
 
-When your website is published on Teamgenik, the values of the `href` attribute of the `<a>`
-elements in it will be converted appropriately.
+ウェブサイトが Teamgenik で公開されると、その中の `<a>` 要素の `href` 属性の値は適切に変換されます。
 
-### `<tg:link>`, `<tg:if-current>` and `<tg:label>`
+### `<tg:link>`、 `<tg:if-current>` 、 `<tg:label>`
 
-The `<tg:link>` is a special element used to conditionally cause the `<a>` element to appear.
-Basically, the content of this element is just rendered as it is.
-If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
-attribute of the `<tg:link>` element is set to the value of the `href` attribute of that `<a>`
-element.
+`<tg:link>` は、 `<a>` 要素を条件付きで出現させるために使われる特別な要素です。
+基本的に、この要素の内容はそのままレンダリングされます。
 
-The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
+`<tg:link>` 要素の中に `"#"` の `href` 属性を持つ `<a>` 要素がある場合、`<tg:link>` 要素の `href` 属性の値が `<a>` 要素の `href` 属性に設定されます。
+
+次のコードは `<a href="/articles/goal">Our Goal</a>` としてレンダリングされます:
 
 ```html
 <tg:link href="/articles/goal.html">
@@ -1908,15 +1905,12 @@ The following code is rendered as `<a href="/articles/goal">Our Goal</a>`:
 </tg:link>
 ```
 
-However, when an article with the path `/articles/goal.html` contains the above code, this part is
-removed from the generated HTML document.
+しかし、`/articles/goal.html` というパスを持つアーティクルが上記のコードを含む場合、この部分は生成されたHTMLドキュメントから削除されます。
 
-Zero or one `<tg:if-current>` element may be placed inside the `<tg:link>` element.
-The content of the `<tg:if-current>` element is only rendered if the value of the `href`
-attribute of the `<tg:link>` element matches the path of the HTML document that is being generated.
+0個または1個の `<tg:if-current>` 要素を `<tg:link>` 要素の中に入れることができます。
+`<tg:if-current>` 要素の内容は、`<tg:link>` 要素の `href` 属性の値が、生成されるHTML文書のパスと一致する場合にのみレンダリングされます。
 
-The following code is rendered as `<span class="font-bold">Our Goal</span>` when it appears in
-an article with the path `/articles/goal.html`.
+次のコードは、`/articles/goal.html` というパスを持つアーティクルの中で `<span class="font-bold">Our Goal</span>` としてレンダリングされます。
 
 ```html
 <tg:link href="/articles/goal.html">
@@ -1927,7 +1921,7 @@ an article with the path `/articles/goal.html`.
 </tg:link>
 ```
 
-The `<tg:label>` element can be used to remove duplication from the above code.
+`<tg:label>` 要素を使えば、上記のコードから重複を取り除くことができます。
 
 ```html
 <tg:link href="/articles/goal.html" label="Our Goal">
@@ -1938,10 +1932,9 @@ The `<tg:label>` element can be used to remove duplication from the above code.
 </tg:link>
 ```
 
-This element is replaced by the value specified in the `label` attribute of the `<tg:link>`
-element.
+この要素は、`<tg:link>` 要素の `label` 属性で指定された値で置き換えられます。
 
-#### Example
+#### 例
 
 `src/components/nav.html`
 
@@ -1962,12 +1955,11 @@ element.
 </nav>
 ```
 
-### `<tg:link>` with the `component` attribute
+###  `<tg:link>` に `component` 属性を付ける
 
-When a `<tg:link>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg:link>` element.
+`<tg:link>` 要素に `component` 属性があると、その値に対応する名前の部品の内容が `<tg:link>` 要素の内容になります。
 
-For example, suppose there is a `nav_link` component with the following content
+例えば、次のような内容の `nav_link` 部品があるとします。
 
 `src/components/nav_link.html`
 
@@ -1978,13 +1970,13 @@ For example, suppose there is a `nav_link` component with the following content
 </tg:if-current>
 ```
 
-In this case, we can construct a `<tg:link>` element as follows:
+この場合、`<tg:link>` 要素は次のように構成できます：
 
 ```html
 <tg:link component="nav_link" href="/articles/goal.html" label="Our Goal"></tg:link>
 ```
 
-The above code is to be interpreted as exactly the same as the following
+上記のコードは、以下のコードとまったく同じと解釈されます。
 
 ```html
 

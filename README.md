@@ -1927,7 +1927,7 @@ elements in it will be converted appropriately.
 
 The `<tg:link>` is a special element used to conditionally cause the `<a>` element to appear.
 Basically, the content of this element is just rendered as it is.
-If there is an `<a>` element with a `href` attribute of `"#"` inside the link element, the `href`
+If there is an `<a>` element with a `href` attribute of `"#"` inside the `<tg:link>` element, the `href`
 attribute of the `<tg:link>` element is set to the value of the `href` attribute of that `<a>`
 element.
 
