@@ -450,9 +450,9 @@ The following table names are available in the front matter block:
 
 * data
 * style
-* meta
-* http-equiv
-* meta-property
+* meta.name
+* meta.http-equiv
+* meta.property
 * link
 
 The first two are described in this section; the other four are described in
@@ -2866,13 +2866,13 @@ belongs to "meta", "http-equiv", or "meta-property" tables.
 Note that the `<head>` element of the generated HTML document always contains a
 `<meta charset="utf-8">` element.
 
-#### `[meta]` table
+#### `[meta.name]` table
 
 You can generate a `<meta>` element with a `name` attribute by setting the value to a property
-that belongs to the "meta" table:
+that belongs to the "meta.name" table:
 
 ```toml
-[meta]
+[meta.name]
 viewport = "width=device-width, initial-scale=1"
 theme-color = "#2da0a8"
 description = Description
@@ -2895,7 +2895,7 @@ Setting the values of the properties as above will produce the following `<meta>
 If you want to generate multiple `<meta>` elements with the same name, write as follows:
 
 ```toml
-[meta]
+[meta.name]
 googlebot = [ "index,follow", "notranslate" ]
 ```
 
@@ -2906,7 +2906,7 @@ The above will generate the following `<meta>` elements
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `[http-equiv]` section
+#### `[meta.http-equiv]` table
 
 You can generate a `<meta>` element with a `http-equiv` attribute by setting the value to a
 property that belongs to "http-equiv" table.
@@ -2926,10 +2926,10 @@ The above settings will generate the following `<meta>` elements:
 
 Teamgenik converts these paths into URLs appropriately.
 
-#### `[meta-property]` section
+#### `[meta.property]` table
 
 ```toml
-[meta-property]
+[meta.property]
 "fb:app_id" = "1234567890abcde"
 "fb:article_style" = "default"
 "fb:use_automatic_ad_placement" = "true"
@@ -2953,10 +2953,10 @@ You can embed the value of a property into the `content` attribute of a `<meta>`
 `${...}` notation:
 
 ```toml
-[meta-property]
+[meta.property]
 "og:url" = "${url}"
 "og:title" = "${title}"
-"og:description" = "${meta.description}"
+"og:description" = "${meta.name.description}"
 ```
 
 To refer to the value of a property belonging to the "meta" table, add `meta.` before the property
@@ -2966,7 +2966,7 @@ You can embed the URL of an image or audio file into the `content` attribute of 
 element using `%{...}` notation:
 
 ```toml
-[meta-property]
+[meta.property]
 "og:image" = "%{/images/icon.png}"
 "og:audio" = "%{/audios/theme.mp3}"
 ```

@@ -1213,50 +1213,40 @@ const renderHead = (documentProperties) => {
   }
 
   if (typeof documentProperties.meta === "object") {
-    Object.keys(documentProperties.meta).forEach(name => {
-      if (name.match(/"/) !== null) return
-      const content = documentProperties.meta[name]
-      const doc = parseDocument(`<meta name="${name}" content="${content}">`)
-      children.push(doc.children[0])
-    })
-  }
+    if (typeof documentProperties.meta.name === "object") {
+      Object.keys(documentProperties.meta.name).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta.name[name]
+        if (typeof content !== "string") return
 
-  if (typeof documentProperties["http-equiv"] === "object") {
-    Object.keys(documentProperties["http-equiv"]).forEach(name => {
-      if (name.match(/"/) !== null) return
-      const content = documentProperties["http-equiv"][name]
-      const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
-      children.push(doc.children[0])
-    })
-  }
+        const doc = parseDocument(`<meta name="${name}" content="${content}">`)
+        children.push(doc.children[0])
+      })
+    }
 
-  if (typeof documentProperties["meta-property"] === "object") {
-    Object.keys(documentProperties["meta-property"]).forEach(name => {
-      if (name.match(/"/) !== null) return
+    if (typeof documentProperties.meta["http-equiv"] === "object") {
+      Object.keys(documentProperties.meta["http-equiv"]).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta["http-equiv"][name]
+        if (typeof content !== "string") return
 
-      const content = documentProperties["meta-property"][name]
+        const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
+        children.push(doc.children[0])
+      })
+    }
 
-      if (typeof content !== "string") return
+    if (typeof documentProperties.meta["property"] === "object") {
+      Object.keys(documentProperties.meta["property"]).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta["property"][name]
 
-      let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
-        const parts = propName.split(".")
+        if (typeof content !== "string") return
 
-        if (parts.length === 1) {
-          const value = documentProperties.main[propName]
+        let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+          const parts = propName.split(".")
 
-          if (typeof value === "string") {
-            return value
-          }
-          else {
-            return `\${${propName}}`
-          }
-        }
-        else if (parts.length === 2) {
-          const p1 = parts[0]
-          const p2 = parts[2]
-
-          if (typeof documentProperties.main[p1] === "object") {
-            const value = documentProperties.main[p1][p2]
+          if (parts.length === 1) {
+            const value = documentProperties.main[propName]
 
             if (typeof value === "string") {
               return value
@@ -1265,20 +1255,35 @@ const renderHead = (documentProperties) => {
               return `\${${propName}}`
             }
           }
-          else {
-            return `\${${propName}}`
+          else if (parts.length === 2) {
+            const p1 = parts[0]
+            const p2 = parts[2]
+
+            if (typeof documentProperties.main[p1] === "object") {
+              const value = documentProperties.main[p1][p2]
+
+              if (typeof value === "string") {
+                return value
+              }
+              else {
+                return `\${${propName}}`
+              }
+            }
+            else {
+              return `\${${propName}}`
+            }
           }
-        }
+        })
+
+        converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+          const rootUrl = documentProperties.main["root-url"]
+          return rootUrl + path.replace(/^\//, "")
+        }).replace(/"/g, "&#34")
+
+        const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
+        children.push(doc.children[0])
       })
-
-      converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties.main["root-url"]
-        return rootUrl + path.replace(/^\//, "")
-      }).replace(/"/g, "&#34")
-
-      const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
-      children.push(doc.children[0])
-    })
+    }
   }
 
   if (typeof documentProperties.link === "object") {

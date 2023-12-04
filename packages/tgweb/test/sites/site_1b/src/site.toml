@@ -9,5 +9,5 @@ x = 0
 y = 0
 z = 0
 
-[meta-property]
+[meta.property]
 "og:image" = "%{/images/red_square.png}"
