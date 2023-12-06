@@ -46,7 +46,7 @@ Then go in and install **tgweb** with `npm`:
 
 ```bash
 cd my_site
-npm install tgweb
+npm install tgweb@latest
 ```
 
 In your working directory you will have a directory named `node_modules`, where you will find
@@ -193,7 +193,7 @@ installed with `npm`:
 ```bash
 mkdir ~/web
 cd web
-npm install tgweb
+npm install tgweb@latest
 ```
 
 Now choose a subdirectory name for the first website you will create in this working directory.
