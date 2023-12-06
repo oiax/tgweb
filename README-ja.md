@@ -47,7 +47,7 @@ mkdir -p ~/my_site
 
 ```bash
 cd my_site
-npm install tgweb
+npm install tgweb@latest
 ```
 
 インストールが無事に終わると、作業ディレクトリの中に `node_modules` というディレクトリが作成され、このディレクトリの中に **tgweb** とその依存関係にあるライブラリがインストールされます。
@@ -183,7 +183,7 @@ tgweb を `npm` 経由でインストールする時点までは、ひとつの�
 ```bash
 mkdir ~/web
 cd web
-npm install tgweb
+npm install tgweb@latest
 ```
 
 作業ディレクトリ内に最初に構築するウェブサイトディレクトリの名前を決めます。

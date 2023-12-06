@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.6.7
+
+* b5ee1ac Update `skel/src/site.toml`
+
 ## 0.6.6
 
 * 7e8f192 Do not adjust the size of body when switcher/rotator does not have `transition-duration`
