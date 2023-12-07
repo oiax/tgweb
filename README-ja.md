@@ -6,7 +6,7 @@
 * [はじめに](#はじめに)
 * [ディレクトリ構造](#ディレクトリ構造)
 * [複数のウェブサイトを管理する方法](#複数のウェブサイトを管理する方法)
-* [Pages](#pages)
+* [ページ](#ページ)
 * [Front Matter](#front-matter)
 * [Color Scheme](#color-scheme)
 * [Images](#images)
@@ -283,21 +283,18 @@ rm -rf sites
 
 注意点として、上記のコマンドは、`sites` 下層のディレクトリに複数のディレクトリがあった場合 `site_0` 以外のディレクトリを削除します。
 
-## Pages
+## ページ
 
-### What is a page
+### ページとは
 
-In **tgweb**, the HTML documents that make up a website are generated from a combination of
-template files. A _page_ is a type of such template file.
+**tgweb** では、ウェブサイトを構成するHTML文書は、テンプレートファイルの組み合わせから生成されます。 _ページ_ はそのようなテンプレート・ファイルの一種です。
 
-Non-page templates include layouts, segments, wrappers, articles, and components, which
-are described in turn in the following sections.
+ページ以外のテンプレートには、レイアウト、セグメント、ラッパー、アーティクル、部品があり、以降のセクションで順番に説明します。
 
-Pages are placed in the `src/pages` subdirectory under the working directory.
+ページは作業ディレクトリ下の`src/pages`サブディレクトリに置かれます。
 
-It is possible to create a subdirectory under the `src/pages` directory and place pages under it.
-However, it is not possible to create a subdirectory directly under the `src/pages` directory with
-the following names:
+`src/pages`ディレクトリの下にサブディレクトリを作り、その下にページを置くことも可能です。
+ただし、`src/pages`ディレクトリ直下に以下のような名前のサブディレクトリを作ることはできません:
 
 * `articles`
 * `audios`
@@ -305,14 +302,14 @@ the following names:
 * `tags`
 * `videos`
 
-Every website must have a file named `index.html` in the `src/pages` directory.
-From this page, the _home page_ of the website is generated.
+すべてのウェブサイトは、`src/pages`ディレクトリに`index.html`という名前のファイルを持たなければなりません。
+このページから、ウェブサイトの _ホームページ_ が作成されます。
 
-### Adding a simple page
+### シンプルなページの追加
 
-Pages to which a [layout](#Layouts) is not applied are called "simple pages".
+[レイアウト](#レイアウト)が適用されていないページは「シンプルページ」と呼ばれます。
 
-The following is an example of a simple page:
+次はシンプルページの例です:
 
 ```html
 <body>
@@ -323,16 +320,14 @@ The following is an example of a simple page:
 </body>
 ```
 
-Note that the top-level element of a page should be the `<body>` element.
-Unlike normal HTML files, a tgweb page is not enclosed in `<html>` and `</html>` tags and does
-not have a `<head>` element.
-A page will be converted into a complete HTML document and written to the `dist` directory.
+ページのトップレベル要素は `<body>` 要素でなければならないことに注意してください。
+通常のHTMLファイルとは異なり、tgwebページは `<html>` タグや `</html>` タグで囲まれておらず、`<head>` 要素もありません。
+ページは完全なHTMLドキュメントに変換され、`dist` ディレクトリに書き込まれます。
 
-For example, `src/pages/index.html` is converted to `dist/index.html` and
-`src/pages/shops/new_york.html` is converted to `dist/shops/new_york.html`.
+例えば、`src/pages/index.html` は `dist/index.html` に、`src/pages/shops/new_york.html` は `dist/shops/new_york.html` に変換されます。
 
-The content of the `<head>` element is automatically generated.
-See [below](#managing-the-contents-of-the-head-element) for details.
+`<head>` 要素の内容は自動的に生成されます。
+詳細は [後述](#managing-the-contents-of-the-head-element) します。
 
 ## Color Scheme
 
@@ -921,7 +916,7 @@ The following example uses the italic Pathway Extreme font family with weight 40
 <p class="font-['Pathway_Extreme'] italic font-[400]">Hello, world!</p>
 ```
 
-## Layouts
+## レイアウト
 
 ### What is a layout
 
