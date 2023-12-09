@@ -470,20 +470,20 @@ header or until the end of the file.
 
 The following table names are available in the front matter block:
 
+* main
 * data
 * style
-* meta
-* http-equiv
-* meta-property
+* meta.name
+* meta.http-equiv
+* meta.property
 * link
 
-The first two are described in this section; the other four are described in
+The first three are described in this section; the other four are described in
 [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element).
 
 ### Predefined properties
 
-In the area before the first table header in the front matter block, set the value of
-_predefined properties_.
+In the _main_ table of the front matter block, set the value of _predefined properties_.
 
 The following are examples of predefined properties:
 
@@ -511,7 +511,7 @@ The following three properties are meaningful only in articles:
 
 See [Articles](#articles) for details.
 
-### Embedding property values in a template
+### Embedding predefined property values in a template
 
 The value of a predefined property can be embedded into a template by the `<tg:prop>` element.
 
@@ -532,9 +532,9 @@ title = "Our Mission"
 
 ### Custom properties
 
-As already noted, `[data]` in the front matter block indicates the beginning of the "data" table.
+As already noted, `[data]` in the front matter block indicates the beginning of the _data_ table.
 
-Within the "data" table, custom properties can be defined. Website authors can set values for
+Within the _data_ table, custom properties can be defined. Website authors can set values for
 custom properties of any name.
 The value of a custom property must be a string or a number in decimal notation.
 
