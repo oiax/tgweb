@@ -22,8 +22,8 @@ describe("getSiteData", () => {
 
     assert.equal(page.frontMatter["main"]["layout"], "home")
     assert.equal(page.frontMatter["main"]["title"], "Home")
-    assert.equal(page.frontMatter["meta"]["viewport"], "width=device-width, initial-scale=1")
-    assert.equal(page.frontMatter["meta-property"]["fb:app_id"], "0123456789abced")
+    assert.equal(page.frontMatter["meta"]["name"]["viewport"], "width=device-width, initial-scale=1")
+    assert.equal(page.frontMatter["meta"]["property"]["fb:app_id"], "0123456789abced")
   })
 
   it("should process a page without <body> and </body> tags", () => {
@@ -50,7 +50,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.properties.meta.viewport, "width=device-width, initial-scale=1.0")
+    assert.equal(siteData.properties.meta.name.viewport, "width=device-width, initial-scale=1.0")
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
     assert.equal(page.path, "pages/index.html")
@@ -70,7 +70,7 @@ describe("getSiteData", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum_with_title")
     const siteData = getSiteData(wd)
 
-    assert.equal(siteData.properties.meta.viewport, "width=device-width, initial-scale=1.0")
+    assert.equal(siteData.properties.meta.name.viewport, "width=device-width, initial-scale=1.0")
 
     const page = siteData.pages.find(page => page.path == "pages/index.html")
     assert.equal(page.path, "pages/index.html")

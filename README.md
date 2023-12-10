@@ -861,39 +861,111 @@ URL.
 
 ### Material Symbols
 
-By setting the value of the `material-symbols` property to `true` in the "font" section of
-`sites.toml`, [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
+#### Basic Usage
+
+By setting the value of the `outlined`, `rounded` and `sharp` properties to `true` in the
+"font.material-symbols" section of `sites.toml`,
+[Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
 provided by Google will be available on your website.
 
 ```toml
-[font]
-material-symbols = true
+[font.material-symbols]
+outlined = true
+rounded = true
+sharp = true
 ```
 
-#### Examples
+By writing in this way, all styles of Material Symbols will be available.
+However, if only some of the styles are used, then the load on the website visitor should be
+reduced by specifying `false` for properties with unused style names.
 
-Outlined "Home" symbol:
+```toml
+[font.material-symbols]
+outlined = false
+rounded = false
+sharp = true
+```
+
+Alternatively, the property itself with the unused style name may be removed from `site.toml`.
+
+```toml
+[font.material-symbols]
+sharp = true
+```
+
+#### Adjusting variables
+
+Material Symbols provides four _variables_ for adjusting its typeface.
+To specify them, write as following:
+
+```toml
+[font.material-symbols]
+rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
+sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
+```
+
+The `fill` is a variable that controls whether or not fill is applied;
+0 means "no fill" and 1 means "fill". The default value is 0.
+
+The `wght` controls the thickness (_weight_) of icons:
+Possible values are 100, 200, 300, 400, 500, 600, or 700.
+100 is the thinnest and 700 is the thickest.
+The default value is 400.
+
+The `grad` is the variable that determines the _grade_ of icons.
+By changing the value of this variable, the thickness of the icon can be fine-tuned.
+Possible values are -25, 0, or 200. The default value is 0.
+A negative value makes icons thinner, a positive value makes them thicker.
+
+The `opsz` variable determines the _optical size_ of icons, which is their recommended display
+size. Possible values are 20, 24, 40, or 48. The default value is 24.
+In general, larger values of optical size result in thinner lines, narrower spaces, and shorter
+x-height (the distance between the baseline and the average line of the typeface's lowercase
+letters).
+
+### Variants
+
+If you want to have multiple variants of a single style with different values for the variables,
+add a dot and the name of the variant after the style name, as follows:
+
+```toml
+[font.material-symbols]
+outlined = true
+rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
+rounded.strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
+rounded.bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
+```
+
+#### Examples of Use
+
+The "Home" symbol (outlined):
 
 ```html
 <span class="material-symbols-outlined">home</span>
 ```
 
-Rounded "Delete" symbol:
+The "Delete" symbol (rounded):
 
 ```html
 <span class="material-symbols-rounded">delete</span>
 ```
 
-Sharp "Shopping Bag" symbol:
+The "Shopping Bag" symbol (sharp):
 
 ```html
 <span class="material-symbols-sharp">shopping_bag</span>
 ```
 
+The "strong" variant of the "Star" symbol (rounded):
+
+```html
+<span class="material-symbols-rounded.strong">star</span>
+```
+
 ### Google Fonts
 
 The Roboto font family from [Google Fonts](https://fonts.google.com/) can be used on your website
-by setting the following in the "font.google-fonts" section of `site.toml`.
+by setting the following in the "font.google-fonts" table of `site.toml`.
 
 ```toml
 Roboto = true
@@ -2929,13 +3001,13 @@ belongs to "meta", "http-equiv", or "meta-property" tables.
 Note that the `<head>` element of the generated HTML document always contains a
 `<meta charset="utf-8">` element.
 
-#### `[meta]` table
+#### `[meta.name]` table
 
 You can generate a `<meta>` element with a `name` attribute by setting the value to a property
-that belongs to the "meta" table:
+that belongs to the "meta.name" table:
 
 ```toml
-[meta]
+[meta.name]
 viewport = "width=device-width, initial-scale=1"
 theme-color = "#2da0a8"
 description = "Description"
@@ -2956,7 +3028,7 @@ Setting the values of the properties as above will produce the following `<meta>
 If you want to generate multiple `<meta>` elements with the same name, write as follows:
 
 ```toml
-[meta]
+[meta.name]
 googlebot = [ "index,follow", "notranslate" ]
 ```
 
@@ -2967,13 +3039,13 @@ The above will generate the following `<meta>` elements
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `[http-equiv]` section
+#### `[meta.http-equiv]` table
 
 You can generate a `<meta>` element with a `http-equiv` attribute by setting the value to a
 property that belongs to "http-equiv" table.
 
 ```toml
-[http-equiv]
+[meta.http-equiv]
 content-security-policy = "default-src 'self'"
 x-dns-prefetch-control = "off"
 ```
@@ -2987,10 +3059,10 @@ The above settings will generate the following `<meta>` elements:
 
 Teamgenik converts these paths into URLs appropriately.
 
-#### `[meta-property]` section
+#### `[meta.property]` table
 
 ```toml
-[meta-property]
+[meta.property]
 "fb:app_id" = "1234567890abcde"
 "fb:article_style" = "default"
 "fb:use_automatic_ad_placement" = "true"
@@ -3014,10 +3086,10 @@ You can embed the value of a property into the `content` attribute of a `<meta>`
 `${...}` notation:
 
 ```toml
-[meta-property]
+[meta.property]
 "og:url" = "${url}"
 "og:title" = "${title}"
-"og:description" = "${meta.description}"
+"og:description" = "${meta.name.description}"
 ```
 
 To refer to the value of a property belonging to the "meta" table, add `meta.` before the property
@@ -3027,7 +3099,7 @@ You can embed the URL of an image or audio file into the `content` attribute of 
 element using `%{...}` notation:
 
 ```toml
-[meta-property]
+[meta.property]
 "og:image" = "%{/images/icon.png}"
 "og:audio" = "%{/audios/theme.mp3}"
 ```

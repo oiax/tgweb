@@ -1213,50 +1213,40 @@ const renderHead = (documentProperties) => {
   }
 
   if (typeof documentProperties.meta === "object") {
-    Object.keys(documentProperties.meta).forEach(name => {
-      if (name.match(/"/) !== null) return
-      const content = documentProperties.meta[name]
-      const doc = parseDocument(`<meta name="${name}" content="${content}">`)
-      children.push(doc.children[0])
-    })
-  }
+    if (typeof documentProperties.meta.name === "object") {
+      Object.keys(documentProperties.meta.name).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta.name[name]
+        if (typeof content !== "string") return
 
-  if (typeof documentProperties["http-equiv"] === "object") {
-    Object.keys(documentProperties["http-equiv"]).forEach(name => {
-      if (name.match(/"/) !== null) return
-      const content = documentProperties["http-equiv"][name]
-      const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
-      children.push(doc.children[0])
-    })
-  }
+        const doc = parseDocument(`<meta name="${name}" content="${content}">`)
+        children.push(doc.children[0])
+      })
+    }
 
-  if (typeof documentProperties["meta-property"] === "object") {
-    Object.keys(documentProperties["meta-property"]).forEach(name => {
-      if (name.match(/"/) !== null) return
+    if (typeof documentProperties.meta["http-equiv"] === "object") {
+      Object.keys(documentProperties.meta["http-equiv"]).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta["http-equiv"][name]
+        if (typeof content !== "string") return
 
-      const content = documentProperties["meta-property"][name]
+        const doc = parseDocument(`<meta http-equiv="${name}" content="${content}">`)
+        children.push(doc.children[0])
+      })
+    }
 
-      if (typeof content !== "string") return
+    if (typeof documentProperties.meta["property"] === "object") {
+      Object.keys(documentProperties.meta["property"]).forEach(name => {
+        if (name.match(/"/) !== null) return
+        const content = documentProperties.meta["property"][name]
 
-      let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
-        const parts = propName.split(".")
+        if (typeof content !== "string") return
 
-        if (parts.length === 1) {
-          const value = documentProperties.main[propName]
+        let converted = content.replaceAll(/\$\{([^}]+)\}/g, (_, propName) => {
+          const parts = propName.split(".")
 
-          if (typeof value === "string") {
-            return value
-          }
-          else {
-            return `\${${propName}}`
-          }
-        }
-        else if (parts.length === 2) {
-          const p1 = parts[0]
-          const p2 = parts[2]
-
-          if (typeof documentProperties.main[p1] === "object") {
-            const value = documentProperties.main[p1][p2]
+          if (parts.length === 1) {
+            const value = documentProperties.main[propName]
 
             if (typeof value === "string") {
               return value
@@ -1265,20 +1255,35 @@ const renderHead = (documentProperties) => {
               return `\${${propName}}`
             }
           }
-          else {
-            return `\${${propName}}`
+          else if (parts.length === 2) {
+            const p1 = parts[0]
+            const p2 = parts[2]
+
+            if (typeof documentProperties.main[p1] === "object") {
+              const value = documentProperties.main[p1][p2]
+
+              if (typeof value === "string") {
+                return value
+              }
+              else {
+                return `\${${propName}}`
+              }
+            }
+            else {
+              return `\${${propName}}`
+            }
           }
-        }
+        })
+
+        converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
+          const rootUrl = documentProperties.main["root-url"]
+          return rootUrl + path.replace(/^\//, "")
+        }).replace(/"/g, "&#34")
+
+        const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
+        children.push(doc.children[0])
       })
-
-      converted = converted.replaceAll(/%\{([^}]+)\}/g, (_, path) => {
-        const rootUrl = documentProperties.main["root-url"]
-        return rootUrl + path.replace(/^\//, "")
-      }).replace(/"/g, "&#34")
-
-      const doc = parseDocument(`<meta property="${name}" content="${converted}">`)
-      children.push(doc.children[0])
-    })
+    }
   }
 
   if (typeof documentProperties.link === "object") {
@@ -1316,16 +1321,73 @@ const renderHead = (documentProperties) => {
   }
 
   if (typeof documentProperties.font === "object") {
-    if (documentProperties.font["material-symbols"] === true) {
-      const doc = parseDocument("<link rel='stylesheet' href='/css/material-symbols/index.css'>")
-      children.push(doc.children[0])
+    let params1 = []
+    let params2 = []
+
+    if (typeof documentProperties.font["material-symbols"] === "object") {
+      const materialSymbols = documentProperties.font["material-symbols"]
+      const symbolStyles = ["outlined", "rounded", "sharp"]
+      const validWieghts = [100, 200, 300, 400, 500, 600, 700]
+
+      const collector =
+        Object.keys(materialSymbols).reduce((acc, key) =>
+          {
+            const parts = key.split(".")
+            let style
+
+            if (parts.length === 1) style = key
+            else if (parts.length === 2) style = parts[0]
+
+            const value = materialSymbols[key]
+
+            let values
+
+            if (value === true) {
+              values = "24,400,0,0"
+            }
+            else if (typeof value === "object") {
+              let fill = value.fill
+              let wght = value.wght
+              let grad = value.grad
+              let opsz = value.opsz
+
+              if (![0, 1].includes(fill)) fill = 0
+              if (!validWieghts.includes(wght)) wght = 400
+              if (![-25, 0, 200].includes(grad)) grad = 0
+              if (![20, 24, 40, 48].includes(opsz)) opsz = 24
+
+              values = `${opsz},${wght},${fill},${grad}`
+            }
+
+            if (symbolStyles.includes(style)) {
+              acc[style].push(values)
+            }
+
+            return acc
+          },
+          {"outlined": [], "rounded": [], "sharp": []}
+        );
+
+      params1 =
+        Object.keys(collector).map(style => {
+          const value = collector[style]
+
+          if (value.length > 0) {
+            const capitalized = style.charAt(0).toUpperCase() + style.slice(1)
+            const params = `family=Material+Symbols+${capitalized}:opsz,wght,FILL,GRAD@`
+
+            return params + value.join(";")
+          }
+        })
+
+      params1 = params1.filter((p) => p != undefined)
     }
 
     const googleFonts = documentProperties.font["google-fonts"]
     const validWeights = [100, 200, 300, 400, 500, 600, 700, 800, 900]
 
     if (typeof googleFonts === "object") {
-      const params =
+      params2 =
         Object.keys(googleFonts).map(fontFamilyName => {
           const value = googleFonts[fontFamilyName]
           const escapedFontFamilyName = fontFamilyName.replaceAll(/ /g, "+")
@@ -1349,21 +1411,25 @@ const renderHead = (documentProperties) => {
                 .map(w => `1,${w}`)
 
             const weights = normalWeights.concat(italicWeights).join(";")
-            return `${escapedFontFamilyName}:ital,wght@${weights}`
+            return `family=${escapedFontFamilyName}:ital,wght@${weights}`
           }
         })
 
-      if (params.length > 0) {
-        children.push(parseDocument(
-          "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
+      params2 = params2.filter((p) => p != undefined)
+    }
 
-        children.push(parseDocument(
-          "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+    if (params1.length > 0 || params2.length > 0) {
+      children.push(parseDocument(
+        "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
 
-        const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
-        const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
-        children.push(doc.children[0])
-      }
+      children.push(parseDocument(
+        "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+
+      const params = params1.concat(params2)
+
+      const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
+      const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
+      children.push(doc.children[0])
     }
   }
 
