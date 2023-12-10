@@ -644,6 +644,7 @@ describe("renderWebSite", () => {
       '      <div class="flex justify-center">',
       '        Hello, world!',
       '      </div>',
+      '      <div>http://localhost:3000/</div>',
       '    </div>',
       '  </div>',
       '</body>'

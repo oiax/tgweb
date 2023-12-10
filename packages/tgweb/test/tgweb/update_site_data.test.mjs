@@ -72,6 +72,8 @@ describe("updateSiteData", () => {
 
     const p = DomUtils.find(node => node.name === "p", page.dom.children, true)
     assert.equal(DomUtils.textContent(p), "Added paragraph.")
+
+    assert.equal(page.frontMatter.main.url, "http://localhost:3000/")
   })
 
   it("should update an article template", () => {
