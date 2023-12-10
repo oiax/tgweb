@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.7.0
+
+* 63e3151 Rename `site.toml` and `front_matter` tables
+* 8aa4d4c Extend `site.toml` schema for Google Material Symbols
+
 ## 0.6.8
 
 * 2392d47 Bug fix: the `url` prop gets unset when a page or article is updated
