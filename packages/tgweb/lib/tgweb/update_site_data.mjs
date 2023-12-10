@@ -24,7 +24,7 @@ const updateSiteData = (siteData, path) => {
     const component = siteData.components.find(c => `src/${c.path}` === path)
 
     if (component) {
-      updateTemplate(component, path)
+      updateTemplate(component, path, "component", siteData.properties)
     }
     else {
       siteData.components.push(getTemplate(path, "component"))
@@ -34,7 +34,7 @@ const updateSiteData = (siteData, path) => {
     const segment = siteData.segments.find(s => `src/${s.path}` === path)
 
     if (segment) {
-      updateTemplate(segment, path)
+      updateTemplate(segment, path, "segment", siteData.properties)
     }
     else {
       siteData.segments.push(getTemplate(path, "segment"))
@@ -44,7 +44,7 @@ const updateSiteData = (siteData, path) => {
     const layout = siteData.layouts.find(l => `src/${l.path}` === path)
 
     if (layout) {
-      updateTemplate(layout, path)
+      updateTemplate(layout, path, "layout", siteData.properties)
       setDependencies(layout, siteData)
     }
     else {
@@ -55,7 +55,7 @@ const updateSiteData = (siteData, path) => {
     const article = siteData.articles.find(a => `src/${a.path}` === path)
 
     if (article) {
-      updateTemplate(article, path, siteData.properties)
+      updateTemplate(article, path, "article", siteData.properties)
       setUrlProperty(article.frontMatter, siteData, article.path)
       setDependencies(article, siteData, true)
     }
@@ -79,7 +79,7 @@ const updateSiteData = (siteData, path) => {
     const page = siteData.pages.find(p => `src/${p.path}` === path)
 
     if (page) {
-      updateTemplate(page, path)
+      updateTemplate(page, path, "page", siteData.properties)
       setUrlProperty(page.frontMatter, siteData, path)
       setDependencies(page, siteData)
     }
@@ -91,7 +91,7 @@ const updateSiteData = (siteData, path) => {
     const wrapper = siteData.wrappers.find(w => `src/${w.path}` === path)
 
     if (wrapper) {
-      updateTemplate(wrapper, path)
+      updateTemplate(wrapper, path, "wrapper", siteData.properties)
       setDependencies(wrapper, siteData)
     }
     else {
@@ -137,8 +137,8 @@ const updateSiteData = (siteData, path) => {
   }
 }
 
-const updateTemplate = (template, path) => {
-  const newTemplate = getTemplate(path, undefined)
+const updateTemplate = (template, path, type, siteProperties) => {
+  const newTemplate = getTemplate(path, type, siteProperties)
   template.frontMatter = newTemplate.frontMatter
   template.inserts = newTemplate.inserts
   template.dom = newTemplate.dom

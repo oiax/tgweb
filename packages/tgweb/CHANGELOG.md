@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.6.8
+
+* 2392d47 Bug fix: the `url` prop gets unset when a page or article is updated
+
 ## 0.6.7
 
 * b5ee1ac Update `skel/src/site.toml`
