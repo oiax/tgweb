@@ -8,7 +8,7 @@
 * [複数のウェブサイトを管理する方法](#複数のウェブサイトを管理する方法)
 * [ページ](#ページ)
 * [フロントマター](#フロントマター)
-* [Color Scheme](#color-scheme)
+* [カラースキーム](#カラースキーム)
 * [Images](#images)
 * [Audios](#audios)
 * [Fonts and Icons](#fonts-and-icons)
@@ -329,57 +329,6 @@ rm -rf sites
 `<head>` 要素の内容は自動的に生成されます。
 詳細は [後述](#managing-the-contents-of-the-head-element) します。
 
-## Color Scheme
-
-### Cusotom color names
-
-Editing the `color_scheme.toml` in the `src` directory allows you to define custom color names
-for Tailwind CSS.
-
-A custom color name is a combination of a _palette_ and a _modifier_.
-The palette is a three-letter alphabet and the modifier is a one-letter alphabet.
-The palette and modifier are joined by a minus sign, like `bas-s` or `neu-d`.
-
-The following is a list of available palettes and their expected uses.
-
-* **bas**: Base color (background color of entire website)
-* **neu**: Neutral color (a quiet color like gray, beige, ivory, etc.)
-* **pri**: Primary color (most frequently used color other than base and neutral colors)
-* **sec**: Secondary color (second most frequently used color other than base and neutral colors)
-* **acc**: Accent color (third most frequently used color other than base and neutral colors)
-* **nav**: Navigation color (background color of navigation bar or sidebar)
-
-The following is a list of modifiers and their expected meaning.
-
-* **s**: Starndard
-* **b**: Brighter
-* **d**: Darker
-* **c**: Contrasting
-
-Here, "contrasting" means a color with good visibility when text is drawn in that color against
-a standard-color background.
-
-`src/color_scheme.toml`
-
-```toml
-bas-s = "#3d4451"
-bas-c = "#a0aec0"
-pri-s = "#45ba9f"
-sec-s = "#70365d"
-```
-
-The defined custom color names can be used as the names of the colors that make up the Tailwind
-CSS classes. For example, to set the color defined as `pri-s` as the background color of an
-element, specify the `bg-pri-s` class in its `class` attribute.
-
-### daisyUI color names
-
-You can also use the color names provided by [daisyUI](https://daisyui.com/), such as `primary`,
-`secondary`, `success`, `warning`.
-For more information, see [Colors](https://daisyui.com/docs/colors/) in the daisyUI Documentation.
-
-Please note that at this time, tgweb does not support the switching of the daisyUI themes.
-
 ## フロントマター
 
 ### フロントマターブロック
@@ -688,6 +637,51 @@ theme-url = "%{audios/our_theme.mp3}"
 ```
 
 具体的な使用例については [<meta> elements](#meta-elements)を参照してください。
+
+## カラースキーム
+
+### カスタムカラー名
+
+`src` ディレクトリの `color_scheme.toml` を編集することで、Tailwind CSSのカスタムカラー名を定義することができます。
+
+カスタムカラー名は _パレット_ と _修飾子_ の組み合わせです。
+パレットは3文字のアルファベット、修飾子は1文字のアルファベットです。
+パレットと修飾子は、`bas-s` や `neu-d` のようにマイナス記号で結ばれます。
+
+以下は利用可能なパレットとその用途の一覧です。
+
+* **bas**: ベースカラー（ウェブサイト全体の背景色）
+* **neu**: ニュートラルカラー（グレー、ベージュ、アイボリーなどの落ち着いた色）
+* **pri**: プライマリーカラー（ベースカラーと中間色以外で最も使用頻度の高い色）
+* **sec**: セカンダリーカラー (ベースカラーとニュートラルカラー以外で2番目によく使われる色)
+* **acc**: アクセントカラー (ベースカラーとニュートラルカラー以外で3番目に使用頻度の高い色)
+* **nav**: ナビゲーションカラー (ナビゲーション・バーまたはサイドバーの背景色)
+
+以下は、修飾子とその意味の一覧です。
+
+* **s**: 標準
+* **b**: より明るい
+* **d**: より暗い
+* **c**: 対照的
+
+ここでいう「対照的」とは、標準色の背景にその色でテキストを描いたときに視認性のよい色を意味します。
+
+`src/color_scheme.toml`
+
+```toml
+bas-s = "#3d4451"
+bas-c = "#a0aec0"
+pri-s = "#45ba9f"
+sec-s = "#70365d"
+```
+
+定義されたカスタムカラー名は、Tailwind CSSクラスを構成する色の名前として使用できます。例えば、`pri-s` と定義された色を要素の背景色として設定するには、その要素の `class` 属性に `bg-pri-s` クラスを指定します。
+
+### daisyUI カラー名
+
+また、`primary`, `secondary`, `success`, `warning` のように、[daisyUI](https://daisyui.com/) で指定された色名を使うこともできます。詳細については、daisyUIドキュメンテーションの [Colors](https://daisyui.com/docs/colors/) を参照してください。
+
+現時点では、tgwebはdaisyUIのテーマの切り替えをサポートしていないことに注意してください。
 
 ## Images
 
