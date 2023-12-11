@@ -432,7 +432,7 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 In the example above, the four main components of the front matter block are used.
 
 * Property definition
-* Section header
+* Table header
 * Comment
 * Blank line
 

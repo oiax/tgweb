@@ -7,7 +7,7 @@
 * [ディレクトリ構造](#ディレクトリ構造)
 * [複数のウェブサイトを管理する方法](#複数のウェブサイトを管理する方法)
 * [ページ](#ページ)
-* [Front Matter](#front-matter)
+* [フロントマター](#フロントマター)
 * [Color Scheme](#color-scheme)
 * [Images](#images)
 * [Audios](#audios)
@@ -380,21 +380,21 @@ For more information, see [Colors](https://daisyui.com/docs/colors/) in the dais
 
 Please note that at this time, tgweb does not support the switching of the daisyUI themes.
 
-## Front Matter
+## フロントマター
 
-### Front matter block
+### フロントマターブロック
 
-When a template begins with a line that consists only of `---` and there is another such line in
-the template, the area enclosed by these two lines is called the _front matter block_.
+テンプレートが `---` のみで構成される行で始まり、テンプレート内にそのような行がもう1行ある場合、この2行で囲まれた領域を _フロントマターブロック_ と呼びます。
 
-In this area you can give values to a set of properties.
-This set of property/value pairs is called _front matter_.
+この領域では、一連のプロパティに値を与えることができます。
+このプロパティと値のペアのセットを _フロントマター_ と呼びます。
 
-Front matter blocks are written in [TOML](https://toml.io/en/) format.
-Shown next is an example of a front matter block:
+フロントマターブロックは [TOML](https://toml.io/en/)  フォーマットで記述されます。
+次に示すのは、フロントマターブロックの例です:
 
 ```
 ---
+[main]
 title = "Our Mission"
 
 [data]
@@ -407,47 +407,44 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 ---
 ```
 
-In the example above, the four main components of the front matter block are used.
+上の例では、フロントマターブロックの4つの主要な構成要素が使われています。
 
-* Property definition
-* Section header
-* Comment
-* Black line
+* プロパティの定義
+* テーブルヘッダー
+* コメント
+* 空白行
 
-Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
+`#` 記号で始まる行はコメントとして無視されます。空白行も無視されます。
 
-### Property definitions
+### プロパティの定義
 
-The line `title = "Our Mission"` is an example of a property definition.
-The `title` to the left of the equals sign is the name of the property and the `"Our Mission"` to
-the right is the value of the property.
+`title = "Our Mission"` はプロパティ定義の例です。
+等号の左側の `title` がプロパティの名前で、右側の `"Our Mission"` がプロパティの値です。
 
-The property name, equals sign, and value must be on the same line, though some values can be
-broken over multiple lines.
+プロパティ名、等号、値は同じ行に記述する必要がありますが、値によっては複数行にまたがるものもあります。
 
-If the property name consists only of uppercase and lowercase letters, numbers, underscores, and
-minus signs, it can be written without quotation marks; otherwise, the name must be enclosed in
-quotation marks, as in the following example.
+プロパティ名が大文字と小文字、数字、アンダースコア、マイナス記号のみで構成されている場合は、引用符なしで書くことができます。;
+そうでない場合は、次の例のように引用符で囲む必要がある。
 
 ```
 "&_p" = "mb-2"
 ```
 
-Property values are described in different ways depending on their type.
-Strings must always be quoted.
-Integers and floating point numbers should be unquoted, such as `100`,  `-16`, and `3.14`.
-Booleans (`true` and `false`) are also not quoted and should be lowercase.
-Other writing styles will be explained when examples appear.
+プロパティの値は、その型によって異なる方法で記述します。
+文字列は常に引用符で囲む必要があります。
+`100`、`-16`、`3.14` のように、整数と浮動小数点数は引用符で囲みません。
+真偽値（`true` と `false`）も引用符で囲まず、小文字で記述します。
+その他の書き方については、例が出てきたときに説明します。
 
-### Table headers
+### テーブルヘッダー
 
-In the previous example, the lines labeled `[data]` and `[style]` are called _table headers_.
+先の例で、`[data]` と `[style]` と書かれた行を _テーブルヘッダー_ と呼びます。
 
-A table header marks the beginning of a _table_. The table continues until the next table
-header or until the end of the file.
+テーブルヘッダーは _テーブル_ の始まりを示します。テーブルは次のテーブルヘッダーまで、あるいはファイルの終わりまで続きます。
 
-The following table names are available in the front matter block:
+フロントマターブロックには以下のテーブル名があります:
 
+* main
 * data
 * style
 * meta.name
@@ -455,47 +452,43 @@ The following table names are available in the front matter block:
 * meta.property
 * link
 
-The first two are described in this section; the other four are described in
-[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element).
+このセクションでは、最初の2つについて説明します; 
+他の4つは[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element) で説明します。
 
-### Predefined properties
+### 定義済みプロパティ
 
-In the area before the first table header in the front matter block, set the value of
-_predefined properties_.
+フロントマターブロックの _main_ テーブルで、_定義済みプロパティ_ の値を設定します。
 
-The following are examples of predefined properties:
+以下は定義済みプロパティの例です:
 
-* `scheme`: The scheme of the URL of the HTML document. It must be `http` or `https`.
-   Default: `localhost`.
-* `host`: The host name of the URL of the HTML document. Default: `localhost`.
-* `port`: The port number of the URL of the HTML document. Default: 3000.
-* `url`: The URL of the HTML document.
-* `root-url`: The root URL of the HTML document.
-* `title`: The title of the HTML document.
-* `layout`: The name of layout to be applied to the template. See [Layouts](#layouts).
-* `html-class`: The value set to the `class` attribute of the `<html>` element.
+* `scheme`: HTMLドキュメントのURLのスキーム。`http` または `https` 。デフォルト: `http` 。
+* `host`: HTMLドキュメントのURLのホスト名。デフォルト: `localhost`.
+* `port`: HTMLドキュメントのURLのポート番号。 デフォルト: 3000.
+* `url`: HTMLドキュメントのURL。
+* `root-url`: HTMLドキュメントのルートURL。
+* `title`: HTML文書のタイトル。
+* `layout`: テンプレートに適用するレイアウトの名前。[Layouts](#layouts) を参照。
+* `html-class`: `<html>` 要素の `class` 属性に設定された値。
 
-Normally, it is not necessary to specify values for the `scheme`, `host`, and `port` properties.
-The values of these properties will be set appropriately when the website is published on
-Teamgenik.
-The value of the `url` property is generated from these properties and the path to the page or
-article. Its value is readonly.
+通常、`scheme`、`host`、および `port` プロパティに値を指定する必要はありません。
+これらのプロパティの値は、ウェブサイトがTeamgenikで公開されるときに適切に設定されます。
+`url` プロパティの値は、これらのプロパティとページまたは記事へのパスから生成されます。その値は読み取り専用です。
 
-The following three properties are meaningful only in articles:
+以下の3つのプロパティは、記事においてのみ意味を持ちます:
 
-* `index`: An integer value used to sort the articles.
-* `tags`: A single string or array of strings to classify articles.
-* `embedded-only`: A boolean value that determines whether a separate HTML document is created
-   from an article; if `true`, it will not be created. Default: `false`.
+* `index`: 記事の並べ替えに使われる整数値。
+* `tags`: 記事を分類する文字列または文字列の配列。
+* `embedded-only`: `true` ならば、HTMLドキュメントは作成されない。デフォルト: `false`。
 
-See [Articles](#articles) for details.
+詳細は [Articles](#articles) を参照してください。
 
-### Embedding property values in a template
+### テンプレートにプロパティ値を埋め込む
 
-The value of a predefined property can be embedded into a template by the `<tg:prop>` element.
+定義済みのプロパティの値は `<tg:prop>` 要素によってテンプレートに埋め込むことができます。
 
 ```html
 ---
+[main]
 title = "Our Mission"
 ---
 <body>
@@ -508,21 +501,22 @@ title = "Our Mission"
 </body>
 ```
 
-### Custom properties
+### カスタムプロパティ
 
-As already noted, `[data]` in the front matter block indicates the beginning of the "data" table.
+すでに述べたように、フロントマターブロックの `[data]` は「data」テーブルの始まりを示します。
 
-Within the "data" table, custom properties can be defined. Website authors can set values of any
-type for custom properties of any name.
+「data」テーブル内では、カスタムプロパティを定義することができます。ウェブサイト作成者は、任意の名前のカスタムプロパティに値を設定することができます。カスタムプロパティの値は、文字列か10進数表記の数値でなければなりません。
 
-The value of a custom property can be embedded into a template by the `<tg:data>` element.
+カスタムプロパティの値は `<tg:data>` 要素によってテンプレートに埋め込むことができます。
 
 ```html
 ---
+[main]
 title = "Our Mission"
 
 [data]
-message: "Hello, world!"
+message = "Hello, world!"
+year = 2023
 ---
 <body>
   <h1 class="text-2xl font-bold">
@@ -531,11 +525,11 @@ message: "Hello, world!"
   <div class="bg-green-300 p-4">
     <p><tg:data name="message"></tg:data></p>
   </div>
+  <footer>&copy; Example Inc. <tg:data name="year"></tg:prop></footer>
 </body>
 ```
 
-You can also use the `${...}` notation to embed the value of a custom property into the attribute
-value of an HTML element.
+また、`${...}` 記法を使えば、カスタムプロパティの値をHTML要素の属性値に埋め込むこともできます。
 
 ```html
 ---
@@ -547,16 +541,15 @@ div-id = "special"
 </body>
 ```
 
-However, the `${...}` notation does not make sense for `class` attributes;
-the method of embedding property values in `class` attributes will be explained shortly.
+しかし、`${...}` 記法は `class` 属性に対しては意味がありません。;
+プロパティの値を `class` 属性に埋め込む方法については後で説明します。
 
-### Defining style aliases
+### スタイルエイリアスの定義
 
-A property defined in the "style" table can be used to give an alias to a set of class tokens.
-We call this a _style alias_. The value of a style alias must always be a string.
+「style」テーブルで定義されたプロパティは、クラストークンのセットにエイリアスを与えるために使用することができます。
+これを _スタイル・エイリアス_ と呼びます。スタイルエイリアスの値は文字列のみです。
 
-To embed a style alias defined as such into the value of a `class` attribute, use the `tg:class`
-attribute.
+定義されたスタイルエイリアスを `class` 属性の値に埋め込むには、 `tg:class` 属性を使います。
 
 ```html
 ---
@@ -570,7 +563,7 @@ blue-square = "w-24 h-24 md:w-48 md:h-48 bg-blue-500 rounded-xl p-8 m-4"
 </body>
 ```
 
-Expanding the alias contained in the above template, we get the following result:
+上記のテンプレートに含まれるエイリアスを展開すると、以下の結果が得られます：
 
 ```html
 <body>
@@ -580,8 +573,7 @@ Expanding the alias contained in the above template, we get the following result
 </body>
 ```
 
-A long sequence of class tokens can be written over several lines surrounded by three
-quotation marks.
+クラストークンの長いシーケンスは、3つの引用符で囲んで数行にわたって書くことができます。
 
 ```html
 ---
@@ -598,23 +590,19 @@ card = """
 </body>
 ```
 
-The three consecutive double quotation marks (`"""`) indicate the beginning and end of a
-multi-line string.
+連続する3つのダブルクォーテーション(`"""`)は、複数行の文字列の開始と終了を示します。
 
-Before being embedded in the `class` attribute of an HTML element, the value of the property is
-converted as follows:
+HTML要素の `class` 属性に埋め込まれる前に、プロパティの値は以下のように変換されます：
 
-* Any included newline characters are replaced by spaces.
-* Consecutive leading and trailing spaces are removed.
-* Consecutive spaces are replaced by a single space.
+* 含まれる改行文字はすべてスペースに置き換えられる。
+* 連続する先頭と末尾の空白は削除される。
+* 連続したスペースは1つのスペースに置き換えられる。
 
-If an element has both the `class` and `tg:class` attributes, the combined value of both become
-the final `class` attribute value.
+要素が `class` 属性と `tg:class` 属性の両方を持つ場合、両方の値を合わせたものが最終的な `class` 属性の値となります。
 
-### Expansion of modifiers
+### 修飾子の拡張
 
-You may want to define the following style aliases using Tailwind CSS modifiers to achieve the
-[responsive design](https://tailwindcss.com/docs/responsive-design).
+[レスポンシブデザイン](https://tailwindcss.com/docs/responsive-design) を実現するために、Tailwind CSS修飾子を使って以下のスタイルエイリアスを定義するとよいでしょう。
 
 ```toml
 box = """
@@ -624,8 +612,7 @@ box = """
   """
 ```
 
-If you are bothered by the repetition of modifiers such as `md:` and `lg:`, remove them using the
-`{...}` notation as follows:
+`md:` や `lg:` のような修飾語の繰り返しが気になる場合は、次のように `{...}` 表記を使うと削除できます。
 
 ```toml
 box = """
@@ -635,10 +622,9 @@ box = """
   """
 ```
 
-The `{...}` notation is especially useful for utilization of
-[arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
+`{...}` 表記は、[arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants) の活用に特に役立ちます。
 
-Assume that you have created the following style alias `blog-article`:
+次のようなスタイル・エイリアス `blog-article` を作成したと仮定します:
 
 ```toml
 blog-article = """
@@ -654,7 +640,7 @@ blog-article = """
   """
 ```
 
-Then you can use this as follows:
+次のように使用できます:
 
 ```html
 <article tg:class="blog-article">
@@ -665,8 +651,7 @@ Then you can use this as follows:
 </article>
 ```
 
-The following use of `{...}` notation eliminates the repetition of `[&_h2]` and `[&_p]` in the
-above example.
+そうすれば、以下のように `{...}` の表記を使うことで、上記の例で `[&_h2]` と `[&_p]` の繰り返しをなくすことができます。
 
 ```toml
 blog-article = """
@@ -678,11 +663,9 @@ blog-article = """
   """
 ```
 
-### Site properties
+### サイト属性
 
-Creating a file named `site.toml` in the `src` directory allows you to set values for properties
-at the site level. The values set here will be the default values for properties set in the
-front matter of each page.
+`src` ディレクトリに `site.toml` という名前のファイルを作成すると、サイトレベルでプロパティの値を設定することができます。 ここで設定された値は、各ページのフロントマターで設定されたプロパティのデフォルト値となります。
 
 `src/site.toml`
 
@@ -691,13 +674,12 @@ title = "No title"
 layout = "common"
 
 [data]
-current-year = "2023"
+current-year = 2023
 ```
 
-### `%{...}` notation
+### `%{...}` 記法
 
-You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
-element using `%{...}` notation:
+画像や音声ファイルのURLを `<meta>` 要素の `content` 属性に埋め込むには `%{...}` 表記を使います。:
 
 ```toml
 [data]
@@ -705,7 +687,7 @@ icon-url = "%{images/icons/default.png}"
 theme-url = "%{audios/our_theme.mp3}"
 ```
 
-See [<meta> elements](#meta-elements) for specific examples of its use.
+具体的な使用例については [<meta> elements](#meta-elements)を参照してください。
 
 ## Images
 
