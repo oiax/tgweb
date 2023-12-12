@@ -9,7 +9,7 @@
 * [ページ](#ページ)
 * [フロントマター](#フロントマター)
 * [カラースキーム](#カラースキーム)
-* [Images](#images)
+* [画像](#画像)
 * [Audios](#audios)
 * [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
@@ -628,7 +628,7 @@ current-year = 2023
 
 ### `%{...}` 記法
 
-画像や音声ファイルのURLを `<meta>` 要素の `content` 属性に埋め込むには `%{...}` 表記を使います。:
+画像や音声ファイルのURLを `<meta>` 要素の `content` 属性に埋め込むには `%{...}` 表記を使います:
 
 ```toml
 [data]
@@ -683,14 +683,13 @@ sec-s = "#70365d"
 
 現時点では、tgwebはdaisyUIのテーマの切り替えをサポートしていないことに注意してください。
 
-## Images
+## 画像
 
-Image files are placed in the `src/images` subdirectory under the working directory.
+画像ファイルは、作業ディレクトリの下の `src/images` サブディレクトリに置かれます。
 
-There are two ways to embed images in a page.
-One is to use the `<img>` element, and the other is to set it as the background of an element.
+ページに画像を埋め込むには2つの方法があります。1 つは `<img>` 要素を使用する方法、もう 1 つは画像を要素の背景として設定する方法です。
 
-Teamgenik supports image files in the following formats:
+Teamgenikは以下の形式の画像ファイルをサポートしています:
 
 * AVIF ('.avif')
 * BMP ('.bmp')
@@ -699,70 +698,56 @@ Teamgenik supports image files in the following formats:
 * PNG ('.png')
 * WEBP ('.webp')
 
-### `<img>` element
+### `<img>` 要素
 
-If the `src` attribute of the `<img>` element contains the relative path of the image file,
-the image will be embedded in the page.
+`<img>` 要素の `src` 属性に画像ファイルの絶対パスが含まれていれば、画像はページに埋め込まれます。
 
 ```html
 <img src="/images/smile.png" alt="Smile face">
 ```
 
-You do not need to write the `width` and `height` attributes in the `<img>` tag,
-because Teamgenik will automatically specify them for you.
+Teamgenik が自動的に指定するので、`<img>` タグに `width` 属性と `height` 属性を記述する必要はありません。
 
-Note that the value of the `src` attribute is the _absolute_ path of the image file.
-When your website is published on Teamgenik, the values of the `src` attribute of the `<img>`
-elements will be converted appropriately.
+`src` 属性の値は画像ファイルのパスは _絶対_ パスであることに注意してください。ウェブサイトがTeamgenikで公開されると、`<img>` 要素の `src` 属性の値は適切に変換されます。
 
-Note also that Teamgenik does not allow the `<img>` element to reference an external URL.
+また、Teamgenikでは `<img>` 要素で外部URLを参照することはできません。
 
-#### Hints
+#### ヒント
 
-If you want to resize an image to fit the size of the image container, use the following class
-tokens provided by Tailwind CSS:
+画像コンテナのサイズに合わせて画像のサイズを変更したい場合は、Tailwind CSSが提供する以下のクラストークンを使用します:
 
-* `object-cover`: resizes an image to cover its container
-* `object-contain`: resizes an image to stay contained within its container
-* `object-fill`: stretches an image to fit its container
-* `object-scale-down`: display an image at its original size but scale it down to fit its
-  container if necessary
+* `object-cover`: コンテナを覆うように画像のサイズを変更する
+* `object-contain`: コンテナ内に収まるように画像のサイズを変更する
+* `object-fill`: コンテナに合わせて画像を引き伸ばす
+* `object-scale-down`: 画像をオリジナルサイズで表示し、必要に応じてコンテナに合わせて縮小する
 
-For more information, see [Object Fit](https://tailwindcss.com/docs/object-fit) subsection of
-the Tailwind CSS Documentation.
+詳細については、Tailwind CSS ドキュメントの [Object Fit](https://tailwindcss.com/docs/object-fit) セクションを参照してください。
 
-### Background images
+### 背景画像
 
-You can embed `images/smile.png` as a background image for a `<div>` element by writing like this:
+`images/smile.png` を `<div>` 要素の背景画像として埋め込むには、次のように記述します:
 
 ```html
 <div class="bg-[url(../images/smile.png)]"></div>
 ```
 
-Tailwind CSS will detect this `class` attribute and write the appropriate CSS fragment to
-`dist/css/tailwind.css`.
+Tailwind CSS はこの `class` 属性を検出すると、適切なCSSフラグメントを `dist/css/tailwind.css` に書き込みます。
 
-Note that inside the parentheses is the relative path from `css/tailwind.css` to the image file.
-Even if you embed `src/images/smile.png` into `src/pages/foo/bar.html`,
-specify `../images/smile.png` instead of `../../images/smile.png` inside the parentheses
-if you embed it as a background image.
+括弧の中は `css/tailwind.css` から画像ファイルまでの相対パスであることに注意してください。
+`src/images/smile.png` を `src/pages/foo/bar.html` に埋め込む場合でも、背景画像として埋め込む場合は、括弧内に `../../images/smile.png` ではなく `../images/smile.png` を指定します。
 
-#### Hints
+#### ヒント
 
-If you want to adjust the rendering of a background image, use the following class
-tokens provided by Tailwind CSS:
+背景画像のレンダリングを調整したい場合は、Tailwind CSSが提供する以下のクラストークンを使用してください:
 
-* `bg-center`: centers the background image on the background layer
-* `bg-repeat`: repeats the background image both vertically and horizontally
-* `bg-repeat-x`: repeats the background image horizontally
-* `bg-repeat-y`: repeats the background image vertically
-* `bg-cover`: scales the background image until it fills the background layer
-* `bg-contain`: scales the background image to the outer edges without cropping or stretching
+* `bg-center`: 背景画像を背景レイヤーの中央に配置する
+* `bg-repeat`: 背景画像を縦横に繰り返す
+* `bg-repeat-x`: 背景画像を水平に繰り返す
+* `bg-repeat-y`: 背景画像を縦に繰り返す
+* `bg-cover`: 背景レイヤーを埋めるまで背景画像を拡大縮小する
+* `bg-contain`: トリミングや引き伸ばしをせずに、背景画像を外縁まで拡大縮小する
 
-For more information, see [Background Position](https://tailwindcss.com/docs/background-position),
-[Background Repeat](https://tailwindcss.com/docs/background-repeat) and
-[Background Size](https://tailwindcss.com/docs/background-size) subsections of
-the Tailwind CSS Documentation.
+詳細については、Tailwind CSS ドキュメントの [Background Position](https://tailwindcss.com/docs/background-position), [Background Repeat](https://tailwindcss.com/docs/background-repeat) , [Background Size](https://tailwindcss.com/docs/background-size) セクションを参照してください。
 
 ## Audios
 

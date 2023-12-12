@@ -751,7 +751,7 @@ Teamgenik supports image files in the following formats:
 
 ### `<img>` element
 
-If the `src` attribute of the `<img>` element contains the relative path of the image file,
+If the `src` attribute of the `<img>` element contains the absolute path of the image file,
 the image will be embedded in the page.
 
 ```html
