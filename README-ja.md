@@ -10,7 +10,7 @@
 * [フロントマター](#フロントマター)
 * [カラースキーム](#カラースキーム)
 * [画像](#画像)
-* [Audios](#audios)
+* [音声](#音声)
 * [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
 * [Wrappers](#wrapper)
@@ -749,25 +749,24 @@ Tailwind CSS はこの `class` 属性を検出すると、適切なCSSフラグ�
 
 詳細については、Tailwind CSS ドキュメントの [Background Position](https://tailwindcss.com/docs/background-position), [Background Repeat](https://tailwindcss.com/docs/background-repeat) , [Background Size](https://tailwindcss.com/docs/background-size) セクションを参照してください。
 
-## Audios
+## 音声
 
-Audio files are placed in the `src/audio` subdirectory under the working directory.
+音声ファイルは、作業ディレクトリの下の `src/audio` サブディレクトリに置かれます。
 
-Teamgenik supports audio files in the following formats:
+Teamgenikは以下の形式の音声ファイルをサポートしています:
 
 * AAC ('.m4a')
 * MP3 ('.mp3')
 * Ogg Vorbis (`.ogg`)
 * WAV (`.wav`)
 
-### `<audio>` element
+### `<audio>` 要素
 
-You can embed a UI object to play an audio content with the `<audio>` element.
+`<audio>` 要素で音声コンテンツを再生するUIオブジェクトを埋め込むことができます。
 
-There are two ways to construct the `<audio>` element.
+`<audio>` 要素を構成するには2つの方法があります。
 
-One is to specify the _absolute_ path of the audio file in the `src` attribute of the `<audio>`
-element itself.
+ひとつは、`<audio>` 要素自体の `src` 属性に音声ファイルの _絶対_ パスを指定する方法です。
 
 ```html
 <audio controls src="/audios/theme.mp3">
@@ -775,11 +774,9 @@ element itself.
 </audio>
 ```
 
-The content of the `<audio>` element will be shown when thw browser does not support the `<audio>`
-element.
+ブラウザが `<audio>` 要素をサポートしていない場合、`<audio>` 要素の内容が表示されます。
 
-The other is to place one or more `<source>` elements inside the `<audio>` element and specify
-the absolute path of the audio file in their `src` attribute.
+もう一つは、`<audio>` 要素の中に1つ以上の `<source>` 要素を配置し、その `src` 属性に音声ファイルの絶対パスを指定する方法です。
 
 ```html
 <audio controls>
@@ -789,8 +786,7 @@ the absolute path of the audio file in their `src` attribute.
 </audio>
 ```
 
-Note that Teamgenik does not allow the `<audio>` and `<source>` elements to reference an external
-URL.
+Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照することはできません。
 
 ## Fonts and Icons
 
