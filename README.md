@@ -864,7 +864,7 @@ URL.
 #### Basic Usage
 
 By setting the value of the `outlined`, `rounded` and `sharp` properties to `true` in the
-"font.material-symbols" section of `sites.toml`,
+"font.material-symbols" table of `sites.toml`,
 [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
 provided by Google will be available on your website.
 
