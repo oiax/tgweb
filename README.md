@@ -926,15 +926,39 @@ letters).
 ### Variants
 
 If you want to have multiple variants of a single style with different values for the variables,
-add a dot and the name of the variant after the style name, as follows:
+add a minus sign and the variant name after the style name, as follows:
 
 ```toml
 [font.material-symbols]
 outlined = true
 rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
-rounded.strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
-rounded.bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
+rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
+rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
 ```
+
+Note that only lowercase letters (`a-z`) and numerals (`0-9`) are allowed in variant names.
+
+#### How to embed symbols in a template
+
+Material Symbols can be embedded in a template by specifying a `class` beginning with
+`material-symbols-` for a `<span>` element and placing the name of the symbol or code point
+as its content.
+
+The name of the symbol must be converted to a _snake case_. That is, replace all spaces in the
+name with underscores and all uppercase letters with lowercase ones.
+
+The code point of a symbol is a four-digit hexadecimal number, such as `e88a`.
+When specified as the content of a `<span>` element, it must be enclosed in `&#x` and `;` like
+`&#xe88a;`
+
+You can find the code point of each symbol on the
+[Material Symbols and Icons](https://fonts.google.com/icons).
+
+Although symbol names are easier to use, code points have one advantage.
+
+Using a symbol name may temporarily disrupt the layout of a web page because a space the width of
+the symbol name is displayed in place of the symbol until the font file is downloaded.
+The use of code points can reduce the disruption to the layout.
 
 #### Examples of Use
 
@@ -942,25 +966,30 @@ The "Home" symbol (outlined):
 
 ```html
 <span class="material-symbols-outlined">home</span>
+<span class="material-symbols-outlined">&#xe88a;</span>
 ```
 
 The "Delete" symbol (rounded):
 
 ```html
 <span class="material-symbols-rounded">delete</span>
+<span class="material-symbols-rounded">&#xe872;</span>
 ```
 
 The "Shopping Bag" symbol (sharp):
 
 ```html
 <span class="material-symbols-sharp">shopping_bag</span>
+<span class="material-symbols-sharp">&#xf1cc;</span>
 ```
 
 The "strong" variant of the "Star" symbol (rounded):
 
 ```html
-<span class="material-symbols-rounded.strong">star</span>
+<span class="material-symbols-rounded-strong">star</span>
+<span class="material-symbols-rounded-strong">&#xe838;</span>
 ```
+
 
 ### Google Fonts
 

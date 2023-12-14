@@ -1327,60 +1327,28 @@ const renderHead = (documentProperties) => {
     if (typeof documentProperties.font["material-symbols"] === "object") {
       const materialSymbols = documentProperties.font["material-symbols"]
       const symbolStyles = ["outlined", "rounded", "sharp"]
-      const validWieghts = [100, 200, 300, 400, 500, 600, 700]
 
-      const collector =
-        Object.keys(materialSymbols).reduce((acc, key) =>
-          {
-            const parts = key.split(".")
+      const styles =
+        Object.keys(materialSymbols).reduce((acc, key) => {
+            const parts = key.split("-")
             let style
 
             if (parts.length === 1) style = key
             else if (parts.length === 2) style = parts[0]
+            else style = undefined
 
-            const value = materialSymbols[key]
-
-            let values
-
-            if (value === true) {
-              values = "24,400,0,0"
-            }
-            else if (typeof value === "object") {
-              let fill = value.fill
-              let wght = value.wght
-              let grad = value.grad
-              let opsz = value.opsz
-
-              if (![0, 1].includes(fill)) fill = 0
-              if (!validWieghts.includes(wght)) wght = 400
-              if (![-25, 0, 200].includes(grad)) grad = 0
-              if (![20, 24, 40, 48].includes(opsz)) opsz = 24
-
-              values = `${opsz},${wght},${fill},${grad}`
-            }
-
-            if (symbolStyles.includes(style)) {
-              acc[style].push(values)
-            }
+            if (style !== undefined && !acc.includes(style) && symbolStyles.includes(style))
+              acc.push(style)
 
             return acc
-          },
-          {"outlined": [], "rounded": [], "sharp": []}
-        );
+        }, [])
 
       params1 =
-        Object.keys(collector).map(style => {
-          const value = collector[style]
-
-          if (value.length > 0) {
-            const capitalized = style.charAt(0).toUpperCase() + style.slice(1)
-            const params = `family=Material+Symbols+${capitalized}:opsz,wght,FILL,GRAD@`
-
-            return params + value.join(";")
-          }
+        styles.map(style => {
+          const capitalized = style.charAt(0).toUpperCase() + style.slice(1)
+          const params = `family=Material+Symbols+${capitalized}:opsz,wght,FILL,GRAD@`
+          return params + "20..48,100..700,0..1,-50..200"
         })
-
-      params1 = params1.filter((p) => p != undefined)
     }
 
     const googleFonts = documentProperties.font["google-fonts"]
@@ -1418,18 +1386,86 @@ const renderHead = (documentProperties) => {
       params2 = params2.filter((p) => p != undefined)
     }
 
-    if (params1.length > 0 || params2.length > 0) {
+    if (params2.length > 0 || params2.length > 0) {
       children.push(parseDocument(
         "<link rel='preconnect' href='https://fonts.googleapis.com'>").children[0])
 
       children.push(parseDocument(
         "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>").children[0])
+    }
 
-      const params = params1.concat(params2)
-
-      const href = `https://fonts.googleapis.com/css2?${params.join("&")}&display=swap`
+    if (params1.length > 0) {
+      const href = `https://fonts.googleapis.com/css2?${params1.join("&")}&display=block`
       const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
       children.push(doc.children[0])
+    }
+
+    if (params2.length > 0) {
+      const href = `https://fonts.googleapis.com/css2?${params2.join("&")}&display=swap`
+      const doc = parseDocument(`<link rel='stylesheet' href='${href}'>`)
+      children.push(doc.children[0])
+    }
+
+    if (typeof documentProperties.font["material-symbols"] === "object") {
+      const materialSymbols = documentProperties.font["material-symbols"]
+
+      const declarations =
+        Object.keys(materialSymbols).reduce((acc, key) => {
+          const value = materialSymbols[key]
+          const parts = key.split("-")
+          let style, variant, fill, wght, grad, opsz
+          let settings, selector, font_display, declaration
+
+          if (parts.length === 1) {
+            style = key
+          }
+          else if (parts.length === 2) {
+            style = parts[0]
+            variant = parts[1]
+          }
+          else {
+            style = undefined
+          }
+
+          if (style === undefined) return acc
+          if (variant !== undefined && !variant.match(/^[0-9a-z]+$/)) return acc
+
+          if (value === true) {
+            fill = 0
+            wght = 400
+            grad = 0
+            opsz = 24
+          }
+          else if (typeof value === "object") {
+            fill = value.fill
+            wght = value.wght
+            grad = value.grad
+            opsz = value.opsz
+          }
+
+          if ([0, 1].includes(fill) && [100, 200, 300, 400, 500, 600, 700].includes(wght) &&
+            [-25, 0, 200].includes(grad) && [20, 24, 40, 48].includes(opsz)) {
+            if (variant === undefined) {
+              settings = `"FILL" ${fill}, "wght" ${wght}, "GRAD" ${grad}, "opsz" ${opsz}`
+              selector = `.material-symbols-${style}`
+              declaration = `${selector} { font-variation-settings: ${settings}; }`
+              acc.push(declaration)
+            }
+            else {
+              settings = `"FILL" ${fill}, "wght" ${wght}, "GRAD" ${grad}, "opsz" ${opsz}`
+              selector = `.material-symbols-${style}.${variant}`
+              declaration = `${selector} { font-variation-settings: ${settings}; }`
+              acc.push(declaration)
+            }
+          }
+
+          return acc
+        }, [])
+
+      if (declarations.length > 0) {
+        const styleElement = "<style>\n" + declarations.join("\n") + "</style>"
+        children.push(parseDocument(styleElement).children[0])
+      }
     }
   }
 
