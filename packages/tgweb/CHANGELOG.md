@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.7.1
+
+* b5126bf Add `<style>` element for Material Symbol Variants
+
 ## 0.7.0
 
 * 63e3151 Rename `site.toml` and `front_matter` tables
