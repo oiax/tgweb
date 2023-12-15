@@ -11,7 +11,7 @@
 * [カラースキーム](#カラースキーム)
 * [画像](#画像)
 * [音声](#音声)
-* [Fonts and Icons](#fonts-and-icons)
+* [フォントとアイコン](#フォントとアイコン)
 * [Layouts](#layouts)
 * [Wrappers](#wrapper)
 * [Segments](#segments)
@@ -788,7 +788,7 @@ Teamgenikは以下の形式の音声ファイルをサポートしています:
 
 Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照することはできません。
 
-## Fonts and Icons
+## フォントとアイコン
 
 ### Material Symbols
 
@@ -811,7 +811,7 @@ rounded = false
 sharp = true
 ```
 
-あるいは、未使用のスタイル名を持つプロパティ自体を site.toml から削除しても構いません。
+あるいは、未使用のスタイル名を持つプロパティ自体を `site.toml` から削除しても構いません。
 
 ```toml
 [font.material-symbols]
@@ -820,7 +820,7 @@ sharp = true
 
 #### 変数の調整
 
-Material Symbols には書体を調整するための4つの変数が用意されています。
+Material Symbols には書体を調整するための4つの _変数_ が用意されています。
 これらを指定するには、次のように記述してください:
 
 ```toml
@@ -877,51 +877,49 @@ rounded.bold = { fill: 0, wght: 700, grad: 0, opsz: 24 }
 
 ### Google Fonts
 
-The Roboto font family from [Google Fonts](https://fonts.google.com/) can be used on your website
-by setting the following in the "font.google-fonts" section of `site.toml`.
+[Google Fonts](https://fonts.google.com/) のRobotoフォントファミリーは、`site.toml` の "font.google-fonts" テーブルで以下のように設定することで、あなたのウェブサイトで使用することができます。
 
 ```toml
 Roboto = true
 ```
 
-The following is an example of using the Robot font family:
+以下はRobotフォントファミリーの使用例です：
 
 ```html
 <p class="font-['Roboto']">Hello, world!</p>
 ```
 
-If the font family name contains spaces, the name must be enclosed in double quotes as follows:
+フォントファミリ名にスペースが含まれている場合は、下記のように二重引用符で囲む必要があります：
 
 ```toml
 "Noto Sans Japanese" = true
 ```
 
-Also, when using it in an HTML template, spaces should be replaced with underscores.
+また、HTMLテンプレートで使用する場合は、スペースをアンダースコアに置き換えてください。
 
 ```html
 <p class="font-['Noto_Sans_Japanese']">こんにちは、世界！</p>
 ```
 
-To select some font weights in order to reduce the size of font file, specify weights as an array
-instead of `true`.
+フォントファイルのサイズを小さくするために、いくつかのフォントウェイト（太さ）を選択するには、`true`の代わりにウェイトを配列で指定します。
 
 ```toml
 "Noto Sans Japanese" = [400, 800]
 ```
 
-The following example uses the Noto Sans Japanese font family with weight 800.
+次の例では、ウェイトが 800 の Noto Sans Japaneseフォントファミリーを使用しています。
 
 ```html
 <p class="font-['Noto_Sans_Japanese'] font-[800]">こんにちは、世界！</p>
 ```
 
-To select font weights for each style, specify weights using the inline table as follows:
+各スタイルのフォントのウェイトを選択するには、以下のようにインライン・テーブルを使ってウェイトを指定する：
 
 ```toml
 "Pathway Extreme" = { normal = [400, 800], italic = [400] }
 ```
 
-The following example uses the italic Pathway Extreme font family with weight 400.
+以下の例では、イタリック体の Pathway Extreme フォントファミリーをウェイトを 400 で使用しています。
 
 ```html
 <p class="font-['Pathway_Extreme'] italic font-[400]">Hello, world!</p>
