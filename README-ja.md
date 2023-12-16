@@ -790,9 +790,9 @@ Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照す�
 
 ## フォントとアイコン
 
-### Material Symbols
+### マテリアル シンボル
 
-`sites.toml` の `font.material-symbols` テーブルの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [Material Symbols](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
+`sites.toml` の `font.material-symbols` テーブルの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
 
 ```toml
 [font.material-symbols]
@@ -801,7 +801,7 @@ rounded = true
 sharp = true
 ```
 
-このように書くことで、すべてのスタイルの Material Symbols が利用できるようになります。
+このように書くことで、すべてのスタイルの マテリアル シンボル が利用できるようになります。
 ただし、一部のスタイルしか使用しない場合は、未使用のスタイル名を持つプロパティに `false` を指定することで、ウェブサイト訪問者の負荷を軽減すべきです。
 
 ```toml
@@ -820,13 +820,13 @@ sharp = true
 
 #### 変数の調整
 
-Material Symbols には書体を調整するための4つの _変数_ が用意されています。
+マテリアル シンボルには書体を調整するための4つの _変数_ が用意されています。
 これらを指定するには、次のように記述してください:
 
 ```toml
 [font.material-symbols]
-rounded = { fill: 1, wght: 200, grad: 0, opsz: 24 }
-sharp = { fill: 0, wght: 300, grad: 200, opsz: 40 }
+rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
+sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
 ```
 
 `fill` は塗りつぶしの有無を制御する変数です。0 なら「なし」、1 なら「あり」を意味します。デフォルト値は0です。
@@ -839,40 +839,62 @@ sharp = { fill: 0, wght: 300, grad: 200, opsz: 40 }
 
 ### 異体
 
-ひとつのスタイルに対して変数の値が異なる複数の異体（variants）を用意したい場合は、次のようにスタイル名の後にドットと異体名を加えてください。
+ひとつのスタイルに対して変数の値が異なる複数の異体（variants）を用意したい場合は、次のようにスタイル名の後にマイナス記号と異体名を加えてください。
 
 ```toml
 [font.material-symbols]
 outlined = true
-rounded = { fill: 0, wght: 200, grad: 0, opsz: 24 }
-rounded.strong = { fill: 1, wght: 400, grad: 0, opsz: 24 }
-rounded.bold = { fill: 0, wght: 700, grad: 0, opsz: 24 }
+sharp = true
+rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
+rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
+rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
 ```
 
-#### 利用例
+異体名には小文字 (`a-z`) と数字 (`0-9`) しか使えないことに注意してください。
+
+#### テンプレートにシンボルを埋め込む方法
+
+マテリアル シンボルは、`<span>` 要素に対して `material-symbols-` で始まる `class` 属性を指定し、その内容としてシンボルの名前またはコードポイントを配置することで、テンプレートに埋め込むことができます。異体名を持つスタイルを `class` 属性に指定する場合は、スタイル名と異体名の間はマイナス記号ではなくスペースとしてください。
+
+シンボルの名前は _スネークケース_ に変換する必要があります。つまり、名前に含まれるすべてのスペースをアンダースコアに、すべての大文字を小文字に置き換えてください。
+
+シンボルのコードポイントは、`e88a` のように4桁の16進数です。
+`<span>` 要素の内容として指定する場合は、`&#xe88a;` のように `&#x` と `;` で囲んでください。
+
+各シンボルのコードポイントは[Material Symbols and Icons](https://fonts.google.com/icons)で確認できます。
+
+シンボル名の方が使いやすいが、コードポイントにも利点があります。
+
+シンボル名を使用すると、フォントファイルがダウンロードされるまで、シンボル名の幅のスペースがシンボルの代わりに表示されるため、ウェブページのレイアウトが一時的に崩れることがあります。コードポイントを使用することで、レイアウトの乱れを減らすことができます。
+
+#### 使用例
 
 「ホーム」アイコン（outlined）:
 
 ```html
 <span class="material-symbols-outlined">home</span>
+<span class="material-symbols-outlined">&#xe88a;</span>
 ```
 
 「削除」アイコン（rounded）:
 
 ```html
 <span class="material-symbols-rounded">delete</span>
+<span class="material-symbols-rounded">&#xe872;</span>
 ```
 
 「買い物かご」アイコン（sharp）:
 
 ```html
 <span class="material-symbols-sharp">shopping_bag</span>
+<span class="material-symbols-sharp">&#xf1cc;</span>
 ```
 
 「星」アイコン（rounded）の異体「strong」:
 
 ```html
-<span class="material-symbols-rounded.strong">star</span>
+<span class="material-symbols-rounded strong">star</span>
+<span class="material-symbols-rounded strong">&#xe838;</span>
 ```
 
 ### Google Fonts

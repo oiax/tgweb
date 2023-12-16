@@ -931,6 +931,7 @@ add a minus sign and the variant name after the style name, as follows:
 ```toml
 [font.material-symbols]
 outlined = true
+sharp = true
 rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
 rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
 rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
@@ -943,6 +944,7 @@ Note that only lowercase letters (`a-z`) and numerals (`0-9`) are allowed in var
 Material Symbols can be embedded in a template by specifying a `class` beginning with
 `material-symbols-` for a `<span>` element and placing the name of the symbol or code point
 as its content.
+When specifying a style with a variant name in the `class` attribute, use a space instead of a minus sign between the style name and variant name.
 
 The name of the symbol must be converted to a _snake case_. That is, replace all spaces in the
 name with underscores and all uppercase letters with lowercase ones.
@@ -986,10 +988,9 @@ The "Shopping Bag" symbol (sharp):
 The "strong" variant of the "Star" symbol (rounded):
 
 ```html
-<span class="material-symbols-rounded-strong">star</span>
-<span class="material-symbols-rounded-strong">&#xe838;</span>
+<span class="material-symbols-rounded strong">star</span>
+<span class="material-symbols-rounded strong">&#xe838;</span>
 ```
-
 
 ### Google Fonts
 
