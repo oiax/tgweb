@@ -1278,7 +1278,7 @@ the following HTML document is generated:
 ### `<tg:if-complete>`
 
 Normally, the `<tg:if-complete>` element in a layout is simply replaced with its content.
-However, if the following two conditions are not met, the entire element is deleted:
+However, if the following three conditions are not met, the entire element is deleted:
 
 * The property values to be inserted for all `<tg:prop>` elements within it are defined.
 * The custom property values to be inserted for all `<tg:data>` elements within it are defined.
@@ -1299,17 +1299,49 @@ However, if the following two conditions are not met, the entire element is dele
 </body>
 ```
 
-`src/pages/home.html`
+`src/pages/home1.html`
 
 ```html
 ---
+[main]
+layout = "message"
+[data]
+custom-name = "Alice"
+---
+<h1>Home</h1>
+<tg:insert name="message">Hello, world!</tg:insert>
+```
+
+When the layout `message` is applied to the page `home.html`,
+the following HTML document is generated:
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body class="p-2">
+    <h1>Home</h1>
+    <hr class="h-px my-8 bg-gray-200 border-0">
+    <div class="bg-gray-800 text-white p-4">To: Alice</div>
+    <div class="bg-gray-200 p-4">Hello, world!</div>
+  </body>
+</html>
+```
+
+`src/pages/home2.html`
+
+```html
+---
+[main]
+layout = "message"
 [data]
 custom-name = "Alice"
 ---
 <h1>Home</h1>
 ```
 
-When the layout `message` is applied to the page `home.html`,
+When the layout `message` is applied to the page `home2.html`,
 the following HTML document is generated:
 
 ```html

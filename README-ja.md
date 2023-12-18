@@ -12,7 +12,7 @@
 * [画像](#画像)
 * [音声](#音声)
 * [フォントとアイコン](#フォントとアイコン)
-* [Layouts](#layouts)
+* [レイアウト](#レイアウト)
 * [Wrappers](#wrapper)
 * [Segments](#segments)
 * [Components](#components)
@@ -949,27 +949,25 @@ Roboto = true
 
 ## レイアウト
 
-### What is a layout
+### レイアウトとは
 
-Typically, the pages of a website have a set of areas that share most of the same content:
-header, sidebar, footer, etc.
+通常、ウェブサイトのページには、ほとんどのコンテンツを共有する一連の領域があります： ヘッダー、サイドバー、フッターなどです。
 
-Separating this set of areas from the page as a single template makes the website easier to manage.
-We call this separated template a "layout".
+この一連の領域をひとつのテンプレートとしてページから分離すると、ウェブサイトの管理が容易になります。この分割されたテンプレートを「レイアウト」と呼びます。
 
-### Adding a layout
+### レイアウトの追加
 
-Layouts are HTML files placed in the `src/layouts` subdirectory under the working directory.
+レイアウトは、作業ディレクトリ下の `src/layouts` サブディレクトリに置かれるHTMLファイルです。
 
-A layout must satisfy the following three conditions:
+レイアウトは次の 3 つの条件を満たす必要があります:
 
-1. There is only one top-level element.
-2. The top-level element is a `<body>` element.
-3. The top-level element contains only one `<tg:content>` element within its descendant elements.
+1. トップレベル要素は1つしかない。
+2. トップレベル要素は `<body>` 要素である。
+3. トップレベル要素は、その子孫要素内に `<tg:content>` 要素を1つだけ含む。
 
-The `<tg:content>` element indicates where in the layout the page will be inserted.
+`<tg:content>` 要素は、レイアウトのどこにページが挿入されるかを示します。
 
-#### Example
+#### 例
 
 `src/layouts/common.html`
 
@@ -985,22 +983,21 @@ The `<tg:content>` element indicates where in the layout the page will be insert
 </body>
 ```
 
-Note that you _cannot_ write `<tg:content />` instead of `<tg:content></tg:content>`.
+`<tg:content></tg:content>` の代わりに `<tg:content />` を書くことは _できない_ ことに注意してください。
 
-### Applying a layout to a page
+### ページにレイアウトを適用する
 
-To apply this layout to a page, specify the name of the layout in the `layout` property of the
-the front matter of the page.
+このレイアウトをページに適用するには、ページのフロントマターの `layout` プロパティにレイアウト名を指定します。
 
-The name of the layout is the file name of the layout minus its extension (`.html`).
-In this case, `common` is the name of the layout.
+レイアウトの名前は、レイアウトのファイル名から拡張子（`.html`）を除いたものです。この場合、`common` がレイアウトの名前です。
 
-#### Example
+#### 例
 
 `src/pages/index.html`
 
 ```html
 ---
+[main]
 layout = "common"
 ---
 <h1>Welcome!</h1>
@@ -1009,8 +1006,7 @@ layout = "common"
 </div>
 ```
 
-When the layout `common` shown in the previous example is applied to this page file,
-the following HTML document is generated:
+前の例で示したレイアウト `common` をこのページファイルに適用すると、次のようなHTML文書が生成されます：
 
 ```html
 <html>
@@ -1032,10 +1028,9 @@ the following HTML document is generated:
 </html>
 ```
 
-### Embedding property values in layouts
+### レイアウトにプロパティ値を埋め込む
 
-The values of the properties set in the front matter of the page can be embedded in the layout
-using the `<tg:prop>` element.
+ページのフロントマターで設定されたプロパティの値は、`<tg:prop>` 要素を使ってレイアウトに埋め込むことができます。
 
 #### Example
 
@@ -1050,7 +1045,6 @@ using the `<tg:prop>` element.
     <h1 class="text-3xl"><tg:prop name="title"></tg:prop></h1>
     <tg:content></tg:content>
   </main>
-  <footer>&copy; Example Inc. <tg:prop name="year"></tg:prop></footer>
 </body>
 ```
 
@@ -1058,9 +1052,9 @@ using the `<tg:prop>` element.
 
 ```html
 ---
+[main]
 layout = "common"
 title = "Greeting"
-year = "2023"
 ---
 <h1>Welcome!</h1>
 <div class="bg-green-300 p-4">
@@ -1068,20 +1062,15 @@ year = "2023"
 </div>
 ```
 
-### Slots and inserts
+### slotとinsert
 
-The `<tg:slot>` element is a place holder inside a layout that you can fill with a content
-specified within a page.
-A `name` attribute must be specified for the `<tg:slot>` element.
+`<tg:slot>` 要素はレイアウト内のプレースホルダーで、ページ内で指定した内容を埋めることができます。`<tg:slot>` 要素には `name` 属性を指定する必要があります。
 
-To embed content into a slot in a layout, place a `<tg:insert>` element on the page where the
-layout is to be applied.
+レイアウトのスロットにコンテンツを埋め込むには、レイアウトを適用するページに `<tg:insert>` 要素を配置します。
 
-If you specify the name of the slot as the value of the `name` property of  `<tg:insert>` element,
-the slot will be replaced with the element's content.
+`<tg:insert>` 要素の `name` プロパティの値としてスロット名を指定すると、スロットは`<tg:insert>` 要素の内容に置き換えられます。
 
-When page content is inserted into a `<tg:content>` element in a layout,
-all `<tg:insert>` elements are removed from the page content.
+ページコンテンツがレイアウト内の `<tg:content>` 要素に挿入されると、すべての `<tg:insert>` 要素がページコンテンツから削除されます。
 
 #### Example
 
@@ -1101,6 +1090,7 @@ all `<tg:insert>` elements are removed from the page content.
 
 ```html
 ---
+[main]
 layout = "product"
 title = "Product 1"
 ---
@@ -1112,8 +1102,7 @@ title = "Product 1"
 <tg:insert name="badges"><span>A</span><span>B</span></tg:insert>
 ```
 
-When the layout `product` is applied to the page `product1.html`,
-the following HTML document is generated:
+レイアウト `product` がページ `product1.html` に適用されると、次のようなHTML文書が生成される：
 
 ```html
 <html>
@@ -1133,10 +1122,9 @@ the following HTML document is generated:
 </html>
 ```
 
-### Fallback content of slot
+### スロットの代替コンテンツ
 
-If the content to be inserted into the slot is not defined, the content of the `<tg:slot>` element
-is used as a fallback content.
+スロットに挿入されるコンテンツが定義されていない場合、`<tg:slot>` 要素の内容が代替コンテンツとして使用されます。
 
 #### Example
 
@@ -1153,6 +1141,7 @@ is used as a fallback content.
 
 ```html
 ---
+[main]
 layout = "message"
 title = "Home"
 ---
@@ -1160,8 +1149,7 @@ title = "Home"
 <p>Hello, world!</p>
 ```
 
-When the layout `message` is applied to the page `home.html`,
-the following HTML document is generated:
+レイアウト `message` がページ `home.html` に適用されると、次のようなHTML文書が生成されます：
 
 ```html
 <html>
@@ -1178,14 +1166,14 @@ the following HTML document is generated:
 
 ### `<tg:if-complete>`
 
-Normally, the `<tg:if-complete>` element in a layout is simply replaced with its content.
-However, if the following two conditions are not met, the entire element is deleted:
+通常、レイアウト内の `<tg:if-complete>` 要素は単にその内容で置き換えられます。
+ただし、以下の3つの条件を満たさない場合は、要素全体が削除されます：
 
-* The property values to be inserted for all `<tg:prop>` elements within it are defined.
-* The custom property values to be inserted for all `<tg:data>` elements within it are defined.
-* The contents to be inserted for all `<tg:slot>` elements within it are defined.
+* その中のすべての `<tg:prop>` 要素に挿入されるプロパティ値が定義されている。
+* その中のすべての `<tg:data>` 要素に挿入されるカスタムプロパティ値が定義されている。
+* その中のすべての`<tg:slot>`要素に挿入される内容が定義されている。
 
-#### Example
+#### 例
 
 `src/layouts/message.html`
 
@@ -1200,18 +1188,48 @@ However, if the following two conditions are not met, the entire element is dele
 </body>
 ```
 
-`src/pages/home.html`
+`src/pages/home1.html`
 
 ```html
 ---
+[main]
+layout = "message"
+[data]
+custom-name = "Alice"
+---
+<h1>Home</h1>
+<tg:insert name="message">Hello, world!</tg:insert>
+```
+
+レイアウト `message` がページ `home1.html` に適用されると、次のようなHTML文書が生成されます：
+
+```html
+<html>
+  <head>
+    ...
+  </head>
+  <body class="p-2">
+    <h1>Home</h1>
+    <hr class="h-px my-8 bg-gray-200 border-0">
+    <div class="bg-gray-800 text-white p-4">To: Alice</div>
+    <div class="bg-gray-200 p-4">Hello, world!</div>
+  </body>
+</html>
+```
+
+`src/pages/home2.html`
+
+```html
+---
+[main]
+layout = "message"
 [data]
 custom-name = "Alice"
 ---
 <h1>Home</h1>
 ```
 
-When the layout `message` is applied to the page `home.html`,
-the following HTML document is generated:
+レイアウト `message` がページ `home2.html` に適用されると、次のようなHTML文書が生成されます：
 
 ```html
 <html>
