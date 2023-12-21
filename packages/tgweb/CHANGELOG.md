@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.7.2
+
+* 9a2778a Introduce a new dynamic elment, Scheduler
+
 ## 0.7.1
 
 * b5126bf Add `<style>` element for Material Symbol Variants
