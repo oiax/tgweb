@@ -356,6 +356,29 @@ window.tgweb = {
       this.inTransition = false
     }
   }),
+  scheduler: (el) => ({
+    el,
+    init() {
+      this.el.dataset.schedulerBaseClass = this.el.className
+
+      if (this.el.dataset.schedulerInit)
+        this.el.dataset.schedulerInit.split(" ").forEach(token => this.el.classList.add(token))
+
+      for (const attr of this.el.attributes) {
+        const md = attr.name.match(/^data-scheduler-(\d+)$/)
+
+        if (md) {
+          const delay = parseInt(md[1])
+          const tokens = this.el.getAttribute(attr.name).split(" ")
+
+          setTimeout(() => {
+            this.el.className = this.el.dataset.schedulerBaseClass
+            tokens.forEach(token => this.el.classList.add(token))
+          }, delay)
+        }
+      }
+    }
+  }),
   tram: (el) => ({
     el,
     kernel: undefined,

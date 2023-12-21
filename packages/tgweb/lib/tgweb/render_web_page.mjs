@@ -745,6 +745,9 @@ const renderElement = (node, siteData, documentProperties, state) => {
   if (newNode.attribs["tg:modal"] !== undefined && state.hookName === undefined)
     addModalHook(newNode, newState)
 
+  if (newNode.attribs["tg:scheduler"] !== undefined && state.hookName === undefined)
+    addSchedulerHook(newNode, newState)
+
   if (newNode.attribs["tg:tram"] !== undefined && state.hookName === undefined)
     addTramHook(newNode, newState)
 
@@ -1024,6 +1027,27 @@ const addModalSubhooks = (newNode) => {
   else if (newNode.attribs["tg:close"] !== undefined) {
     newNode.attribs["x-on:click.stop"] = "if (body && open) body.close(); open = false"
   }
+}
+
+// Scheduler
+
+const addSchedulerHook = (newNode, newState) => {
+  newState.hookName = "scheduler"
+  newNode.attribs["x-data"] = `window.tgweb.scheduler($el)`
+  addSchedulerSubhooks(newNode)
+}
+
+const addSchedulerSubhooks = (newNode) => {
+  if (newNode.attribs["tg:init"] !== undefined)
+    newNode.attribs["data-scheduler-init"] = newNode.attribs["tg:init"]
+
+  Object.keys(newNode.attribs).forEach(attrName => {
+    const md = attrName.match(/^tg:(\d+)$/)
+    if (md === null) return
+    const time = md[1]
+
+    newNode.attribs[`data-scheduler-${time}`] = newNode.attribs[attrName]
+  })
 }
 
 // Tram
@@ -1414,7 +1438,7 @@ const renderHead = (documentProperties) => {
           const value = materialSymbols[key]
           const parts = key.split("-")
           let style, variant, fill, wght, grad, opsz
-          let settings, selector, font_display, declaration
+          let settings, selector, declaration
 
           if (parts.length === 1) {
             style = key
