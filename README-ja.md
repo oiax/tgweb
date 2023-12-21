@@ -25,7 +25,9 @@
   * [Switcher](#switcher)
   * [Rotator](#rotator)
   * [Carousel](#carousel)
+  * [Scheduler](#scheduler)
   * [Tram](#tram)
+  * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
@@ -2483,9 +2485,77 @@ the buttons.
 Class tokens specified in the `tg:disabled-class` attribute are added to the `class` attribute of
 all pagination buttons when the carousel body is shifting.
 
+### Scheduler
+
+_Scheduler_ is a mechanism for changing the `class` attribute of an HTML element and its
+descendant elements over time.
+
+The following is a simple example of scheduler configuration:
+
+```html
+<div
+  tg:scheduler
+  class="w-24 mx-auto p-4 text-center text-white"
+  tg:init="bg-black"
+  tg:1000="bg-red-500"
+  tg:2000="bg-blue-500"
+  tg:3000="bg-green-500"
+>
+  Hello, world!
+</div>
+```
+
+The `tg:scheduler` attribute declares that this element is managed by a scheduler.
+The value of this element's `class` attribute is called the _base class_.
+
+The base class plus the value of the tg:init attribute is initially the `class` attribute of
+this element.
+In this example, the `class` attribute of the `<div>` element is initially set to the value
+`"w-24 mx-auto p-4 text-center text-white bg-black"`.
+
+The attribute named `tg:` combined with a sequence of numbers changes the `class` attribute of
+this element at the moment a certain amount of time has elapsed since the web page was loaded.
+The sequence of numbers represents the elapsed time in milliseconds.
+
+The base class plus the value of the tg:init attribute is initially the `class` attribute of
+this element.
+In this example, the `class` attribute of the `<div>` element is initially set to the value
+`"w-24 mx-auto p-4 text-center text-white bg-black"`.
+
+The attribute named `tg:` combined with a sequence of numbers changes the `class` attribute of
+this element at the moment a certain amount of time has elapsed since the web page was loaded.
+The sequence of numbers represents the elapsed time in milliseconds.
+
+In this example, the value of the `class` attribute of the `<div>` element changes over time as
+follows:
+
+* After 1 second: `w-24 mx-auto p-4 text-center text-white bg-red-500`
+* After 2 seconds: `w-24 mx-auto p-4 text-center text-white bg-blue-500`
+* After 3 seconds: `w-24 mx-auto p-4 text-center text-white bg-green-500`
+
+In the following example, the scheduler is used to achieve the fade-in effect:
+
+```html
+<div
+  tg:scheduler
+  class="transition duration-500"
+  tg:init="opacity-0"
+  tg:0="opacity-100"
+>
+  Fade In
+</div>
+```
+
+Initially, the value of the `class` attribute of this `<div>` element contains `opacity-0`, so its
+contents are not visible to the user.
+The moment the page loads, `opacity-0` is removed from the `class` attribute of this `<div>`
+element and `opacity-100` is added instead.
+Thanks to the `transition duration-500` included in the base class, the effect of `opacity-100` is
+applied gradually over a period of 0.5 seconds.
+
 ### Tram
 
-#### Basics
+#### Tram Basics
 
 _Tram_ is a mechanism for changing the `class` attribute of an HTML element and its descendant
 elements as the positional relationship between the element and the viewport changes.
