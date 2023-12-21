@@ -20,6 +20,12 @@
 * [Tags](#tags)
 * [リンク](#リンク)
 * [Dynamic Elements](#dynamic-elements)
+  * [Modal](#modal)
+  * [Toggler](#toggler)
+  * [Switcher](#switcher)
+  * [Rotator](#rotator)
+  * [Carousel](#carousel)
+  * [Tram](#tram)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
@@ -401,7 +407,7 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 * meta.property
 * link
 
-このセクションでは、最初の2つについて説明します; 
+このセクションでは、最初の2つについて説明します;
 他の4つは[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element) で説明します。
 
 ### 定義済みプロパティ
