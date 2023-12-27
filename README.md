@@ -2676,9 +2676,8 @@ In the following example, the scheduler is used to achieve the fade-in effect:
 ```html
 <div
   tg:scheduler
-  class="transition duration-[2000ms]"
   tg:init="opacity-0"
-  tg:0="opacity-100"
+  tg:0="opacity-100 transition duration-[2000ms]"
 >
   Fade In
 </div>
