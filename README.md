@@ -13,7 +13,7 @@
 * [Audios](#audios)
 * [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
-* [Wrappers](#wrapper)
+* [Wrappers](#wrappers)
 * [Segments](#segments)
 * [Components](#components)
 * [Articles](#articles)
@@ -1390,65 +1390,166 @@ The `<tg:content>` element indicates where in the wrapper the page will be inser
 
 #### Example
 
-`src/pages/_wrapper.html`
+`src/pages/mission/_wrapper.html`
 
 ```html
-<div class="[&_p]:mt-4">
+<h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+<div class="[&_p]:mt-2 [&_p]:pl-2">
   <tg:content></tg:content>
 </div>
 ```
 
-The `class` attribute value `[&_p]:mt-4` sets the `margin-top` of all `<p>` elements within this
-wrapper to scale 4 (16px/1rem). For the notation `[&_p]`, see
+The `class` attribute value `[&_p]:mt-2 [&_p]:pl-2` sets the `margin-top` and `padding-left` of all `<p>` elements within this
+wrapper to scale 2 (8px/0.5rem). For the notation `[&_p]`, see
 [Using arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
 
 ### Applying a wrapper to a page
 
 As already mentioned, a wrapper placed in a directory applies to all pages in that directory.
-The only thing you should do is take the `layout` attribute off the page.
+In this example, assume the following two pages exist in the `src/pages/mission/` directory and its descendant directory `src/pages/mission/member_mission/`.
 
-`src/pages/index.html`
+
+`src/pages/mission/team_mission.html`
 
 ```html
----
-[main]
-layout = "common"
----
-<h1>Welcome!</h1>
-<div class="bg-green-300 p-4">
-  <p>Hello, world!</p>
+<h2 class="text-lg">[Team]</h2>
+<div>
+  <p>Create workshop pages.</p>
 </div>
 ```
+
+`src/pages/mission/member_mission/alice_mission.html`
+
+```html
+<h2 class="text-lg">[Alice]</h2>
+<div>
+  <p>Coding with html (workshop page).</p>
+  <p>Coding with html (workshop calender page).</p>
+</div>
+```
+
+Since the wrapper `_wrapper.html` is applied to these two pages, each `body` section is generated as follows.
+
+`dist/pages/mission/team_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <h2 class="text-lg">[Team]</h2>
+    <div>
+      <p>Create workshop pages.</p>
+    </div>
+  </div>
+</body>
+```
+
+`dist/pages/mission/member_mission/alice_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <h2 class="text-lg">[Alice]</h2>
+    <div>
+      <p>Coding with html (workshop page).</p>
+      <p>Coding with html (workshop calender page).</p>
+    </div>
+  </div>
+</body>
+```
+
+For both pages, `margin-top` and `padding-left` of the `<p>` element are set to scale 2 (8px/0.5rem).
+In this way, common styles and common elements can be added to all pages in a particular directory and its descendant directories.
 
 ### Wrapper properties
 
 The value of a property set in the wrapper's front matter becomes the default value of the
 property for the page to which that wrapper is applied.
+If the same property has a value set in the front matter of the page, the setting in the page takes precedence.
 
 Wrapper property values take precedence over site property values.
 
 #### Example
 
-`src/pages/_wrapper.html`
+In this example, `title = "Team's Mission"` is defined as the wrapper property value.
+It is then described as the content of the `h1` element using the `<tg:prop>` element.
+
+`src/pages/mission/_wrapper.html`
 
 ```html
 ---
 [main]
-layout = "common"
+title = "Team's Mission"
 ---
-<div class="[&_p]:mt-4">
+<h1 class="text-xl bg-blue-400 p-2">
+  <tg:prop name="title"></tg:prop>
+</h1>
+<div class="[&_p]:mt-2 [&_p]:pl-2">
   <tg:content></tg:content>
 </div>
 ```
 
-`src/pages/index.html`
+Apply the above wrapper to the following two pages.
+
+`src/pages/mission/team_mission.html`
 
 ```html
-<h1>Welcome!</h1>
-<div class="bg-green-300 p-4">
-  <p>Hello, world!</p>
+<div>
+  <p>Create workshop pages.</p>
 </div>
 ```
+
+`src/pages/member_mission/alice_mission.html`
+
+```html
+---
+[main]
+title = "Alice's Mission"
+---
+<div>
+  <p>Coding with html (workshop page).</p>
+  <p>Coding with html (workshop calender page).</p>
+</div>
+```
+
+The `team_mission.html` one does not redefine the property `title` in the front matter, but the `member_mission/alice_mission.html` one does.
+
+When the wrapper `_wrapper.html` is applied to these two pages, each `body` section is generated as follows.
+
+`dist/pages/mission/team_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">
+    Team&#39;s Mission
+  </h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <div>
+      <p>Create workshop pages.</p>
+    </div>
+  </div>
+</body>
+```
+
+`dist/pages/mission/member_mission/alice_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">
+    Alice&#39;s Mission
+  </h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <div>
+      <p>Coding with html (workshop page).</p>
+      <p>Coding with html (workshop calender page).</p>
+    </div>
+  </div>
+</body>
+```
+
+`team_mission.html` is rendered with the property `title` defined in the wrapper.
+On the other hand, `member_mission/alice_mission.html` is rendered by `title`, which is redefined in the page.
 
 ## Segments
 

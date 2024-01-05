@@ -13,7 +13,7 @@
 * [音声](#音声)
 * [フォントとアイコン](#フォントとアイコン)
 * [レイアウト](#レイアウト)
-* [Wrappers](#wrapper)
+* [ラッパー](#ラッパー)
 * [Segments](#segments)
 * [Components](#components)
 * [Articles](#articles)
@@ -1250,90 +1250,180 @@ custom-name = "Alice"
 </html>
 ```
 
-## Wrappers
+## ラッパー
 
-### What is a wrapper
+### ラッパーとは
 
-A wrapper is a template that exists at a level between layouts and pages.
+ラッパーとは、レイアウトとページの中間のレベルに存在するテンプレートのことです。
 
-Wrappers allow you to apply a common style and add common elements to a group of pages.
+ラッパーを使えば、共通のスタイルや共通の要素を一群のページに追加できます。
 
-### Adding a wrapper
+### ラッパーの追加
 
-The file name of a wrapper is always `_wrapper.html` and it is placed directly under the
-`src/pages` subdirectory of working directory or its descendant directories.
+ラッパーのファイル名は常に `_wrapper.html` です。作業ディレクトリ下の`src/pages`サブディレクトリの直下かその子孫ディレクトリに配置します。
 
-A wrapper placed in a directory applies to all pages in that directory.
+あるディレクトリーに置かれたラッパーは、そのディレクトリーと子孫ディレクトリー内のすべてのページに適用されます。
 
-If the wrapper does not exist in a directory, the first wrapper found in the directory hierarchy
-from the bottom up becomes the wrapper for that directory.
+もし、あるディレクトリにラッパーが存在しない場合、ディレクトリ階層で下から順番に最初に見つかったラッパーが、そのディレクトリのラッパーとなります。
 
-For example, if `src/pages/foo/_wrapper.html` exists and `_wrapper.html` does not exist in either
-the `src/pages/foo/bar` directory or the `src/pages/foo/bar/baz` directory, then
-`src/pages/foo/_wrapper.html` will be the wrapper for `src/pages/foo/bar/baz` directory.
+例えば、 `src/pages/foo/_wrapper.html` が存在し、 `_wrapper.html` が `src/pages/foo/bar` ディレクトリにも `src/pages/foo/bar/baz` ディレクトリにも存在しない場合、 `src/pages/foo/_wrapper.html` は `src/pages/foo/bar/baz` ディレクトリのラッパーとなります。
 
-Basically, the wrapper is written the same way as that of the layout.
-The `<tg:content>` element indicates where in the wrapper the page will be inserted.
+基本的に、ラッパーはレイアウトと同じように書きます。
+`<tg:content>`要素は、ラッパー内のどこにページが挿入されるかを示します。
 
-#### Example
+#### 例
 
-`src/pages/_wrapper.html`
+`src/pages/mission/_wrapper.html`
 
 ```html
-<div class="[&_p]:mt-4">
+<h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+<div class="[&_p]:mt-2 [&_p]:pl-2">
   <tg:content></tg:content>
 </div>
 ```
 
-The `class` attribute value `[&_p]:mt-4` sets the `margin-top` of all `<p>` elements within this
-wrapper to scale 4 (16px/1rem). For the notation `[&_p]`, see
-[Using arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants).
+`class` 属性値 `[&_p]:mt-2 [&_p]:pl-2` は、このラッパー内の全ての `<p>` 要素の `margin-top` と `padding-left` をスケール2（8px/0.5rem）に設定します。`[&_p]`の表記については [Using arbitrary variants](https://tailwindcss.com/docs/hover-focus-and-other-states#using-arbitrary-variants)を参照してください。
 
-### Applying a wrapper to a page
+### ラッパーをページに適用する
 
-As already mentioned, a wrapper placed in a directory applies to all pages in that directory.
-The only thing you should do is take the `layout` attribute off the page.
+すでに述べたように、あるディレクトリーに置かれたラッパーは、そのディレクトリーと子孫ディレクトリー内のすべてのページに適用されます。この例では、`src/pages/mission/` ディレクトリとその子孫ディレクトリ `src/pages/mission/member_mission/` に次の２つのページが存在するとします。
 
-`src/pages/index.html`
+`src/pages/mission/team_mission.html`
 
 ```html
----
-layout = "common"
----
-<h1>Welcome!</h1>
-<div class="bg-green-300 p-4">
-  <p>Hello, world!</p>
+<h2 class="text-lg">[Team]</h2>
+<div>
+  <p>Create workshop pages.</p>
 </div>
 ```
 
-### Wrapper properties
+`src/pages/mission/member_mission/alice_mission.html`
 
-The value of a property set in the wrapper's front matter becomes the default value of the
-property for the page to which that wrapper is applied.
+```html
+<h2 class="text-lg">[Alice]</h2>
+<div>
+  <p>Coding with html (workshop page).</p>
+  <p>Coding with html (workshop calender page).</p>
+</div>
+```
 
-Wrapper property values take precedence over site property values.
+ラッパー `_wrapper.html` がこれら2つのページに適用されるので、それぞれの `body` 部は次のように生成されます。
 
-#### Example
+`dist/pages/mission/team_mission.html`
 
-`src/pages/_wrapper.html`
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <h2 class="text-lg">[Team]</h2>
+    <div>
+      <p>Create workshop pages.</p>
+    </div>
+  </div>
+</body>
+```
+
+`dist/pages/mission/member_mission/alice_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">Our Mission</h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <h2 class="text-lg">[Alice]</h2>
+    <div>
+      <p>Coding with html (workshop page).</p>
+      <p>Coding with html (workshop calender page).</p>
+    </div>
+  </div>
+</body>
+```
+
+どちらのページも、`<p>` 要素の `margin-top` と `padding-left` はスケール2（8px/0.5rem）に設定されます。このように特定のディレクトリーとその子孫ディレクトリー内のすべてのページに共通のスタイルや共通の要素を追加できます。
+
+### ラッパープロパティ
+
+ラッパーのフロントマターで設定されたプロパティの値は、そのラッパーが適用されるページのプロパティのデフォルト値になります。もし、ページのフロントマターで同じプロパティに値が設定されている場合は、ページでの設定が優先されます。
+
+ラッパーのプロパティ値は、サイトのプロパティ値よりも優先されます。
+
+#### 例
+
+この例では、ラッパーのプロパティ値として `title = "Team's Mission"` が定義されています。そして、`<tg:prop>` 要素を使って `h1` 要素の内容として記述されています。
+
+`src/pages/mission/_wrapper.html`
 
 ```html
 ---
-layout = "common"
+[main]
+title = "Team's Mission"
 ---
-<div class="[&_p]:mt-4">
+<h1 class="text-xl bg-blue-400 p-2">
+  <tg:prop name="title"></tg:prop>
+</h1>
+<div class="[&_p]:mt-2 [&_p]:pl-2">
   <tg:content></tg:content>
 </div>
 ```
 
-`src/pages/index.html`
+上記のラッパーを次の2つのページに適用します。
+
+`src/pages/mission/team_mission.html`
 
 ```html
-<h1>Welcome!</h1>
-<div class="bg-green-300 p-4">
-  <p>Hello, world!</p>
+<div>
+  <p>Create workshop pages.</p>
 </div>
 ```
+
+`src/pages/member_mission/alice_mission.html`
+
+```html
+---
+[main]
+title = "Alice's Mission"
+---
+<div>
+  <p>Coding with html (workshop page).</p>
+  <p>Coding with html (workshop calender page).</p>
+</div>
+```
+
+`team_mission.html` の方は、フロントマターでプロパティ `title` を再定義していませんが、`member_mission/alice_mission.html` の方は再定義しています。
+
+ラッパー `_wrapper.html` がこれら2つのページに適用されると、それぞれの `body` 部は次のように生成されます。
+
+`dist/pages/mission/team_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">
+    Team&#39;s Mission
+  </h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <div>
+      <p>Create workshop pages.</p>
+    </div>
+  </div>
+</body>
+```
+
+`dist/pages/mission/member_mission/alice_mission.html`
+
+```html
+<body>
+  <h1 class="text-xl bg-blue-400 p-2">
+    Alice&#39;s Mission
+  </h1>
+  <div class="[&_p]:mt-2 [&_p]:pl-2">
+    <div>
+      <p>Coding with html (workshop page).</p>
+      <p>Coding with html (workshop calender page).</p>
+    </div>
+  </div>
+</body>
+```
+
+`team_mission.html` の方は、ラッパーで定義したのプロパティ `title` がレンダリングされています。一方、`member_mission/alice_mission.html` の方はページで再定義した `title` がレンダリングされています。
 
 ## Segments
 
