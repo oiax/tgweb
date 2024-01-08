@@ -1557,7 +1557,7 @@ On the other hand, `member_mission/alice_mission.html` is rendered by `title`, w
 
 A _segment_ is a template file that can be embedded in pages, layouts or segments.
 Segments cannot be embedded in templates other than these types, such as articles,
-wrappers, segments or components.
+wrappers, and components.
 
 When embedding a segment into another segment, care should be taken to avoid circular
 references. If a circular reference is detected, an error message will be inserted in the

@@ -14,7 +14,7 @@
 * [フォントとアイコン](#フォントとアイコン)
 * [レイアウト](#レイアウト)
 * [ラッパー](#ラッパー)
-* [Segments](#segments)
+* [セグメント](#セグメント)
 * [Components](#components)
 * [Articles](#articles)
 * [Tags](#tags)
@@ -1425,20 +1425,17 @@ title = "Alice's Mission"
 
 `team_mission.html` の方は、ラッパーで定義したのプロパティ `title` がレンダリングされています。一方、`member_mission/alice_mission.html` の方はページで再定義した `title` がレンダリングされています。
 
-## Segments
+## セグメント
 
-### Segment files
+### セグメントファイル
 
-A _segment_ is a template file that can be embedded in pages, layouts or segments.
-Segments cannot be embedded in templates other than these types, such as articles,
-wrappers or components.
+_segment_ はページ、レイアウト、セグメントに埋め込むことができるテンプレートファイルです。セグメントはアーティクル、ラッパー、コンポーネントなど、これらのタイプ以外のテンプレートに埋め込むことはできません。
 
-In order to embed one segment into another, certain conditions must be met.
-See [Segment layers](#segment-layers).
+セグメントを別のセグメントに埋め込むときは、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
-Segments are placed in the `src/segments` subdirectory of the working directory.
+セグメントは作業ディレクトリの `src/segments` サブディレクトリに置かれます。
 
-The following is an example of a segment:
+以下はセグメントの例です :
 
 `src/segments/hero.html`
 
@@ -1454,12 +1451,11 @@ The following is an example of a segment:
 </section>
 ```
 
-### Embedding segments into a page
+### セグメントをページに埋め込む
 
-To embed a segment into a page, add a `<tg:segment>` element at the
-location where you want to place it and specify its name in the `name` attribute.
+ページにセグメントを埋め込むには、配置したい場所に `<tg:segment>` 要素を追加し、`name` 属性でセグメント名を指定します。
 
-#### Example
+#### 例
 
 ```html
 <div>
@@ -1471,9 +1467,9 @@ location where you want to place it and specify its name in the `name` attribute
 </div>
 ```
 
-### Passing custom properties to a segment
+### カスタムプロパティをセグメントに渡す
 
-You can pass custom properties to a segment using the `<tg:segment> element's `tg:data-*` attribute.
+`<tg:segment>` 要素の `data-*` 属性を使って、セグメントにカスタムプロパティを渡すことができます。
 
 `src/segment/hero.html`
 
@@ -1489,7 +1485,7 @@ You can pass custom properties to a segment using the `<tg:segment> element's `t
 
 ```html
 <div>
-  <tg:segment name="hero" tg:data-image-path="hello.jpg"></tg:segment>
+  <tg:segment name="hero" data-image-path="hello.jpg"></tg:segment>
 
   <main>
     ...
@@ -1497,12 +1493,11 @@ You can pass custom properties to a segment using the `<tg:segment> element's `t
 </div>
 ```
 
-### Slots
+### スロット
 
-Like layouts, slots can be placed inside segments. The method of embedding content in the slots
-within a segment is similar to that of a layout.
+レイアウトと同様、スロットをセグメント内に配置できます。セグメント内のスロットにコンテンツを埋め込む方法は、レイアウトと同様です。
 
-#### Example
+#### 例
 
 `src/segment/hero.html`
 
@@ -1532,37 +1527,6 @@ within a segment is similar to that of a layout.
     ...
   </main>
 </div>
-```
-
-### Segment layers
-
-Segments have a property called _layer_. This predefined property controls the hierarchical
-relationship between segments.
-
-The value of this property must be an integer greater than or equal to 0, and its default value is 0.
-To embed one segment A into another segment B, the layer of A must be larger than the layer of B.
-
-#### Example
-
-`src/segment/foo.html`
-
-```html
----
-layer = 0
----
-
-<tg:segment name="bar"></tg:segment>
-```
-
-`src/segment/bar.html`
-
-
-```html
----
-layer = 1
----
-
-<div>Bar</div>
 ```
 
 ## Components
