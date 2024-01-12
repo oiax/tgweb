@@ -1680,8 +1680,8 @@ The following is an example of a component:
 </span>
 ```
 
-Note that you should set the `font.material-symbols` property to `true` in the `sites.toml`
-in order to display the above smile icon. See [Material Symbols](#material-symbols).
+Note that the property in the `font.material-symbols` table of `sites.toml` (the `outlined` property in this example) must be set to `true` in order to display the smiley icon above.
+See [Material Symbols](#material-symbols) for details.
 
 When embedding a component into another component, care should be taken to avoid circular
 references. If a circular reference is detected, an error message will be inserted in the
@@ -1701,7 +1701,7 @@ location where you want to place it and specify its name in the `name` attribute
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg:component> element's `data-*`
+You can pass custom properties to a component using the `<tg:component>` element's `data-*`
 attribute.
 
 `src/components/avatar.html`
@@ -1750,10 +1750,6 @@ in the slots within a component is similar to that of a layout and segment.
 `src/pages/hello.html`
 
 ```html
----
-[main]
-layout: home
----
 <main class="bg-gray-100 py-2">
   <tg:component name="blog_item">
     <tg:insert name="title">Greeting</tg:insert>
@@ -1775,7 +1771,7 @@ The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a prope
 message = "Hi!"
 ---
 <span>
-  <i class="fas fa-smile"></i>
+  <span class="material-symbols-outlined">sentiment_satisfied</span>
   <tg:data name="message"></tg:data>
 </span>
 ```

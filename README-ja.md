@@ -15,7 +15,7 @@
 * [レイアウト](#レイアウト)
 * [ラッパー](#ラッパー)
 * [セグメント](#セグメント)
-* [Components](#components)
+* [部品](#部品)
 * [Articles](#articles)
 * [Tags](#tags)
 * [リンク](#リンク)
@@ -1429,7 +1429,7 @@ title = "Alice's Mission"
 
 ### セグメントファイル
 
-_segment_ はページ、レイアウト、セグメントに埋め込むことができるテンプレートファイルです。セグメントはアーティクル、ラッパー、コンポーネントなど、これらのタイプ以外のテンプレートに埋め込むことはできません。
+_segment_ はページ、レイアウト、セグメントに埋め込むことができるテンプレートファイルです。セグメントはアーティクル、ラッパー、部品など、これらのタイプ以外のテンプレートに埋め込むことはできません。
 
 セグメントを別のセグメントに埋め込むときは、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
@@ -1529,16 +1529,15 @@ _segment_ はページ、レイアウト、セグメントに埋め込むこと�
 </div>
 ```
 
-## Components
+## 部品
 
-### Component files
+### 部品ファイル
 
-A _components_ is a template file that can be embedded in pages, segments, articles and layouts.
-However, embedding a component in another is not allowed.
+_部品_ はページ、セグメント、部品、記事、レイアウトに埋め込むことができるテンプレートファイルです。
 
-Components are placed in the `src/components` subdirectory of the working directory.
+部品は、作業ディレクトリの `src/components` サブディレクトリに置かれます。
 
-The following is an example of a component:
+以下は部品の例です:
 
 `src/components/smile.html`
 
@@ -1547,15 +1546,16 @@ The following is an example of a component:
   <span class="material-symbols-outlined">sentiment_satisfied</span>
 </span>
 ```
-Note that you should set the `font.material-symbols` property to `true` in the `sites.toml`
-in order to display the above smile icon. See [Material Symbols](#material-symbols).
 
-### Embedding components
+上記のスマイル・アイコンを表示するには、 `sites.toml` の `font.material-symbols` テーブル内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
 
-To embed a component into a page, article, or layout, add a `<tg:component>` element at the
-location where you want to place it and specify its name in the `name` attribute.
+部品を別の部品に埋め込む場合は、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
-#### Example
+### 部品を埋め込む
+
+部品をページや記事、レイアウトに埋め込むには、配置したい場所に `<tg:component>` 要素を追加し、 `name` 属性でその名前を指定します。
+
+#### 例
 
 ```html
 <p>
@@ -1564,8 +1564,7 @@ location where you want to place it and specify its name in the `name` attribute
 </p>
 ```
 
-You can pass custom properties to a component using the `<tg:component> element's `tg:data-*`
-attribute.
+`<tg:component>` 要素の `data-*` 属性を使って、カスタムプロパティをコンポーネントに渡すことができます。
 
 `src/components/avatar.html`
 
@@ -1581,16 +1580,15 @@ attribute.
 
 ```html
 <div class="grid grid-rows-2 gap-4">
-  <tg:component name="avatar" tg:data-name="Alice"></tg:component>
-  <tg:component name="avatar" tg:data-name="Bob"></tg:component>
-  <tg:component name="avatar" tg:data-name="Carol"></tg:component>
+  <tg:component name="avatar" data-name="Alice"></tg:component>
+  <tg:component name="avatar" data-name="Bob"></tg:component>
+  <tg:component name="avatar" data-name="Carol"></tg:component>
 </div>
 ```
 
-### Slots
+### スロット
 
-Like layouts and segments, slots can be placed inside components. The method of embedding content
-in the slots within a component is similar to that of a layout and segment.
+レイアウトやセグメントと同様、スロットを部品内に配置できます。部品内のスロットにコンテンツを埋め込む方法は、レイアウトやセグメントと同様です。
 
 #### Example
 
@@ -1604,7 +1602,7 @@ in the slots within a component is similar to that of a layout and segment.
   <tg:slot name="body"></tg:slot>
 </div>
 <tg:if-complete>
-  <divclass="text-right">
+  <div class="text-right">
     <tg:slot name="date"></tg:slot>
   </div>
 </tg:if-complete>
@@ -1613,9 +1611,6 @@ in the slots within a component is similar to that of a layout and segment.
 `src/pages/hello.html`
 
 ```html
----
-layout: home
----
 <main class="bg-gray-100 py-2">
   <tg:component name="blog_item">
     <tg:insert name="title">Greeting</tg:insert>
@@ -1627,24 +1622,22 @@ layout: home
 </main>
 ```
 
-### Embedding property values into a component
+### プロパティの値を部品に埋め込む
 
-The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a property in a component.
+`<tg:prop>` 要素と `<tg:data>` 要素は、コンポーネントにプロパティの値を埋め込むことができます。
 
 ```html
 ---
 [data]
-message: Hi!
+message = "Hi!"
 ---
 <span>
-  <i class="fas fa-smile"></i>
+  <span class="material-symbols-outlined">sentiment_satisfied</span>
   <tg:data name="message"></tg:data>
 </span>
 ```
 
-Note that the component inherits the property from the page or article in which it is embedded.
-When a property with the same name is defined in a component and a page or article, the value
-defined in the page or article takes precedence.
+コンポーネントは、それが埋め込まれているページや記事からプロパティを継承することに注意してください。同じ名前のプロパティが部品とページまたは記事で定義されている場合、ページまたは記事で定義されている値が優先されます。
 
 ## Articles
 
