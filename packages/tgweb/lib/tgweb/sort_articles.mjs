@@ -40,7 +40,11 @@ const sortArticles = (articles, orderBy) => {
       }
       else {
         if (j !== undefined) return (direction === "asc" ? 1 : -1)
-        else return (direction === "asc" ? -1 : 1)
+        else {
+          if (a.path > b.path) return (direction === "asc" ? 1 : -1)
+          if (a.path < b.path) return (direction === "asc" ? -1 : 1)
+          return 0
+        }
       }
     })
   }
