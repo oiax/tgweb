@@ -67,7 +67,8 @@ const createHTML = (posixPath, dom) => {
   const targetDir = PATH.dirname(targetPath)
 
   if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
-  fs.writeFileSync(targetPath, html)
+  fs.writeFileSync(targetPath, "<!DOCTYPE html>\n")
+  fs.appendFileSync(targetPath, html)
 
   if (process.env.VERBOSE) console.log(`Created ${distPath}.`)
 }
