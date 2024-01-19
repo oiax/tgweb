@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.7.5
+
+* 1c0ca5d Fix sort order for articles without index property
+
 ## 0.7.4
 
 * 63c6572 Add "px" to style.width and style.height
