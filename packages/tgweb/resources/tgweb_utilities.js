@@ -193,10 +193,10 @@ window.tgweb = {
         }
 
         window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+      }
 
-        if (this.interval > 0) {
-          this.v = setInterval(() => { this._forward() }, this.interval)
-        }
+      if (this.interval > 0) {
+        this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
     _forward() {
