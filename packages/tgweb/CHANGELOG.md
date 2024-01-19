@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.7.4
+
+* 63c6572 Add "px" to style.width and style.height
+
 ## 0.7.3
 
 * 4880d62 Show error when firstItem === undefined (not === null)

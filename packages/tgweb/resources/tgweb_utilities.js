@@ -93,15 +93,15 @@ window.tgweb = {
         this.body.style.display = "flex"
         this.body.style.flexDirection = "column"
         this.body.style.position = "relative"
-        this.body.style.width = firstItem.offsetWidth
-        this.body.style.height = firstItem.offsetHeight
+        this.body.style.width = firstItem.offsetWidth + "px"
+        this.body.style.height = firstItem.offsetHeight + "px"
 
         const windowResizeHandler = () => {
           const items = this.body.querySelectorAll("[data-item-index]")
           const firstItem = items[0]
 
-          this.body.style.width = firstItem.offsetWidth
-          this.body.style.height = firstItem.offsetHeight
+          this.body.style.width = firstItem.offsetWidth + "px"
+          this.body.style.height = firstItem.offsetHeight + "px"
         }
 
         window.tgweb.windowResizeHandlers.push(windowResizeHandler)
@@ -181,15 +181,15 @@ window.tgweb = {
         this.body.style.display = "flex"
         this.body.style.flexDirection = "column"
         this.body.style.position = "relative"
-        this.body.style.width = firstItem.offsetWidth
-        this.body.style.height = firstItem.offsetHeight
+        this.body.style.width = firstItem.offsetWidth + "px"
+        this.body.style.height = firstItem.offsetHeight + "px"
 
         const windowResizeHandler = () => {
           const items = this.body.querySelectorAll("[data-item-index]")
           const firstItem = items[0]
 
-          this.body.style.width = firstItem.offsetWidth
-          this.body.style.height = firstItem.offsetHeight
+          this.body.style.width = firstItem.offsetWidth + "px"
+          this.body.style.height = firstItem.offsetHeight + "px"
         }
 
         window.tgweb.windowResizeHandlers.push(windowResizeHandler)
