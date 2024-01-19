@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.7.3
+
+* 4880d62 Show error when firstItem === undefined (not === null)
+* 787509e Add `<!DOCTYPE html>` to generate html files
+* 8b12c33 Fix bug: rotator does not work without transition-duration
+
 ## 0.7.2
 
 * 9a2778a Introduce a new dynamic elment, Scheduler

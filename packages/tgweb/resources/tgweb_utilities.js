@@ -82,7 +82,7 @@ window.tgweb = {
       const items = this.body.querySelectorAll("[data-item-index]")
       const firstItem = items[0]
 
-      if (firstItem === null) {
+      if (firstItem === undefined) {
         console.error("This switcher has no item.")
         return
       }
@@ -170,7 +170,7 @@ window.tgweb = {
       const items = this.body.querySelectorAll("[data-item-index]")
       const firstItem = items[0]
 
-      if (firstItem === null) {
+      if (firstItem === undefined) {
         console.error("This switcher has no item.")
         return
       }
@@ -193,10 +193,10 @@ window.tgweb = {
         }
 
         window.tgweb.windowResizeHandlers.push(windowResizeHandler)
+      }
 
-        if (this.interval > 0) {
-          this.v = setInterval(() => { this._forward() }, this.interval)
-        }
+      if (this.interval > 0) {
+        this.v = setInterval(() => { this._forward() }, this.interval)
       }
     },
     _forward() {
@@ -260,7 +260,7 @@ window.tgweb = {
       const items = this.body.querySelectorAll("[data-carousel-item]")
       const firstItem = items[0]
 
-      if (firstItem === null) {
+      if (firstItem === undefined) {
         console.error("This carousel has no item.")
         return
       }

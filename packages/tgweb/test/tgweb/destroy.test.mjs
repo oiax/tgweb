@@ -75,6 +75,7 @@ describe("destroy", () => {
     const lines = pretty(html.toString()).split("\n").filter(line => line !== "")
 
     const expected = [
+      '<!DOCTYPE html>',
       '<html>',
       '  <head>',
       '    <meta charset="utf-8">',
