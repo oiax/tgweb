@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.8.0
+
+* 8fd059c Add `tgweb-archive` command
+
 ## 0.7.5
 
 * 1c0ca5d Fix sort order for articles without index property
