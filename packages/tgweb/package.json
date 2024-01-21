@@ -28,6 +28,7 @@
     "@ltd/j-toml": "^1.38.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "alpinejs": "^3.12.0",
+    "archiver": "^6.0.1",
     "chokidar": "^3.5.3",
     "daisyui": "^2.51.5",
     "express": "^4.18.2",
@@ -43,7 +44,8 @@
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",
-    "tgweb-server": "lib/server.mjs"
+    "tgweb-server": "lib/server.mjs",
+    "tgweb-archive": "lib/archive.mjs"
   },
   "files": [
     "lib",
