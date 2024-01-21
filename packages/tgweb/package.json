@@ -44,7 +44,8 @@
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",
-    "tgweb-server": "lib/server.mjs"
+    "tgweb-server": "lib/server.mjs",
+    "tgweb-archive": "lib/archive.mjs"
   },
   "files": [
     "lib",

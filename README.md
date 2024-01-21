@@ -307,6 +307,18 @@ rm -rf sites
 Note that if there are multiple subdirectories in the `sites` directory, this operation will
 delete all subdirectories except for `site_0`.
 
+### Archiving a `src` directory
+
+The `npx tgweb-archive` command can be used to create a zipped file of a `src` directory.
+
+In the case of a single-site structure, executing this command on a working directory will create
+an archive file in the current directory with the name of the working directory plus the `.zip`
+extension.
+
+For a multi-site structure, specify the directory name of the target website on the working
+directory like `npx tgweb-archive site_0`. As a result, an archive file will be created in the
+current directory with the name of the target directory plus the `.zip` extension.
+
 ## Pages
 
 ### What is a page
