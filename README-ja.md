@@ -16,9 +16,9 @@
 * [ラッパー](#ラッパー)
 * [セグメント](#セグメント)
 * [部品](#部品)
-* [Articles](#articles)
-* [Tags](#tags)
+* [アーティクル](#アーティクル)
 * [リンク](#リンク)
+* [リンクリスト](#リンクリスト)
 * [Dynamic Elements](#dynamic-elements)
   * [Modal](#modal)
   * [Toggler](#toggler)
@@ -342,8 +342,33 @@ rm -rf sites
 
 例えば、`src/pages/index.html` は `dist/index.html` に、`src/pages/shops/new_york.html` は `dist/shops/new_york.html` に変換されます。
 
+#### 例
+
+`src/pages/index.html` を上のシンプルページの内容に変更します。
+
+`dist/index.html` には次のような `<html>` や `<head>` 要素を含む完全なHTML文書が生成されます。
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    <body>
+      <h1 class="text-2xl font-bold">Greeting</h1>
+      <div class="bg-green-300 p-4">
+        <p>Hello, world!</p>
+      </div>
+    </body>
+  </body>
+</html>
+```
+
 `<head>` 要素の内容は自動的に生成されます。
 詳細は [後述](#managing-the-contents-of-the-head-element) します。
+
+ブラウザでこのページを開くには、URLとして `http://localhost:3000` を指定します。
 
 ## フロントマター
 
@@ -437,15 +462,15 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 
 通常、`scheme`、`host`、および `port` プロパティに値を指定する必要はありません。
 これらのプロパティの値は、ウェブサイトがTeamgenikで公開されるときに適切に設定されます。
-`url` プロパティの値は、これらのプロパティとページまたは記事へのパスから生成されます。その値は読み取り専用です。
+`url` プロパティの値は、これらのプロパティとページまたはアーティクルへのパスから生成されます。その値は読み取り専用です。
 
-以下の3つのプロパティは、記事においてのみ意味を持ちます:
+以下の3つのプロパティは、アーティクルにおいてのみ意味を持ちます:
 
-* `index`: 記事の並べ替えに使われる整数値。
-* `tags`: 記事を分類する文字列または文字列の配列。
+* `index`: アーティクの並べ替えに使われる整数値。
+* `tags`: アーティクを分類する文字列または文字列の配列。
 * `embedded-only`: `true` ならば、HTMLドキュメントは作成されない。デフォルト: `false`。
 
-詳細は [Articles](#articles) を参照してください。
+詳細は [アーティクル](#アーティクル) を参照してください。
 
 ### テンプレートにプロパティ値を埋め込む
 
@@ -514,7 +539,7 @@ div-id = "special"
 「style」テーブルで定義されたプロパティは、クラストークンのセットにエイリアスを与えるために使用することができます。
 これを _スタイル・エイリアス_ と呼びます。スタイルエイリアスの値は文字列のみです。
 
-定義されたスタイルエイリアスを `class` 属性の値に埋め込むには、 `tg:class` 属性を使います。
+定義されたスタイルエイリアスを `class` 属性の値に埋め込むには、`tg:class` 属性を使います。
 
 ```html
 ---
@@ -1274,7 +1299,7 @@ custom-name = "Alice"
 
 もし、あるディレクトリにラッパーが存在しない場合、ディレクトリ階層で下から順番に最初に見つかったラッパーが、そのディレクトリのラッパーとなります。
 
-例えば、 `src/pages/foo/_wrapper.html` が存在し、 `_wrapper.html` が `src/pages/foo/bar` ディレクトリにも `src/pages/foo/bar/baz` ディレクトリにも存在しない場合、 `src/pages/foo/_wrapper.html` は `src/pages/foo/bar/baz` ディレクトリのラッパーとなります。
+例えば、`src/pages/foo/_wrapper.html` が存在し、`_wrapper.html` が `src/pages/foo/bar` ディレクトリにも `src/pages/foo/bar/baz` ディレクトリにも存在しない場合、`src/pages/foo/_wrapper.html` は `src/pages/foo/bar/baz` ディレクトリのラッパーとなります。
 
 基本的に、ラッパーはレイアウトと同じように書きます。
 `<tg:content>`要素は、ラッパー内のどこにページが挿入されるかを示します。
@@ -1541,7 +1566,7 @@ _segment_ はページ、レイアウト、セグメントに埋め込むこと�
 
 ### 部品ファイル
 
-_部品_ はページ、セグメント、部品、記事、レイアウトに埋め込むことができるテンプレートファイルです。
+_部品_ はページ、セグメント、部品、アーティクル、レイアウトに埋め込むことができるテンプレートファイルです。
 
 部品は、作業ディレクトリの `src/components` サブディレクトリに置かれます。
 
@@ -1555,13 +1580,13 @@ _部品_ はページ、セグメント、部品、記事、レイアウトに�
 </span>
 ```
 
-上記のスマイル・アイコンを表示するには、 `sites.toml` の `font.material-symbols` テーブル内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
+上記のスマイル・アイコンを表示するには、`sites.toml` の `font.material-symbols` テーブル内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
 
 部品を別の部品に埋め込む場合は、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
 ### 部品を埋め込む
 
-部品をページや記事、レイアウトに埋め込むには、配置したい場所に `<tg:component>` 要素を追加し、 `name` 属性でその名前を指定します。
+部品をページやアーティクル、レイアウトに埋め込むには、配置したい場所に `<tg:component>` 要素を追加し、`name` 属性でその名前を指定します。
 
 #### 例
 
@@ -1572,7 +1597,7 @@ _部品_ はページ、セグメント、部品、記事、レイアウトに�
 </p>
 ```
 
-`<tg:component>` 要素の `data-*` 属性を使って、カスタムプロパティをコンポーネントに渡すことができます。
+`<tg:component>` 要素の `data-*` 属性を使って、カスタムプロパティを部品に渡すことができます。
 
 `src/components/avatar.html`
 
@@ -1632,7 +1657,7 @@ _部品_ はページ、セグメント、部品、記事、レイアウトに�
 
 ### プロパティの値を部品に埋め込む
 
-`<tg:prop>` 要素と `<tg:data>` 要素は、コンポーネントにプロパティの値を埋め込むことができます。
+`<tg:prop>` 要素と `<tg:data>` 要素は、部品にプロパティの値を埋め込むことができます。
 
 ```html
 ---
@@ -1645,38 +1670,68 @@ message = "Hi!"
 </span>
 ```
 
-コンポーネントは、それが埋め込まれているページや記事からプロパティを継承することに注意してください。同じ名前のプロパティが部品とページまたは記事で定義されている場合、ページまたは記事で定義されている値が優先されます。
+部品は、それが埋め込まれているページやアーティクルからプロパティを継承することに注意してください。同じ名前のプロパティが部品とページまたはアーティクルで定義されている場合、ページまたはアーティクルで定義されている値が優先されます。
 
-## Articles
+## アーティクル
 
-### What is an article
+### アーティクルとは
 
-Like a page, an _article_ is a template file used to generate an HTML document.
+ページと同様、_アーティクル_ はHTML文書を生成するためのテンプレート・ファイルです。
 
-Articles are placed in the `src/articles` subdirectory under the working directory.
-It is possible to create a subdirectory under the `src/articles` directory and place articles
-under it.
+アーティクルは、作業ディレクトリの `src/articles` サブディレクトリに置かれます。`src/articles` ディレクトリの下にサブディレクトリを作り、その下にアーティクルを置くことも可能です。
 
-The articles will be converted into complete HTML documents and written to the `dist/articles`
-directory.
+アーティクルは完全なHTML文書に変換され、`dist/articles` ディレクトリに書き込まれます。
 
-For example, `src/articles/tech.html` is converted to `dist/articles/tech.html` and
-`src/articles/blog/happy_new_year.html` is converted to `dist/articles/blog/happy_new_year.html`.
+例えば、`src/articles/tech.html` は `dist/articles/tech.html` に、`src/articles/blog/happy_new_year.html` は `dist/articles/blog/happy_new_year.html` に変換されます。
 
-Articles and pages have exactly the same characteristics in the following respects:
+アーティクルとページは、以下の点でまったく同じ特徴を持っています：
 
-* A layout can be applied to them.
-* Images and audios can be embedded in them.
-* The content of the `<head>` element is automatically generated in the manner described
-  [below](#managing-the-contents-of-the-head-element).
+* レイアウトを適用することができる。
+* 画像や音声を埋め込むこともできる。
+* `<head>` 要素の内容は、[後述](#managing-the-contents-of-the-head-element) する方法で自動的に生成される。.
 
-### Embedding an article in a page or segment
+#### 例
 
-Like components, articles can be embedded in pages or segments.
-Place `<tg:article>` elements where you want to embed articles as follows:
+ここでは、アーティクルを作成し、それをブラウザで表示する方法を説明します。
+
+次の内容で `src/articles/glossary.html` を作成します。
 
 ```html
 ---
+[main]
+title = "Glossary"
+---
+<h3>Glossary</h3>
+<p>HTML: HyperText Markup Language</p>
+<p>CSS: Cascading Style Sheets</p>
+```
+
+次のような `<html>` や `<head>` 要素を含む完全なHTML文書として、`dist/articles/glossary.html` が生成されます。
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    <h1>Glossary</h1>
+    <p>HTML: HyperText Markup Language</p>
+    <p>CSS: Cascading Style Sheets</p>
+  </body>
+</html>
+```
+
+URLとして `http://localhost:3000/articles/glossary.html` を指定するとブラウザで表示することができます。
+
+### ページやセグメントにアーティクルを埋め込む
+
+部品のように、アーティクルはページやセグメントに埋め込むことができます。
+`<tg:article>` 要素を次のようにアーティクルを埋め込みたい場所に配置します:
+
+```html
+---
+[main]
 layout = "home"
 ---
 <main>
@@ -1686,31 +1741,38 @@ layout = "home"
 </main>
 ```
 
-The value of the `name` attribute of the `<tg:article>` element must be the name of the
-article file without the extension (`.html`).
+`<tg:article>` 要素の `name` 属性の値は、拡張子 (`.html`) を除いたアーティクルファイル名にする必要があります。
 
-Unlike components, articles can only be embedded into a page.
-Articles cannot be embedded in other articles or layouts.
+部品とは異なり、アーティクルはページにのみ埋め込むことができます。アーティクルを他のアーティクルやレイアウトに埋め込むことはできません。
 
-### `embedded-only` property
+レイアウトやセグメントと同様に、スロットはアーティクルの中に置くことができます。また、 `<tg:article>` 要素の  `data-*` 属性を使ってアーティクルにカスタムプロパティを渡すこともできます。
 
-When the value of the `embedded-only` property of an article is set to `true`, it is not converted
-into a full HTML file, but is used only for embedding in a page or segment:
+### `embedded-only` プロパティ
+
+アーティクルの `embedded-only` プロパティの値が `true` に設定されている場合、完全なHTMLファイルには変換されず、ページやセグメントへの埋め込みにのみ使用されます。
 
 ```html
 ---
+[main]
 embedded-only = true
 ---
 <h3>Greeting</h3>
 <p>Hello, world!</p>
 ```
 
-### Embedding articles in a page
+### `<tg:if-embedded>` と `<tg:unless-embedded>`
 
-The `<tg:articles>` element can be used to embed multiple articles into a page or segment.
+`<tg:if-embedded>`  要素はアーティクルのテンプレートの中で使われ、アーティクルが他のページやセグメントの中に埋め込まれた時にのみ表示されます。
+
+`<tg:unless-embedded>`  要素はアーティクルのテンプレートの中で使われ、アーティクルが個別のウェブページとして生成される時にのみ表示されます。
+
+### ページに複数のアーティクルを埋め込む
+
+`<tg:articles>` 要素は、複数のアーティクルをページやセグメントに埋め込むために使うことができます。
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1719,16 +1781,15 @@ layout = "home"
 </main>
 ```
 
-The above example embeds all articles in the `src/articles/proposals` directory under the
-`<h1>` element.
+上記の例では、`src/articles/proposals` ディレクトリのすべてのアーティクルを `<h1>` 要素の下に埋め込んでいます。
 
-By default, articles are sorted in ascending (alphabetically) order by filename.
+デフォルトでは、アーティクルはファイル名の昇順（アルファベット順）でソートされます。
 
-To sort articles in descending order by their filename, set the `order-by` attribute of the
-`<tg:articles>` element to `"filename:desc"`:
+アーティクルをファイル名の降順に並べ替えるには、`<tg:articles>` 要素の `order-by` 属性を `"filename:desc"` に設定します：
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1737,13 +1798,15 @@ layout = "home"
 </main>
 ```
 
-### Sorting articles by their title
+`<tg:articles>`  要素の  `data-*`  属性を使ってアーティクルにカスタムプロパティを渡すことができます。
 
-To sort articles by their title, set the `order-by` attribute of the `<tg:articles>` element
-to `"title:asc"` or `"title:desc"`:
+### アーティクルをタイトルで並べ替える
+
+アーティクルをタイトルでソートするには、`<tg:articles>` 要素の `order-by` 属性を `"title:asc"` または `"title:desc"` に設定します：
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1752,18 +1815,13 @@ layout = "home"
 </main>
 ```
 
-The value of the `order-by` attribute is a string separated by a single colon.
-The left side of the colon must be `"title"`, `"index"` or `"filename"`.
-The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
-and `"desc"` means "descending order".
+### アーティクルを任意の順序で並べ替える
 
-### Sorting articles in an arbitrary order
-
-To sort articles in an arbitrary order, set the `index` property to an integer value for each
-article:
+アーティクルを任意の順序で並べ替えるには、各アーティクルに `index` プロパティを整数値に設定します：
 
 ```html
 ---
+[main]
 index = 123
 ---
 <article>
@@ -1771,11 +1829,11 @@ index = 123
 </article>
 ```
 
-Then, set the `order-by` attribute of the `<tg:articles>` element to `"index:asc"` or
-`"index:desc"`:
+そして、`<tg:articles>` 要素の `order-by` 属性に `"index:asc"` または `"index:desc"` を設定します：
 
 ```html
 ---
+[main]
 layout = "home"
 ---
 <main>
@@ -1784,203 +1842,9 @@ layout = "home"
 </main>
 ```
 
-Articles without the `index` property are ordered by file name after those with the `index`
-property.
+`index` プロパティを持たないアーティクルは、`index` プロパティを持つアーティクルの後にファイル名の昇順で並べられます。
 
-### Generating a link list to articles
-
-The `<tg:links>` element can be used to embed links to articles in any template
-(page, layout, component, article).
-
-```html
----
-layout = "home"
----
-<main>
-  <h1>Our Proposals</h1>
-  <ul>
-    <tg:links pattern="proposals/*">
-      <li>
-        <a href="#">
-          <tg:prop name="title"></tg:prop>
-          <tg:if-complete>
-            <span class="text-sm">
-              (<tg:slot name="date"></tg:slot>)
-            </span>
-          </tg:if-complete>
-        </a>
-      </li>
-    </tg:links>
-  </ul>
-</main>
-```
-
-The `<tg:links>` element contains one or more `<a>` elements and
-zero or more `<tg:prop>`, `<tg:data>` and `<tg:slot>` elements.
-
-The values of `href` attribute of `<a>` are replaced by the URL of the article.
-The `<tg:prop>` and `<tg:data>` elements are replaced by the value of a property of the article
-to be embedded.
-The `<tg:slot>` elements are replaced by the content of a `<tg:insert>` element defined in the
-article to be embedded.
-
-Inside the `<tg:links>` element, `<tg:if-complete>` elements work the same way
-as inside components.
-That is, a `<tg:if-complete>` element will be removed from the output
-unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg:slot>` elements
-within it.
-
-By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
-`"title:asc"` or `"title:desc"`:
-
-```html
-    <tg:links pattern="proposals/*" order-by="title:asc">
-      <li>
-        ...
-      </li>
-    </tg:links>
-```
-
-See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
-to be set in the `order-by` attribute.
-
-To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
-
-```html
----
-layout = "home"
-index = 123
----
-<article>
-  ...
-</article>
-```
-
-Then, specify the `order-by` attribute of the `<tg:links>` element.
-
-```html
-    <tg:links pattern="proposals/*" order-by="index:asc">
-      <li>
-        ...
-      </li>
-    </tg:links>
-```
-
-Note that the current specification does not allow a `<tg:component>` element to be placed within
-a `<tg:links>` element.
-
-### Filtering articles by tags
-
-You may use _tags_ to classify your articles.
-
-To attach tags to an article, specify their names in the `tags` property as an array
-using `[...]` notation:
-
-```html
----
-tags: [ "travel", "europe" ]
----
-<article>
-  ...
-</article>
-```
-
-To attach a single tag to an article, the value of the `tags` property may be specified as a
-string:
-
-```html
----
-tags = "anime"
----
-<article>
-  ...
-</article>
-```
-
-You can use the `filter` attribute to filter articles embedded on the page:
-
-```html
----
-layout = "home"
----
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
-</main>
-```
-
-The value of the `filter` attribute is a string separated by a single colon.
-In the current specification, the left side of the colon is always `"tag"` and
-the right side of the colon is a tag name.
-
-You can also filter the list of links to articles using the `filter` attribute:
-
-```html
----
-layout = "home"
----
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <ul>
-    <tg:links pattern="blog/*" filter="tag:travel">
-      <li>
-        <a href="#">
-          <tg:slot name="title"></tg:slot>
-        </a>
-      </li>
-    </tg:links>
-  </ul>
-</main>
-```
-
-Note that you cannot assign tags to a page.
-
-### `<tg:links>` with the `component` attribute
-
-When a `<tg:links>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg:links>` element.
-
-For example, suppose there is a `nav_link` component with the following content
-
-`src/components/nav_link.html`
-
-```html
-<li>
-  <a href="#">
-    <tg:prop name="title"></tg:prop>
-    <tg:if-complete>
-      <span class="text-sm">
-        (<tg:slot name="date"></tg:slot>)
-      </span>
-    </tg:if-complete>
-  </a>
-</li>
-```
-
-In this case, we can construct a `<tg:links>` element as follows:
-
-```html
-<tg:links component="nav_link" pattern="blog/*"></tg:links>
-```
-
-The above code is to be interpreted as exactly the same as the following
-
-```html
-
-<tg:links pattern="blog/*">
-  <li>
-    <a href="#">
-      <tg:prop name="title"></tg:prop>
-      <tg:if-complete>
-        <span class="text-sm">
-          (<tg:slot name="date"></tg:slot>)
-        </span>
-      </tg:if-complete>
-    </a>
-  </li>
-</tg:links>
-```
+`order-by` 属性の値は、コロン一つで区切られた文字列です。コロンの左側は `"title"` 、`"index"` 、`"filename"` のいずれかです。コロンの右側は `"asc"` または `"desc"` でなければならず、`"asc"` は「昇順」、`"desc"` は「降順」を意味します。
 
 ## リンク
 
@@ -1997,9 +1861,9 @@ The above code is to be interpreted as exactly the same as the following
 
 ウェブサイトが Teamgenik で公開されると、その中の `<a>` 要素の `href` 属性の値は適切に変換されます。
 
-### `<tg:link>`、 `<tg:if-current>` 、 `<tg:label>`
+### `<tg:link>`、`<tg:if-current>`、`<tg:label>`
 
-`<tg:link>` は、 `<a>` 要素を条件付きで出現させるために使われる特別な要素です。
+`<tg:link>` は、`<a>` 要素を条件付きで出現させるために使われる特別な要素です。
 基本的に、この要素の内容はそのままレンダリングされます。
 
 `<tg:link>` 要素の中に `"#"` の `href` 属性を持つ `<a>` 要素がある場合、`<tg:link>` 要素の `href` 属性の値が `<a>` 要素の `href` 属性に設定されます。
@@ -2093,6 +1957,191 @@ The above code is to be interpreted as exactly the same as the following
     <span class="font-bold"><tg:label></tg:label></span>
   </tg:if-current>
 </tg:link>
+```
+
+## リンクリスト
+
+### アーティクルへのリンクリストの作成
+
+`<tg:links>` 要素は、あらゆるテンプレート（ページ、レイアウト、部品、アーティクル）にアーティクルへのリンクを埋め込むために使用できます。
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <ul>
+    <tg:links pattern="proposals/*">
+      <li>
+        <a href="#">
+          <tg:prop name="title"></tg:prop>
+          <tg:if-complete>
+            <span class="text-sm">
+              (<tg:slot name="date"></tg:slot>)
+            </span>
+          </tg:if-complete>
+        </a>
+      </li>
+    </tg:links>
+  </ul>
+</main>
+```
+
+`<tg:links>` 要素は1つ以上の `<a>` 要素と0つ以上の `<tg:prop>` 要素、`<tg:data>` 要素、`<tg:slot>` 要素を含みます。
+
+`<a>` の `href` 属性の値は、アーティクルのURLに置き換えられます。`<tg:prop>` 要素と `<tg:data>` 要素は、埋め込まれるアーティクルのプロパティの値で置き換えられます。`<tg:slot>` 要素は、埋め込まれるアーティクル内で定義された `<tg:insert>` 要素の内容に置き換えられます。
+
+`<tg:links>` 要素の内側では、`<tg:if-complete>` 要素は部品の内側と同じように機能します。つまり、`<tg:if-complete>` 要素は、その中のすべての `<tg:prop>` 、`<tg:data>` 、`<tg:slot>` 要素に値または内容が提供されない限り、出力から削除されます。
+
+デフォルトでは、アーティクルはファイル名の昇順（アルファベット順）でソートされます。アーティクルをタイトルでソートするには、`<tg:links>` 要素の `order-by` 属性を `"title:asc"` または `"title:desc"` に設定します:
+
+```html
+<tg:links pattern="proposals/*" order-by="title:asc">
+  <li>
+    ...
+  </li>
+</tg:links>
+```
+
+`order-by` 属性に設定する値の書き方については、[アーティクルをタイトルで並べ替える](#アーティクルをタイトルで並べ替える)を参照してください。
+
+アーティクルを任意の順序で並べ替えるには、各アーティクルに `tg:index` 属性を追加します：
+
+```html
+---
+[main]
+layout = "home"
+index = 123
+---
+<article>
+  ...
+</article>
+```
+
+次に、`<tg:links>` 要素の `order-by` 属性を指定します。
+
+```html
+<tg:links pattern="proposals/*" order-by="index:asc">
+  <li>
+    ...
+  </li>
+</tg:links>
+```
+
+現在の仕様では、`<tg:component>` 要素を `<tg:links>` 要素の中に入れることはできません。
+
+0個または1個の `<tg:if-current>` 要素を `<tg:links>` 要素の中に入れることができます。`<tg:if-current>` 要素の内容は、アーティクルのパスが生成されるHTMLドキュメントのパスである場合にのみレンダリングされます。
+
+### タグによるアーティクルのフィルタリング
+
+_タグ_ を使ってアーティクルを分類することができます。
+
+アーティクルにタグを付けるには、`tags` プロパティにタグ名を `[...]` 記法の配列で指定します：
+
+```html
+---
+[main]
+tags = [ "travel", "europe" ]
+---
+<article>
+  ...
+</article>
+```
+
+アーティクルに一つのタグを付けるには、`tags` プロパティの値を文字列で指定することができます：
+
+```html
+---
+[main]
+tags = "anime"
+---
+<article>
+  ...
+</article>
+```
+
+`filter` 属性を使って、ページに埋め込まれたアーティクルをフィルタリングすることができます：
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
+</main>
+```
+
+`filter` 属性の値は、コロン一つで区切られた文字列です。現在の仕様では、コロンの左側は常に `"tag"` で、コロンの右側はタグ名です。
+
+`filter` 属性を使ってアーティクルへのリンクのリストをフィルタリングすることもできます：
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <ul>
+    <tg:links pattern="blog/*" filter="tag:travel">
+      <li>
+        <a href="#">
+          <tg:prop name="title"></tg:prop>
+        </a>
+      </li>
+    </tg:links>
+  </ul>
+</main>
+```
+
+ページにタグを割り当てることはできません。
+
+### `<tg:links>` に `component` 属性を付ける
+
+`<tg:links>` 要素に `component` 属性があると、その値に対応する名前の部品の内容が `<tg:links>` 要素の内容になります。
+
+例えば、次のような内容の `nav_link` 部品があるとする。
+
+`src/components/nav_link.html`
+
+```html
+<li>
+  <a href="#">
+    <tg:prop name="title"></tg:prop>
+    <tg:if-complete>
+      <span class="text-sm">
+        (<tg:slot name="date"></tg:slot>)
+      </span>
+    </tg:if-complete>
+  </a>
+</li>
+```
+
+この場合、`<tg:links>` 要素は次のように構成できます：
+
+```html
+<tg:links component="nav_link" pattern="proposals/*"></tg:links>
+```
+
+上記のコードは、以下のコードとまったく同じと解釈されます。
+
+```html
+<tg:links pattern="proposals/*">
+  <li>
+    <a href="#">
+      <tg:prop name="title"></tg:prop>
+      <tg:if-complete>
+        <span class="text-sm">
+          (<tg:slot name="date"></tg:slot>)
+        </span>
+      </tg:if-complete>
+    </a>
+  </li>
+</tg:links>
 ```
 
 ## Dynamic Elements

@@ -18,6 +18,7 @@
 * [Components](#components)
 * [Articles](#articles)
 * [Links](#links)
+* [Link list](#link-list)
 * [Dynamic Elements](#dynamic-elements)
   * [Modal](#modal)
   * [Toggler](#toggler)
@@ -367,8 +368,34 @@ A page will be converted into a complete HTML document and written to the `dist`
 For example, `src/pages/index.html` is converted to `dist/index.html` and
 `src/pages/shops/new_york.html` is converted to `dist/shops/new_york.html`.
 
+
+#### Example
+
+Change `src/pages/index.html` to the contents of the simple page above.
+
+`dist/index.html` generates a complete HTML document including the following `<html>` and `<head>` elements.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    <body>
+      <h1 class="text-2xl font-bold">Greeting</h1>
+      <div class="bg-green-300 p-4">
+        <p>Hello, world!</p>
+      </div>
+    </body>
+  </body>
+</html>
+```
+
 The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
+
+To open this page in a browser, specify  `http://localhost:3000`  as the URL.
 
 ## Front Matter
 
@@ -1815,6 +1842,40 @@ Articles and pages have exactly the same characteristics in the following respec
 * The content of the `<head>` element is automatically generated in the manner described
   [below](#managing-the-contents-of-the-head-element).
 
+#### Example
+
+Here we describe how to create an article and display it in a browser.
+
+Create `src/articles/glossary.html` with the following contents.
+
+```html
+---
+[main]
+title = "Glossary"
+---
+<h3>Glossary</h3>
+<p>HTML: HyperText Markup Language</p>
+<p>CSS: Cascading Style Sheets</p>
+```
+
+`dist/articles/glossary.html` generates a complete HTML document including the following `<html>` and `<head>` elements.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    <h1>Glossary</h1>
+    <p>HTML: HyperText Markup Language</p>
+    <p>CSS: Cascading Style Sheets</p>
+  </body>
+</html>
+```
+
+You can specify `http://localhost:3000/articles/glossary.html` as the URL to display it in your browser.
+
 ### Embedding an article in a page or segment
 
 Like components, articles can be embedded in pages or segments.
@@ -1855,6 +1916,14 @@ embedded-only = true
 <p>Hello, world!</p>
 ```
 
+### `<tg:if-embedded>` and `<tg:unless-embedded>`
+
+The `<tg:if-embedded>` element is used within an article's template and is rendered only when the
+article is embedded within another page or segment.
+
+The `<tg:unless-embedded>` element is used within an article's template and is rendered only when
+the article is generated as a separate web page.
+0
 ### Embedding articles in a page
 
 The `<tg:articles>` element can be used to embed multiple articles into a page or segment.
@@ -1891,14 +1960,6 @@ layout = "home"
 
 You can pass custom properties to an article using the `<tg:articles>` element's `data-*` attribute.
 
-### `<tg:if-embedded>` and `<tg:unless-embedded>`
-
-The `<tg:if-embedded>` element is used within an article's template and is rendered only when the
-article is embedded within another page or segment.
-
-The `<tg:unless-embedded>` element is used within an article's template and is rendered only when
-the article is generated as a separate web page.
-
 ### Sorting articles by their title
 
 To sort articles by their title, set the `order-by` attribute of the `<tg:articles>` element
@@ -1914,11 +1975,6 @@ layout = "home"
   <tg:articles pattern="proposals/*" order-by="title:asc"></tg:articles>
 </main>
 ```
-
-The value of the `order-by` attribute is a string separated by a single colon.
-The left side of the colon must be `"title"`, `"index"` or `"filename"`.
-The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
-and `"desc"` means "descending order".
 
 ### Sorting articles in an arbitrary order
 
@@ -1949,213 +2005,13 @@ layout = "home"
 </main>
 ```
 
-Articles without the `index` property are ordered by file name after those with the `index`
+Articles without the `index` property are sorted in ascending order by file name after those with the `index`
 property.
 
-### Generating a link list to articles
-
-The `<tg:links>` element can be used to embed links to articles in any template
-(page, layout, component, article).
-
-```html
----
-[main]
-layout = "home"
----
-<main>
-  <h1>Our Proposals</h1>
-  <ul>
-    <tg:links pattern="proposals/*">
-      <li>
-        <a href="#">
-          <tg:prop name="title"></tg:prop>
-          <tg:if-complete>
-            <span class="text-sm">
-              (<tg:slot name="date"></tg:slot>)
-            </span>
-          </tg:if-complete>
-        </a>
-      </li>
-    </tg:links>
-  </ul>
-</main>
-```
-
-The `<tg:links>` element contains one or more `<a>` elements and
-zero or more `<tg:prop>`, `<tg:data>` and `<tg:slot>` elements.
-
-The values of `href` attribute of `<a>` are replaced by the URL of the article.
-The `<tg:prop>` and `<tg:data>` elements are replaced by the value of a property of the article
-to be embedded.
-The `<tg:slot>` elements are replaced by the content of a `<tg:insert>` element defined in the
-article to be embedded.
-
-Inside the `<tg:links>` element, `<tg:if-complete>` elements work the same way
-as inside components.
-That is, a `<tg:if-complete>` element will be removed from the output
-unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg:slot>` elements
-within it.
-
-By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
-`"title:asc"` or `"title:desc"`:
-
-```html
-    <tg:links pattern="proposals/*" order-by="title:asc">
-      <li>
-        ...
-      </li>
-    </tg:links>
-```
-
-See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
-to be set in the `order-by` attribute.
-
-To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
-
-```html
----
-[main]
-layout = "home"
-index = 123
----
-<article>
-  ...
-</article>
-```
-
-Then, specify the `order-by` attribute of the `<tg:links>` element.
-
-```html
-    <tg:links pattern="proposals/*" order-by="index:asc">
-      <li>
-        ...
-      </li>
-    </tg:links>
-```
-
-Note that the current specification does not allow a `<tg:component>` element to be placed within
-a `<tg:links>` element.
-
-Zero or one `<tg:if-current>` element may be placed inside the `<tg:links>` element.
-The content of the `<tg:if-current>` element is only rendered if the path of the article the path
-of the HTML document that is being generated.
-
-### Filtering articles by tags
-
-You may use _tags_ to classify your articles.
-
-To attach tags to an article, specify their names in the `tags` property as an array
-using `[...]` notation:
-
-```html
----
-[main]
-tags: [ "travel", "europe" ]
----
-<article>
-  ...
-</article>
-```
-
-To attach a single tag to an article, the value of the `tags` property may be specified as a
-string:
-
-```html
----
-[main]
-tags = "anime"
----
-<article>
-  ...
-</article>
-```
-
-You can use the `filter` attribute to filter articles embedded on the page:
-
-```html
----
-[main]
-layout = "home"
----
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
-</main>
-```
-
-The value of the `filter` attribute is a string separated by a single colon.
-In the current specification, the left side of the colon is always `"tag"` and
-the right side of the colon is a tag name.
-
-You can also filter the list of links to articles using the `filter` attribute:
-
-```html
----
-[main]
-layout = "home"
----
-<main>
-  <h1>Articles (tag:travel)</h1>
-  <ul>
-    <tg:links pattern="blog/*" filter="tag:travel">
-      <li>
-        <a href="#">
-          <tg:slot name="title"></tg:slot>
-        </a>
-      </li>
-    </tg:links>
-  </ul>
-</main>
-```
-
-Note that you cannot assign tags to a page.
-
-### `<tg:links>` with the `component` attribute
-
-When a `<tg:links>` element has the `component` attribute, the content of the component with the
-name corresponding to its value becomes the content of the `<tg:links>` element.
-
-For example, suppose there is a `nav_link` component with the following content
-
-`src/components/nav_link.html`
-
-```html
-<li>
-  <a href="#">
-    <tg:prop name="title"></tg:prop>
-    <tg:if-complete>
-      <span class="text-sm">
-        (<tg:slot name="date"></tg:slot>)
-      </span>
-    </tg:if-complete>
-  </a>
-</li>
-```
-
-In this case, we can construct a `<tg:links>` element as follows:
-
-```html
-<tg:links component="nav_link" pattern="blog/*"></tg:links>
-```
-
-The above code is to be interpreted as exactly the same as the following
-
-```html
-
-<tg:links pattern="blog/*">
-  <li>
-    <a href="#">
-      <tg:prop name="title"></tg:prop>
-      <tg:if-complete>
-        <span class="text-sm">
-          (<tg:slot name="date"></tg:slot>)
-        </span>
-      </tg:if-complete>
-    </a>
-  </li>
-</tg:links>
-```
+The value of the `order-by` attribute is a string separated by a single colon.
+The left side of the colon must be `"title"`, `"index"` or `"filename"`.
+The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
+and `"desc"` means "descending order".
 
 ## Links
 
@@ -2276,6 +2132,212 @@ The above code is to be interpreted as exactly the same as the following
     <span class="font-bold"><tg:label></tg:label></span>
   </tg:if-current>
 </tg:link>
+```
+
+## Link list
+
+### Generating a link list to articles
+
+The `<tg:links>` element can be used to embed links to articles in any template
+(page, layout, component, article).
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <ul>
+    <tg:links pattern="proposals/*">
+      <li>
+        <a href="#">
+          <tg:prop name="title"></tg:prop>
+          <tg:if-complete>
+            <span class="text-sm">
+              (<tg:slot name="date"></tg:slot>)
+            </span>
+          </tg:if-complete>
+        </a>
+      </li>
+    </tg:links>
+  </ul>
+</main>
+```
+
+The `<tg:links>` element contains one or more `<a>` elements and
+zero or more `<tg:prop>`, `<tg:data>` and `<tg:slot>` elements.
+
+The values of `href` attribute of `<a>` are replaced by the URL of the article.
+The `<tg:prop>` and `<tg:data>` elements are replaced by the value of a property of the article
+to be embedded.
+The `<tg:slot>` elements are replaced by the content of a `<tg:insert>` element defined in the
+article to be embedded.
+
+Inside the `<tg:links>` element, `<tg:if-complete>` elements work the same way
+as inside components.
+That is, a `<tg:if-complete>` element will be removed from the output
+unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg:slot>` elements
+within it.
+
+By default, articles are sorted in ascending (alphabetically) order by file name.
+To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
+`"title:asc"` or `"title:desc"`:
+
+```html
+<tg:links pattern="proposals/*" order-by="title:asc">
+  <li>
+    ...
+  </li>
+</tg:links>
+```
+
+See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
+to be set in the `order-by` attribute.
+
+To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
+
+```html
+---
+[main]
+layout = "home"
+index = 123
+---
+<article>
+  ...
+</article>
+```
+
+Then, specify the `order-by` attribute of the `<tg:links>` element.
+
+```html
+<tg:links pattern="proposals/*" order-by="index:asc">
+  <li>
+    ...
+  </li>
+</tg:links>
+```
+
+Note that the current specification does not allow a `<tg:component>` element to be placed within
+a `<tg:links>` element.
+
+Zero or one `<tg:if-current>` element may be placed inside the `<tg:links>` element.
+The content of the `<tg:if-current>` element is only rendered if the path of the article the path
+of the HTML document that is being generated.
+
+### Filtering articles by tags
+
+You may use _tags_ to classify your articles.
+
+To attach tags to an article, specify their names in the `tags` property as an array
+using `[...]` notation:
+
+```html
+---
+[main]
+tags = [ "travel", "europe" ]
+---
+<article>
+  ...
+</article>
+```
+
+To attach a single tag to an article, the value of the `tags` property may be specified as a
+string:
+
+```html
+---
+[main]
+tags = "anime"
+---
+<article>
+  ...
+</article>
+```
+
+You can use the `filter` attribute to filter articles embedded on the page:
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <tg:articles pattern="blog/*" filter="tag:travel"></tg:articles>
+</main>
+```
+
+The value of the `filter` attribute is a string separated by a single colon.
+In the current specification, the left side of the colon is always `"tag"` and
+the right side of the colon is a tag name.
+
+You can also filter the list of links to articles using the `filter` attribute:
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Articles (tag:travel)</h1>
+  <ul>
+    <tg:links pattern="blog/*" filter="tag:travel">
+      <li>
+        <a href="#">
+          <tg:prop name="title"></tg:prop>
+        </a>
+      </li>
+    </tg:links>
+  </ul>
+</main>
+```
+
+Note that you cannot assign tags to a page.
+
+### `<tg:links>` with the `component` attribute
+
+When a `<tg:links>` element has the `component` attribute, the content of the component with the
+name corresponding to its value becomes the content of the `<tg:links>` element.
+
+For example, suppose there is a `nav_link` component with the following content
+
+`src/components/nav_link.html`
+
+```html
+<li>
+  <a href="#">
+    <tg:prop name="title"></tg:prop>
+    <tg:if-complete>
+      <span class="text-sm">
+        (<tg:slot name="date"></tg:slot>)
+      </span>
+    </tg:if-complete>
+  </a>
+</li>
+```
+
+In this case, we can construct a `<tg:links>` element as follows:
+
+```html
+<tg:links component="nav_link" pattern="proposals/*"></tg:links>
+```
+
+The above code is to be interpreted as exactly the same as the following
+
+```html
+<tg:links pattern="proposals/*">
+  <li>
+    <a href="#">
+      <tg:prop name="title"></tg:prop>
+      <tg:if-complete>
+        <span class="text-sm">
+          (<tg:slot name="date"></tg:slot>)
+        </span>
+      </tg:if-complete>
+    </a>
+  </li>
+</tg:links>
 ```
 
 ## Dynamic Elements
