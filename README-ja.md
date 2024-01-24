@@ -955,25 +955,25 @@ Roboto = true
 フォントファミリ名にスペースが含まれている場合は、下記のように二重引用符で囲む必要があります：
 
 ```toml
-"Noto Sans Japanese" = true
+"Noto Sans JP" = true
 ```
 
 また、HTMLテンプレートで使用する場合は、スペースをアンダースコアに置き換えてください。
 
 ```html
-<p class="font-['Noto_Sans_Japanese']">こんにちは、世界！</p>
+<p class="font-['Noto_Sans_JP']">こんにちは、世界！</p>
 ```
 
 フォントファイルのサイズを小さくするために、いくつかのフォントウェイト（太さ）を選択するには、`true`の代わりにウェイトを配列で指定します。
 
 ```toml
-"Noto Sans Japanese" = [400, 800]
+"Noto Sans JP" = [400, 800]
 ```
 
-次の例では、ウェイトが 800 の Noto Sans Japaneseフォントファミリーを使用しています。
+次の例では、ウェイトが 800 の Noto Sans JPフォントファミリーを使用しています。
 
 ```html
-<p class="font-['Noto_Sans_Japanese'] font-[800]">こんにちは、世界！</p>
+<p class="font-['Noto_Sans_JP'] font-[800]">こんにちは、世界！</p>
 ```
 
 各スタイルのフォントのウェイトを選択するには、以下のようにインライン・テーブルを使ってウェイトを指定する：
