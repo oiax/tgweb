@@ -1057,26 +1057,26 @@ The following is an example of using the Robot font family:
 If the font family name contains spaces, the name must be enclosed in double quotes as follows:
 
 ```toml
-"Noto Sans Japanese" = true
+"Noto Sans JP" = true
 ```
 
 Also, when using it in an HTML template, spaces should be replaced with underscores.
 
 ```html
-<p class="font-['Noto_Sans_Japanese']">こんにちは、世界！</p>
+<p class="font-['Noto_Sans_JP']">こんにちは、世界！</p>
 ```
 
 To select some font weights in order to reduce the size of font file, specify weights as an array
 instead of `true`.
 
 ```toml
-"Noto Sans Japanese" = [400, 800]
+"Noto Sans JP" = [400, 800]
 ```
 
-The following example uses the Noto Sans Japanese font family with weight 800.
+The following example uses the Noto Sans JP font family with weight 800.
 
 ```html
-<p class="font-['Noto_Sans_Japanese'] font-[800]">こんにちは、世界！</p>
+<p class="font-['Noto_Sans_JP'] font-[800]">こんにちは、世界！</p>
 ```
 
 To select font weights for each style, specify weights using the inline table as follows:
