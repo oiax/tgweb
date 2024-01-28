@@ -19,7 +19,7 @@
 * [アーティクル](#アーティクル)
 * [リンク](#リンク)
 * [リンクリスト](#リンクリスト)
-* [Dynamic Elements](#dynamic-elements)
+* [動的要素](#動的要素)
   * [Modal](#modal)
   * [Toggler](#toggler)
   * [Switcher](#switcher)
@@ -379,7 +379,7 @@ rm -rf sites
 この領域では、一連のプロパティに値を与えることができます。
 このプロパティと値のペアのセットを「フロントマター」と呼びます。
 
-フロントマターブロックは [TOML](https://toml.io/en/)  フォーマットで記述されます。
+フロントマターブロックは [TOML](https://toml.io/en/) フォーマットで記述されます。
 次に示すのは、フロントマターブロックの例です:
 
 ```
@@ -1745,7 +1745,7 @@ layout = "home"
 
 部品とは異なり、アーティクルはページにのみ埋め込むことができます。アーティクルを他のアーティクルやレイアウトに埋め込むことはできません。
 
-レイアウトやセグメントと同様に、スロットはアーティクルの中に置くことができます。また、 `<tg:article>` 要素の  `data-*` 属性を使ってアーティクルにカスタムプロパティを渡すこともできます。
+レイアウトやセグメントと同様に、スロットはアーティクルの中に置くことができます。また、 `<tg:article>` 要素の `data-*` 属性を使ってアーティクルにカスタムプロパティを渡すこともできます。
 
 ### `embedded-only` プロパティ
 
@@ -1762,9 +1762,9 @@ embedded-only = true
 
 ### `<tg:if-embedded>` と `<tg:unless-embedded>`
 
-`<tg:if-embedded>`  要素はアーティクルのテンプレートの中で使われ、アーティクルが他のページやセグメントの中に埋め込まれた時にのみ表示されます。
+`<tg:if-embedded>` 要素はアーティクルのテンプレートの中で使われ、アーティクルが他のページやセグメントの中に埋め込まれた時にのみ表示されます。
 
-`<tg:unless-embedded>`  要素はアーティクルのテンプレートの中で使われ、アーティクルが個別のウェブページとして生成される時にのみ表示されます。
+`<tg:unless-embedded>` 要素はアーティクルのテンプレートの中で使われ、アーティクルが個別のウェブページとして生成される時にのみ表示されます。
 
 ### ページに複数のアーティクルを埋め込む
 
@@ -1798,7 +1798,7 @@ layout = "home"
 </main>
 ```
 
-`<tg:articles>`  要素の  `data-*`  属性を使ってアーティクルにカスタムプロパティを渡すことができます。
+`<tg:articles>` 要素の `data-*` 属性を使ってアーティクルにカスタムプロパティを渡すことができます。
 
 ### アーティクルをタイトルで並べ替える
 
@@ -1926,7 +1926,7 @@ layout = "home"
 </nav>
 ```
 
-###  `<tg:link>` に `component` 属性を付ける
+### `<tg:link>` に `component` 属性を付ける
 
 `<tg:link>` 要素に `component` 属性があると、その値に対応する名前の部品の内容が `<tg:link>` 要素の内容になります。
 
@@ -2144,27 +2144,22 @@ layout = "home"
 </tg:links>
 ```
 
-## Dynamic Elements
+## 動的要素
 
-This section explains how to introduce dynamic elements such as modals and carousels to your website.
+このセクションでは、modal や carousel などの動的要素をウェブサイトに導入する方法を説明します。
 
 ### Modal
 
-Specifying the `tg:modal` attribute on an HTML element makes the following attributes available
-to descendant elements of that element:
+HTML要素に `tg:modal` 属性を指定すると、その要素の子孫要素で以下の属性が利用できるようになります:
 
 * `tg:open`
 * `tg:close`
 
-We call an HTML element with the `tg:modal` attribute a __modal__.
-A modal has two states, `open` and `close`. Its initial state is `close`.
+`tg:modal` 属性を持つHTML要素を「modal」と呼びます。modal は `open` と `close` の2つの状態を持ちます。初期状態は `close` です。
 
-There must be one `<dialog>` element inside the modal. Initially, this element is not displayed.
-When the user clicks on an element with the `tg:open` attribute, the `<dialog>` element is displayed.
-Conversely, if the user clicks on an element with the `tg:close` attribute, the `<dialog>` element
-will disappear.
+modal の内部には `<dialog>` 要素が 1 つなければなりません。初期状態では、この要素は表示されません。ユーザーが `tg:open` 属性を持つ要素をクリックすると、`<dialog>` 要素が表示されます。逆に、ユーザーが `tg:close` 属性を持つ要素をクリックすると、`<dialog>` 要素は消えます。
 
-What follows is an example of a modal:
+以下はモーダルの例です:
 
 ```html
 <div tg:modal>
@@ -2177,33 +2172,24 @@ What follows is an example of a modal:
 </div>
 ```
 
-A transparent element of the same size as the viewport, called a "backdrop," is inserted directly
-below the `<dialog>` element.
-The backdrop deactivates all page content except the `<dialog>` element.
+`<dialog>` 要素の直下には、「バックドロップ」と呼ばれる表示領域と同じ大きさの透明な要素が挿入されます。バックドロップは `<dialog>` 要素以外のすべてのページ内容を非アクティブにします。
 
-The class token `backdrop:bg-gray-800/80` in the value of the `class` attribute of the `<dialog>`
-element applies a translucent dark gray background color to the backdrop.
-See [Dialog Backdrops](https://tailwindcss.com/docs/hover-focus-and-other-states#dialog-backdrops)
-in the Tailwind CSS Documentation for more information.
+`<dialog>` 要素の `class` 属性の値にあるクラス・トークン `backdrop:bg-gray-800/80` は、背景色に半透明の濃い灰色を適用します。詳細はTailwind CSS Documentationの [Dialog Backdrops](https://tailwindcss.com/docs/hover-focus-and-other-states#dialog-backdrops) を参照してください。
 
 ### Toggler
 
-Specifying the `tg:toggler` attribute on an HTML element makes the following attributes available
-to descendant elements of that element:
+HTML要素に `tg:toggler` 属性を指定すると、その要素の子孫要素で以下の属性が利用できるようになります:
 
 * `tg:when`
 * `tg:toggle`
 
-We call an HTML element with the `tg:toggler` attribute a __toggler__.
-A toggler has two states, `on` and `off`. Its initial state is `off`.
+`tg:toggler` 属性を持つHTML要素を「toggler」と呼びます。toggler は `on` と `off` の2つの状態を持ちます。初期状態は `off` です。
 
-An element with a `tg:when` attribute inside a toggler will only be displayed if its value matches
-the state of the toggler.
+toggler 内の `tg:when` 属性を持つ要素は、その値が toggler の状態と一致した場合のみ表示されます。
 
-When the user clicks or taps an element with a `tg:toggle` attribute inside the toggler,
-the toggler's state is set to the value of the the attribute.
+toggler の中にある `tg:toggle` 属性を持つ要素をクリックまたはタップすると、toggler の状態がその属性の値に設定されます。
 
-Here is an example toggler:
+以下は toggler の例です:
 
 ```html
 <div tg:toggler>
@@ -2215,14 +2201,9 @@ Here is an example toggler:
 </div>
 ```
 
-When viewing this example in a browser, initially only the "Open" button is visible to the user.
-When the user clicks or taps this button, the state of the toggler is set to `on`, the "Open" button
-disappears, and a "Close" button and a "Hello, world" paragraph appear instead.
-When the user further clicks or taps the "Close" button, it returns to the initial state.
+この例をブラウザで見ると、最初は "Open" ボタンだけがユーザーに見えます。このボタンをクリックまたはタップすると、toggler の状態が `on` に設定され、 "Open" ボタンは消え、代わりに "Close" ボタンと "Hello, world" パラグラフが表示されます。さらに "Close" ボタンをクリックまたはタップすると、初期状態に戻ります。
 
-If the `tg:toggle` attribute's value is omitted, the toggler's state is reversed when the user
-clicks or taps on the element.
-So the above example could be rewritten as:
+`tg:toggle` 属性の値が省略された場合、ユーザーが要素をクリックまたはタップすると toggler の状態が反転します。つまり、上記の例は次のように書き換えることができます:
 
 ```html
 <div tg:toggler>
@@ -2236,8 +2217,9 @@ So the above example could be rewritten as:
 
 ### Switcher
 
-Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
-to descendant elements of that element:
+#### Switcher の基本
+
+HTML要素に `tg:switcher` 属性を指定すると、その要素の子孫要素で以下の属性が利用できるようになります:
 
 * `tg:item`
 * `tg:choose`
@@ -2247,62 +2229,60 @@ to descendant elements of that element:
 * `tg:last`
 * `tg:paginator`
 
-We call an HTML element with the `tg:switcher` attribute a _switcher_.
-There must be more than one element with the `tg:item` attribute in the switcher.
-We call them _switcher items_.
+`tg:switcher` 属性を持つHTML要素を「switcher」と呼びます。
 
-Swticher items are assigned unique _index numbers_ starting from zero in sequence.
-A switcher has a state represented by an integer value, called an _current index number_.
-A switcher item will only be displayed if its index number matches the current index number of the
-switcher.
+switcher の内部には、必ず `tg:body` 属性を持つ要素、つまり「switcherボディ」がなければなりません。さらに、`tg:item`属性を持つ要素、つまり「switcherアイテム」がなければなりません。
 
-When the user clicks or taps an element with a `tg:choose` attribute inside the switcher,
-the switcher's current index number is set to the value of the the attribute.
 
-Here is an example switcher:
+switcherアイテムには、0から順番にユニークな「index 番号」が割り当てられます。switcherは、「現在のindex番号」と呼ばれる整数値で表される状態を持っています。switcherアイテムは、そのインデックス番号が switcher の現在のインデックス番号と一致する場合のみ表示されます。
+
+ユーザーが switcher の中の `tg:choose` 属性を持つ要素をクリックまたはタップすると、switcher の現在のインデックス番号がその属性の値に設定されます。
+
+以下は switcher の例です:
 
 ```html
 <div tg:switcher>
-  <div tg:item>A</div>
-  <div tg:item>B</div>
-  <div tg:item>C</div>
-  <div tg:item>D</div>
-  <div tg:item>E</div>
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
-    <button type="button" tg:choose="1">a</button>
-    <button type="button" tg:choose="2">b</button>
-    <button type="button" tg:choose="3">c</button>
-    <button type="button" tg:choose="4">d</button>
-    <button type="button" tg:choose="5">e</button>
+    <button type="button" tg:choose="0">a</button>
+    <button type="button" tg:choose="1">b</button>
+    <button type="button" tg:choose="2">c</button>
+    <button type="button" tg:choose="3">d</button>
+    <button type="button" tg:choose="4">e</button>
   </nav>
 </div>
 ```
 
-If the the value of `tg:choose` attribute of a button matches switcher's current index number
-nothing happens when the user clicks or taps this button.
+ボタンの  `tg:choose`  属性の値が switcher の現在のインデックス番号と一致する場合、ユーザーがこのボタンをクリックまたはタップしても何も起こりません。
 
-To visually indicate this, use the `tg:current-class` and `tg:normal-class` attributes to
-change the style applied to the button.
+これを視覚的に現すために、`tg:current-class` と `tg:normal-class` 属性を使用してボタンに適用されるスタイルを変更します。
 
 ```html
   <button
     type="button"
-    tg:choose="1"
+    tg:choose="0"
     class="btn"
-    tg:current-class="btn-primary"
+    tg:current-class="btn-primary cursor-default"
     tg:normal-class="btn-secondary">a</button>
 ```
 
-You can create a button that change the state of the switcher using special attributes such as
-`tg:first`, `tg:prev`, `tg:next`, `tg:last`, etc. instead of the `tg:choose` attribute.
+`tg:choose` 属性の代わりに、`tg:first`、`tg:prev`、`tg:next`、`tg:last` などの特別な属性を使用して、スイッチャーの状態を変更するボタンを作成できます。
 
 ```html
 <div tg:switcher>
-  <div tg:item>A</div>
-  <div tg:item>B</div>
-  <div tg:item>C</div>
-  <div tg:item>D</div>
-  <div tg:item>E</div>
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
     <button type="button" tg:first>First</button>
     <button type="button" tg:prev>Prev</button>
@@ -2312,14 +2292,11 @@ You can create a button that change the state of the switcher using special attr
 </div>
 ```
 
-If the switcher's current index number matches the its lower bound,
-nothing happens when the user clicks or taps a button with `tg:first` or `tg:prev` attribute.
+switcher の現在のインデックス番号がその下限に一致する場合、ユーザーが `tg:first` または `tg:prev` 属性のボタンをクリックまたはタップしても何も起こりません。
 
-Similarly, if the switcher's current index number matches the its upper bound,
-nothing happens when the user clicks or taps a button with `tg:next` or `tg:last` attribute.
+同様に、switcher の現在のインデックス番号がその上限と一致する場合、ユーザーが `tg:next` または `tg:last` 属性のボタンをクリックまたはタップしても何も起こりません。
 
-To visually indicate this, use the `tg:enabled-class` and `tg:disabled-class` attributes to
-change the style applied to the button.
+これを視覚的に現すために、`tg:enabled-class` と `tg:disabled-class` 属性を使用してボタンに適用されるスタイルを変更します。
 
 ```html
   <button
@@ -2330,25 +2307,31 @@ change the style applied to the button.
     tg:disabled-class="btn-disabled">First</button>
 ```
 
-If the switcher has an `tg:interval` attribute, the switcher's index number is incremented
-by 1 at the specified interval (unit: millisecond).
+#### Switcher の自動切り替えとフェードイン／フェードアウト効果
+
+switcher が `tg:interval` 属性を持つ場合、switcher のインデックス番号は指定された間隔で1ずつ増加します（単位：ミリ秒）。
 
 ```html
-<div tg:switcher tg:interval="2000">
+<div tg:switcher tg:interval="5000">
   ...
 </div>
 ```
 
-When the user clicks or taps a button with a `tg:choose` attribute, etc., the switcher's state
-no longer changes automatically.
+switcherアイテムにフェードイン／フェードアウトの効果を加えたい場合は、switcher の `tg:transition-duration` 属性にフェードイン／フェードアウトが完了するまでの時間をミリ秒単位で指定します。
 
-Inside the switcher, there may be an element with the `tg:paginator` attribute.
-This element will be a template for a group of buttons that will allow the user to choose the
-a switcher item to be displayed.
-We call these buttons _pagination buttons_.
+```html
+<div tg:switcher tg:interval="5000" tg:transition-duration="750">
+  ...
+</div>
+```
 
-For example, if the number of switcher items is five, the following code example generates a
-`<nav>` element with five `<button>` elements inside.
+ユーザーが `tg:choose` 属性付きのボタンなどをクリックまたはタップした場合、switcher の状態は自動的に変化しなくなります。
+
+#### Paginator
+
+switcher の中には、`tg:paginator` 属性を持つ要素があるかもしれません。この要素は、ユーザーが表示される switcherアイテムを選択するためのボタン・グループのテンプレートになります。これらのボタンを「ページネーションボタン」と呼びます。
+
+例えば、switcher 項目の数が5つの場合、次のコード例は5つの `<button>` 要素を内部に持つ `<nav>` 要素を生成します。
 
 ```html
 <div tg:switcher>
@@ -2359,28 +2342,52 @@ For example, if the number of switcher items is five, the following code example
 </div>
 ```
 
-### Rotator
-
-We call an HTML element with the `tg:rotator` attribute a _rotator_.
-
-A rotator behaves exactly like a switcher with three reservations:
-
-* If the user clicks a button with the `tg:next` attribute when the current index number matches
-the upper bound, the index number will be set to its lower bound.
-* If the user clicks a button with the `tg:prev` attribute when the current index number matches
-the lower bound, the index number will be set to its upper bound.
-* When the `tg:interval` attribute is set, when the current index number reaches the upper bound,
-the next time the index number is set to its lower bound.
-
-Here is an example rotator:
+このままでは、単なる `<button></button>` 要素が作られるだけなのでユーザにはには何も見えません。CSSでスタイルを指定する必要があります。例えば、次のようにすると丸いボタンが現れます。
 
 ```html
-<div tg:rotator tg:interval="2000">
-  <div tg:when="1">A</div>
-  <div tg:when="2">B</div>
-  <div tg:when="3">C</div>
-  <div tg:when="4">D</div>
-  <div tg:when="5">E</div>
+<nav>
+  <button
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 bg-gray-500"
+  ></button>
+</nav>
+```
+
+さらに、次のようにするとUIが洗練されます。
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+  ></button>
+</nav>
+```
+
+### Rotator
+
+`tg:rotator` 属性を持つHTML要素を「rotator」と呼びます。
+
+rotator は、3つの条件がある switcher とまったく同じように振る舞います：
+
+* 現在のインデックス番号が上限と一致するときにユーザーが `tg:next` 属性のボタンをクリックすると、インデックス番号はその下限に設定されます。
+* 現在のインデックス番号が下限値に一致するときに `tg:prev` 属性のボタンをクリックすると、インデックス番号は上限値に設定されます。
+* `tg:interval` 属性が設定されている場合、現在のインデックス番号が上限値に達すると、次回はインデックス番号が下限値に設定されます。
+
+rotator の例です:
+
+```html
+<div tg:rotator tg:interval="5000" tg:transition-duration="750">
+  <div tg:body>
+    <div tg:item>A</div>
+    <div tg:item>B</div>
+    <div tg:item>C</div>
+    <div tg:item>D</div>
+    <div tg:item>E</div>
+  </div>
   <nav>
     <button type="button" tg:prev>Prev</button>
     <button type="button" tg:next>Next</button>
@@ -2390,31 +2397,17 @@ Here is an example rotator:
 
 ### Carousel
 
-#### Carousel Basics
+#### Carousel の基本
 
-We call an HTML element with the `tg:carousel` attribute a _carousel_.
+`tg:carousel` 属性を持つHTML要素を「carousel」と呼びます。
 
-This allows website authors to display multiple pieces of content sequentially in a slideshow-like
-format.
+これにより、ウェブサイト制作者は複数のコンテンツをスライドショーのような形式で連続して表示することができます。
 
-Inside the carousel, there must always be an element with the `tg:frame` attribute, a _carousel frame_.
-Also, inside the carousel frame, there must be an element with the `tg:body` attribute, a _carousel body_.
-In addition, there must be elements with the `tg:item` attribute, _carousel items_,
-inside the carousel body.
+carousel の内部には、必ず `tg:frame` 属性を持つ要素、つまり「carousel frame」がなければなりません。carouselフレームの中には、`tg:body` 属性を持つ要素、「carouselボディ」が必要です。また、carouselボディ の中に `tg:item` 属性を持つ要素、「carouselアイテム」がなければなりません。
 
-The width of the carousel body is automatically calculated to be an integer multiple of the width
-of the first carousel item, so there is no need for the website author to specify it.
-Its width becomes large enough to allow all carousel items to be aligned horizontally, but only a
-portion of it will be visible to website visitors because of the `overflow: hidden` style of the
-carousel frame.
-The carousel effect is achieved by shifting the carousel body left and right with an embedded
-JavaScript program.
+carousel body の幅は、最初の carouselアイテム の幅の整数倍になるように自動的に計算されるので、ウェブサイト作成者が指定する必要はありません。その幅は、すべての carouselアイテム を水平に整列させるのに十分な大きさになるが、carouselフレームの `overflow: hidden` スタイルのため、ウェブサイトの訪問者にはその一部しか見えません。carousel効果は、埋め込まれたJavaScriptプログラムで carousel body を左右に移動させることで実現されます。
 
-The width of the carousel frame should be adjusted by the website author.
-Normally, match the width of the carousel frame and the first carousel item.
-That way, only one carousel item will be displayed in the carousel frame while the carousel remains still.
-If you want to always display multiple carousel items, make the width of the carousel frame larger
-than the width of the first carousel item.
+carouselフレームの幅は、ウェブサイト作成者が調整する必要があります。通常は、carouselフレームと最初の carouselアイテム の幅を同じにします。そうすることで、carousel が静止している間、carouselフレームには1つの carouselアイテム だけが表示されます。常に複数の carousel項目 表示したい場合は、carouselフレームの幅を最初の carouselアイテム の幅より大きくしてください。
 
 ```html
 ---
@@ -2439,8 +2432,8 @@ carousel-body = """
 </div>
 ```
 
-As with rotators, placing an element with a `tg:prev` or `tg:next` attribute inside the carousel
-allows the user to control the state of the carousel.
+
+rotator と同様に、`tg:prev`  または  `tg:next`  属性を持つ要素を carousel の内側に置くことで、ユーザーは carousel の状態をコントロールすることができます。
 
 ```html
 <nav>
@@ -2449,30 +2442,26 @@ allows the user to control the state of the carousel.
 </nav>
 ```
 
-#### Carousel auto-rotation and animation effect
+#### Carousel のオートローテーションとアニメーション効果
 
-To automatically rotate the carousel items at regular time intervals, specify a positive integer
-for the `tg:interval` attribute of the carousel.
-The value specified in this attribute is interpreted as time in milliseconds.
+carousel のアイテムを一定時間ごとに自動的にローテーションさせるには、カルーセルの `tg:interval` 属性に正の整数を指定します。この属性で指定された値は、ミリ秒単位の時間として解釈されます。
 
 ```html
 <div tg:carousel tg:interval="3000">
 ```
 
-If you want to add animation effect to the rotation of the carousel, specify the
-`tg:duration` attribute of the carousel.
+carousel のローテーションにアニメーション効果を加えたい場合は、carousel の `tg:transition-duration` 属性を指定します。
 
 ```html
-<div tg:carousel tg:interval="3000" tg:duration="500">
+<div tg:carousel tg:interval="3000" tg:transition-duration="500">
 ```
 
-By default, the horizontal movement of carousel items is linear, i.e., they move at the even speed.
+デフォルトでは、カルーセル・アイテムの水平方向の動きは線形、つまり等速で動きます。
 
-If you want to fine-tune the way they move, specify a class with a name beginning with "ease-" for
-the carousel body.
+carousel の動き方を微調整したい場合は、"ease-"で始まる名前のクラスをcarouselボディに指定します。
 
 ```html
-<div tg:carousel>
+<div tg:carousel tg:transition-duration="1000">
   <div tg:frame tg:class="carousel-frame">
     <div tg:body class="ease-in-out" tg:class="carousel-body">
       ...
@@ -2481,18 +2470,11 @@ the carousel body.
 </div>
 ```
 
-The `ease-in-out` class moderates the movement near the beginning and near the end of the change.
-See [Transition Timing Function](https://tailwindcss.com/docs/transition-timing-function) for
-details.
+`ease-in-out` クラスは、変化の始まりと終わりで動きを緩やかにします。詳細は [Transition Timing Function](https://tailwindcss.com/docs/transition-timing-function) を参照。
 
-If the `tg:duration` attribute is set on the carousel, a user clicking/tapping the "prev" or
-"next" button while the carousel body is shifting horizontally will have no effect.
-To visually indicate this, specify the `tg:enabled-class` and `tg:disabled-class` attributes to
-the buttons.
+carousel に `tg:transition-duration` 属性が設定されている場合、carouselボディが水平方向に移動している間にユーザーが "prev "または "next "ボタンをクリック/タップしても、何の効果もありません。これを視覚的に示すには、ボタンに `tg:enabled-class` と `tg:disabled-class` 属性を指定します。
 
-Class tokens specified in the `tg:enabled-class` attribute are added to the `class` attribute of
-the button when the carousel body is stopped, and class tokens specified in the `tg:disabled-class`
-attribute are added to the `class` attribute of the button when the carousel body is shifting.
+`tg:enabled-class` 属性で指定されたクラス・トークンは、carouselボディが停止している時にボタンの `class` 属性に追加され、`tg:disabled-class` 属性で指定されたクラス・トークンは、carouselボディが移動している時にボタンの `class` 属性に追加されます。
 
 ```html
 <button
@@ -2508,13 +2490,9 @@ attribute are added to the `class` attribute of the button when the carousel bod
 
 #### Paginator
 
-Inside the carousel, there may be an element with the `tg:paginator` attribute.
-This element will be a template for a group of buttons that will allow the user to choose the
-a carousel item to be displayed in the center of the carousel frame.
-We call these buttons _pagination buttons_.
+carousel の中には、`tg:paginator` 属性を持つ要素があります。この要素は、ユーザーが carouselフレームの中央に表示される carouselアイテムを選択するためのボタングループのテンプレートになります。これらのボタンを「ページネーションボタン」と呼びます。
 
-For example, if the number of carousel items is five, the following code example generates a
-`<nav>` element with five `<button>` elements inside.
+例えば、carouselアイテムの数が5つの場合、次のコード例は5つの `<button>` 要素を内部に持つ `<nav>` 要素を生成します。
 
 ```html
 <div tg:carousel>
@@ -2525,13 +2503,11 @@ For example, if the number of carousel items is five, the following code example
 </div>
 ```
 
-Each pagination button corresponds to one of the carousel items.
+各ページネーションボタンは carouselアイテムの1つに対応しています。
 
-If desired, you may code individual pagination buttons by specifying the number of the carousel
-item in the `tg:choose` attribute.
+必要であれば、`tg:choose` 属性で carouselアイテムの番号を指定することで、個々のページネーション・ボタンをコード化することができます。
 
-The following example generates a `<nav>` element with five `<button>` elements, as in the
-previous example.
+次の例は、前の例と同じように、5つの `<button>` 要素を持つ `<nav>` 要素を生成します。
 
 ```html
 <nav>
@@ -2543,11 +2519,9 @@ previous example.
 </nav>
 ```
 
-Note that each carousel item is numbered starting with zero.
+各 carouselアイテムには0から始まる番号が振られていることに注意してください。
 
-If you want to give a prominent style to the pagination button corresponding to the carousel item
-displayed in the center of the carousel frame, use the `tg:normal-class` and `tg:current-class`
-attributes.
+carouselフレームの中央に表示される carouselアイテムに対応するページネーションボタンに目立つスタイルを与えたい場合は、`tg:normal-class` 属性と `tg:current-class` 属性を使用します。
 
 ```html
 <nav>
@@ -2562,15 +2536,9 @@ attributes.
 </nav>
 ```
 
-Class tokens specified in the `tg:normal-class` attribute are applied to buttons corresponding to
-carousel items that are not currently displayed in the center of the carousel frame,
-and class tokens specified in the `tg:current-class` attribute are applied to the button
-corresponding to the carousel item that is currently displayed in the center of the carousel frame.
+`tg:normal-class` 属性で指定されたクラス・トークンは、現在 carouselフレームの中央に表示されていない carouselアイテムに対応するボタンに適用され、`tg:current-class` 属性で指定されたクラス・トークンは、現在 carouselフレームの中央に表示されている carouselアイテムに対応するボタンに適用されます。
 
-When the `tg:duration` attribute is set on the carousel, a user clicking/tapping the pagination
-buttons while the carousel body is shifting horizontally will have no effect.
-To visually indicate this, specify the `tg:disabled-class` attributes to
-the buttons.
+カルーセルに `tg:transition-duration` 属性が設定されている場合、carouselボディが水平方向に移動している間にユーザーがページ分割ボタンをクリック/タップしても、何の効果もありません。これを視覚的に示すには、ボタンに `tg:disabled-class` 属性を指定します。
 
 ```html
 <nav>
@@ -2586,15 +2554,13 @@ the buttons.
 </nav>
 ```
 
-Class tokens specified in the `tg:disabled-class` attribute are added to the `class` attribute of
-all pagination buttons when the carousel body is shifting.
+`tg:disabled-class` 属性で指定されたクラス・トークンは、carouselボディが移動する際に、すべてのページネーションボタンの `class` 属性に追加されます。
 
 ### Scheduler
 
-_Scheduler_ is a mechanism for changing the `class` attribute of an HTML element and its
-descendant elements over time.
+「Scheduler」は、HTML要素とその子孫要素の `class` 属性を時間と共に変更する仕組みです。
 
-The following is a simple example of scheduler configuration:
+以下は scheduler 設定の簡単な例です:
 
 ```html
 <div
@@ -2609,160 +2575,114 @@ The following is a simple example of scheduler configuration:
 </div>
 ```
 
-The `tg:scheduler` attribute declares that this element is managed by a scheduler.
-The value of this element's `class` attribute is called the _base class_.
+`tg:scheduler` 属性は、この要素が scheduler よって管理されていることを宣言しています。この要素の `class` 属性の値は「ベースクラス」と呼ばれます。
 
-The base class plus the value of the tg:init attribute is initially the `class` attribute of
-this element.
-In this example, the `class` attribute of the `<div>` element is initially set to the value
-`"w-24 mx-auto p-4 text-center text-white bg-black"`.
+ベースクラスに `tg:init` 属性の値を加えたものが、この要素の `class` 属性となります。この例では、`<div>` 要素の `class` 属性は初期値 `"w-24 mx-auto p-4 text-center text-white bg-black"` に設定されます。
 
-The attribute named `tg:` combined with a sequence of numbers changes the `class` attribute of
-this element at the moment a certain amount of time has elapsed since the web page was loaded.
-The sequence of numbers represents the elapsed time in milliseconds.
+`tg:` という属性と数字の並びを組み合わせることで、ウェブページが読み込まれてから一定の時間が経過した時点で、この要素の `class` 属性を変更します。数字の並びは経過時間をミリ秒単位で表します。
 
-The base class plus the value of the tg:init attribute is initially the `class` attribute of
-this element.
-In this example, the `class` attribute of the `<div>` element is initially set to the value
-`"w-24 mx-auto p-4 text-center text-white bg-black"`.
+この例では、`<div>` 要素の `class` 属性の値は次のように時間と共に変化します:
 
-The attribute named `tg:` combined with a sequence of numbers changes the `class` attribute of
-this element at the moment a certain amount of time has elapsed since the web page was loaded.
-The sequence of numbers represents the elapsed time in milliseconds.
+* 1秒後: `w-24 mx-auto p-4 text-center text-white bg-red-500`
+* 2秒後: `w-24 mx-auto p-4 text-center text-white bg-blue-500`
+* 3秒後: `w-24 mx-auto p-4 text-center text-white bg-green-500`
 
-In this example, the value of the `class` attribute of the `<div>` element changes over time as
-follows:
-
-* After 1 second: `w-24 mx-auto p-4 text-center text-white bg-red-500`
-* After 2 seconds: `w-24 mx-auto p-4 text-center text-white bg-blue-500`
-* After 3 seconds: `w-24 mx-auto p-4 text-center text-white bg-green-500`
-
-In the following example, the scheduler is used to achieve the fade-in effect:
+以下の例では、フェードイン効果を得るために scheduler を使用しています:
 
 ```html
 <div
   tg:scheduler
   tg:init="opacity-0"
-  tg:0="opacity-100 transition duration-[2000ms]"
+  tg:0="opacity-100 transition duration-500"
 >
   Fade In
 </div>
 ```
 
-Initially, the value of the `class` attribute of this `<div>` element contains `opacity-0`, so its
-contents are not visible to the user.
-The moment the page loads, `opacity-0` is removed from the `class` attribute of this `<div>`
-element and `opacity-100` is added instead.
-Thanks to the `transition duration-500` included in the base class, the effect of `opacity-100` is
-applied gradually over a period of 0.5 seconds.
+初期状態では、この `<div>` 要素の `class` 属性の値は `opacity-0` を含んでいるので、その内容はユーザーには見えません。ページが読み込まれた瞬間に、この `<div>` 要素の `class` 属性から `opacity-0` が削除され、代わりに `opacity-100` が追加されます。`tg:0` 属性に含まれる `transition duration-500` のおかげで、`opacity-100` の効果は0.5秒かけて徐々に適用されます。
 
 ### Tram
 
-#### Tram Basics
+#### Tram の基本
 
-_Tram_ is a mechanism for changing the `class` attribute of an HTML element and its descendant
-elements as the positional relationship between the element and the viewport changes.
+「tram」は、要素と表示領域の位置関係の変化に応じて、HTML要素やその子孫要素の `class` 属性を変更する仕組みです。
 
-When a user scrolls a web page on which a tram is placed from top to bottom, the tram progresses
-from bottom to top.
-When the head of the tram touches the bottom of the viewport, we say tram progress is 0.
-When the rear of the tram touches the upper edge of the viewport, we say tram progress is 100.
+ユーザーが tarm を配置したウェブページを上から下へスクロールすると、tarm は下から上へ進行します。tram の上端が表示領域の下端に接したとき、tram の進行度は0となります。tram の下端が表示領域の上端に接したとき、tram の進行度は100となります。
 
-The following is a simple example of tram configuration:
+以下は tram の簡単な設定例です。:
 
 ```html
 <div tg:tram>
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
   >
   </div>
 </div>
 ```
 
-This tram has one inner `<div>` element. The inner element has the `tg:forward-50` attribute, and
-the presence of this attribute makes this element the _target_ of the tram.
+この tram は内側に１つの `<div>` 要素を持っています。内側の要素は `tg:forward-50` 属性を持ち、この属性があることでこの要素が tram の「ターゲット」となります。
 
-The value of the target's `class` attribute is called the _base class_.
-Initially, the actual value of the class attribute is the base class plus `bg-black` specified in
-the `tg:init` attribute.
-Then, by specifying the attribute `tg:forward-50`, the moment tram progress reaches 50, the base
-class plus `bg-red` is set as the target's `class` attribute.
-Tram progresses, represented by a number such as 50, are called _trigger points_.
+ターゲットの `class` 属性の値は「ベースクラス」と呼ばれます。最初は、ベースクラスに `tg:init` 属性で指定された `bg-black` を加えたものが、class属性の実際の値がになります。そして、`tg:forward-50` という属性を指定することで、tram の進行度が50になった瞬間に、ベースクラスに `bg-red-500` を加えたものがターゲットのclass属性として設定されます。50のような数字で表される tram の進行度は「トリガーポイント」と呼ばれます。
 
-Attributes whose names begin with `tg:forward-` are called _forward triggers_, and attributes
-whose names begin with `tg:backward-` are called _backward triggers_.
-Class tokens specified with a forward trigger are added to the target's `class` attribute when
-the tram reaches the trigger point of that trigger while moving forward.
-Class tokens specified with a backward trigger are added to the target's `class` attribute when
-the tram reaches the trigger point of that trigger while moving backward.
+名前が `tg:forward-` で始まる属性は「フォワードトリガー」と呼ばれ、名前が `tg:backward-` で始まる属性は「バックトリガー」と呼ばれます。フォワードトリガーで指定されたクラストークンは、tram が前進中にそのトリガーのトリガーポイントに達すると、ターゲットの `class` 属性に追加されます。バックトリガーで指定されたクラストークンは、tram が後方へ移動中にそのトリガーのトリガーポイントに到達すると、ターゲットの `class` 属性に追加されます。
 
-Setting multiple triggers to a single target is allowed.
-In the following example, the background color changes from black to red and then from red to green
-as the tram progresses.
+1つのターゲットに複数のトリガーを設定することが可能です。
+次の例では、tram が進むにつれて背景色が黒から赤へ、そして赤から緑へと変化します。
 
 ```html
 <div tg:tram>
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-25="bg-red"
-    tg:forward-50="bg-green"
+    tg:forward-25="bg-red-500"
+    tg:forward-50="bg-green-500"
   >
   </div>
 </div>
 ```
 
-If you want the color change to be gradual, add `transition` and `duration-1000` to the base class:
+色の変化を緩やかにしたい場合は、`transition`と`duration-1000`をベースクラスに追加します:
 
 ```html
 <div tg:tram>
   <div
     class="w-48 h-48 mx-auto transition duration-1000"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
   >
   </div>
 </div>
 ```
 
-This way, when tram advances to the center of the viewport, the background color will switch from
-black to red over 1000 ms.
+こうすることで、tram が表示領域の中央まで進むと、1000ミリ秒かけて背景色が黒から赤に切り替わります。
 
-When a user scrolls a web page from bottom to top, the tram moves backward from the top of the
-screen to the bottom.
+ユーザーがウェブページを下から上へスクロールすると、tram は画面の上から下へ後退します。
 
-If you want the target's `class` attribute to change while tram is moving backward, specify
-the backward triggers:
+tram が後方に移動している間にターゲットの `class` 属性を変更したい場合は、後方トリガーを指定します:
 
 ```html
 <div tg:tram>
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
     tg:backward-50="bg-black"
   >
   </div>
 </div>
 ```
 
-In the example above, the target's background color changes from red to black at the moment
-the tram reaches center of the viewport while moving backward.
+上の例では、tram が後方に移動しながら表示領域の中央に到達した瞬間に、ターゲットの背景色が赤から黒に変わります。
 
-#### Trigger points
+#### トリガーポイント
 
-So far we have used _bare_ integers from 0 to 100 to represent trigger points, but by adding
-a _unit_ to integers, we can represent a variety of trigger points.
+これまでは0から100までの「裸の」整数を使ってトリガーポイントを表現してきたが、整数に「単位」を加えることで、様々なトリガーポイントを表現することができます。
 
-`100%` represents a trigger point equivalent to a progress equal to the length (height) of the tram.
-For example, class tokens set to the `tg:forward-50%` attribute will be added to the target's `class`
-attribute when the tram advances its half the length from the bottom of the viewport.
+`100%` は、tram の長さ（高さ）に等しい前進に相当するトリガーポイントを表します。例えば、`tg:forward-50%` 属性に設定されたクラストークンは、tram が表示領域の底から tram の半分の長さだけ進んだときに、ターゲットの `class` 属性に追加されます。
 
-In the following example, the target in the tram is initially outside the left edge of the viewport,
-and when the tram advances until its tail touches the bottom edge of the viewport, it takes 1000ms
-to return to its original position.
+次の例では、tram のターゲットは最初は表示領域の左端より外側にあり、tram が進んでその下端が表示領域の下端に触れると、1000msかけて元の位置に移動します。
 
 ```html
 <div tg:tram class="overflow-hidden">
@@ -2775,30 +2695,17 @@ to return to its original position.
 </div>
 ```
 
-`100vh` represents a trigger point equivalent to a progress equal to the height of the viewport.
-For example, class tokens set to the `tg:forward-50vh` attribute will be added to the target's `class`
-attribute when the head of the tram is at the same height as the midpoint of the viewport.
+`100vh` は、表示領域の高さに等しい進捗に相当するトリガーポイントを表します。例えば、`tg:forward-50vh` 属性に設定されたクラストークンは、tram の頭部が表示領域の中点と同じ高さにあるとき、ターゲットの `class` 属性に追加されます。
 
-`100px` represents the trigger point which corresponds to 100 pixels of progress.
-For example, the `tg:forward-64px` attribute has as its value the class tokens that should be
-applied when the tram advances 64 pixels beyond the bottom edge of the viewport.
+`100px` は100ピクセルの進行に対応するトリガーポイントを表します。例えば、`tg:forward-64px` 属性は、tramが表示領域の下端から64ピクセル進んだときに適用されるべきクラストークンを値として持っています。
 
-It is possible to add an additional suffix, `+` or `-`, to these units.
-The suffix `+` means that tram progress is measured relative to the top of the viewport.
-For example, `50%+` indicates that the tram has advanced from the top of the viewport by half its
-own length.
+これらの単位には、`+` または `-` という接尾辞を追加することができます。接尾辞 `+` は、tramの進行が表示領域の上端を基準として測定されることを意味します。例えば、`50%+` はtramが表示領域の上から半分の長さだけ進んだことを示します。
 
-The suffix `-` means that the tram progress reference is the top edge of the viewport and the
-trigger point is backward away from the top edge of the viewport.
-For example, `64px-` indicates the head of the tram is 64 pixels behind the top edge of the
-viewport.
+接尾辞 `-` は、tram の進行基準が表示領域の上端であり、トリガーポイントがビューポートの上端から後方に離れていることを意味します。例えば、`64px-` は tram の先頭が表示領域の上端から64ピクセル後方にあることを示します。
 
-### Notes on Alpine.js
+### Alpine.jsについてのメモ
 
-The tgweb uses [Alpine.js](https://alpinejs.dev/) to achieve dynamic content manipulation.
-However, website authors themselves cannot use attributes derived from Alpine.js such as `x-data`
-, `@click`, and `:class`.
-When those attributes are found in the source HTML files, they will be removed.
+tgwebは [Alpine.js](https://alpinejs.dev/) を使って動的なコンテンツ操作を実現しています。ただし、`x-data` 、 `@click` 、 `:class` のようなAlpine.jsに由来する属性は、ウェブサイトの作者自身が使用することはできません。これらの属性が HTML ソースファイルで見つかった場合、それらは削除されます。
 
 ## Embedding Teamgenik Mini-apps
 
@@ -3054,6 +2961,7 @@ The title of the HTML document generated from the template below will be "Greeti
 
 ```html
 ---
+[main]
 title = "Greeting"
 ---
 <body>
@@ -3103,9 +3011,9 @@ that belongs to the "meta.name" table:
 [meta.name]
 viewport = "width=device-width, initial-scale=1"
 theme-color = "#2da0a8"
-description = Description
+description = "Description"
 robots = "index,follow"
-generator = Teamgenik
+generator = "Teamgenik"
 ```
 
 Setting the values of the properties as above will produce the following `<meta>` elements:
@@ -3115,8 +3023,6 @@ Setting the values of the properties as above will produce the following `<meta>
 <meta name="theme-color" content="#2da0a8">
 <meta name="description" content="Description">
 <meta name="robots" content="index,follow">
-<meta name="googlebot" content="index,follow">
-<meta name="googlebot" content="notranslate">
 <meta name="generator" content="Teamgenik">
 ```
 
@@ -3140,7 +3046,7 @@ You can generate a `<meta>` element with a `http-equiv` attribute by setting the
 property that belongs to "http-equiv" table.
 
 ```toml
-[http-equiv]
+[meta.http-equiv]
 content-security-policy = "default-src 'self'"
 x-dns-prefetch-control = "off"
 ```
@@ -3202,19 +3108,33 @@ element using `%{...}` notation:
 ### `<link>` elements
 
 The `<link>` elements in the `<head>` element are generated by the values of properties that
-belon to "link" table.
+belon to "link" table and "links" tables.
 
 ```toml
 [link]
-archives = "https://example.com/archives/"
+canonical = "https://example.com/"
 license = "%{/copyright.html}"
+
+[[links]]
+blocking = "render"
+href = "example.woff2"
+as = "font"
+
+[[links]]
+rel = "preload"
+href = "my_font.woff2"
+as = "font"
+type = "font/woff2"
+crossorigin = "anonymous"
 ```
 
 The above will generate the following `<link>` elements
 
 ```html
-<link rel="archives" content="https://example.com/archives/">
-<link rel="license" content="http://localhost:3000/copyright.html">
+<link rel="canonical" href="https://example.com/">
+<link rel="license" href="http://localhost:3000/copyright.html">
+<link blocking="render" href="example.woff2" as="font">
+<link rel="preload" href="myFont.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 ```
 
 When your website is published on Teamgenik, URLs generated from `%{...}` notation will be
