@@ -89,23 +89,21 @@ window.tgweb = {
 
       this.len = items.length
 
-      if (transitionDuration !== undefined && transitionDuration > 0) {
-        this.body.style.display = "flex"
-        this.body.style.flexDirection = "column"
-        this.body.style.position = "relative"
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth + "px"
+      this.body.style.height = firstItem.offsetHeight + "px"
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
         this.body.style.width = firstItem.offsetWidth + "px"
         this.body.style.height = firstItem.offsetHeight + "px"
-
-        const windowResizeHandler = () => {
-          const items = this.body.querySelectorAll("[data-item-index]")
-          const firstItem = items[0]
-
-          this.body.style.width = firstItem.offsetWidth + "px"
-          this.body.style.height = firstItem.offsetHeight + "px"
-        }
-
-        window.tgweb.windowResizeHandlers.push(windowResizeHandler)
       }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval > 0) {
         this.v = setInterval(() => { this._forward() }, this.interval)
@@ -177,23 +175,21 @@ window.tgweb = {
 
       this.len = items.length
 
-      if (transitionDuration !== undefined && transitionDuration > 0) {
-        this.body.style.display = "flex"
-        this.body.style.flexDirection = "column"
-        this.body.style.position = "relative"
+      this.body.style.display = "flex"
+      this.body.style.flexDirection = "column"
+      this.body.style.position = "relative"
+      this.body.style.width = firstItem.offsetWidth + "px"
+      this.body.style.height = firstItem.offsetHeight + "px"
+
+      const windowResizeHandler = () => {
+        const items = this.body.querySelectorAll("[data-item-index]")
+        const firstItem = items[0]
+
         this.body.style.width = firstItem.offsetWidth + "px"
         this.body.style.height = firstItem.offsetHeight + "px"
-
-        const windowResizeHandler = () => {
-          const items = this.body.querySelectorAll("[data-item-index]")
-          const firstItem = items[0]
-
-          this.body.style.width = firstItem.offsetWidth + "px"
-          this.body.style.height = firstItem.offsetHeight + "px"
-        }
-
-        window.tgweb.windowResizeHandlers.push(windowResizeHandler)
       }
+
+      window.tgweb.windowResizeHandlers.push(windowResizeHandler)
 
       if (this.interval > 0) {
         this.v = setInterval(() => { this._forward() }, this.interval)
