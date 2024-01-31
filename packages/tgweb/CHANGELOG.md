@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.8.1
+
+* 65bc50f Bug fix: styles of switch/rotator not adjusted when `transitionDuration` is not set
+
 ## 0.8.0
 
 * 8fd059c Add `tgweb-archive` command
