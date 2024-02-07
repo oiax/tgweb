@@ -2352,7 +2352,7 @@ to descendant elements of that element:
 * `tg:open`
 * `tg:close`
 
-We call an HTML element with the `tg:modal` attribute a __modal__.
+We call an HTML element with the `tg:modal` attribute a _modal_.
 A modal has two states, `open` and `close`. Its initial state is `close`.
 
 There must be one `<dialog>` element inside the modal. Initially, this element is not displayed.
@@ -2390,7 +2390,7 @@ to descendant elements of that element:
 * `tg:when`
 * `tg:toggle`
 
-We call an HTML element with the `tg:toggler` attribute a __toggler__.
+We call an HTML element with the `tg:toggler` attribute a _toggler_.
 A toggler has two states, `on` and `off`. Its initial state is `off`.
 
 An element with a `tg:when` attribute inside a toggler will only be displayed if its value matches
@@ -2431,6 +2431,8 @@ So the above example could be rewritten as:
 ```
 
 ### Switcher
+
+#### Carousel Basics
 
 Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
@@ -2532,6 +2534,8 @@ change the style applied to the button.
     tg:disabled-class="btn-disabled">First</button>
 ```
 
+#### Switcher auto-switching and fade-in/fade-out effects
+
 If the switcher has an `tg:interval` attribute, the switcher's index number is incremented
 by 1 at the specified interval (unit: millisecond).
 
@@ -2541,7 +2545,7 @@ by 1 at the specified interval (unit: millisecond).
 </div>
 ```
 
-If you want to add a fade-in/fade-out effect to the switcher, specify the time in milliseconds
+If you want to add a fade-in/fade-out effect to the switcher items, specify the time in milliseconds
 required for the fade-in or fade-out effect to complete in the `tg:transition-duration` attribute
 of the switcher.
 
@@ -2553,6 +2557,8 @@ of the switcher.
 
 When the user clicks or taps a button with a `tg:choose` attribute, etc., the switcher's state
 no longer changes automatically.
+
+#### Paginator
 
 Inside the switcher, there may be an element with the `tg:paginator` attribute.
 This element will be a template for a group of buttons that will allow the user to choose the
@@ -2571,6 +2577,30 @@ For example, if the number of switcher items is five, the following code example
 </div>
 ```
 
+This will just create a `<button></button>` element, which is invisible to the user, and must be styled with CSS.　For example, a round button appears when you do the following.
+
+```html
+<nav>
+  <button
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 bg-gray-500"
+  ></button>
+</nav>
+```
+
+Additionally, the UI can be refined by.
+
+```html
+<nav>
+  <button
+    type="button"
+    tg:paginator
+    class="rounded-full w-6 h-6 mx-1 opacity-50"
+    tg:normal-class="bg-teal-400 hover:opacity-75"
+    tg:current-class="bg-orange-400 cursor-default"
+  ></button>
+</nav>
+```
 ### Rotator
 
 We call an HTML element with the `tg:rotator` attribute a _rotator_.
@@ -2686,7 +2716,7 @@ If you want to fine-tune the way they move, specify a class with a name beginnin
 the carousel body.
 
 ```html
-<div tg:carousel>
+<div tg:carousel tg:transition-duration="1000">
   <div tg:frame tg:class="carousel-frame">
     <div tg:body class="ease-in-out" tg:class="carousel-body">
       ...
@@ -2826,7 +2856,7 @@ The following is a simple example of scheduler configuration:
 The `tg:scheduler` attribute declares that this element is managed by a scheduler.
 The value of this element's `class` attribute is called the _base class_.
 
-The base class plus the value of the tg:init attribute is initially the `class` attribute of
+The base class plus the value of the `tg:init` attribute is initially the `class` attribute of
 this element.
 In this example, the `class` attribute of the `<div>` element is initially set to the value
 `"w-24 mx-auto p-4 text-center text-white bg-black"`.
@@ -2848,7 +2878,7 @@ In the following example, the scheduler is used to achieve the fade-in effect:
 <div
   tg:scheduler
   tg:init="opacity-0"
-  tg:0="opacity-100 transition duration-[2000ms]"
+  tg:0="opacity-100 transition duration-500"
 >
   Fade In
 </div>
@@ -2880,7 +2910,7 @@ The following is a simple example of tram configuration:
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
   >
   </div>
 </div>
@@ -2893,7 +2923,7 @@ The value of the target's `class` attribute is called the _base class_.
 Initially, the actual value of the class attribute is the base class plus `bg-black` specified in
 the `tg:init` attribute.
 Then, by specifying the attribute `tg:forward-50`, the moment tram progress reaches 50, the base
-class plus `bg-red` is set as the target's `class` attribute.
+class plus `bg-red-500` is set as the target's `class` attribute.
 Tram progresses, represented by a number such as 50, are called _trigger points_.
 
 Attributes whose names begin with `tg:forward-` are called _forward triggers_, and attributes
@@ -2912,8 +2942,8 @@ as the tram progresses.
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-25="bg-red"
-    tg:forward-50="bg-green"
+    tg:forward-25="bg-red-500"
+    tg:forward-50="bg-green-500"
   >
   </div>
 </div>
@@ -2926,7 +2956,7 @@ If you want the color change to be gradual, add `transition` and `duration-1000`
   <div
     class="w-48 h-48 mx-auto transition duration-1000"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
   >
   </div>
 </div>
@@ -2946,7 +2976,7 @@ the backward triggers:
   <div
     class="w-48 h-48 mx-auto"
     tg:init="bg-black"
-    tg:forward-50="bg-red"
+    tg:forward-50="bg-red-500"
     tg:backward-50="bg-black"
   >
   </div>
