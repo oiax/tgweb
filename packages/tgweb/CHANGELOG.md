@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.8.2
+
+* 97ac48a Fix tram's init() so that target.dataset.tramBaseClass gets initialized only once
+
 ## 0.8.1
 
 * 65bc50f Bug fix: styles of switch/rotator not adjusted when `transitionDuration` is not set
