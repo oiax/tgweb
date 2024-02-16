@@ -3090,7 +3090,7 @@ described below.
 
 The `id` property is the identifier (ID) assigned to the mini-app on Teamgenik.
 Its value has the form of a UUID (Universally Unique IDentifier).
-You can find the ID of each mini-app by visiting the website builder within the Teamgenik PUB space.
+You can check the ID of each mini app on the "Mini apps" tab in the Teamgenik BASE space.
 This property is optional.
 
 The ID is necessary to actually run a mini-app on the website published on Teamgenik, but
