@@ -28,7 +28,7 @@
   * [Scheduler](#scheduler)
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
-* [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
+* [ミニアプリの埋め込み](#ミニアプリの埋め込み)
 * [Notes on Property Values](#notes-on-property-values)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
@@ -2707,34 +2707,24 @@ tram が後方に移動している間にターゲットの `class` 属性を変
 
 tgwebは [Alpine.js](https://alpinejs.dev/) を使って動的なコンテンツ操作を実現しています。ただし、`x-data` 、 `@click` 、 `:class` のようなAlpine.jsに由来する属性は、ウェブサイトの作者自身が使用することはできません。これらの属性が HTML ソースファイルで見つかった場合、それらは削除されます。
 
-## Embedding Teamgenik Mini-apps
+## ミニアプリの埋め込み
 
-### What is a mini-app?
+### ミニアプリとは
 
-Teamgenik has an aspect of being a no-code development platform.
-Applications created on Teamgenik are called "mini-apps".
-In the STUDIO space on Teamgenik you can create mini-apps, and in the MARKET space you can acquire
-or purchase mini-apps.
+Teamgenikはノーコード開発プラットフォームという側面を持っています。Teamgenikで作成されたアプリケーションは「ミニアプリ」と呼ばれます。TeamgenikのSTUDIOスペースではミニアプリを作成でき、MARKETスペースではミニアプリを取得または購入できます。
 
-Mini-pps have two uses:
+ミニアプリには2つの用途があります:
 
-1. You can use them as stand-alone widgets in your BASE space.
-2. You can embed them on your personal or your team's website.
+1. BASEスペースで独立したウィジェットとして使用できます。
+2. 個人またはチームのウェブサイトに埋め込むことができます。
 
-Note that you can only embed the mini-apps on websites that are published on Teamgenik.
-Therefore, it is not possible to run mini-apps on top of the web pages delivered by the web server
-started by the `npx tgweb-server` command.
-However, it is possible to embed placeholders for mini-apps in them.
-You can then upload the website data to Teamgenik with the `npx tgweb-push` command and publish
-the website with the embedded mini-apps.
+ミニアプリはTeamgenikで公開されているウェブサイトにのみ埋め込むことができます。そのため、`npx tgweb-server` コマンドで起動したウェブサーバーが配信するウェブページの上でミニアプリケーションを実行することはできません。ただし、ミニアプリのプレースホルダーを埋め込むことは可能です。その後、`npx tgweb-push` コマンドでウェブサイトデータをTeamgenikにアップロードし、ミニアプリを埋め込んだウェブサイトを公開できます。
 
-**Note** The `npx tgweb-push` command is not yet available.
+**Note** `npx tgweb-push` コマンドはまだ使用できません。
 
-### Settings for mini-apps
+### ミニアプリの設定
 
-To embed mini-app placeholders in your web page, you must specify the default locale of mini-apps
-and register their name, ID, and display name in `site.toml`.
-Shown below is an example of the setup.
+ミニアプリのプレースホルダをウェブページに埋め込むには、ミニアプリのデフォルトロケールを指定し、`site.toml` にミニアプリの名前、ID、表示名を登録する必要があります。以下にセットアップの例を示します。
 
 ```toml
 default-locale = "en"
@@ -2750,56 +2740,37 @@ id = "70955db7-75f6-43b2-b46a-50413e43b94f"
 display-name = "Players List"
 ```
 
-When the texts in mini-apps are internationalized, they are translated in the locale set in the
-`default-locale` property.
+ミニアプリのテキストが国際化されると、`default-locale`  プロパティで設定されたロケールで翻訳されます。
 
-You must place `[[apps]]` on the first line of each mini-app configuration.
-Note that the word "apps" is enclosed in double square brackets.
+各ミニアプリのコンフィギュレーションの最初の行に `[[apps]]` を置かなければなりません。「apps」という言葉は二重の角括弧で囲まれていることに注意してください。
 
-The `name` property is the name used to identify the mini-app to be configured.
-Its value can be any string, but it must correspond to the `name` attribute of the `<tg:app>` tag
-described below.
+`name` プロパティは、設定するミニアプリを識別するための名前です。その値はどんな文字列でもよいですが、後述の `<tg:app>` タグの `name` 属性に対応するものでなければなりません。
 
-The `id` property is the identifier (ID) assigned to the mini-app on Teamgenik.
-Its value has the form of a UUID (Universally Unique IDentifier).
-You can find the ID of each mini-app by visiting the website builder within the Teamgenik PUB space.
-This property is optional.
+`id` プロパティは、Teamgenik上のミニアプリに割り当てられた識別子  (ID)  です。その値は UUID (Universally Unique IDentifier) の形をしています。各ミニアプリのIDは、Teamgenik PUBスペース内のウェブサイトビルダーにアクセスすることで確認できます。このプロパティはオプションです。
 
-The ID is necessary to actually run a mini-app on the website published on Teamgenik, but
-if you simply want to embed a its placeholder in a web page in the local environment and
-check its appearance, you can omit it.
+このIDは、Teamgenikで公開されているウェブサイト上で実際にミニアプリを実行するために必要ですが、単にローカル環境のウェブページにプレースホルダを埋め込み、その外観を確認したい場合は省略できます。
 
-The value of `display-name` property is a string that will be displayed within the placeholder.
-If this property is omitted, the value of the `name` property is used instead.
+`display-name` プロパティの値はプレースホルダー内に表示される文字列です。このプロパティが省略された場合、代わりに `name` プロパティの値が使用されます。
 
-### Embed mini-app placeholders into your webpages
+### ミニアプリのプレースホルダーをウェブページに埋め込む
 
-Use the `<tg:app>` element to embed mini-app placeholders into your web page.
-Its value of the `name` attribute must match the `name` property of one of the mini-apps described
-in `site.toml`.
-The following is an example of the use the `<tg:app>` element:
+ミニアプリのプレースホルダーをウェブページに埋め込むには、`<tg:app>` 要素を使います。その `name` 属性の値は、`site.toml` で説明したミニアプリの `name` プロパティと一致しなければなりません。以下は `<tg:app>` 要素の使用例です。
 
 ```html
 <tg:app name="score_board"></tg:app>
 ```
 
-The `<tg:app>` element can have an `expanded` attribute. This attribute controls the display mode
-of mini-apps.
+`<tg:app>` 要素は `expanded` 属性を持つことができます。この属性はミニアプリの表示モードを制御します。
 
-Mini apps have two display modes: standard mode and expanded mode.
-The layout of the mini-apps in standard mode is optimized for a width of 300 pixels, while the
-mini-apps in expanded mode are optimized for a width of 640 pixels.
+ミニアプリには、標準モードと拡張モードの2つの表示モードがあります。標準モードのミニアプリのレイアウトは横幅300ピクセルに最適化され、拡張モードのミニアプリのレイアウトは横幅640ピクセルに最適化されます。
 
-The `expanded` attribute is a boolean attribute; if the attribute is present, the mini-app is
-displayed in expanded mode; otherwise, it is displayed in standard mode.
-The following is an example of the use the `expanded` attribute:
+`expanded` 属性はブーリアン属性で、この属性が存在すればミニ・アプリは拡張モードで表示され、そうでなければ標準モードで表示されます。以下は `expanded` 属性の使用例です:
 
 ```html
 <tg:app name="score_board" expanded></tg:app>
 ```
 
-Note that the mini-app placeholder itself does not have a specific width and height.
-Usually, you should fix the width of the placeholder by enclosing it in a `<div>` element like this:
+ミニアプリのプレースホルダー自体には特定の幅と高さがないことに注意してください。通常、プレースホルダーの幅は次のように `<div>` 要素で囲んで固定します：
 
 ```html
 <div class="w-[300px]">
@@ -2807,8 +2778,7 @@ Usually, you should fix the width of the placeholder by enclosing it in a `<div>
 </div>
 ```
 
-Specifying a minimum height as shown below may prevent the web page layout from wobbling when
-the content of the mini-app changes.
+以下のように最小の高さを指定することで、ミニアプリケーションのコンテンツが変更されたときに、ウェブページのレイアウトがぐらつくのを防ぐことができます。
 
 ```html
 <div class="w-[300px] min-h-[450px]">
@@ -2816,9 +2786,7 @@ the content of the mini-app changes.
 </div>
 ```
 
-To switch the display mode depending on whether the display width of the browser is 640 pixels or
-more, place two placeholders as follows, surround each with a `<div>` element which has
-an appropriate set of Tailwind CSS class tokens.
+ブラウザの表示幅が 640 ピクセル以上かどうかに応じて表示モードを切り替えるには、次のように 2 つのプレースホルダーを配置し、適切な Tailwind CSS クラス トークンのセットを含む  `<div>`  要素でそれぞれを囲みます。
 
 ```html
 <div class="w-[300px] sm:hidden">
@@ -2829,10 +2797,9 @@ an appropriate set of Tailwind CSS class tokens.
 </div>
 ```
 
-The `sm:hidden` class hides elements when the browser display width is greater than 640 pixels.
-The `hidden sm:block` class hides the element when the browser display width is less than 640 pixels.
+`sm:hidden`  クラスは、ブラウザーの表示幅が 640 ピクセルを超える場合に要素を非表示にします。`hidden sm:block` クラスは、ブラウザの表示幅が 640 ピクセル未満の場合に要素を非表示にします。
 
-To learn more about the Tailwind CSS class tokens mentioned here, please visit the following pages:
+ここで説明した Tailwind CSS クラス トークンの詳細については、次のページを参照してください:
 
 * https://tailwindcss.com/docs/width#arbitrary-values
 * https://tailwindcss.com/docs/min-height#arbitrary-values
