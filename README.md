@@ -395,7 +395,7 @@ Change `src/pages/index.html` to the contents of the simple page above.
 The content of the `<head>` element is automatically generated.
 See [below](#managing-the-contents-of-the-head-element) for details.
 
-To open this page in a browser, specify  `http://localhost:3000`  as the URL.
+To open this page in a browser, specify `http://localhost:3000` as the URL.
 
 ## Front Matter
 
@@ -453,7 +453,7 @@ quotation marks, as in the following example.
 
 Property values are described in different ways depending on their type.
 Strings must always be quoted.
-Integers and floating point numbers should be unquoted, such as `100`,  `-16`, and `3.14`.
+Integers and floating point numbers should be unquoted, such as `100`, `-16`, and `3.14`.
 Booleans (`true` and `false`) are also not quoted and should be lowercase.
 Other writing styles will be explained when examples appear.
 
@@ -1221,7 +1221,7 @@ A `name` attribute must be specified for the `<tg:slot>` element.
 To embed content into a slot in a layout, place a `<tg:insert>` element on the page where the
 layout is to be applied.
 
-If you specify the name of the slot as the value of the `name` property of  `<tg:insert>` element,
+If you specify the name of the slot as the value of the `name` property of `<tg:insert>` element,
 the slot will be replaced with the element's content.
 
 When page content is inserted into a `<tg:content>` element in a layout,
@@ -1699,6 +1699,23 @@ within a segment is similar to that of a layout.
   </main>
 </div>
 ```
+
+### Embedding property values into a segment
+
+The `<tg:prop>` and `<tg:data>` elements allow you to embed the value of a property in a segment.
+
+```html
+---
+[data]
+message = "Hi!"
+---
+<div>
+  <tg:data name="message"></tg:data>
+</div>
+
+Note that the segment inherits the property from the page or layout in which it is embedded.
+When a property with the same name is defined in a segment and a page or layout, the value
+defined in the page or layout takes precedence.
 
 ## Components
 
@@ -2181,7 +2198,7 @@ unless a value or content is provided for all `<tg:prop>`, `<tg:data>`, and `<tg
 within it.
 
 By default, articles are sorted in ascending (alphabetically) order by file name.
-To sort articles by their title, set  the `order-by` attribute of the `<tg:links>` element to
+To sort articles by their title, set the `order-by` attribute of the `<tg:links>` element to
 `"title:asc"` or `"title:desc"`:
 
 ```html
@@ -3178,7 +3195,7 @@ will search for a value in the following order:
 2. the front matter of its layout if available
 3. `sites.toml` if available
 
-For example, suppose that the value `"a"` is set to the custom property `data.x` in the front
+For example, suppose that the value `"a"` is set to the custom property `x` in the front
 matter of a page as follows:
 
 ```
