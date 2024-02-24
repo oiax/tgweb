@@ -29,8 +29,8 @@
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [ミニアプリの埋め込み](#ミニアプリの埋め込み)
-* [Notes on Property Values](#notes-on-property-values)
-* [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [プロパティの値に関する注記](#プロパティの値に関する注記)
+* [Managing theontents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
 * [License](#license)
 
@@ -1562,6 +1562,22 @@ title = "Alice's Mission"
 </div>
 ```
 
+### プロパティの値をセグメントに埋め込む
+
+`<tg:prop>` 要素と `<tg:data>` 要素は、セグメントにプロパティの値を埋め込むことができます。
+
+```html
+---
+[data]
+message = "Hi!"
+---
+<div>
+  <tg:data name="message"></tg:data>
+</div>
+```
+
+セグメントは、それが埋め込まれているページやレイアウトからプロパティを継承することに注意してください。同じ名前のプロパティが部品とページまたはレイアウトで定義されている場合、ページまたはレイアウトで定義されている値が優先されます。
+
 ## 部品
 
 ### 部品ファイル
@@ -2259,7 +2275,7 @@ switcherアイテムには、0から順番にユニークな「index 番号」�
 </div>
 ```
 
-ボタンの  `tg:choose`  属性の値が switcher の現在のインデックス番号と一致する場合、ユーザーがこのボタンをクリックまたはタップしても何も起こりません。
+ボタンの `tg:choose` 属性の値が switcher の現在のインデックス番号と一致する場合、ユーザーがこのボタンをクリックまたはタップしても何も起こりません。
 
 これを視覚的に現すために、`tg:current-class` と `tg:normal-class` 属性を使用してボタンに適用されるスタイルを変更します。
 
@@ -2433,7 +2449,7 @@ carousel-body = """
 ```
 
 
-rotator と同様に、`tg:prev`  または  `tg:next`  属性を持つ要素を carousel の内側に置くことで、ユーザーは carousel の状態をコントロールすることができます。
+rotator と同様に、`tg:prev` または `tg:next` 属性を持つ要素を carousel の内側に置くことで、ユーザーは carousel の状態をコントロールすることができます。
 
 ```html
 <nav>
@@ -2740,13 +2756,13 @@ id = "70955db7-75f6-43b2-b46a-50413e43b94f"
 display-name = "Players List"
 ```
 
-ミニアプリのテキストが国際化されると、`default-locale`  プロパティで設定されたロケールで翻訳されます。
+ミニアプリのテキストが国際化されると、`default-locale` プロパティで設定されたロケールで翻訳されます。
 
 各ミニアプリのコンフィギュレーションの最初の行に `[[apps]]` を置かなければなりません。「apps」という言葉は二重の角括弧で囲まれていることに注意してください。
 
 `name` プロパティは、設定するミニアプリを識別するための名前です。その値はどんな文字列でもよいですが、後述の `<tg:app>` タグの `name` 属性に対応するものでなければなりません。
 
-`id` プロパティは、Teamgenik上のミニアプリに割り当てられた識別子  (ID)  です。その値は UUID (Universally Unique IDentifier) の形をしています。各ミニアプリのIDは、Teamgenik BASEスペース内の「ミニアプリ」タブで確認できます。このプロパティはオプションです。
+`id` プロパティは、Teamgenik上のミニアプリに割り当てられた識別子 (ID) です。その値は UUID (Universally Unique IDentifier) の形をしています。各ミニアプリのIDは、Teamgenik BASEスペース内の「ミニアプリ」タブで確認できます。このプロパティはオプションです。
 
 このIDは、Teamgenikで公開されているウェブサイト上で実際にミニアプリを実行するために必要ですが、単にローカル環境のウェブページにプレースホルダを埋め込み、その外観を確認したい場合は省略できます。
 
@@ -2786,7 +2802,7 @@ display-name = "Players List"
 </div>
 ```
 
-ブラウザの表示幅が 640 ピクセル以上かどうかに応じて表示モードを切り替えるには、次のように 2 つのプレースホルダーを配置し、適切な Tailwind CSS クラス トークンのセットを含む  `<div>`  要素でそれぞれを囲みます。
+ブラウザの表示幅が 640 ピクセル以上かどうかに応じて表示モードを切り替えるには、次のように 2 つのプレースホルダーを配置し、適切な Tailwind CSS クラス トークンのセットを含む `<div>` 要素でそれぞれを囲みます。
 
 ```html
 <div class="w-[300px] sm:hidden">
@@ -2797,7 +2813,7 @@ display-name = "Players List"
 </div>
 ```
 
-`sm:hidden`  クラスは、ブラウザーの表示幅が 640 ピクセルを超える場合に要素を非表示にします。`hidden sm:block` クラスは、ブラウザの表示幅が 640 ピクセル未満の場合に要素を非表示にします。
+`sm:hidden` クラスは、ブラウザーの表示幅が 640 ピクセルを超える場合に要素を非表示にします。`hidden sm:block` クラスは、ブラウザの表示幅が 640 ピクセル未満の場合に要素を非表示にします。
 
 ここで説明した Tailwind CSS クラス トークンの詳細については、次のページを参照してください:
 
@@ -2806,26 +2822,24 @@ display-name = "Players List"
 * https://tailwindcss.com/docs/responsive-design
 * https://tailwindcss.com/docs/display
 
-## Notes on Property Values
+## プロパティの値に関する注記
 
-### Property Inheritance
+### プロパティの継承
 
-If no value is set for a particular property in the front matter of a page, tgweb
-will search for a value in the following order:
+ページのフロントマターで特定のプロパティに値が設定されていない場合、tgwebは以下の順序で値を検索します。
 
-1. the front matter of its wrapper if available
-2. the front matter of its layout if available
-3. `sites.toml` if available
+1. 可能な場合は、そのラッパーのフロントマター
+2. 可能な場合は、そのレイアウトのフロントマター
+3. 可能な場合は、`sites.toml`
 
-For example, suppose that the value `"a"` is set to the custom property `data.x` in the front
-matter of a page as follows:
+例えば、あるページのフロントマターで、次のようにカスタムプロパティ `x` の値が `"a"` と設定されているとします。
 
 ```
 [data]
 x = "a"
 ```
 
-And suppose the front matter of its wrapper has the following settings:
+また、ラッパーのフロントマターが以下のような設定になっているとします:
 
 ```
 [data]
@@ -2833,46 +2847,37 @@ x = "b"
 y = "c"
 ```
 
-In this case, the value of the custom property `x` for this page is `"a"` and the value of the
-custom property `y` is `"c"`.
+この場合、このページのカスタムプロパティ `x` の値は `"a"` であり、カスタムプロパティ `y` の値は `"c"` です。
 
-In addition, suppose that the front matter of the layout applied to this page has the following
-settings:
+さらに、このページに適用されているレイアウトのフロントマターが以下のような設定になっているとします:
 
 ```
 [data]
 z = "d"
 ```
 
-If so, the value of property `z` on this page is `"d"`.
+この場合、このページのプロパティ `z` の値は `"d"` となります。
 
-Custom properties as well as predefined properties such as `title` are inherited as well.
-Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" tables are
-inherited. However, properties that belong to "style" table are _not_ inherited.
+カスタムプロパティだけでなく、`title` のような定義済みのプロパティも継承されます。また、"meta"、"http-equiv"、"meta-property"、"link" テーブルに属するプロパティも継承されます。ただし、"style" テーブルに属するプロパティは _継承されません_ 。
 
-### Embedding property values into an article
+### プロパティ値をアーティクルに埋め込む
 
-When an article is rendered as an independent HTML document, the property inheritance mechanism is
-exactly the same as that of a page.
+アーティクルが独立した HTML ドキュメントとしてレンダリングされるとき、プロパティの継承のメカニズムはページと全く同じです。
 
-When an article is embedded in a page, segment, or layout, it inherits properties from the wrapper
-surrounding it, if any, and `site.toml` but not from the page, segment, or layout that embeds that
-article.
+アーティクルがページ、セグメント、レイアウトに埋め込まれるとき、もしあれば、アーティクルを囲むラッパーと `site.toml` からプロパティを継承しますが、そのアーティクルを埋め込むページ、セグメント、レイアウトからは継承しません。
 
-### Embedding property values into a wrapper or layout
+### ラッパーやレイアウトへのプロパティ値の埋め込み
 
-When a wrapper or layout is applied to a page or article, the values that are substituted for
-the `<tg:prop>` and `<tg:data>` elements in that wrapper or layout are the values of
-properties that the page or article has.
+ラッパーやレイアウトがページやアーティクルに適用されるとき、そのラッパーやレイアウトの `<tg:prop>` や `<tg:data>` 要素に置き換えられる値は、ページやアーティクルが持つプロパティの値です。
 
-For example, suppose a page has the following front matter
+例えば、あるページに次のようなフロントマターがあるとします。
 
 ```
 [data]
 x = "a"
 ```
 
-And suppose its wrapper has the following front matter and HTML fragment:
+そして、そのラッパーが次のようなフロントマターとHTML断片を持っているとします。:
 
 ```html
 ---
@@ -2887,24 +2892,17 @@ y = "c"
 <tg:content></tg:content>
 ```
 
-Then, the text content of the `<header>` element of the HTML document generated from them will
-be "a c" instead of "b c".
+すると、そこから生成されるHTML文書の `<header>` 要素のテキスト内容は、"b c "ではなく、"a c "となります。
 
-### Embedding property values into a segment
+### プロパティの値をセグメントに埋め込む
 
-When a segment is embedded into a page, the values that are substituted for
-the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
-properties that the page has.
+セグメントがページに埋め込まれるとき、そのセグメントの `<tg:prop>` 要素と `<tg:data>` 要素に置き換えられる値は、ページが持つプロパティの値です。
 
-Similarly, when a segment is into a layout, the values that are substituted for
-the `<tg:prop>` and `<tg:data>` elements in that segment are the values of
-properties of the main template (page or article).
+同様に、セグメントがレイアウトの中にあるとき、そのセグメント内の `<tg:prop>` と `<tg:data>` 要素に置き換えられる値は、メインテンプレート（ページまたは記事）のプロパティの値です。
 
-### Embedding property values into a component
+### プロパティの値を部品に埋め込む
 
-When a component is embedded into a page, article, segment, wrapper, layout,
-the values that are substituted for the `<tg:prop>` and `<tg:data>` elements in that template
-are the values of properties of the main template (page or article).
+部品がページ、アーティクル、セグメント、ラッパー、レイアウトに埋め込まれるとき、そのテンプレートの `<tg:prop>` と `<tg:data>` 要素に置き換えられる値は、メインテンプレート（ページまたはアーティクル）のプロパティの値です。
 
 ## Managing the Contents of the `<head>` Element
 
