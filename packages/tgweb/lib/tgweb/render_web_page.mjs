@@ -1241,10 +1241,17 @@ const renderHead = (documentProperties) => {
       Object.keys(documentProperties.meta.name).forEach(name => {
         if (name.match(/"/) !== null) return
         const content = documentProperties.meta.name[name]
-        if (typeof content !== "string") return
 
-        const doc = parseDocument(`<meta name="${name}" content="${content}">`)
-        children.push(doc.children[0])
+        if (typeof content === "string") {
+          const doc = parseDocument(`<meta name="${name}" content="${content}">`)
+          children.push(doc.children[0])
+        }
+        else if (Array.isArray(content)) {
+          content.forEach(e => {
+            const doc = parseDocument(`<meta name="${name}" content="${e}">`)
+            children.push(doc.children[0])
+          })
+        }
       })
     }
 

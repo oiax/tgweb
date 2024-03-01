@@ -29,6 +29,8 @@ describe("createInitially", () => {
       '    <meta charset="utf-8">',
       '    <title>Hello, world!</title>',
       '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '    <meta name="googlebot" content="index,follow">',
+      '    <meta name="googlebot" content="notranslate">',
       '    <link rel="stylesheet" href="/css/tailwind.css">',
       '    <style>',
       '      [x-cloak] {',
