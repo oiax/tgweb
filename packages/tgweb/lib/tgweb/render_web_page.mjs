@@ -1241,10 +1241,17 @@ const renderHead = (documentProperties) => {
       Object.keys(documentProperties.meta.name).forEach(name => {
         if (name.match(/"/) !== null) return
         const content = documentProperties.meta.name[name]
-        if (typeof content !== "string") return
 
-        const doc = parseDocument(`<meta name="${name}" content="${content}">`)
-        children.push(doc.children[0])
+        if (typeof content === "string") {
+          const doc = parseDocument(`<meta name="${name}" content="${content}">`)
+          children.push(doc.children[0])
+        }
+        else if (Array.isArray(content)) {
+          content.forEach(e => {
+            const doc = parseDocument(`<meta name="${name}" content="${e}">`)
+            children.push(doc.children[0])
+          })
+        }
       })
     }
 
@@ -1281,10 +1288,30 @@ const renderHead = (documentProperties) => {
           }
           else if (parts.length === 2) {
             const p1 = parts[0]
-            const p2 = parts[2]
+            const p2 = parts[1]
 
             if (typeof documentProperties.main[p1] === "object") {
               const value = documentProperties.main[p1][p2]
+
+              if (typeof value === "string") {
+                return value
+              }
+              else {
+                return `\${${propName}}`
+              }
+            }
+            else {
+              return `\${${propName}}`
+            }
+          }
+          else if (parts.length === 3) {
+            const p1 = parts[0]
+            const p2 = parts[1]
+            const p3 = parts[2]
+
+            if (typeof documentProperties[p1] === "object"
+              && typeof documentProperties[p1][p2] === "object") {
+              const value = documentProperties[p1][p2][p3]
 
               if (typeof value === "string") {
                 return value
