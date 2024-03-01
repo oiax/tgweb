@@ -1,5 +1,12 @@
 # tgweb CHANGELOG
 
+## 0.8.3
+
+* 92e3699 Embed the value of the meta.name property etc. in `site.toml` into the values of other
+          properties.
+* 5645314 If an array is specified in the meta.name field of `site.toml`, generate `<meta>` tags
+          for that number of tags.
+
 ## 0.8.2
 
 * 97ac48a Fix tram's init() so that target.dataset.tramBaseClass gets initialized only once
