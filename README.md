@@ -3300,6 +3300,8 @@ by the following rules:
 7. The text content of the first `<h6>` element if available
 8. `"No Title"`
 
+Note that even if the value of the `title` property is not set in the front matter of the page or article, it may inherit from the wrapper, layout, or `sites.toml`.
+
 #### Examples
 
 The title of the HTML document generated from the template below will be "Greeting":
