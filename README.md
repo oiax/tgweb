@@ -36,7 +36,7 @@
 
 ## Requirements
 
-* Node.js: 16.12 or higher
+* Node.js: 18 or higher
 * npm: 8.0 or higher
 
 ## Getting Started
