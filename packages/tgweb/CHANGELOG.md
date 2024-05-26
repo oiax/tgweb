@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.9.0
+
+* eda1f3d Add tgweb-dist command to generate files for distribution
+
 ## 0.8.3
 
 * 92e3699 Embed the value of the meta.name property etc. in `site.toml` into the values of other

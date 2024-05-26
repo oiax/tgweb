@@ -36,7 +36,7 @@
 
 ## Requirements
 
-* Node.js: 18 or higher
+* Node.js: 20 or higher
 * npm: 8.0 or higher
 
 ## Getting Started
@@ -146,6 +146,14 @@ Confirm that the browser screen is automatically redrawn and the text color of
 ### Stop the tgweb server
 
 Presse `Ctrl + C` to stop the tgweb server.
+
+### Generate the website date for distribution
+
+To generate the website data for distribution, run the following command:
+
+```bash
+npx tgweb-dist
+```
 
 ## Directory Structure
 
@@ -284,6 +292,15 @@ npx tgweb-server sites/site_0
 
 This will increase the number of characters of the command, but may make it easier to type the
 command with the help of shell completion.
+
+### Generate the website data for distribution with the subdirectory name
+
+To generate data for distribution of a website located in the subdirectory `sites/_site_0`,
+execute the following command:
+
+```bash
+npx tgweb-dist site_0
+```
 
 ### Changing the working directory composition
 

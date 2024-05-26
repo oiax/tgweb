@@ -23,7 +23,7 @@
     "templates"
   ],
   "engines": {
-    "node": ">=16.12.0"
+    "node": ">=20.9.0"
   },
   "devDependencies": {
     "mocha": "^10.2.0"

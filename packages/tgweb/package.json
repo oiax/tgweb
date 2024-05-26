@@ -1,7 +1,7 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "keywords": [
     "teamgenik",
     "blog",
@@ -44,6 +44,7 @@
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",
+    "tgweb-dist": "lib/dist.mjs",
     "tgweb-server": "lib/server.mjs",
     "tgweb-archive": "lib/archive.mjs"
   },
@@ -53,7 +54,7 @@
     "skel"
   ],
   "engines": {
-    "node": ">=16.12.0"
+    "node": ">=20.9.0"
   },
   "devDependencies": {
     "eslint": "^8.33.0",
