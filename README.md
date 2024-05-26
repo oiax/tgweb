@@ -147,6 +147,14 @@ Confirm that the browser screen is automatically redrawn and the text color of
 
 Presse `Ctrl + C` to stop the tgweb server.
 
+### Generate the website date for distribution
+
+To generate the website data for distribution, run the following command:
+
+```bash
+npx tgweb-dist
+```
+
 ## Directory Structure
 
 Running `npx tgweb-init` from the command line creates a directory structure with the
@@ -284,6 +292,15 @@ npx tgweb-server sites/site_0
 
 This will increase the number of characters of the command, but may make it easier to type the
 command with the help of shell completion.
+
+### Generate the website data for distribution with the subdirectory name
+
+To generate data for distribution of a website located in the subdirectory `sites/_site_0`,
+execute the following command:
+
+```bash
+npx tgweb-dist site_0
+```
 
 ### Changing the working directory composition
 
