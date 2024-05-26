@@ -7,6 +7,7 @@ import { installUtilities } from "./server/install_utilities.mjs"
 import { installAlpinejs } from "./server/install_alpinejs.mjs"
 import { touchTailwindcss } from "./server/touch_tailwindcss.mjs"
 import { generateTailwindConfig } from "./tgweb/generate_tailwind_config.mjs"
+import { execSync } from "child_process"
 import tgweb from "./tgweb.mjs"
 
 const tailwindCss = `
@@ -34,8 +35,21 @@ const main = (targetDirPath) => {
   const paths = fs.readdirSync(PATH.join(process.cwd(), "src"), {recursive: true})
 
   paths.forEach(path => {
-    tgweb.createInitially(PATH.join("src", path), siteData)
+    const realPath = PATH.join(process.cwd(), "src", path)
+    const targetPath = PATH.join(process.cwd(), "dist", path)
+    const stat = fs.statSync(realPath)
+
+    if (stat.isDirectory()) {
+      if (!fs.existsSync(targetPath)) fs.mkdirSync(realPath, { recursive: true })
+    }
+    else {
+      tgweb.createInitially(PATH.join("src", path), siteData)
+    }
   })
+
+  const tailwindcssPath = PATH.join("dist", "css", "tailwind.css")
+
+  execSync(`npx tailwindcss -i tailwind.css -o ${tailwindcssPath}`)
 }
 
 if (process.argv.length > 2) {
