@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.9.1
+
+* b9b59c1 Fix directory handling of tgweb-dist command
+
 ## 0.9.0
 
 * eda1f3d Add tgweb-dist command to generate files for distribution
