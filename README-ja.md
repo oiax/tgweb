@@ -8,7 +8,7 @@
 * [複数のウェブサイトを管理する方法](#複数のウェブサイトを管理する方法)
 * [ページ](#ページ)
 * [フロントマター](#フロントマター)
-* [カラースキーム](#カラースキーム)
+* [配色](#配色)
 * [画像](#画像)
 * [音声](#音声)
 * [フォントとアイコン](#フォントとアイコン)
@@ -458,8 +458,8 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 * meta.property
 * link
 
-このセクションでは、最初の2つについて説明します;
-他の4つは[Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element) で説明します。
+このセクションでは、最初の3つについて説明します;
+他の3つは[head要素の内容の管理](#head要素の内容の管理) で説明します。
 
 ### 定義済みプロパティ
 
@@ -695,7 +695,7 @@ theme-url = "%{audios/our_theme.mp3}"
 
 具体的な使用例については [<meta> elements](#meta-elements)を参照してください。
 
-## カラースキーム
+## 配色
 
 ### カスタムカラー名
 
@@ -1886,8 +1886,8 @@ layout = "home"
 
 ```html
 <nav>
-  <a href="/articles/goal">Our Goal</a>
-  <a href="/articles/about">About Us</a>
+  <a href="/articles/goal.html">Our Goal</a>
+  <a href="/articles/about.html">About Us</a>
 </nav>
 ```
 
