@@ -2056,8 +2056,8 @@ the page in its `href` attribute:
 
 ```html
 <nav>
-  <a href="/articles/goal">Our Goal</a>
-  <a href="/articles/about">About Us</a>
+  <a href="/articles/goal.html">Our Goal</a>
+  <a href="/articles/about.html">About Us</a>
 </nav>
 ```
 
