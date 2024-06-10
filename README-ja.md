@@ -29,7 +29,7 @@
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [ミニアプリの埋め込み](#ミニアプリの埋め込み)
-* [プロパティの値に関する注記](#プロパティの値に関する注記)
+* [サイトプロパティとプロパティの継承](#サイトプロパティとプロパティの継承)
 * [head要素の内容の管理](#head要素の内容の管理)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -669,31 +669,8 @@ blog-article = """
   """
 ```
 
-### サイト属性
-
-`src` ディレクトリに `site.toml` という名前のファイルを作成すると、サイトレベルでプロパティの値を設定することができます。 ここで設定された値は、各ページのフロントマターで設定されたプロパティのデフォルト値となります。
-
-`src/site.toml`
-
-```toml
-title = "No title"
-layout = "common"
-
-[data]
-current-year = 2023
-```
-
-### `%{...}` 記法
-
-画像や音声ファイルのURLを `<meta>` 要素の `content` 属性に埋め込むには `%{...}` 表記を使います:
-
-```toml
-[data]
-icon-url = "%{images/icons/default.png}"
-theme-url = "%{audios/our_theme.mp3}"
-```
-
-具体的な使用例については [<meta> elements](#meta-elements)を参照してください。
+### プロパティの継承
+ページのフロントマターで特定のプロパティに値が設定されていない場合、ラッパーやレイアウトのフロントマターやサイトプロパティを検索します。詳しくは、[サイトプロパティとプロパティの継承](#サイトプロパティとプロパティの継承) を参照してください。
 
 ## 配色
 
@@ -2838,7 +2815,33 @@ display-name = "Players List"
 * https://tailwindcss.com/docs/responsive-design
 * https://tailwindcss.com/docs/display
 
-## プロパティの値に関する注記
+## サイトプロパティとプロパティの継承
+
+### サイトプロパティ
+
+`src` ディレクトリに `site.toml` という名前のファイルを作成すると、サイトレベルでプロパティの値を設定することができます。 ここで設定された値は、各ページのフロントマターで設定されたプロパティのデフォルト値となります。
+
+`src/site.toml`
+
+```toml
+title = "No title"
+layout = "common"
+
+[data]
+current-year = 2023
+```
+
+### `%{...}` 記法
+
+画像や音声ファイルのURLを `<meta>` 要素の `content` 属性に埋め込むには `%{...}` 表記を使います:
+
+```toml
+[data]
+icon-url = "%{images/icons/default.png}"
+theme-url = "%{audios/our_theme.mp3}"
+```
+
+具体的な使用例については [`<meta>` 要素](#meta-要素)を参照してください。
 
 ### プロパティの継承
 
@@ -2873,6 +2876,15 @@ z = "d"
 ```
 
 この場合、このページのプロパティ `z` の値は `"d"` となります。
+
+また更に、`sites.toml` が以下のような設定になっているとします:
+
+```
+[data]
+s = "e"
+```
+
+この場合、このページのプロパティ `s` の値は `"e"` となります。
 
 カスタムプロパティだけでなく、`title` のような定義済みのプロパティも継承されます。また、"meta"、"http-equiv"、"meta-property"、"link" テーブルに属するプロパティも継承されます。ただし、"style" テーブルに属するプロパティは _継承されません_ 。
 
