@@ -196,7 +196,7 @@ Please note the following:
 
 ### Installation and initialization
 
-In the [Getting Started](#getting-started) section, we installed tgweb in a working directory
+In the [Getting Started](#getting-started), we installed tgweb in a working directory
 and built a single website there.
 However, it is possible to manage multiple websites under a working directory.
 
@@ -345,7 +345,7 @@ In **tgweb**, the HTML documents that make up a website are generated from a com
 template files. A _page_ is a type of such template file.
 
 Non-page templates include layouts, segments, wrappers, articles, and components, which
-are described in turn in the following sections.
+are described in turn below.
 
 Pages are placed in the `src/pages` subdirectory under the working directory.
 
@@ -445,7 +445,7 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 In the example above, the four main components of the front matter block are used.
 
 * Property definition
-* Table header
+* Section header
 * Comment
 * Blank line
 
@@ -474,14 +474,14 @@ Integers and floating point numbers should be unquoted, such as `100`, `-16`, an
 Booleans (`true` and `false`) are also not quoted and should be lowercase.
 Other writing styles will be explained when examples appear.
 
-### Table headers
+### Section headers
 
-In the previous example, the lines labeled `[data]` and `[style]` are called _table headers_.
+In the previous example, the lines labeled `[data]` and `[style]` are called _section headers_. TOML calls them _table headers_, while Tgweb calls them _section headers_.
 
-A table header marks the beginning of a _table_. The table continues until the next table
+A section header marks the beginning of a _section_. The section continues until the next section
 header or until the end of the file.
 
-The following table names are available in the front matter block:
+The following section names are available in the front matter block:
 
 * main
 * data
@@ -491,12 +491,12 @@ The following table names are available in the front matter block:
 * meta.property
 * link
 
-The first three are described in this section; the other four are described in
+The first three are described here; the other four are described in
 [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element).
 
 ### Predefined properties
 
-In the _main_ table of the front matter block, set the value of _predefined properties_.
+In the _main_ section of the front matter block, set the value of _predefined properties_.
 
 The following are examples of predefined properties:
 
@@ -545,9 +545,9 @@ title = "Our Mission"
 
 ### Custom properties
 
-As already noted, `[data]` in the front matter block indicates the beginning of the _data_ table.
+As already noted, `[data]` in the front matter block indicates the beginning of the _data_ section.
 
-Within the _data_ table, custom properties can be defined. Website authors can set values for
+Within the _data_ section, custom properties can be defined. Website authors can set values for
 custom properties of any name.
 The value of a custom property must be a string or a number in decimal notation.
 
@@ -591,7 +591,7 @@ the method of embedding property values in `class` attributes will be explained 
 
 ### Defining style aliases
 
-A property defined in the "style" table can be used to give an alias to a set of class tokens.
+A property defined in the "style" section can be used to give an alias to a set of class tokens.
 We call this a _style alias_. The value of a style alias must always be a string.
 
 To embed a style alias defined as such into the value of a `class` attribute, use the `tg:class`
@@ -842,7 +842,7 @@ tokens provided by Tailwind CSS:
 * `object-scale-down`: display an image at its original size but scale it down to fit its
   container if necessary
 
-For more information, see [Object Fit](https://tailwindcss.com/docs/object-fit) subsection of
+For more information, see [Object Fit](https://tailwindcss.com/docs/object-fit) of
 the Tailwind CSS Documentation.
 
 ### Background images
@@ -875,7 +875,7 @@ tokens provided by Tailwind CSS:
 
 For more information, see [Background Position](https://tailwindcss.com/docs/background-position),
 [Background Repeat](https://tailwindcss.com/docs/background-repeat) and
-[Background Size](https://tailwindcss.com/docs/background-size) subsections of
+[Background Size](https://tailwindcss.com/docs/background-size) of
 the Tailwind CSS Documentation.
 
 ## Audios
@@ -928,7 +928,7 @@ URL.
 #### Basic Usage
 
 By setting the value of the `outlined`, `rounded` and `sharp` properties to `true` in the
-"font.material-symbols" table of `sites.toml`,
+"font.material-symbols" section of `sites.toml`,
 [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
 provided by Google will be available on your website.
 
@@ -1059,7 +1059,7 @@ The "strong" variant of the "Star" symbol (rounded):
 ### Google Fonts
 
 The Roboto font family from [Google Fonts](https://fonts.google.com/) can be used on your website
-by setting the following in the "font.google-fonts" table of `site.toml`.
+by setting the following in the "font.google-fonts" section of `site.toml`.
 
 ```toml
 Roboto = true
@@ -1484,7 +1484,7 @@ In this example, assume the following two pages exist in the `src/pages/mission/
 </div>
 ```
 
-Since the wrapper `_wrapper.html` is applied to these two pages, each `body` section is generated as follows.
+Since the wrapper `_wrapper.html` is applied to these two pages, each `body` element is generated as follows.
 
 `dist/pages/mission/team_mission.html`
 
@@ -1571,7 +1571,7 @@ title = "Alice's Mission"
 
 The `team_mission.html` one does not redefine the property `title` in the front matter, but the `member_mission/alice_mission.html` one does.
 
-When the wrapper `_wrapper.html` is applied to these two pages, each `body` section is generated as follows.
+When the wrapper `_wrapper.html` is applied to these two pages, each `body` element is generated as follows.
 
 `dist/pages/mission/team_mission.html`
 
@@ -1753,7 +1753,7 @@ The following is an example of a component:
 </span>
 ```
 
-Note that the property in the `font.material-symbols` table of `sites.toml` (the `outlined` property in this example) must be set to `true` in order to display the smiley icon above.
+Note that the property in the `font.material-symbols` section of `sites.toml` (the `outlined` property in this example) must be set to `true` in order to display the smiley icon above.
 See [Material Symbols](#material-symbols) for details.
 
 When embedding a component into another component, care should be taken to avoid circular
@@ -2376,7 +2376,7 @@ The above code is to be interpreted as exactly the same as the following
 
 ## Dynamic Elements
 
-This section explains how to introduce dynamic elements such as modals and carousels to your website.
+Here we'll show you how to introduce dynamic elements like modals and carousels to your website.
 
 ### Modal
 
@@ -3242,8 +3242,8 @@ z = "d"
 If so, the value of property `z` on this page is `"d"`.
 
 Custom properties as well as predefined properties such as `title` are inherited as well.
-Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" tables are
-inherited. However, properties that belong to "style" table are _not_ inherited.
+Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" sections are
+inherited. However, properties that belong to "style" section are _not_ inherited.
 
 ### Embedding property values into an article
 
@@ -3361,15 +3361,15 @@ If the next template is rendered as an HTML document, its title will be "No Titl
 ### `<meta>` elements
 
 The `<meta>` elements in the `<head>` element are generated by the values of properties that
-belongs to "meta", "http-equiv", or "meta-property" tables.
+belongs to "meta", "http-equiv", or "meta-property" sections.
 
 Note that the `<head>` element of the generated HTML document always contains a
 `<meta charset="utf-8">` element.
 
-#### `[meta.name]` table
+#### `[meta.name]` section
 
 You can generate a `<meta>` element with a `name` attribute by setting the value to a property
-that belongs to the "meta.name" table:
+that belongs to the "meta.name" section:
 
 ```toml
 [meta.name]
@@ -3404,10 +3404,10 @@ The above will generate the following `<meta>` elements
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `[meta.http-equiv]` table
+#### `[meta.http-equiv]` section
 
 You can generate a `<meta>` element with a `http-equiv` attribute by setting the value to a
-property that belongs to "http-equiv" table.
+property that belongs to "http-equiv" section.
 
 ```toml
 [meta.http-equiv]
@@ -3424,7 +3424,7 @@ The above settings will generate the following `<meta>` elements:
 
 Teamgenik converts these paths into URLs appropriately.
 
-#### `[meta.property]` table
+#### `[meta.property]` section
 
 ```toml
 [meta.property]
@@ -3457,7 +3457,7 @@ You can embed the value of a property into the `content` attribute of a `<meta>`
 "og:description" = "${meta.name.description}"
 ```
 
-To refer to the value of a property belonging to the "meta" table, add `meta.` before the property
+To refer to the value of a property belonging to the "meta" section, add `meta.` before the property
 name.
 
 You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
@@ -3472,7 +3472,7 @@ element using `%{...}` notation:
 ### `<link>` elements
 
 The `<link>` elements in the `<head>` element are generated by the values of properties that
-belon to "link" table and "links" tables.
+belon to "link" section and "links" sections.
 
 ```toml
 [link]

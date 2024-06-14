@@ -189,7 +189,7 @@ npx tgweb-dist
 
 ### インストールと初期化
 
-[はじめに](#はじめに) セクションでは、tgweb を作業ディレクトリにインストールし、ひとつのウェブサイト構造を扱いました。
+[はじめに](#はじめに) では、tgweb を作業ディレクトリにインストールし、ひとつのウェブサイト構造を扱いました。
 しかし、同一の作業ディレクトリ以下で複数のウェブサイト構造を構築することも可能です。
 
 ここでは例として、ユーザのホームディレクトリの下層に `web` という作業ディレクトリがあると想定します。
@@ -321,7 +321,7 @@ rm -rf sites
 
 **tgweb** では、ウェブサイトを構成するHTML文書は、テンプレートファイルの組み合わせから生成されます。「ページ」はそのようなテンプレート・ファイルの一種です。
 
-ページ以外のテンプレートには、レイアウト、セグメント、ラッパー、アーティクル、部品があり、以降のセクションで順番に説明します。
+ページ以外のテンプレートには、レイアウト、セグメント、ラッパー、アーティクル、部品があり、以降で順番に説明します。
 
 ページは作業ディレクトリ下の`src/pages`サブディレクトリに置かれます。
 
@@ -416,7 +416,7 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 上の例では、フロントマターブロックの4つの主要な構成要素が使われています。
 
 * プロパティの定義
-* テーブルヘッダー
+* セクションヘッダー
 * コメント
 * 空白行
 
@@ -442,13 +442,13 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 真偽値（`true` と `false`）も引用符で囲まず、小文字で記述します。
 その他の書き方については、例が出てきたときに説明します。
 
-### テーブルヘッダー
+### セクションヘッダー
 
-先の例で、`[data]` と `[style]` と書かれた行を「テーブルヘッダー」と呼びます。
+先の例で、`[data]` と `[style]` と書かれた行を「セクションヘッダー」と呼びます。TOMLでは「テーブルヘッダー」と呼びますが、Tgwebでは「セクションヘッダー」と呼びます。
 
-テーブルヘッダーは「テーブル」の始まりを示します。テーブルは次のテーブルヘッダーまで、あるいはファイルの終わりまで続きます。
+セクションヘッダーは「セクション」の始まりを示します。セクションは次のセクションヘッダーまで、あるいはファイルの終わりまで続きます。
 
-フロントマターブロックには以下のテーブル名があります:
+フロントマターブロックには以下のセクション名があります:
 
 * main
 * data
@@ -458,12 +458,13 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 * meta.property
 * link
 
-このセクションでは、最初の3つについて説明します;
+
+ここでは、最初の3つについて説明します;
 他の3つは[head要素の内容の管理](#head要素の内容の管理) で説明します。
 
 ### 定義済みプロパティ
 
-フロントマターブロックの「main」テーブルで、「定義済みプロパティ」の値を設定します。
+フロントマターブロックの「main」セクションで、「定義済みプロパティ」の値を設定します。
 
 以下は定義済みプロパティの例です:
 
@@ -509,9 +510,9 @@ title = "Our Mission"
 
 ### カスタムプロパティ
 
-すでに述べたように、フロントマターブロックの `[data]` は「data」テーブルの始まりを示します。
+すでに述べたように、フロントマターブロックの `[data]` は「data」セクションの始まりを示します。
 
-「data」テーブル内では、カスタムプロパティを定義することができます。ウェブサイト作成者は、任意の名前のカスタムプロパティに値を設定することができます。カスタムプロパティの値は、文字列か10進数表記の数値でなければなりません。
+「data」セクション内では、カスタムプロパティを定義することができます。ウェブサイト作成者は、任意の名前のカスタムプロパティに値を設定することができます。カスタムプロパティの値は、文字列か10進数表記の数値でなければなりません。
 
 カスタムプロパティの値は `<tg:data>` 要素によってテンプレートに埋め込むことができます。
 
@@ -552,7 +553,7 @@ div-id = "special"
 
 ### スタイルエイリアスの定義
 
-「style」テーブルで定義されたプロパティは、クラストークンのセットにエイリアスを与えるために使用することができます。
+「style」セクションで定義されたプロパティは、クラストークンのセットにエイリアスを与えるために使用することができます。
 これを「スタイル・エイリアス」と呼びます。スタイルエイリアスの値は文字列のみです。
 
 定義されたスタイルエイリアスを `class` 属性の値に埋め込むには、`tg:class` 属性を使います。
@@ -778,7 +779,7 @@ Teamgenik が自動的に指定するので、`<img>` タグに `width` 属性�
 * `object-fill`: コンテナに合わせて画像を引き伸ばす
 * `object-scale-down`: 画像をオリジナルサイズで表示し、必要に応じてコンテナに合わせて縮小する
 
-詳細については、Tailwind CSS ドキュメントの [Object Fit](https://tailwindcss.com/docs/object-fit) セクションを参照してください。
+詳細については、Tailwind CSS ドキュメントの [Object Fit](https://tailwindcss.com/docs/object-fit) を参照してください。
 
 ### 背景画像
 
@@ -804,7 +805,7 @@ Tailwind CSS はこの `class` 属性を検出すると、適切なCSSフラグ�
 * `bg-cover`: 背景レイヤーを埋めるまで背景画像を拡大縮小する
 * `bg-contain`: トリミングや引き伸ばしをせずに、背景画像を外縁まで拡大縮小する
 
-詳細については、Tailwind CSS ドキュメントの [Background Position](https://tailwindcss.com/docs/background-position), [Background Repeat](https://tailwindcss.com/docs/background-repeat) , [Background Size](https://tailwindcss.com/docs/background-size) セクションを参照してください。
+詳細については、Tailwind CSS ドキュメントの [Background Position](https://tailwindcss.com/docs/background-position), [Background Repeat](https://tailwindcss.com/docs/background-repeat) , [Background Size](https://tailwindcss.com/docs/background-size) を参照してください。
 
 ## 音声
 
@@ -849,7 +850,7 @@ Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照す�
 
 ### マテリアル シンボル
 
-`sites.toml` の `font.material-symbols` テーブルの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
+`sites.toml` の `font.material-symbols` セクションの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
 
 ```toml
 [font.material-symbols]
@@ -956,7 +957,7 @@ rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
 
 ### Google Fonts
 
-[Google Fonts](https://fonts.google.com/) のRobotoフォントファミリーは、`site.toml` の "font.google-fonts" テーブルで以下のように設定することで、あなたのウェブサイトで使用することができます。
+[Google Fonts](https://fonts.google.com/) のRobotoフォントファミリーは、`site.toml` の "font.google-fonts" セクションで以下のように設定することで、あなたのウェブサイトで使用することができます。
 
 ```toml
 Roboto = true
@@ -1612,7 +1613,7 @@ message = "Hi!"
 </span>
 ```
 
-上記のスマイル・アイコンを表示するには、`sites.toml` の `font.material-symbols` テーブル内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
+上記のスマイル・アイコンを表示するには、`sites.toml` の `font.material-symbols` セクション内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
 
 部品を別の部品に埋め込む場合は、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
@@ -2178,7 +2179,7 @@ layout = "home"
 
 ## 動的要素
 
-このセクションでは、modal や carousel などの動的要素をウェブサイトに導入する方法を説明します。
+ここでは、modal や carousel などの動的要素をウェブサイトに導入する方法を説明します。
 
 ### Modal
 
@@ -2874,7 +2875,7 @@ z = "d"
 
 この場合、このページのプロパティ `z` の値は `"d"` となります。
 
-カスタムプロパティだけでなく、`title` のような定義済みのプロパティも継承されます。また、"meta"、"http-equiv"、"meta-property"、"link" テーブルに属するプロパティも継承されます。ただし、"style" テーブルに属するプロパティは _継承されません_ 。
+カスタムプロパティだけでなく、`title` のような定義済みのプロパティも継承されます。また、"meta"、"http-equiv"、"meta-property"、"link" セクションに属するプロパティも継承されます。ただし、"style" セクションに属するプロパティは _継承されません_ 。
 
 ### プロパティ値をアーティクルに埋め込む
 
@@ -2978,14 +2979,14 @@ title = "Greeting"
 
 ### `<meta>` 要素
 
-`<head>` 要素内の `<meta>` 要素は "meta"、"http-equiv"、"meta-property" テーブルに属するプロパティの値によって生成されます。
+`<head>` 要素内の `<meta>` 要素は "meta"、"http-equiv"、"meta-property" セクションに属するプロパティの値によって生成されます。
 
 
 生成されたHTML文書の `<head>` 要素には、必ず `<meta charset="utf-8">` 要素が含まれていることに注意してください。
 
-#### `[meta.name]` テーブル
+#### `[meta.name]` セクション
 
-"meta.name" テーブルに属するプロパティに値を設定することで、`name` 属性を持つ `<meta>` 要素を生成できます:
+"meta.name" セクションに属するプロパティに値を設定することで、`name` 属性を持つ `<meta>` 要素を生成できます:
 
 ```toml
 [meta.name]
@@ -3020,9 +3021,9 @@ googlebot = [ "index,follow", "notranslate" ]
 <meta name="googlebot" content="notranslate">
 ```
 
-#### `[meta.http-equiv]` テーブル
+#### `[meta.http-equiv]` セクション
 
-"http-equiv" テーブルに属するプロパティに値を設定することで、`http-equiv` 属性を持つ `<meta>` 要素を生成できます。
+"http-equiv" セクションに属するプロパティに値を設定することで、`http-equiv` 属性を持つ `<meta>` 要素を生成できます。
 
 ```toml
 [meta.http-equiv]
@@ -3039,7 +3040,7 @@ x-dns-prefetch-control = "off"
 
 Teamgenikはこれらのパスを適切にURLに変換します。
 
-#### `[meta.property]` テーブル
+#### `[meta.property]` セクション
 
 ```toml
 [meta.property]
@@ -3071,7 +3072,7 @@ Teamgenikはこれらのパスを適切にURLに変換します。
 "og:description" = "${meta.name.description}"
 ```
 
-"meta" テーブルに属するプロパティの値を参照するには、プロパティ名の前に `meta.` を加えます。
+"meta" セクションに属するプロパティの値を参照するには、プロパティ名の前に `meta.` を加えます。
 
 画像や音声ファイルのURLは、`%{...}` 記法を使って `<meta>` 要素の `content` 属性に埋め込むことができます：
 
@@ -3083,7 +3084,7 @@ Teamgenikはこれらのパスを適切にURLに変換します。
 
 ### `<link>` 要素
 
-`<head>` 要素内の `<link>` 要素は、"link" テーブルと "links" テーブルに属するプロパティの値によって生成されます。
+`<head>` 要素内の `<link>` 要素は、"link" セクションと "links" セクションに属するプロパティの値によって生成されます。
 
 ```toml
 [link]
