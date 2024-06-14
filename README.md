@@ -17,6 +17,7 @@
 * [Segments](#segments)
 * [Components](#components)
 * [Articles](#articles)
+* [What can be embedded in what?](#what-can-be-embedded-in-what)
 * [Links](#links)
 * [Link list](#link-list)
 * [Dynamic Elements](#dynamic-elements)
@@ -1729,6 +1730,7 @@ message = "Hi!"
 <div>
   <tg:data name="message"></tg:data>
 </div>
+```
 
 Note that the segment inherits the property from the page or layout in which it is embedded.
 When a property with the same name is defined in a segment and a page or layout, the value
@@ -2046,6 +2048,21 @@ The value of the `order-by` attribute is a string separated by a single colon.
 The left side of the colon must be `"title"`, `"index"` or `"filename"`.
 The right side of the colon must be `"asc"` or `"desc"`, where `"asc"` means "ascending order"
 and `"desc"` means "descending order".
+
+## What can be embedded in what?
+Templates include pages, layouts, wrappers, segments, components, and articles. Segments, components, and articles in it can be embedded in other templates with `<tg:component>`,`<tg:segment>`,`<tg:article>`, and `<tg:articles>` elements, respectively.
+Here is a rundown of what can be embedded in what.
+
+embedding destination↓  | `<tg:component>` | `<tg:segment>` | `<tg:article>` | `<tg:articles>`
+-- | -- | -- | -- | --
+pages | Y | Y | Y | Y
+page wrappers | Y | N | Y | Y
+layouts |  Y | Y | N | N 
+segments | Y | Y | Y | Y
+components | Y | N | N | N
+articles | Y | N | N  | N
+article wrappers  | Y | N | N  | N
+
 
 ## Links
 
