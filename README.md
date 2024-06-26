@@ -30,7 +30,7 @@
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
-* [Notes on Property Values](#notes-on-property-values)
+* [Site Properties and Property Inheritance](#site-properties-and-property-inheritance)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -718,34 +718,11 @@ blog-article = """
   """
 ```
 
-### Site properties
+### Property Inheritance
 
-Creating a file named `site.toml` in the `src` directory allows you to set values for properties
-at the site level. The values set here will be the default values for properties set in the
-front matter of each page.
+If no value is set for a particular property in the front matter of the page, search for wrappers and layout front matter,and site properties.
+For more information, see [Site Properties and Property Inheritance](#site-properties-and-property-inheritance).
 
-`src/site.toml`
-
-```toml
-title = "No title"
-layout = "common"
-
-[data]
-current-year = 2023
-```
-
-### `%{...}` notation
-
-You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
-element using `%{...}` notation:
-
-```toml
-[data]
-icon-url = "%{images/icons/default.png}"
-theme-url = "%{audios/our_theme.mp3}"
-```
-
-See [<meta> elements](#meta-elements) for specific examples of its use.
 
 ## Color Scheme
 
@@ -1914,7 +1891,7 @@ You can specify `http://localhost:3000/articles/glossary.html` as the URL to dis
 
 ### Embedding an article in a page or segment
 
-Like components, articles can be embedded in pages or segments.
+Like components, articles can be embedded in pages or segments. It can also be embedded in a page wrapper.
 Place `<tg:article>` elements where you want to embed articles as follows:
 
 ```html
@@ -2056,7 +2033,7 @@ Here is a rundown of what can be embedded in what.
 embedding destination↓  | `<tg:component>` | `<tg:segment>` | `<tg:article>` | `<tg:articles>`
 -- | -- | -- | -- | --
 pages | Y | Y | Y | Y
-page wrappers | Y | N | Y | Y
+page wrappers | Y | Y | Y | Y
 layouts |  Y | Y | N | N 
 segments | Y | Y | Y | Y
 components | Y | N | N | N
@@ -3218,7 +3195,36 @@ To learn more about the Tailwind CSS class tokens mentioned here, please visit t
 * https://tailwindcss.com/docs/responsive-design
 * https://tailwindcss.com/docs/display
 
-## Notes on Property Values
+## Site Properties and Property Inheritance
+
+### Site properties
+
+Creating a file named `site.toml` in the `src` directory allows you to set values for properties
+at the site level. The values set here will be the default values for properties set in the
+front matter of each page.
+
+`src/site.toml`
+
+```toml
+title = "No title"
+layout = "common"
+
+[data]
+current-year = 2023
+```
+
+### `%{...}` notation
+
+You can embed the URL of an image or audio file into the `content` attribute of a `<meta>`
+element using `%{...}` notation:
+
+```toml
+[data]
+icon-url = "%{images/icons/default.png}"
+theme-url = "%{audios/our_theme.mp3}"
+```
+
+See [<meta> elements](#meta-elements) for specific examples of its use.
 
 ### Property Inheritance
 
@@ -3257,6 +3263,15 @@ z = "d"
 ```
 
 If so, the value of property `z` on this page is `"d"`.
+
+And suppose that `sites.toml` is configured as follows:
+
+```
+[data]
+s = "e"
+```
+
+In this case, the value of the custom property `s` for this page is `"e"`.
 
 Custom properties as well as predefined properties such as `title` are inherited as well.
 Also, properties that belong to "meta", "http-equiv", "meta-property", and "link" sections are
