@@ -38,7 +38,7 @@
     "material-symbols": "^0.4.5",
     "minimatch": "^6.1.6",
     "pretty": "^2.0.0",
-    "reload": "^3.2.1",
+    "reload": "^3.2.0",
     "tailwindcss": "^3.3.1",
     "tcp-port-used": "^1.0.2"
   },
