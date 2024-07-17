@@ -459,6 +459,6 @@ window.tgweb = {
   windowResizeHandlers: []
 }
 
-window.onresize= () => {
+window.onresize = () => {
   this.tgweb.windowResizeHandlers.forEach(handler => handler())
 }

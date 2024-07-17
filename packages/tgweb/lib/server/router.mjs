@@ -21,6 +21,18 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
+  router.get("/js/tgweb_lottie_player.js", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
+  router.get("/js/lottie.min.js", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
+  router.get("/js/dotlottie.min.js", (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
   router.get("/js/alpine.min.js", (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
@@ -43,6 +55,10 @@ const getRouter = () => {
   })
 
   router.get(/^\/audios\/.*\.(mp3|wav)$/, (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
+  router.get(/^\/animations\/.*\.(json|lottie)$/, (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 

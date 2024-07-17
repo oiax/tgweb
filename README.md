@@ -10,6 +10,7 @@
 * [Front Matter](#front-matter)
 * [Color Scheme](#color-scheme)
 * [Images](#images)
+* [Animations](#animations)
 * [Audios](#audios)
 * [Fonts and Icons](#fonts-and-icons)
 * [Layouts](#layouts)
@@ -166,6 +167,7 @@ following elements:
 ├── dist
 ├── node_modules
 ├── src
+│   ├── animations
 │   ├── articles
 │   ├── audios
 │   ├── components
@@ -258,6 +260,7 @@ If this approach is adopted, the structure of the working directory will look li
     ├── site_0
     │   ├── dist
     │   └── src
+    │       ├── animations
     │       ├── articles
     │       ├── audios
     │       ├── color_scheme.toml
@@ -272,6 +275,7 @@ If this approach is adopted, the structure of the working directory will look li
     └── site_1
         ├── dist
         └── src
+            ├── animations
             ├── articles
             ├── audios
             ├── color_scheme.toml
@@ -354,6 +358,7 @@ It is possible to create a subdirectory under the `src/pages` directory and plac
 However, it is not possible to create a subdirectory directly under the `src/pages` directory with
 the following names:
 
+* `animations`
 * `articles`
 * `audios`
 * `images`
@@ -855,6 +860,52 @@ For more information, see [Background Position](https://tailwindcss.com/docs/bac
 [Background Repeat](https://tailwindcss.com/docs/background-repeat) and
 [Background Size](https://tailwindcss.com/docs/background-size) of
 the Tailwind CSS Documentation.
+
+## Animations
+
+The `<tg:animation>` element allows you to embed an animation in a web page.
+The animation is played by specifying the name of the animation file in its `src` attribute.
+The following example plays the animation file `cat.json`, which is located in
+the `src/animations` subdirectory.
+
+``html
+<tg:animation src=“cat.json”></tg:animation>
+```
+
+The following example plays the animation file `flag.lottie`,
+located in the `src/animations/common` subdirectory.
+
+```html
+<tg:animation src=“common/flag.lottie”></tg:animation>
+```
+
+By default the animation is 300px wide and 150px high.
+To adjust the width and height, specify integer values for the `width` and `height` attributes
+for the `<tg:animation>` element.
+
+``html
+<tg:animation src=“cat.json” width=“100” height=“100”></tg:animation>
+````
+
+To adjust the animation's background color, etc., specify the `class` attribute
+for the `<tg:animation>` element.
+
+```html
+<tg:animation src=“cat.json” class=“bg-red-200”></tg:animation>
+```
+
+The `<tg:animation>` element can also have the following attributes:
+
+* `loop`: boolean indicating whether the animation should loop (default: `“true”`).
+* `autoplay`: a boolean indicating whether the animation should start automatically (default: `“true”`).
+* `click`: boolean indicating whether to toggle the playback state on click or tap (default: `“false”`).
+* `hover`: boolean indicating whether to play only during mouse hover (default: `“false”`).
+
+If both `click` and `hover` attribute values are `“true”`, only the `click` attribute is valid.
+Also, if the `autoplay` attribute is `“true”`, the `hover` attribute is ignored.
+
+See [LottieFiles](https://lottiefiles.com/jp/) for information on how to obtain or create
+animation files.
 
 ## Audios
 
@@ -2034,7 +2085,7 @@ embedding destination↓  | `<tg:component>` | `<tg:segment>` | `<tg:article>` 
 -- | -- | -- | -- | --
 pages | Y | Y | Y | Y
 page wrappers | Y | Y | Y | Y
-layouts |  Y | Y | N | N 
+layouts |  Y | Y | N | N
 segments | Y | Y | Y | Y
 components | Y | N | N | N
 articles | Y | N | N  | N

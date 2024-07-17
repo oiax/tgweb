@@ -41,7 +41,7 @@
     "reload": "^3.2.0",
     "tailwindcss": "^3.3.1",
     "tcp-port-used": "^1.0.2",
-    "lottie-web": "^5.12.2"
+    "@lottiefiles/dotlottie-web": "^0.28.0"
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",
