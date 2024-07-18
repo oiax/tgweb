@@ -249,6 +249,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:label") {
       return renderLabel(node, state)
     }
+    else if (node.name === "tg:animation") {
+      return renderAnimation(node)
+    }
     else if (node.name === "tg:app") {
       return renderAppPlaceholder(node, siteData)
     }
@@ -659,11 +662,40 @@ const renderArticleLink = (node, article, siteData, state) => {
 
 const renderLabel = (node, state) => {
   if (state.container.name === "tg:link" || state.container.name === "tg:links") {
-    if (state.label != "") {
+    if (state.label !== "") {
       const textNode = parseDocument("\n").children[0]
       textNode.data = escape(state.label)
       return textNode
     }
+  }
+  else {
+    return err(render(node))
+  }
+}
+
+const renderAnimation = (node) => {
+  const canvas = parseDocument(`<canvas data-animation="lottie"></canvas>`).children[0]
+
+  if (node.attribs["src"] && node.attribs["src"] !== "") {
+    canvas.attribs["data-src"] = node.attribs["src"]
+
+    if (["false", "true"].includes(node.attribs["autoplay"]))
+      canvas.attribs["data-autoplay"] = node.attribs["autoplay"]
+
+    if (["false", "true"].includes(node.attribs["loop"]))
+      canvas.attribs["data-loop"] = node.attribs["loop"]
+
+    if (["false", "true"].includes(node.attribs["hover"]))
+      canvas.attribs["data-hover"] = node.attribs["hover"]
+
+    if (["false", "true"].includes(node.attribs["click"]))
+      canvas.attribs["data-click"] = node.attribs["click"]
+
+    if (node.attribs["class"]) canvas.attribs["class"] = node.attribs["class"]
+    if (node.attribs["width"]) canvas.attribs["width"] = node.attribs["width"]
+    if (node.attribs["height"]) canvas.attribs["height"] = node.attribs["height"]
+
+    return canvas
   }
   else {
     return err(render(node))
@@ -1524,6 +1556,8 @@ const renderHead = (documentProperties) => {
   children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
   children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
+  children.push(parseDocument("<script src='/js/lottie.min.js' defer></script>").children[0])
+  children.push(parseDocument("<script type='module' src='/js/tgweb_lottie_player.js'></script>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 
   head.children = children

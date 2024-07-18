@@ -10,6 +10,7 @@
 * [フロントマター](#フロントマター)
 * [配色](#配色)
 * [画像](#画像)
+* [アニメーション](#アニメーション)
 * [音声](#音声)
 * [フォントとアイコン](#フォントとアイコン)
 * [レイアウト](#レイアウト)
@@ -162,6 +163,7 @@ npx tgweb-dist
 ├── dist
 ├── node_modules
 ├── src
+│   ├── animations
 │   ├── articles
 │   ├── audios
 │   ├── components
@@ -246,6 +248,7 @@ npx tgweb-server site_0
     ├── site_0
     │   ├── dist
     │   └── src
+    │       ├── animations
     │       ├── articles
     │       ├── audios
     │       ├── color_scheme.toml
@@ -260,6 +263,7 @@ npx tgweb-server site_0
     └── site_1
         ├── dist
         └── src
+            ├── animations
             ├── articles
             ├── audios
             ├── color_scheme.toml
@@ -329,6 +333,7 @@ rm -rf sites
 `src/pages`ディレクトリの下にサブディレクトリを作り、その下にページを置くことも可能です。
 ただし、`src/pages`ディレクトリ直下に以下のような名前のサブディレクトリを作ることはできません:
 
+* `animations`
 * `articles`
 * `audios`
 * `images`
@@ -784,6 +789,49 @@ Tailwind CSS はこの `class` 属性を検出すると、適切なCSSフラグ�
 * `bg-contain`: トリミングや引き伸ばしをせずに、背景画像を外縁まで拡大縮小する
 
 詳細については、Tailwind CSS ドキュメントの [Background Position](https://tailwindcss.com/docs/background-position), [Background Repeat](https://tailwindcss.com/docs/background-repeat) , [Background Size](https://tailwindcss.com/docs/background-size) を参照してください。
+
+## アニメーション
+
+Tgweb は Lottie 形式のアニメーションファイルに対応しています。アニメーションファイルは、作業ディレクトリの下の `src/animations` サブディレクトリに置かれます。
+
+アニメーションファイルの拡張子は `.json` または `.lottie` です。
+
+### `<tg:animation>` 要素
+
+`<tg:animation>` 要素でアニメーションを Web ページ内に埋め込むことができます。その `src` 属性にアニメーションファイルの名前を指定すればアニメーションが再生されます。次の例は、`src/animations` サブディレクトリに置かれたアニメーションファイル `cat.json` を再生します。
+
+```html
+<tg:animation src="cat.json"></tg:animation>
+```
+
+次の例は、`src/animations/common` サブディレクトリに置かれたアニメーションファイル `flag.lottie` を再生します。
+
+```html
+<tg:animation src="common/flag.lottie"></tg:animation>
+```
+
+デフォルトでアニメーションは 300px の幅と 150px の高さで表示されます。幅と高さを調整するには、`<tg:animation>` 要素に対して `width` および `height` 属性に整数値を指定してください。
+
+```html
+<tg:animation src="cat.json" width="100" height="100"></tg:animation>
+```
+アニメーションの背景色等を調整するには、`<tg:animation>` 要素に対して `class` 属性を指定してください。
+
+```html
+<tg:animation src="cat.json" class="bg-red-200"></tg:animation>
+```
+
+`<tg:animation>` 要素には他に以下の属性を設定できます：
+
+* `loop`: ループ再生するかどうかを示す真偽値（デフォルト: `"true"`）
+* `autoplay`: 自動再生するかどうかを示す真偽値（デフォルト: `"true"`）
+* `click`: クリックまたはタップで再生状態をトグルするかどうかを示す真偽値（デフォルト: `"false"`）
+* `hover`: マウスホーバー中のみ再生するかどうかを示す真偽値（デフォルト: `"false"`）
+
+`click` 属性と `hover` 属性の値がともに `"true"` の場合、`click` 属性のみが有効となります。
+また、`autoplay` 属性が `"true"` の場合、`hover` 属性は無視されます。
+
+アニメーションファイルの入手または作成する方法については、[LottieFiles](https://lottiefiles.com/jp/) を参照してください。
 
 ## 音声
 
@@ -1867,7 +1915,7 @@ layout = "home"
 -- | -- | -- | -- | --
 ページ | ◯ | ◯ | ◯ | ◯
 ページのラッパー | ◯ | ◯ | ◯ | ◯
-レイアウト |  ◯ | ◯ | ✕ | ✕ 
+レイアウト |  ◯ | ◯ | ✕ | ✕
 セグメント | ◯ | ◯ | ◯ | ◯
 部品 | ◯ | ✕ | ✕ | ✕
 アーティクル | ◯ | ✕ | ✕  | ✕

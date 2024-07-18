@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.10.0
+
+* c86d5fd Make the lottie animation files playable
+
 ## 0.9.1
 
 * b9b59c1 Fix directory handling of tgweb-dist command

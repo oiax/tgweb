@@ -55,7 +55,7 @@ const generateSkeleton = (targetDirPath) => {
   fs.mkdirSync(`${targetDirPath}/dist`)
 
   const subdirectories =
-    ["pages", "layouts", "segments", "components", "articles", "tags", "images", "audios"]
+    ["pages", "layouts", "segments", "components", "articles", "tags", "images", "animations", "audios"]
 
   subdirectories.forEach(subdir => fs.mkdirSync(`${targetDirPath}/src/${subdir}`))
 

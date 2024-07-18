@@ -11,7 +11,9 @@ import { spawn } from "child_process"
 import { getRouter } from "./server/router.mjs"
 import { installFonts } from "./server/install_fonts.mjs"
 import { installUtilities } from "./server/install_utilities.mjs"
+import { installLottiePlayer } from "./server/install_lottie_player.mjs"
 import { installAlpinejs } from "./server/install_alpinejs.mjs"
+import { installDotlottiejs } from "./server/install_dotlottiejs.mjs"
 import { touchTailwindcss } from "./server/touch_tailwindcss.mjs"
 import { generateTailwindConfig } from "./tgweb/generate_tailwind_config.mjs"
 import tgweb from "./tgweb.mjs"
@@ -84,7 +86,9 @@ const main = (workingDir, port) => {
 
   installFonts(siteData, workingDir)
   installUtilities(workingDir)
+  installLottiePlayer(workingDir)
   installAlpinejs(workingDir)
+  installDotlottiejs(workingDir)
   touchTailwindcss()
 
   const tailwindConfig = generateTailwindConfig(PATH.join(process.cwd(), "src"))

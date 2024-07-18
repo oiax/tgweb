@@ -4,7 +4,9 @@ import * as PATH from "path"
 import fs from "fs"
 import { installFonts } from "./server/install_fonts.mjs"
 import { installUtilities } from "./server/install_utilities.mjs"
+import { installLottiePlayer } from "./server/install_lottie_player.mjs"
 import { installAlpinejs } from "./server/install_alpinejs.mjs"
+import { installDotlottiejs } from "./server/install_dotlottiejs.mjs"
 import { touchTailwindcss } from "./server/touch_tailwindcss.mjs"
 import { generateTailwindConfig } from "./tgweb/generate_tailwind_config.mjs"
 import { execSync } from "child_process"
@@ -24,7 +26,9 @@ const main = (targetDirPath) => {
 
   installFonts(siteData, workingDir)
   installUtilities(workingDir)
+  installLottiePlayer(workingDir)
   installAlpinejs(workingDir)
+  installDotlottiejs(workingDir)
   touchTailwindcss()
 
   const tailwindConfig = generateTailwindConfig(PATH.join(process.cwd(), "src"))
