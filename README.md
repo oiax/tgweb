@@ -868,7 +868,7 @@ The animation is played by specifying the name of the animation file in its `src
 The following example plays the animation file `cat.json`, which is located in
 the `src/animations` subdirectory.
 
-``html
+```html
 <tg:animation src=“cat.json”></tg:animation>
 ```
 
@@ -883,7 +883,7 @@ By default the animation is 300px wide and 150px high.
 To adjust the width and height, specify integer values for the `width` and `height` attributes
 for the `<tg:animation>` element.
 
-``html
+```html
 <tg:animation src=“cat.json” width=“100” height=“100”></tg:animation>
 ````
 
