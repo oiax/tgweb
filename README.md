@@ -869,14 +869,14 @@ The following example plays the animation file `cat.json`, which is located in
 the `src/animations` subdirectory.
 
 ```html
-<tg:animation src=“cat.json”></tg:animation>
+<tg:animation src="cat.json"></tg:animation>
 ```
 
 The following example plays the animation file `flag.lottie`,
 located in the `src/animations/common` subdirectory.
 
 ```html
-<tg:animation src=“common/flag.lottie”></tg:animation>
+<tg:animation src="common/flag.lottie"></tg:animation>
 ```
 
 By default the animation is 300px wide and 150px high.
@@ -884,25 +884,25 @@ To adjust the width and height, specify integer values for the `width` and `heig
 for the `<tg:animation>` element.
 
 ```html
-<tg:animation src=“cat.json” width=“100” height=“100”></tg:animation>
+<tg:animation src="cat.json" width="100" height="100"></tg:animation>
 ````
 
 To adjust the animation's background color, etc., specify the `class` attribute
 for the `<tg:animation>` element.
 
 ```html
-<tg:animation src=“cat.json” class=“bg-red-200”></tg:animation>
+<tg:animation src="cat.json" class="bg-red-200"></tg:animation>
 ```
 
 The `<tg:animation>` element can also have the following attributes:
 
-* `loop`: boolean indicating whether the animation should loop (default: `“true”`).
-* `autoplay`: a boolean indicating whether the animation should start automatically (default: `“true”`).
-* `click`: boolean indicating whether to toggle the playback state on click or tap (default: `“false”`).
-* `hover`: boolean indicating whether to play only during mouse hover (default: `“false”`).
+* `loop`: boolean indicating whether the animation should loop (default: `"true"`).
+* `autoplay`: a boolean indicating whether the animation should start automatically (default: `"true"`).
+* `click`: boolean indicating whether to toggle the playback state on click or tap (default: `"false"`).
+* `hover`: boolean indicating whether to play only during mouse hover (default: `"false"`).
 
-If both `click` and `hover` attribute values are `“true”`, only the `click` attribute is valid.
-Also, if the `autoplay` attribute is `“true”`, the `hover` attribute is ignored.
+If both `click` and `hover` attribute values are `"true"`, only the `click` attribute is valid.
+Also, if the `autoplay` attribute is `"true"`, the `hover` attribute is ignored.
 
 See [LottieFiles](https://lottiefiles.com/jp/) for information on how to obtain or create
 animation files.
