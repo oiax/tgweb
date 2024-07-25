@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.10.1
+
+* ff7ed75 Copy src/animations/* to dist/animations/
+
 ## 0.10.0
 
 * c86d5fd Make the lottie animation files playable
