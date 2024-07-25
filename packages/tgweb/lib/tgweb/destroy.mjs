@@ -11,7 +11,8 @@ const destroy = (path, siteData) => {
   const posixPath = slash(path)
   const dirname = PATH.dirname(posixPath)
 
-  if (dirname.startsWith("src/images") || dirname.startsWith("src/audios")) {
+  if (dirname.startsWith("src/images") || dirname.startsWith("src/animations") ||
+      dirname.startsWith("src/audios")) {
     const distPath = posixPath.replace(/^src\//, "dist/")
     const targetPath = PATH.resolve(distPath)
 
