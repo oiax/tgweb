@@ -25,10 +25,6 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
-  router.get("/js/lottie.min.js", (req, res) => {
-    res.sendFile(path.join(documentRoot, req.path))
-  })
-
   router.get("/js/dotlottie.min.js", (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
