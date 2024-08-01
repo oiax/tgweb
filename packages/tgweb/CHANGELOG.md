@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.10.2
+
+* 3e27f6e Fix typos: lottie.min.js -> dotlottie.min.js
+
 ## 0.10.1
 
 * ff7ed75 Copy src/animations/* to dist/animations/
