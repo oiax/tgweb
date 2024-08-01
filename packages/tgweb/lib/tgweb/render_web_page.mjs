@@ -1556,7 +1556,6 @@ const renderHead = (documentProperties) => {
   children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
   children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
-  children.push(parseDocument("<script src='/js/dotlottie.min.js' defer></script>").children[0])
   children.push(parseDocument("<script type='module' src='/js/tgweb_lottie_player.js'></script>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 

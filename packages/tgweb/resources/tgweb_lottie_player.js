@@ -4,8 +4,6 @@ window.onload = () => {
   const canvases = document.querySelectorAll("canvas[data-animation='lottie']")
 
   canvases.forEach(canvas => {
-    console.log(canvas.dataset.hover)
-
     const lottie =
       new DotLottie({
         autoplay: canvas.dataset.autoplay !== "false",
