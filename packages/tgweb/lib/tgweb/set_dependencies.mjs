@@ -16,6 +16,15 @@ const setDependencies = (object, siteData, deep) => {
   })
 
   DomUtils.find(
+    node => node.constructor.name === "Element" && node.name === "tg:shared-component",
+    object.dom.children,
+    true
+  )
+  .forEach(ref => {
+    if (ref.attribs.name) object.dependencies.push(`shared_components/${ref.attribs.name}`)
+  })
+
+  DomUtils.find(
     node => node.constructor.name === "Element" && node.name === "tg:segment",
     object.dom.children,
     true
