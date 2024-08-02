@@ -35,6 +35,9 @@ const initializeSites = () => {
 
   createGitignore()
 
+  const sharedComponentsDirPath = PATH.resolve(process.cwd(), "./shared_components")
+  fs.mkdirSync(sharedComponentsDirPath, { recursive: true })
+
   const targetDirName = process.argv[2]
   const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
 
@@ -46,6 +49,8 @@ const initializeSites = () => {
   fs.mkdirSync(targetDirPath, { recursive: true })
 
   generateSkeleton(targetDirPath)
+
+  fs.symlinkSync("../../../shared_components", `${targetDirPath}/shared_components`)
 
   console.log(`A website scaffold was created in the sites/${targetDirName} directory.`)
 }
