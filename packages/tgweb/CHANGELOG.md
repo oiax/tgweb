@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.11.0
+
+* 4a63a79 Introduce `<tg:shared-component>`
+
 ## 0.10.3
 
 * a6105d7 Remove unnecessary lines

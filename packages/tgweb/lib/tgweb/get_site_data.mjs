@@ -16,6 +16,7 @@ const getSiteData = directory => {
     wrappers: [],
     articles: [],
     components: [],
+    sharedComponents: [],
     properties: {
       main: {
         scheme: "http",
@@ -47,6 +48,11 @@ const getSiteData = directory => {
   if (fs.existsSync("src/components")) {
     siteData.components =
       glob.sync("src/components/**/*.html").map(path => getTemplate(path, "component"))
+  }
+
+  if (fs.existsSync("src/shared_components")) {
+    siteData.sharedComponents =
+      glob.sync("src/shared_components/**/*.html").map(path => getTemplate(path, "component"))
   }
 
   siteData.wrappers =

@@ -9,6 +9,7 @@ const getType = path => {
   if (filename === "_wrapper.html") return "wrapper"
   else if (shortDirname === "src/segments" && ext === ".html") return "segment"
   else if (shortDirname === "src/components" && ext === ".html") return "component"
+  else if (shortDirname === "src/shared_components" && ext === ".html") return "shared_component"
   else if (shortDirname === "src/layouts" && ext === ".html") return "layout"
   else if (shortDirname === "src/articles" && ext === ".html") return "article"
   else if (shortDirname === "src/pages" && ext === ".html") return "page"

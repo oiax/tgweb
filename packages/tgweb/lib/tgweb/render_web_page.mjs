@@ -216,6 +216,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:component") {
       return renderComponent(node, siteData, documentProperties, state)
     }
+    else if (node.name === "tg:shared-component") {
+      return renderSharedComponent(node, siteData, documentProperties, state)
+    }
     else if (node.name === "tg:slot") {
       return renderSlot(node, siteData, documentProperties, state)
     }
@@ -312,7 +315,45 @@ const renderComponent = (node, siteData, documentProperties, state) => {
   if (state.referencedComponentNames && state.referencedComponentNames.includes(componentName))
     return err(render(node))
 
+  if (state.referencedComponentNames &&
+      state.referencedComponentNames.some(name => name.startsWith("shared_components/")))
+    return err(render(node))
+
   const component = siteData.components.find(c => c.path == `components/${componentName}.html`)
+
+  if (component === undefined) return err(render(node))
+
+  let properties = Object.assign({}, documentProperties)
+  properties = mergeProperties(documentProperties, component.frontMatter)
+
+  if (properties.data === undefined) properties.data = {}
+
+  Object.keys(node.attribs).forEach(key => {
+    if (key.startsWith("data-")) {
+      const propName = toKebabCase(key.slice(5))
+      properties.data[propName] = node.attribs[key]
+    }
+  })
+
+  const inserts = getInserts(node)
+  const innerContent = removeInserts(node)
+  const localState = getLocalState(state, component, innerContent, inserts)
+
+  if (localState.referencedComponentNames) localState.referencedComponentNames.push(componentName)
+
+  return component.dom.children
+    .map(child => renderNode(child, siteData, properties, localState))
+    .flat()
+}
+
+const renderSharedComponent = (node, siteData, documentProperties, state) => {
+  const componentName = "shared_components/" + node.attribs.name
+
+  if (state.referencedComponentNames && state.referencedComponentNames.includes(componentName))
+    return err(render(node))
+
+  const component =
+    siteData.sharedComponents.find(c => c.path == `${componentName}.html`)
 
   if (component === undefined) return err(render(node))
 
@@ -568,6 +609,19 @@ const renderLink = (node, properties, siteData, state) => {
       children = node.children
     }
   }
+  else if (node.attribs.sharedComponent !== undefined) {
+    const component =
+      siteData.sharedComponents.find(c =>
+        c.path == `shared_components/${node.attribs.component}.html`
+      )
+
+    if (component) {
+      children = component.dom.children
+    }
+    else {
+      children = node.children
+    }
+  }
   else {
     children = node.children
   }
@@ -625,6 +679,19 @@ const renderArticleLink = (node, article, siteData, state) => {
   if (node.attribs.component !== undefined) {
     const component =
       siteData.components.find(c => c.path === `components/${node.attribs.component}.html`)
+
+    if (component) {
+      children = component.dom.children
+    }
+    else {
+      children = node.children
+    }
+  }
+  else if (node.attribs.sharedComponent !== undefined) {
+    const component =
+      siteData.sharedComponents.find(c =>
+        c.path === `shared_components/${node.attribs.component}.html`
+      )
 
     if (component) {
       children = component.dom.children

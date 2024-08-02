@@ -51,7 +51,7 @@ const update = (path, siteData) => {
         updateHTML("src/" + page.path, siteData)
       })
   }
-  else if (type === "component") {
+  else if (type === "component" || type === "shared_component") {
     const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.articles

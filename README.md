@@ -1883,6 +1883,37 @@ Note that the component inherits the property from the page or article in which 
 When a property with the same name is defined in a component and a page or article, the value
 defined in the page or article takes precedence.
 
+## Shared components
+
+Components that are shared among multiple websites are called **shared components**.
+
+Shared components are placed in the `src/shared_components` subdirectory of the working directory.
+Usually, this subdirectory is a symbolic link to another directory.
+
+If you initialized your website working directory in the way described in
+[How to manage multiple websites](#How to manage multiple websites),
+the `src/shared_components` subdirectory will  created as a symbolic link referring to the
+`../../../shared_components` directory.
+
+The way to create shared components is the same as for components.
+Slots are also available for shared components.
+
+To embed a shared component in a page, article, layout, or component,
+add a `<tg:shared-component>` element at the desired location and
+specify its name in the `name` attribute.
+
+It is possible to embed another shared component within a shared component,
+but it is not possible to embed a normal component within a shared component.
+
+#### Example
+
+```html
+<p>
+  <tg:shared-component name="smile"></tg:shared-component>
+  How are you?
+</p>
+```
+
 ## Articles
 
 ### What is an article

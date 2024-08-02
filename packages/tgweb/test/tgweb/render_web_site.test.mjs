@@ -42,7 +42,6 @@ describe("renderWebSite", () => {
       '  </style>',
       '  <script src="/js/tgweb_utilities.js" defer></script>',
       '  <script src="/js/alpine.min.js" defer></script>',
-      '  <script src="/js/lottie.min.js" defer></script>',
       '  <script type="module" src="/js/tgweb_lottie_player.js"></script>',
       '  <script src="/reload/reload.js" defer></script>',
       '</head>'
@@ -231,6 +230,86 @@ describe("renderWebSite", () => {
       '      <div>',
       '        <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:component name=&quot;x&quot;&gt;&lt;/tg:component&gt;</span>',
       '      </div>',
+      '    </div>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render a page of 'with_shared_component' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_shared_components")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Hello, world!</h1>',
+      '  <div>',
+      '    <span class="badge-lg badge badge-primary">',
+      '  M',
+      '  Z',
+      '    AAA',
+      '</span>',
+      '  </div>',
+      '  <div>',
+      '    <h3>Warning</h3>',
+      '    <p>You <em>cannot</em> do it.</p>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should detect a circular reference of shared components", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_shared_components")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/circular_reference.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <div>',
+      '      <div>',
+      '        <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:shared-component name=&quot;x&quot;&gt;&lt;/tg:shared-component&gt;</span>',
+      '      </div>',
+      '    </div>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should prevent normal components from being embedded in shared components", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_shared_components")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/illegal_composition.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <div>',
+      '      <span class="inline-block bg-error text-black m-1 py-1 px-2">&lt;tg:component name=&quot;message&quot;&gt;',
+      '    &lt;tg:insert name=&quot;title&quot;&gt;Greeting&lt;/tg:insert&gt;',
+      '    &lt;tg:insert name=&quot;body&quot;&gt;',
+      '      &lt;p&gt;Hello.&lt;/p&gt;',
+      '    &lt;/tg:insert&gt;',
+      '  &lt;/tg:component&gt;</span>',
       '    </div>',
       '  </div>',
       '</body>'
@@ -641,7 +720,6 @@ describe("renderWebSite", () => {
       '  </style>',
       '  <script src="/js/tgweb_utilities.js" defer></script>',
       '  <script src="/js/alpine.min.js" defer></script>',
-      '  <script src="/js/lottie.min.js" defer></script>',
       '  <script type="module" src="/js/tgweb_lottie_player.js"></script>',
       '  <script src="/reload/reload.js" defer></script>',
       '</head>'

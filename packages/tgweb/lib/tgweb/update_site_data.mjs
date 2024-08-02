@@ -17,6 +17,7 @@ const updateSiteData = (siteData, path) => {
     siteData.segments = newSiteData.segments
     siteData.articles = newSiteData.articles
     siteData.components = newSiteData.components
+    siteData.sharedComponents = newSiteData.sharedComponents
     siteData.layouts = newSiteData.layouts
     siteData.wrappers = newSiteData.wrappers
   }
@@ -28,6 +29,16 @@ const updateSiteData = (siteData, path) => {
     }
     else {
       siteData.components.push(getTemplate(path, "component"))
+    }
+  }
+  else if (type === "shared_component") {
+    const component = siteData.sharedComponents.find(c => `src/${c.path}` === path)
+
+    if (component) {
+      updateTemplate(component, path, "shared_component", siteData.properties)
+    }
+    else {
+      siteData.sharedComponents.push(getTemplate(path, "shared_component"))
     }
   }
   else if (type === "segment") {

@@ -62,6 +62,10 @@ const _destroyTemplate = (path, siteData) => {
     const shortPath = path.replace(/^src\//, "")
     siteData.components = siteData.components.filter(c => c.path !== shortPath)
   }
+  else if (type === "shared_component") {
+    const shortPath = path.replace(/^src\//, "")
+    siteData.sharedComponents = siteData.sharedComponents.filter(c => c.path !== shortPath)
+  }
   else if (type === "segment") {
     const shortPath = path.replace(/^src\//, "")
     siteData.segments = siteData.segments.filter(s => s.path !== shortPath)
