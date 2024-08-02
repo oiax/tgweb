@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.10.3
+
+* a6105d7 Remove unnecessary lines
+
 ## 0.10.2
 
 * 3e27f6e Fix typos: lottie.min.js -> dotlottie.min.js
