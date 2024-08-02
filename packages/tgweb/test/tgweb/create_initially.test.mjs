@@ -41,7 +41,6 @@ describe("createInitially", () => {
       '    </style>',
       '    <script src="/js/tgweb_utilities.js" defer></script>',
       '    <script src="/js/alpine.min.js" defer></script>',
-      '    <script src="/js/lottie.min.js" defer></script>',
       '    <script type="module" src="/js/tgweb_lottie_player.js"></script>',
       '    <script src="/reload/reload.js" defer></script>',
       '  </head>',
