@@ -1891,7 +1891,7 @@ Shared components are placed in the `src/shared_components` subdirectory of the 
 Usually, this subdirectory is a symbolic link to another directory.
 
 If you initialized your website working directory in the way described in
-[How to manage multiple websites](#How to manage multiple websites),
+[Managing Multiple Websites](#managing-multiple-websites),
 the `src/shared_components` subdirectory will  created as a symbolic link referring to the
 `../../../shared_components` directory.
 
