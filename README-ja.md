@@ -33,6 +33,7 @@
 * [ミニアプリの埋め込み](#ミニアプリの埋め込み)
 * [サイトプロパティとプロパティの継承](#サイトプロパティとプロパティの継承)
 * [head要素の内容の管理](#head要素の内容の管理)
+* [特殊なタグと属性のリスト](#特殊なタグと属性のリスト)
 * [TODO List](#todo-list)
 * [License](#license)
 
@@ -1146,7 +1147,7 @@ title = "Greeting"
 </div>
 ```
 
-### slotとinsert
+### スロットとインサート
 
 `<tg:slot>` 要素はレイアウト内のプレースホルダーで、ページ内で指定した内容を埋めることができます。`<tg:slot>` 要素には `name` 属性を指定する必要があります。
 
@@ -2105,7 +2106,7 @@ layout = "home"
 
 `order-by` 属性に設定する値の書き方については、[アーティクルをタイトルで並べ替える](#アーティクルをタイトルで並べ替える)を参照してください。
 
-アーティクルを任意の順序で並べ替えるには、各アーティクルに `tg:index` 属性を追加します：
+アーティクルを任意の順序で並べ替えるには、各アーティクルのフロントマターに `index` プロパティを追加します：
 
 ```html
 ---
@@ -3238,6 +3239,64 @@ crossorigin = "anonymous"
 <script src="/js/alpine.min.js" defer></script>
 <script src="/reload/reload.js" defer></script>
 ```
+
+## 特殊なタグと属性のリスト
+
+### 特殊タグのリスト
+
+* `<tg:animation>`: [アニメーション](#アニメーション)
+* `<tg:article>`: [ページやセグメントにアーティクルを埋め込む](#ページやセグメントにアーティクルを埋め込む)
+* `<tg:articles>`: [ページに複数のアーティクルを埋め込む](#ページに複数のアーティクルを埋め込む)
+* `<tg:app>`: [ミニアプリの埋め込み](#ミニアプリの埋め込み)
+* `<tg:component>`: [部品を埋め込む](#部品を埋め込む)
+* `<tg:content>`: [レイアウトの追加](#レイアウトの追加), [ラッパーの追加](#ラッパーの追加)
+* `<tg:data>`: [カスタムプロパティ](#カスタムプロパティ)
+* `<tg:if-complete>`: [`<tg:if-complete>`](#tgif-complete)
+* `<tg:if-current>`: [`<tg:link>、<tg:if-current>、<tg:label>`](#tglinktgif-currenttglabel)
+* `<tg:if-embedded>`: [`<tg:if-embedded> と <tg:unless-embedded>`](#tgif-embedded-と-tgunless-embedded)
+* `<tg:insert>`: [スロットとインサート](#スロットとインサート)
+* `<tg:label>`: [`<tg:link>、<tg:if-current>、<tg:label>`](#tglinktgif-currenttglabel)
+* `<tg:link>`: [`<tg:link>、<tg:if-current>、<tg:label>`](#tglinktgif-currenttglabel)
+* `<tg:links>`: [リンクリスト](#リンクリスト)
+* `<tg:prop>`: [Embedding predefined property values in a template](#embedding-predefined-property-values-in-a-template)
+* `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
+* `<tg:shared-component>`: [共有部品](#共有部品)
+* `<tg:slot>`: [スロットとインサート](#スロットとインサート)
+* `<tg:unless-embedded>`: [`<tg:if-embedded> と <tg:unless-embedded>`](#tgif-embedded-と-tgunless-embedded)
+
+### 特殊属性のリスト
+
+* `tg:1000`, etc.: [Scheduler](#scheduler)
+* `tg:backward-*`: [Tram](#tram)
+* `tg:body`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:carousel`: [Carousel](#carousel)
+* `tg:choose`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:class`: [スタイルエイリアスの定義](#スタイルエイリアスの定義)
+* `tg:close`: [Modal](#modal)
+* `tg:current-class`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:disabled-class`: [Carousel](#carousel)
+* `tg:enabled-class`: [Carousel](#carousel)
+* `tg:first`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:frame`: [Carousel](#carousel)
+* `tg:forward-*`: [Tram](#tram)
+* `tg:init`: [Scheduler](#scheduler), [Tram](#tram)
+* `tg:interval`: [Rotator](#rotator), [Carousel](#carousel)
+* `tg:item`: [Carousel](#carousel)
+* `tg:last`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:modal`: [Modal](#modal)
+* `tg:next`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:normal-class`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:open`: [Modal](#modal)
+* `tg:paginator`: [Switcher/Paginator](#paginator), [Carousel/Paginator](#paginator-1)
+* `tg:prev`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:rotator`: [Rotator](#rotator)
+* `tg:switcher`: [Switcher](#switcher)
+* `tg:scheduler`: [Scheduler](#scheduler)
+* `tg:toggle`: [Toggler](#toggler)
+* `tg:toggler`: [Toggler](#toggler)
+* `tg:tram`: [Tram](#tram)
+* `tg:transition-duration`: [Carousel](#carousel)
+* `tg:when`: [Toggler](#toggler)
 
 ## TODO List
 

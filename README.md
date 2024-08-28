@@ -33,6 +33,7 @@
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
 * [Site Properties and Property Inheritance](#site-properties-and-property-inheritance)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [List of special tags and attributes](#list-of-special-tags-and-attributes)
 * [TODO List](#todo-list)
 * [License](#license)
 
@@ -2305,7 +2306,7 @@ To sort articles by their title, set the `order-by` attribute of the `<tg:links>
 See [Sorting articles by their title](#sorting-articles-by-their-title) on how to　write values
 to be set in the `order-by` attribute.
 
-To sort articles in an arbitrary order, add a `tg:index` attribute to each article:
+To sort articles in an arbitrary order, add the `main.index` property to each article's front matter:
 
 ```html
 ---
@@ -2542,7 +2543,7 @@ So the above example could be rewritten as:
 
 ### Switcher
 
-#### Carousel Basics
+#### Switcher Basics
 
 Specifying the `tg:switcher` attribute on an HTML element makes the following attributes available
 to descendant elements of that element:
@@ -3641,6 +3642,64 @@ The following `<script>` elements are always inserted within the head element.
 <script src="/js/alpine.min.js" defer></script>
 <script src="/reload/reload.js" defer></script>
 ```
+
+## List of special tags and attributes
+
+### List of special tags
+
+* `<tg:animation>`: [Animations](#animations)
+* `<tg:article>`: [Embedding an article in a page or segment](#embedding-an-article-in-a-page-or-segment)
+* `<tg:articles>`: [Embedding articles in a page](#embedding-articles-in-a-page)
+* `<tg:app>`: [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
+* `<tg:component>`: [Embedding components](#embedding-components)
+* `<tg:content>`: [Adding a layout](#adding-a-layout), [Adding a wrapper](#adding-a-wrapper)
+* `<tg:data>`: [Custom properties](#custom-properties)
+* `<tg:if-complete>`: [`<tg:if-complete>`](#tgif-complete)
+* `<tg:if-current>`: [`<tg:link>, <tg:if-current> and <tg:label>`](#tglink-tgif-current-and-tglabel)
+* `<tg:if-embedded>`: [`<tg:if-embedded> and <tg:unless-embedded>`](#tgif-embedded-and-tgunless-embedded)
+* `<tg:insert>`: [Slots and inserts](#slots-and-inserts)
+* `<tg:label>`: [`<tg:link>, <tg:if-current> and <tg:label>`](#tglink-tgif-current-and-tglabel)
+* `<tg:link>`: [`<tg:link>, <tg:if-current> and <tg:label>`](#tglink-tgif-current-and-tglabel)
+* `<tg:links>`: [Link list](#link-list)
+* `<tg:prop>`: [Embedding predefined property values in a template](#embedding-predefined-property-values-in-a-template)
+* `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
+* `<tg:shared-component>`: [Shared components](#shared-components)
+* `<tg:slot>`: [Slots and inserts](#slots-and-inserts)
+* `<tg:unless-embedded>`: [`<tg:if-embedded> and <tg:unless-embedded>`](#tgif-embedded-and-tgunless-embedded)
+
+### List of special attributes
+
+* `tg:1000`, etc.: [Scheduler](#scheduler)
+* `tg:backward-*`: [Tram](#tram)
+* `tg:body`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:carousel`: [Carousel](#carousel)
+* `tg:choose`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:class`: [Defining style aliases](#defining-style-aliases)
+* `tg:close`: [Modal](#modal)
+* `tg:current-class`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:disabled-class`: [Carousel](#carousel)
+* `tg:enabled-class`: [Carousel](#carousel)
+* `tg:first`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:frame`: [Carousel](#carousel)
+* `tg:forward-*`: [Tram](#tram)
+* `tg:init`: [Scheduler](#scheduler), [Tram](#tram)
+* `tg:interval`: [Rotator](#rotator), [Carousel](#carousel)
+* `tg:item`: [Carousel](#carousel)
+* `tg:last`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:modal`: [Modal](#modal)
+* `tg:next`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:normal-class`: [Switcher](#switcher), [Rotator](#rotator), [Carousel](#carousel)
+* `tg:open`: [Modal](#modal)
+* `tg:paginator`: [Switcher/Paginator](#paginator), [Carousel/Paginator](#paginator-1)
+* `tg:prev`: [Switcher](#switcher), [Rotator](#rotator)
+* `tg:rotator`: [Rotator](#rotator)
+* `tg:switcher`: [Switcher](#switcher)
+* `tg:scheduler`: [Scheduler](#scheduler)
+* `tg:toggle`: [Toggler](#toggler)
+* `tg:toggler`: [Toggler](#toggler)
+* `tg:tram`: [Tram](#tram)
+* `tg:transition-duration`: [Carousel](#carousel)
+* `tg:when`: [Toggler](#toggler)
 
 ## TODO List
 
