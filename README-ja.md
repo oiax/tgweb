@@ -465,7 +465,6 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 * meta.property
 * link
 
-
 ここでは、最初の3つについて説明します;
 他の3つは[head要素の内容の管理](#head要素の内容の管理) で説明します。
 
@@ -495,6 +494,9 @@ red-box = "rounded border border-red-600 p-1 md:p-2"
 * `embedded-only`: `true` ならば、HTMLドキュメントは作成されない。デフォルト: `false`。
 
 詳細は [アーティクル](#アーティクル) を参照してください。
+
+`shared-wrapper` プロパティはラッパーにおいてのみ意味を持ちます。
+詳細は [共有ラッパー](#共有ラッパー) を参照してください。
 
 ### テンプレートにプロパティ値を埋め込む
 
@@ -1501,6 +1503,24 @@ title = "Alice's Mission"
 ```
 
 `team_mission.html` の方は、ラッパーで定義したのプロパティ `title` がレンダリングされています。一方、`member_mission/alice_mission.html` の方はページで再定義した `title` がレンダリングされています。
+
+## 共有ラッパー
+
+複数のサイト間で共有されるラッパーを**共有ラッパー** (shared wrappers)と呼びます。
+
+共有ラッパーは、作業ディレクトリの `src/shared_wrappers` サブディレクトリに置かれます。通常、このサブディレクトリは他のディレクトリへのシンボリックリンクです。
+
+[複数のウェブサイトを管理する方法](#複数のウェブサイトを管理する方法)で説明した方法でウェブサイトの作業ディレクトリを初期化した場合、`src/shared_wrappers` サブディレクトリは `../../../shared_wrappers` ディレクトリを参照するシンボリックリンクとして作られます。
+
+`"decorated.html"` という名前の共通ラッパーをあるディレクトリのラッパーとして使用したければ、
+そのディレクトリに次のような中身を持つ `_wrapper.html` を作成してください：
+
+```
+---
+[main]
+shared-wrapper = "decorated"
+---
+```
 
 ## セグメント
 

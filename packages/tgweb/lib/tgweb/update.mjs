@@ -62,7 +62,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => updateHTML("src/" + page.path, siteData))
   }
-  else if (type === "wrapper") {
+  else if (type === "wrapper" || type === "shared_wrapper") {
     const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.articles

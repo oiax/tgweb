@@ -531,6 +531,9 @@ The following three properties are meaningful only in articles:
 
 See [Articles](#articles) for details.
 
+The `shared-wrapper` property is meaningful only in wrappers.
+See [Shared wrappers](#shared-wrappers) for details.
+
 ### Embedding predefined property values in a template
 
 The value of a predefined property can be embedded into a template by the `<tg:prop>` element.
@@ -1636,6 +1639,28 @@ When the wrapper `_wrapper.html` is applied to these two pages, each `body` elem
 
 `team_mission.html` is rendered with the property `title` defined in the wrapper.
 On the other hand, `member_mission/alice_mission.html` is rendered by `title`, which is redefined in the page.
+
+## Shared wrappers
+
+Wrappers that are shared among multiple websites are called **shared wrappers**.
+
+Shared wrappers are placed in the `src/shared_wrappers` subdirectory of the working directory.
+Usually, this subdirectory is a symbolic link to another directory.
+
+If you initialized your website working directory in the way described in
+[Managing Multiple Websites](#managing-multiple-websites),
+the `src/shared_wrappers` subdirectory will  created as a symbolic link referring to the
+`../../../shared_wrappers` directory.
+
+If you want to use a common wrapper named `"decorated.html"` as a wrapper for a certain directory,
+Create a `_wrapper.html` in that directory with the following contents:
+
+```
+---
+[main]
+shared-wrapper = "decorated"
+---
+```
 
 ## Segments
 

@@ -20,6 +20,7 @@ const updateSiteData = (siteData, path) => {
     siteData.sharedComponents = newSiteData.sharedComponents
     siteData.layouts = newSiteData.layouts
     siteData.wrappers = newSiteData.wrappers
+    siteData.sharedWrappers = newSiteData.sharedWrappers
   }
   else if (type === "component") {
     const component = siteData.components.find(c => `src/${c.path}` === path)
@@ -145,6 +146,12 @@ const updateSiteData = (siteData, path) => {
         })
       }
     }
+  }
+  else if (type === "shared_wrapper") {
+    siteData.wrappers.forEach(wrapper => {
+      updateTemplate(wrapper, path, "wrapper", siteData.properties)
+      setDependencies(wrapper, siteData)
+    })
   }
 }
 
