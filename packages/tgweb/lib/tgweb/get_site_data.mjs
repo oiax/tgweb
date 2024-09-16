@@ -25,6 +25,9 @@ const getSiteData = directory => {
         port: 3000,
         "root-url": "http://localhost:3000/"
       }
+    },
+    options: {
+      buildDrafts: false
     }
   }
 

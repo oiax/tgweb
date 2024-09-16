@@ -25,7 +25,7 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "c")
 
-    create("src/pages/new.html", siteData)
+    create("src/pages/new.html", siteData, false)
 
     const n = siteData.pages.find(p => p.path === "pages/new.html")
     assert(n)
@@ -42,7 +42,7 @@ describe("create", () => {
 
     process.chdir(wd + "c")
 
-    create("src/articles/blog/k.html", siteData)
+    create("src/articles/blog/k.html", siteData, false)
 
     const k = siteData.articles.find(a => a.path === "articles/blog/k.html")
     assert(k)
@@ -61,7 +61,7 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "c")
 
-    create("src/components/x.html", siteData)
+    create("src/components/x.html", siteData, false)
 
     const x = siteData.components.find(c => c.path === "components/x.html")
     assert(x)
@@ -74,7 +74,7 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "c")
 
-    create("src/layouts/simple.html", siteData)
+    create("src/layouts/simple.html", siteData, false)
 
     const s = siteData.layouts.find(l => l.path === "layouts/simple.html")
     assert(s)
@@ -87,7 +87,7 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "c")
 
-    create("src/pages/etc/_wrapper.html", siteData)
+    create("src/pages/etc/_wrapper.html", siteData, false)
 
     const w = siteData.wrappers.find(w => w.path === "pages/etc/_wrapper.html")
     assert(w)
@@ -106,7 +106,7 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "c")
 
-    create("src/articles/_wrapper.html", siteData)
+    create("src/articles/_wrapper.html", siteData, false)
 
     const w = siteData.wrappers.find(w => w.path === "articles/_wrapper.html")
     assert(w)
@@ -124,9 +124,55 @@ describe("create", () => {
     const siteData = getSiteData(wd)
     process.chdir(wd + "a")
 
-    create("src/site.toml", siteData)
+    create("src/site.toml", siteData, false)
 
     assert.equal(siteData.properties["main"]["title"], "Example")
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
+  })
+
+  it("should not render a draft page", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/pages/draft.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/draft.html"), false)
+  })
+
+  it("should render a draft page", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    create("src/pages/draft.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/draft.html"), true)
+  })
+
+  it("should not render a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/articles/b.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/articles/b.html"), false)
+  })
+
+  it("should render a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    create("src/articles/b.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/articles/b.html"), true)
   })
 })

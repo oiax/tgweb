@@ -2,6 +2,7 @@
 
 import * as PATH from "path"
 import fs from "fs"
+import getopts from "getopts"
 import { installFonts } from "./server/install_fonts.mjs"
 import { installUtilities } from "./server/install_utilities.mjs"
 import { installLottiePlayer } from "./server/install_lottie_player.mjs"
@@ -18,11 +19,12 @@ const tailwindCss = `
 @tailwind utilities;
 `
 
-const main = (targetDirPath) => {
+const main = (targetDirPath, options) => {
   const workingDir = process.cwd()
   process.chdir(targetDirPath)
 
   const siteData = tgweb.getSiteData(process.cwd())
+  siteData.options = options
 
   installFonts(siteData, workingDir)
   installUtilities(workingDir)
@@ -56,8 +58,11 @@ const main = (targetDirPath) => {
   execSync(`npx tailwindcss -i tailwind.css -o ${tailwindcssPath}`)
 }
 
-if (process.argv.length > 2) {
-  const targetDirName = process.argv[2]
+const options = getopts(process.argv.slice(2))
+const args = options["_"]
+
+if (args.length > 0) {
+  const targetDirName = args[0]
 
   if (targetDirName == undefined) {
     console.log("Usage: npx tgweb-dist <site-name>")
@@ -65,10 +70,10 @@ if (process.argv.length > 2) {
   else {
     const adjustedDirName = targetDirName.replace(/^sites\//, "")
     const targetDirPath = PATH.resolve(process.cwd(), `./sites/${adjustedDirName}`)
-    main(targetDirPath)
+    main(targetDirPath, options)
   }
 }
 else {
   const targetDirPath = PATH.resolve(process.cwd(), ".")
-  main(targetDirPath)
+  main(targetDirPath, options)
 }

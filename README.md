@@ -546,6 +546,14 @@ See [Articles](#articles) for details.
 The `shared-wrapper` property is meaningful only in wrappers.
 See [Shared wrappers](#shared-wrappers) for details.
 
+The `draft` property indicates that pages and articles are _drafts_.
+The `tgweb-dist` and `tgweb-server` commands ignore draft pages and articles.
+Also, the `<tg:article>` and `<tg:articles>` elements will not embed draft pages and articles.
+Also, the `<tg:link>` and `<tg:links>` elements will not generate links to draft pages and articles.
+
+However, if you invoke the `tgweb-dist` and `tgweb-server` commands with the `--buildDrafts`
+option, they will treat draft pages and articles as normal pages and articles.
+
 ### Embedding predefined property values in a template
 
 The value of a predefined property can be embedded into a template by the `<tg:prop>` element.

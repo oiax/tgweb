@@ -4,6 +4,7 @@ import * as PATH from "path"
 
 import fs from "fs"
 import archiver from "archiver"
+import getopts from "getopts"
 
 const archive = (dirName) => {
   const name = PATH.parse(dirName).base

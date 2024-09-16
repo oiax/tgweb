@@ -934,4 +934,118 @@ describe("renderWebSite", () => {
 
     assert.deepEqual(html.attribs, { class: 'scroll-smooth' })
   })
+
+  it("should not render a link to a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Home</h1>',
+      '  <div>',
+      '    <a href="/articles/a.html">A</a>',
+      '  </div>',
+      '  <nav>',
+      '    <li>',
+      '      <a href="/articles/a.html">',
+      '        A',
+      '      </a>',
+      '    </li>',
+      '  </nav>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render a link to a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Home</h1>',
+      '  <div>',
+      '    <a href="/articles/a.html">A</a>',
+      '    <a href="/articles/b.html">B</a>',
+      '  </div>',
+      '  <nav>',
+      '    <li>',
+      '      <a href="/articles/a.html">',
+      '        A',
+      '      </a>',
+      '    </li>',
+      '    <li>',
+      '      <a href="/articles/b.html">',
+      '        B',
+      '      </a>',
+      '    </li>',
+      '  </nav>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should not embed draft articles", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/articles.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Home</h1>',
+      '  <div>',
+      '    <p>A</p>',
+      '  </div>',
+      '  <nav>',
+      '    <p>A</p>',
+      '  </nav>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should embed draft articles", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    const dom = renderWebPage("src/pages/articles.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Home</h1>',
+      '  <div>',
+      '    <p>A</p>',
+      '    <p>B</p>',
+      '  </div>',
+      '  <nav>',
+      '    <p>A</p>',
+      '    <p>B</p>',
+      '  </nav>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
 })

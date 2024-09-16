@@ -40,11 +40,20 @@ const create = (path, siteData) => {
       return
     }
     else if (type === "page") {
+      const page = siteData.pages.find(page => "src/" + page.path === posixPath)
+
+      if (siteData.options["buildDrafts"] !== true && page.frontMatter.main &&
+          page.frontMatter.main["draft"] === true) return
+
       const dom = renderWebPage(posixPath, siteData)
       createHTML(posixPath, dom)
       return
     }
     else if (type === "article") {
+      const article = siteData.articles.find(article => "src/" + article.path === posixPath)
+      if (siteData.options["buildDrafts"] !== true && article.frontMatter.main &&
+          article.frontMatter.main["draft"] === true) return
+
       const dom = renderWebPage(posixPath, siteData)
 
       if (dom !== undefined) createHTML(posixPath, dom)
