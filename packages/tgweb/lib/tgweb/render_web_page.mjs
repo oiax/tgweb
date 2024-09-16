@@ -276,7 +276,7 @@ const renderSegment = (node, siteData, documentProperties, state) => {
   if (state.referencedSegmentNames && state.referencedSegmentNames.includes(segmentName))
     return err(render(node))
 
-  const allowedTypes = ["page", "layout", "segment"]
+  const allowedTypes = ["page", "layout", "segment", "wrapper"]
 
   if (state.container && allowedTypes.includes(state.container.type)) {
     const segment = siteData.segments.find(c => c.path == `segments/${segmentName}.html`)
