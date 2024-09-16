@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.11.3
+
+* dbd6759 Fix #193: Make a `<tg:segment>` embeddable into a page wrapper
+
 ## 0.11.2
 
 * 8b3d928 Fix #194: Article cannot be embedded in page wrapper
