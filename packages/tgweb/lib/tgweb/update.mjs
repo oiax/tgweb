@@ -9,10 +9,18 @@ import { getWrapper } from "./get_wrapper.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
 
 const update = (path, siteData) => {
-  const posixPath = slash(path)
+  let posixPath = slash(path)
   updateSiteData(siteData, posixPath)
 
-  const type = getType(posixPath)
+  let type = getType(posixPath)
+
+  if (type === "front_matter_file") {
+    posixPath = posixPath.replace(/\.toml$/, ".html")
+
+    if (!fs.existsSync(posixPath)) return
+
+    type = getType(posixPath)
+  }
 
   if (type === "site.toml") {
     siteData.pages.forEach(page => updateHTML("src/" + page.path, siteData))
@@ -62,7 +70,7 @@ const update = (path, siteData) => {
       .filter(page => page.dependencies.includes(name))
       .forEach(page => updateHTML("src/" + page.path, siteData))
   }
-  else if (type === "wrapper") {
+  else if (type === "wrapper" || type === "shared_wrapper") {
     const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
 
     siteData.articles

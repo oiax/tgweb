@@ -458,6 +458,18 @@ In the example above, the four main components of the front matter block are use
 
 Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
 
+### Front matter file
+
+When a file exists whose name is the body of the template file name plus the extension `.toml`,
+the contents of that file are interpreted as the front matter of the template file.
+The file is called **front matter file**.
+
+For example, if `index.html` and `index.toml` exist in the `src/pages` directory,
+the latter is the front matter file of the former.
+
+If a template file has both a front matter block and a front matter file,
+the front matter file takes precedence.
+
 ### Property definitions
 
 The line `title = "Our Mission"` is an example of a property definition.
@@ -530,6 +542,9 @@ The following three properties are meaningful only in articles:
    from an article; if `true`, it will not be created. Default: `false`.
 
 See [Articles](#articles) for details.
+
+The `shared-wrapper` property is meaningful only in wrappers.
+See [Shared wrappers](#shared-wrappers) for details.
 
 ### Embedding predefined property values in a template
 
@@ -1636,6 +1651,28 @@ When the wrapper `_wrapper.html` is applied to these two pages, each `body` elem
 
 `team_mission.html` is rendered with the property `title` defined in the wrapper.
 On the other hand, `member_mission/alice_mission.html` is rendered by `title`, which is redefined in the page.
+
+## Shared wrappers
+
+Wrappers that are shared among multiple websites are called **shared wrappers**.
+
+Shared wrappers are placed in the `src/shared_wrappers` subdirectory of the working directory.
+Usually, this subdirectory is a symbolic link to another directory.
+
+If you initialized your website working directory in the way described in
+[Managing Multiple Websites](#managing-multiple-websites),
+the `src/shared_wrappers` subdirectory will  created as a symbolic link referring to the
+`../../../shared_wrappers` directory.
+
+If you want to use a common wrapper named `"decorated.html"` as a wrapper for a certain directory,
+Create a `_wrapper.html` in that directory with the following contents:
+
+```
+---
+[main]
+shared-wrapper = "decorated"
+---
+```
 
 ## Segments
 

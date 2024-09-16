@@ -1,0 +1,8 @@
+[main]
+tags = "culture"
+index = 1
+title = "W"
+
+[data]
+date = "2023-01-01"
+tooltip = "B"

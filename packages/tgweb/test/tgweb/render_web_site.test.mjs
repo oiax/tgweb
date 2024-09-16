@@ -161,6 +161,30 @@ describe("renderWebSite", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should render a page of 'with_shared_wrappers' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_shared_wrappers")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div class="my-4 p-2 bg-green-100 md:my-6 md:p-4 [&>p]:mb-2 [&>p]:p-1">',
+      '    <h1 class="text-xl m-2">Hello, world!</h1>',
+      '    <p>I am a <em>computer</em>.</p>',
+      '    <div>',
+      '      <em>X</em>',
+      '    </div>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render a page of 'with_wrapper_and_layout' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_wrapper_and_layout")
     const siteData = getSiteData(wd)

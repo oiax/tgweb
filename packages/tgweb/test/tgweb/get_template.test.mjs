@@ -32,4 +32,13 @@ describe("getTemplate", () => {
 
     assert.equal(template.frontMatter.main.index, 2)
   })
+  it("should get front matter from a separated TOML file", () => {
+    const path = PATH.resolve(__dirname, "../sites/site_1/src/articles/blog/b.html")
+    const siteProperties = normalizeSiteProperties({})
+    const template = getTemplate(path, "article", siteProperties)
+
+    assert.equal(template.type, "article")
+
+    assert.equal(template.frontMatter.main.index, 1)
+  })
 })

@@ -1,5 +1,10 @@
 # tgweb CHANGELOG
 
+## 0.11.1
+
+* baba03c Introduce front matter files
+* e493bf3 Introduce `main.shared-wrapper property` to the wrapper's frontmatter
+
 ## 0.11.0
 
 * 4a63a79 Introduce `<tg:shared-component>`
