@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.11.4
+
+* 6e53dd6 Introduce `main.draft` property to page/article front matter
+
 ## 0.11.3
 
 * dbd6759 Fix #193: Make a `<tg:segment>` embeddable into a page wrapper
