@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.11.2
+
+* 8b3d928 Fix #194: Article cannot be embedded in page wrapper
+
 ## 0.11.1
 
 * baba03c Introduce front matter files

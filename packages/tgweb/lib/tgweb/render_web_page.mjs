@@ -491,6 +491,7 @@ const renderEmbeddedArticle = (node, siteData, state) => {
   if (state.container && (
       state.container.type === "page" ||
       state.container.type === "segment" ||
+      state.container.type === "wrapper" ||
       state.container.type === "layout")) {
     const article = siteData.articles.find(a => a.path == `articles/${articleName}.html`)
 

@@ -210,6 +210,27 @@ describe("renderWebSite", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should render a page of 'with_wrapper_and_article' site", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_wrapper_and_article")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <div>',
+      '    <h1 class="text-xl m-2">Hello, world!</h1>',
+      '    <div>A</div>',
+      '  </div>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render a page of 'with_component' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_component")
     const siteData = getSiteData(wd)
