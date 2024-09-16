@@ -40,35 +40,55 @@ const destroy = (path, siteData) => {
 }
 
 const _destroyTemplate = (path, siteData) => {
-  const type = getType(path)
+  const posixPath = slash(path)
+  const type = getType(posixPath)
+  const shortPath = posixPath.replace(/^src\//, "")
 
   if (type === "page") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.pages = siteData.pages.filter(p => p.path !== shortPath)
   }
   else if (type === "article") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.articles = siteData.articles.filter(a => a.path !== shortPath)
   }
   else if (type === "wrapper") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.wrappers = siteData.wrappers.filter(w => w.path !== shortPath)
   }
   else if (type === "layout") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.layouts = siteData.layouts.filter(l => l.path !== shortPath)
   }
   else if (type === "component") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.components = siteData.components.filter(c => c.path !== shortPath)
   }
   else if (type === "shared_component") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.sharedComponents = siteData.sharedComponents.filter(c => c.path !== shortPath)
   }
   else if (type === "segment") {
-    const shortPath = path.replace(/^src\//, "")
     siteData.segments = siteData.segments.filter(s => s.path !== shortPath)
+  }
+  else if (type === "front_matter_file") {
+    const htmlPath = posixPath.replace(/\.toml$/, ".html")
+    if (!fs.existsSync(htmlPath)) return
+
+    updateSiteData(siteData, htmlPath)
+
+    const name = shortPath.replace(/\.toml$/, "")
+
+    siteData.articles
+      .filter(article => article.dependencies.includes(name))
+      .forEach(article => {
+        updateHTML("src/" + article.path, siteData)
+      })
+
+    siteData.articles.forEach(a => setDependencies(a, siteData))
+    siteData.segments.forEach(s => setDependencies(s, siteData))
+
+    siteData.pages
+      .filter(page => page.dependencies.includes(name))
+      .forEach(page => {
+        updateHTML("src/" + page.path, siteData)
+      })
+
+    siteData.pages.forEach(p => setDependencies(p, siteData))
   }
 }
 

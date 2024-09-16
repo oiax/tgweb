@@ -8,11 +8,26 @@ import { normalizeFrontMatter } from "./normalize_front_matter.mjs"
 const separatorRegex = new RegExp("^---\\n", "m")
 
 const getTemplate = (path, type, siteProperties) => {
+  const tomlPath = path.replace(/\.html$/, ".toml")
+  let frontMatter
+
+  if (fs.existsSync(tomlPath)) {
+    const tomlData = fs.readFileSync(tomlPath)
+
+    try {
+      frontMatter = TOML.parse(tomlData, {joiner: "\n", bigint: false})
+      normalizeFrontMatter(frontMatter)
+    }
+    catch (error) {
+      showTomlSytaxError(tomlPath, tomlData, error)
+      frontMatter = normalizeFrontMatter({})
+    }
+  }
+
   const source = fs.readFileSync(path).toString().replaceAll(/\r/g, "")
   const parts = source.split(separatorRegex)
 
-  if (parts[0] === "" && parts[1] !== undefined) {
-    let frontMatter
+  if (frontMatter == undefined && parts[0] === "" && parts[1] !== undefined) {
     try {
       frontMatter = TOML.parse(parts[1], {joiner: "\n", bigint: false})
       normalizeFrontMatter(frontMatter)
@@ -26,7 +41,7 @@ const getTemplate = (path, type, siteProperties) => {
     return createTemplate(path, type, html, frontMatter, siteProperties)
   }
   else {
-    const frontMatter = normalizeFrontMatter({})
+    frontMatter = frontMatter || normalizeFrontMatter({})
     return createTemplate(path, type, source, frontMatter, siteProperties)
   }
 }

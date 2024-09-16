@@ -5,6 +5,7 @@ import { updateSiteData } from "./update_site_data.mjs"
 import { renderWebPage } from "./render_web_page.mjs"
 import getType from "./get_type.mjs"
 import { updateHTML } from "./update_html.mjs"
+import { setDependencies } from "./set_dependencies.mjs"
 import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
 import render from "dom-serializer"
 import pretty from "pretty"
@@ -49,15 +50,19 @@ const create = (path, siteData) => {
       if (dom !== undefined) createHTML(posixPath, dom)
     }
 
-    const name = posixPath.replace(/^src\//, "").replace(/\.html$/, "")
+    const name = posixPath.replace(/^src\//, "").replace(/\.(html|toml)$/, "")
 
-    siteData.pages
-      .filter(page => page.dependencies.includes(name))
-      .forEach(page => updateHTML("src/" + page.path, siteData))
+    siteData.segments.forEach(s => setDependencies(s, siteData))
+    siteData.articles.forEach(a => setDependencies(a, siteData))
+    siteData.pages.forEach(p => setDependencies(p, siteData))
 
     siteData.articles
       .filter(article => article.dependencies.includes(name))
       .forEach(article => updateHTML("src/" + article.path, siteData))
+
+    siteData.pages
+      .filter(page => page.dependencies.includes(name))
+      .forEach(page => updateHTML("src/" + page.path, siteData))
   }
 }
 

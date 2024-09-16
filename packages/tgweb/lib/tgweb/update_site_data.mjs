@@ -1,4 +1,5 @@
 import * as PATH from "path"
+import fs from "fs"
 import getType from "./get_type.mjs"
 import { getSiteData } from "./get_site_data.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
@@ -7,9 +8,17 @@ import { getTemplate } from "./get_template.mjs"
 import { updateDependencies } from "./update_dependencies.mjs"
 
 const updateSiteData = (siteData, path) => {
-  const type = getType(path)
+  let type = getType(path)
 
-  if (type == "site.toml") {
+  if (type === "front_matter_file") {
+    path = path.replace(/\.toml$/, ".html")
+
+    if (!fs.existsSync(path)) return
+
+    type = getType(path)
+  }
+
+  if (type === "site.toml") {
     const newSiteData = getSiteData(process.cwd())
     updateDependencies(newSiteData)
     siteData.properties = newSiteData.properties
@@ -69,22 +78,12 @@ const updateSiteData = (siteData, path) => {
     if (article) {
       updateTemplate(article, path, "article", siteData.properties)
       setUrlProperty(article.frontMatter, siteData, article.path)
-      setDependencies(article, siteData, true)
     }
     else {
       const newArticle = getTemplate(path, "article", siteData.properties)
 
       setUrlProperty(newArticle.frontMatter, siteData, newArticle.path)
-      setDependencies(newArticle, siteData)
-
       siteData.articles.push(newArticle)
-
-      siteData.pages.forEach(p => setDependencies(p, siteData))
-      siteData.segments.forEach(s => setDependencies(s, siteData))
-
-      siteData.articles.forEach(a => {
-        if (`src/${a.path}` !== path) setDependencies(a, siteData)
-      })
     }
   }
   else if (type === "page") {

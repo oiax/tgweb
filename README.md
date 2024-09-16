@@ -458,6 +458,18 @@ In the example above, the four main components of the front matter block are use
 
 Lines beginning with a `#` sign are ignored as comments. Blank lines are also ignored.
 
+### Front matter file
+
+When a file exists whose name is the body of the template file name plus the extension `.toml`,
+the contents of that file are interpreted as the front matter of the template file.
+The file is called **front matter file**.
+
+For example, if `index.html` and `index.toml` exist in the `src/pages` directory,
+the latter is the front matter file of the former.
+
+If a template file has both a front matter block and a front matter file,
+the front matter file takes precedence.
+
 ### Property definitions
 
 The line `title = "Our Mission"` is an example of a property definition.
