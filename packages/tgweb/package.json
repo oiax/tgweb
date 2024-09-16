@@ -1,7 +1,7 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "keywords": [
     "teamgenik",
     "blog",
@@ -25,6 +25,7 @@
   "license": "MIT",
   "main": "index.mjs",
   "dependencies": {
+    "@lottiefiles/dotlottie-web": "^0.28.0",
     "@ltd/j-toml": "^1.38.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "alpinejs": "^3.12.0",
@@ -32,6 +33,7 @@
     "chokidar": "^3.5.3",
     "daisyui": "^2.51.5",
     "express": "^4.18.2",
+    "getopts": "^2.3.0",
     "glob": "^8.0.3",
     "html-escaper": "^3.0.3",
     "htmlparser2": "^8.0.2",
@@ -40,8 +42,7 @@
     "pretty": "^2.0.0",
     "reload": "^3.2.0",
     "tailwindcss": "^3.3.1",
-    "tcp-port-used": "^1.0.2",
-    "@lottiefiles/dotlottie-web": "^0.28.0"
+    "tcp-port-used": "^1.0.2"
   },
   "bin": {
     "tgweb-init": "lib/init.mjs",

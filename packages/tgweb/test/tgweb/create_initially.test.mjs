@@ -116,4 +116,50 @@ describe("createInitially", () => {
 
     assert.match(html, /世界/)
   })
+
+  it("should not render a draft page", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    createInitially("src/pages/draft.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/draft.html"), false)
+  })
+
+  it("should render a draft page", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    createInitially("src/pages/draft.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/draft.html"), true)
+  })
+
+  it("should not render a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    createInitially("src/articles/b.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/articles/b.html"), false)
+  })
+
+  it("should render a draft article", () => {
+    const wd = PATH.resolve(__dirname, "../sites/draft")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+    siteData.options.buildDrafts = true
+
+    createInitially("src/articles/b.html", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/articles/b.html"), true)
+  })
 })

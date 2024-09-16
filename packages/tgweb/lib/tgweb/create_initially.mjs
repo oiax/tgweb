@@ -30,9 +30,18 @@ const createInitially = (path, siteData) => {
 
       if (article.frontMatter.main["embedded-only"] === true) return
 
+      if (siteData.options["buildDrafts"] !== true && article.frontMatter.main["draft"] === true)
+        return
+
       const wrapper = getWrapper(siteData, article.path)
 
       if (wrapper && wrapper.frontMatter.main["embedded-only"] === true) return
+    }
+    else if (type === "page") {
+      const page = siteData.pages.find(page => "src/" + page.path === posixPath)
+
+      if (siteData.options["buildDrafts"] !== true && page.frontMatter.main &&
+          page.frontMatter.main["draft"] === true) return
     }
 
     const dom = renderWebPage(posixPath, siteData)

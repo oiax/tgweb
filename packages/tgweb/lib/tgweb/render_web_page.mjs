@@ -497,6 +497,9 @@ const renderEmbeddedArticle = (node, siteData, state) => {
 
     if (article === undefined) return err(render(node))
 
+    if (siteData.options.buildDrafts !== true && article.frontMatter.main &&
+      article.frontMatter.main.draft === true) return []
+
     return doRenderEmbeddedArticle(article, node, siteData, state)
   }
   else {
@@ -512,9 +515,18 @@ const renderEmbeddedArticleList = (node, siteData, state) => {
   if (state.container && (
       state.container.type === "page" ||
       state.container.type === "segment" ||
+      state.container.type === "wrapper" ||
       state.container.type === "layout")) {
-    const articles = filterArticles(siteData.articles, pattern, tag)
+    let articles = filterArticles(siteData.articles, pattern, tag)
     sortArticles(articles, orderBy)
+
+    if (siteData.options.buildDrafts !== true) {
+      articles =
+        articles.filter(a =>
+          a.frontMatter.main === undefined || a.frontMatter.main.draft !== true
+        )
+    }
+
     return articles.map(article => doRenderEmbeddedArticle(article, node, siteData, state)).flat()
   }
   else {
@@ -597,11 +609,27 @@ const renderLink = (node, properties, siteData, state) => {
   const localState =
     mergeState(state, {container: node, targetPath: node.attribs.href, label: node.attribs.label})
 
+  let targetPath = localState.targetPath
+
+  if (targetPath.startsWith("/articles/")) {
+    const article = siteData.articles.find(a => `/${a.path}` === targetPath)
+
+    if (siteData.options.buildDrafts !== true && article && article.frontMatter.main &&
+      article.frontMatter.main.draft === true) return []
+  }
+  else {
+    targetPath = targetPath === "/" ? "index.html" : targetPath
+    const page = siteData.pages.find(p => `/${p.path}` === targetPath)
+
+    if (siteData.options.buildDrafts !== true && page && page.frontMatter.main &&
+      page.frontMatter.main.draft === true) return []
+  }
+
   let children
 
   if (node.attribs.component !== undefined) {
     const component =
-      siteData.components.find(c => c.path == `components/${node.attribs.component}.html`)
+      siteData.components.find(c => c.path === `components/${node.attribs.component}.html`)
 
     if (component) {
       children = component.dom.children
@@ -629,7 +657,7 @@ const renderLink = (node, properties, siteData, state) => {
 
   const href = state.path.replace(/^src\//, "").replace(/^pages/, "").replace(/\bindex.html$/, "")
 
-  if (node.attribs.href === href) {
+  if (localState.targetPath === href) {
     const fallback =
       DomUtils.findOne(
         n => n.constructor.name === "Element" && n.name === "tg:if-current",
@@ -659,8 +687,17 @@ const renderLinks = (node, documentProperties, siteData, state) => {
   const orderBy = node.attribs["order-by"]
 
   if (state.container && (state.container.type !== "links")) {
-    const articles = filterArticles(siteData.articles, pattern, tag)
+    let articles = filterArticles(siteData.articles, pattern, tag)
+
     if (orderBy !== undefined) sortArticles(articles, orderBy)
+
+    if (siteData.options.buildDrafts !== true) {
+      articles =
+        articles.filter(a =>
+          a.frontMatter.main === undefined || a.frontMatter.main.draft !== true
+        )
+    }
+
     return articles
       .map(article => renderArticleLink(node, article, siteData, state))
       .flat()
