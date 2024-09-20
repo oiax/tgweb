@@ -1048,4 +1048,42 @@ describe("renderWebSite", () => {
 
     assert.deepEqual(lines, expected)
   })
+
+  it("should render the head of 'with_assets' site correctly", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_assets")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+
+    const head = DomUtils.findOne(elem => elem.name === "head", dom.children)
+
+    const html = pretty(render(head, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<head>',
+      '  <meta charset="utf-8">',
+      '  <title>Home</title>',
+      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '  <meta name="googlebot" content="index,follow">',
+      '  <meta name="googlebot" content="notranslate">',
+      '  <meta name="description" content="Description">',
+      '  <meta property="og:description" content="Description">',
+      '  <link rel="stylesheet" href="/css/tailwind.css">',
+      '  <link rel="stylesheet" href="/css/main.css">',
+      '  <style>',
+      '    [x-cloak] {',
+      '      display: none !important;',
+      '    }',
+      '  </style>',
+      '  <script src="/js/tgweb_utilities.js" defer></script>',
+      '  <script src="/js/alpine.min.js" defer></script>',
+      '  <script type="module" src="/js/tgweb_lottie_player.js"></script>',
+      '  <script src="/reload/reload.js" defer></script>',
+      '  <script src="/js/main.js" defer></script>',
+      '</head>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
 })

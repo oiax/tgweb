@@ -9,6 +9,8 @@
 * [ページ](#ページ)
 * [フロントマター](#フロントマター)
 * [配色](#配色)
+* [スタイルシート](#スタイルシート)
+* [JavaScriptファイル](#JavaScript-ファイル)
 * [画像](#画像)
 * [アニメーション](#アニメーション)
 * [音声](#音声)
@@ -167,12 +169,18 @@ npx tgweb-dist
 │   ├── animations
 │   ├── articles
 │   ├── audios
+│   ├── css
 │   ├── components
 │   ├── images
+│   ├── js
 │   ├── layouts
 │   ├── pages
 │   │   └── index.html
 │   ├── segments
+│   ├── shared_components
+│   ├── shared_css
+│   ├── shared_js
+│   ├── shared_wrappers
 │   ├── tags
 │   ├── color_scheme.toml
 │   └── site.toml
@@ -252,30 +260,42 @@ npx tgweb-server site_0
     │       ├── animations
     │       ├── articles
     │       ├── audios
-    │       ├── color_scheme.toml
     │       ├── components
+    │       ├── css
     │       ├── images
+    │       ├── js
     │       ├── layouts
     │       ├── pages
     │       │   └── index.html
     │       ├── segments
-    │       ├── site.toml
-    │       └── tags
+    │       ├── shared_components
+    │       ├── shared_css
+    │       ├── shared_js
+    │       ├── shared_wrappers
+    │       ├── tags
+    │       ├── color_scheme.toml
+    │       └── site.toml
     └── site_1
         ├── dist
         └── src
             ├── animations
             ├── articles
             ├── audios
-            ├── color_scheme.toml
             ├── components
+            ├── css
             ├── images
+            ├── js
             ├── layouts
             ├── pages
             │   └── index.html
             ├── segments
-            ├── site.toml
-            └── tags
+            ├── shared_components
+            ├── shared_css
+            ├── shared_js
+            ├── shared_wrappers
+            ├── tags
+            ├── color_scheme.toml
+            └── site.toml
 ```
 
 `sites/` を含んだ表記でディレクトリ名を tgweb サーバのコマンド引数に渡すこともできます。
@@ -741,6 +761,48 @@ sec-s = "#70365d"
 また、`primary`, `secondary`, `success`, `warning` のように、[daisyUI](https://daisyui.com/) で指定された色名を使うこともできます。詳細については、daisyUIドキュメンテーションの [Colors](https://daisyui.com/docs/colors/) を参照してください。
 
 現時点では、tgwebはdaisyUIのテーマの切り替えをサポートしていないことに注意してください。
+
+## スタイルシート
+
+tgweb では Tailwind CSS を利用してビジュアルデザインを調整することが推奨されています。独自の CSS ファイルを使用したい場合は、`shared_css` ディレクトリまたは `css` ディレクトリに `.css` ファイルを置き、フロントマターの `stylesheets` にファイル名の本体をキー、値を `true` とする項目を追加してください。
+
+次に示すのは、フロントマターの設定例です：
+
+```
+[stylesheets]
+main = true
+```
+
+上記の設定は、`shared_css` ディレクトリまたは `css` ディレクトリにある `main.css` を使用するという意味になります。
+
+通常、`shared_css` ディレクトリは `../../../shared_css` へのシンボリックリンクです。`shared_css` ディレクトリと `css` ディレクトリに同名のファイルが存在した場合、`css` ディレクトリにあるものが優先されます。
+
+### 注意事項
+
+`npx tgweb-archive` コマンドを用いて作られた `.zip` ファイルを TeamGenik にインポートした場合、`site.toml` およびフロントマターに含まれる "stylesheets" セクションは無視されます。
+
+すなわち、TeamGenik 上で管理・公開する Web サイトにおいては、独自の CSS ファイルを使用することはできません。
+
+## JavaScript ファイル
+
+tgweb では [動的要素](#動的要素) を利用して画面上の要素に動きをつけることが推奨されています。独自の JavaScript ファイルを使用したい場合は、`shared_js` ディレクトリまたは `js` ディレクトリに `.js` ファイルを置き、フロントマターの `javascripts` にファイル名の本体をキー、値を `true` とする項目を追加してください。
+
+次に示すのは、フロントマターの設定例です：
+
+```
+[javascripts]
+main = true
+```
+
+上記の設定は、`shared_js` ディレクトリまたは `js` ディレクトリにある `main.js` を使用するという意味になります。
+
+通常、`shared_js` ディレクトリは `../../../shared_js` へのシンボリックリンクです。`shared_js` ディレクトリと `js` ディレクトリに同名のファイルが存在した場合、`js` ディレクトリにあるものが優先されます。
+
+#### 注意事項
+
+`npx tgweb-archive` コマンドを用いて作られた `.zip` ファイルを TeamGenik にインポートした場合、`site.toml` およびフロントマターに含まれる "scripts" セクションは無視されます。
+
+すなわち、TeamGenik 上で管理・公開する Web サイトにおいては、独自の JavaScript ファイルを使用することはできません。
 
 ## 画像
 
@@ -3221,7 +3283,7 @@ Teamgenikはこれらのパスを適切にURLに変換します。
 
 ### `<link>` 要素
 
-`<head>` 要素内の `<link>` 要素は、"link" セクションと "links" セクションに属するプロパティの値によって生成されます。
+`<head>` 要素内の `<link>` 要素は、"link" セクション、"links" セクション、"stylesheets" セクションに属するプロパティの値によって生成されます。
 
 ```toml
 [link]
@@ -3239,6 +3301,11 @@ href = "my_font.woff2"
 as = "font"
 type = "font/woff2"
 crossorigin = "anonymous"
+
+[[stylesheets]]
+main = true
+secondary = false
+"foo/bar" = true
 ```
 
 上記は以下の `<link>` 要素を生成します。
@@ -3248,11 +3315,13 @@ crossorigin = "anonymous"
 <link rel="license" href="http://localhost:3000/copyright.html">
 <link blocking="render" href="example.woff2" as="font">
 <link rel="preload" href="myFont.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="/main.css">
+<link rel="stylesheet" type="text/css" href="/foo/bar.css">
 ```
 
 ウェブサイトがTeamgenikで公開されると、`%{...}` 表記から生成されたURLは適切に変換されます。
 
-#### Note
+#### 注意事項 (1)
 
 次の `<link>` 要素は常にhead要素の中に挿入されます。
 
@@ -3260,20 +3329,46 @@ crossorigin = "anonymous"
 <link href="/css/tailwind.css" rel="stylesheet">
 ```
 
-他のスタイルシートを参照する `<link>` 要素をhead要素内に挿入することはできません。
+#### 注意事項 (2)
+
+`npx tgweb-archive` コマンドを用いて作られた `.zip` ファイルを TeamGenik にインポートした場合、`site.toml` およびフロントマターに含まれる "stylesheets" セクションは無視されます。
+
+すなわち、TeamGenik 上で管理・公開する Web サイトにおいては、独自の CSS ファイルを使用することはできません。
 
 ### `<script>` elements
 
-`<script>` 要素はtgwebが管理します。`<script>` 要素を `<head>` 要素や `<body>` 要素に挿入することはできません。
+`<head>` 要素内の `<script>` 要素は、"scripts" セクションに属するプロパティの値によって生成されます。
 
-#### Note
+```toml
+[[scripts]]
+main = true
+secondary = false
+"foo/bar" = true
+```
+
+上記は以下の `<link>` 要素を生成します。
+
+```html
+<script type="text/javascript" src="/main.js"></script>
+<script type="text/javascript" src="/foo/bar.js"></script>
+```
+
+#### 注意事項 (1)
 
 次の `<script>` 要素は常にhead要素内に挿入されます。
 
 ```html
+<script src="/js/tgweb_utilities.js" defer></script>
 <script src="/js/alpine.min.js" defer></script>
+<script type="module" src="/js/tgweb_lottie_player.js"></script>
 <script src="/reload/reload.js" defer></script>
 ```
+
+#### 注意事項 (2)
+
+`npx tgweb-archive` コマンドを用いて作られた `.zip` ファイルを TeamGenik にインポートした場合、`site.toml` およびフロントマターに含まれる "scripts" セクションは無視されます。
+
+すなわち、TeamGenik 上で管理・公開する Web サイトにおいては、独自の JavaScript ファイルを使用することはできません。
 
 ## 特殊なタグと属性のリスト
 

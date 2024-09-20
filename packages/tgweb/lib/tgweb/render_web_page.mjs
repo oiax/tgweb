@@ -1658,11 +1658,28 @@ const renderHead = (documentProperties) => {
   }
 
   children.push(parseDocument("<link rel='stylesheet' href='/css/tailwind.css'>").children[0])
+
+  if (typeof documentProperties.stylesheets === "object") {
+    for (const [key, value] of Object.entries(documentProperties.stylesheets)) {
+      if (value === true) {
+        children.push(parseDocument(`<link rel='stylesheet' href='/css/${key}.css'>`).children[0])
+      }
+    }
+  }
+
   children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
   children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
   children.push(parseDocument("<script type='module' src='/js/tgweb_lottie_player.js'></script>").children[0])
   children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
+
+  if (typeof documentProperties.javascripts === "object") {
+    for (const [key, value] of Object.entries(documentProperties.javascripts)) {
+      if (value === true) {
+        children.push(parseDocument(`<script src='/js/${key}.js' defer></script>'>`).children[0])
+      }
+    }
+  }
 
   head.children = children
 

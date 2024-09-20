@@ -7,12 +7,43 @@ import fs from "fs"
 import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
 import { getWrapper } from "./get_wrapper.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
+import { protectedFiles } from "./protected_files.mjs"
 
 const update = (path, siteData) => {
   let posixPath = slash(path)
+
+  if (protectedFiles.includes(posixPath.replace(/^src\//, ""))) return
+
   updateSiteData(siteData, posixPath)
 
   let type = getType(posixPath)
+  const dirname = PATH.dirname(posixPath)
+
+
+  if (dirname.startsWith("src/images") || dirname.startsWith("src/animations") ||
+      dirname.startsWith("src/audios") || dirname.startsWith("src/css") ||
+      dirname.startsWith("src/js")) {
+    const distPath = posixPath.replace(/^src\//, "dist/")
+    const targetPath = PATH.resolve(distPath)
+    const targetDir = PATH.dirname(targetPath)
+
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+    fs.copyFileSync(posixPath, targetPath)
+    return
+  }
+  else if (dirname.startsWith("src/shared_css") || dirname.startsWith("src/shared_js")) {
+    const assetPath = posixPath.replace(/^src\/shared_/, "src/")
+
+    if (fs.existsSync(assetPath)) return
+
+    const distPath = assetPath.replace(/^src\//, "dist/")
+    const targetPath = PATH.resolve(distPath)
+    const targetDir = PATH.dirname(targetPath)
+
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+    fs.copyFileSync(posixPath, targetPath)
+    return
+  }
 
   if (type === "front_matter_file") {
     posixPath = posixPath.replace(/\.toml$/, ".html")

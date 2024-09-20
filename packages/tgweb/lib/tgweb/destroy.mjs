@@ -6,9 +6,13 @@ import { updateSiteData } from "./update_site_data.mjs"
 import { updateHTML } from "./update_html.mjs"
 import { setDependencies } from "./set_dependencies.mjs"
 import { generateTailwindConfig } from "./generate_tailwind_config.mjs"
+import { protectedFiles } from "./protected_files.mjs"
 
 const destroy = (path, siteData) => {
   const posixPath = slash(path)
+
+  if (protectedFiles.includes(posixPath.replace(/^src\//, ""))) return
+
   const dirname = PATH.dirname(posixPath)
 
   if (dirname.startsWith("src/images") || dirname.startsWith("src/animations") ||
@@ -20,6 +24,50 @@ const destroy = (path, siteData) => {
       fs.rmSync(targetPath)
 
       if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
+    }
+  }
+  else if (dirname.startsWith("src/css") || dirname.startsWith("src/js")) {
+    const sharedAssetPath = posixPath.replace(/^src\//, "src/shared_")
+
+    if (fs.existsSync(sharedAssetPath)) {
+      const distPath = posixPath.replace(/^src\//, "dist/")
+      const targetPath = PATH.resolve(distPath)
+      const targetDir = PATH.dirname(targetPath)
+
+      if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+      fs.copyFileSync(sharedAssetPath, targetPath)
+    }
+    else {
+      const distPath = posixPath.replace(/^src\//, "dist/")
+      const targetPath = PATH.resolve(distPath)
+
+      if (fs.existsSync(targetPath)) {
+        fs.rmSync(targetPath)
+
+        if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
+      }
+    }
+  }
+  else if (dirname.startsWith("src/shared_css") || dirname.startsWith("src/shared_js")) {
+    const assetPath = posixPath.replace(/^src\/shared_/, "src/")
+
+    if (fs.existsSync(assetPath)) {
+      const distPath = assetPath.replace(/^src\//, "dist/")
+      const targetPath = PATH.resolve(distPath)
+      const targetDir = PATH.dirname(targetPath)
+
+      if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+      fs.copyFileSync(assetPath, targetPath)
+    }
+    else {
+      const distPath = assetPath.replace(/^src\//, "dist/")
+      const targetPath = PATH.resolve(distPath)
+
+      if (fs.existsSync(targetPath)) {
+        fs.rmSync(targetPath)
+
+        if (process.env.VERBOSE) console.log(`Deleted ${distPath}.`)
+      }
     }
   }
   else if (posixPath === "src/site.toml") {
