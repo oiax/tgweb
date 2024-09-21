@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.12.0
+
+* 81f3534 Allow authors to include their own css/js files
+
 ## 0.11.4
 
 * 6e53dd6 Introduce `main.draft` property to page/article front matter
