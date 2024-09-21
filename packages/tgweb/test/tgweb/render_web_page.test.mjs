@@ -13,7 +13,7 @@ if (inspectDom === undefined) { inspectDom() }
 
 const __dirname = PATH.dirname(fileURLToPath(import.meta.url))
 
-describe("renderWebSite", () => {
+describe("renderWebPage", () => {
   it("should render a head of 'minimum' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/minimum")
     const siteData = getSiteData(wd)
