@@ -23,6 +23,8 @@ const getWrapper = (siteData, path) => {
           return sharedWrapper
         }
         else {
+          const message = `No common wrapper named "${sharedWrapperName}" found.`
+
           wrapper.dom =
             parseDocument(`<div class='bg-error text-black m-1 py-1 px-2'>${message}</div>"`)
 
