@@ -41,6 +41,12 @@ const initializeSites = () => {
   const sharedWrappersDirPath = PATH.resolve(process.cwd(), "./shared_wrappers")
   fs.mkdirSync(sharedWrappersDirPath, { recursive: true })
 
+  const sharedCssDirPath = PATH.resolve(process.cwd(), "./shared_css")
+  fs.mkdirSync(sharedCssDirPath, { recursive: true })
+
+  const sharedJsDirPath = PATH.resolve(process.cwd(), "./shared_js")
+  fs.mkdirSync(sharedJsDirPath, { recursive: true })
+
   const targetDirName = process.argv[2]
   const targetDirPath = PATH.resolve(process.cwd(), `./sites/${targetDirName}`)
 
@@ -55,6 +61,8 @@ const initializeSites = () => {
 
   fs.symlinkSync("../../../shared_components", `${targetDirPath}/shared_components`)
   fs.symlinkSync("../../../shared_wrappers", `${targetDirPath}/shared_wrappers`)
+  fs.symlinkSync("../../../shared_css", `${targetDirPath}/shared_css`)
+  fs.symlinkSync("../../../shared_js", `${targetDirPath}/shared_js`)
 
   console.log(`A website scaffold was created in the sites/${targetDirName} directory.`)
 }
@@ -64,7 +72,8 @@ const generateSkeleton = (targetDirPath) => {
   fs.mkdirSync(`${targetDirPath}/dist`)
 
   const subdirectories =
-    ["pages", "layouts", "segments", "components", "articles", "tags", "images", "animations", "audios"]
+    ["pages", "layouts", "segments", "components", "articles", "tags", "images", "animations",
+      "audios", "css", "js"]
 
   subdirectories.forEach(subdir => fs.mkdirSync(`${targetDirPath}/src/${subdir}`))
 
