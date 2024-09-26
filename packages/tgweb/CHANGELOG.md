@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.12.1
+
+* 50a6f8d Fix `router.mjs` to serve `css/*.css` and `js/*.js`
+
 ## 0.12.0
 
 * 81f3534 Allow authors to include their own css/js files
