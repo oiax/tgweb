@@ -13,23 +13,11 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
-  router.get("/css/tailwind.css", (req, res) => {
+  router.get("/css/*.css", (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
-  router.get("/js/tgweb_utilities.js", (req, res) => {
-    res.sendFile(path.join(documentRoot, req.path))
-  })
-
-  router.get("/js/tgweb_lottie_player.js", (req, res) => {
-    res.sendFile(path.join(documentRoot, req.path))
-  })
-
-  router.get("/js/dotlottie.min.js", (req, res) => {
-    res.sendFile(path.join(documentRoot, req.path))
-  })
-
-  router.get("/js/alpine.min.js", (req, res) => {
+  router.get("/js/*.js", (req, res) => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
