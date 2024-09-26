@@ -19,7 +19,6 @@ const update = (path, siteData) => {
   let type = getType(posixPath)
   const dirname = PATH.dirname(posixPath)
 
-
   if (dirname.startsWith("src/images") || dirname.startsWith("src/animations") ||
       dirname.startsWith("src/audios") || dirname.startsWith("src/css") ||
       dirname.startsWith("src/js")) {
