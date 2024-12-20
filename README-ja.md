@@ -956,7 +956,7 @@ Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照す�
 
 ### マテリアル シンボル
 
-`sites.toml` の `font.material-symbols` セクションの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) があなたのウェブサイトで利用可能になります。
+`sites.toml` の `font.material-symbols` セクションの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) というアイコンがあなたのウェブサイトで利用可能になります。
 
 ```toml
 [font.material-symbols]
@@ -1001,9 +1001,9 @@ sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
 
 `opsz` はアイコンの「光学サイズ（optical size）」を決定する変数です。光学サイズとは、アイコンの推奨表示サイズを示します。20, 24, 40, 48 のいずれかを指定できます。デフォルト値は24です。一般に、光学サイズの値を大きくすると、線がより細く、空間がより狭く、x-height （ベースラインと書体の小文字の平均線との間の距離）がより短くなります。
 
-### 異体
+### アイコンバリアント
 
-ひとつのスタイルに対して変数の値が異なる複数の異体（variants）を用意したい場合は、次のようにスタイル名の後にマイナス記号と異体名を加えてください。
+ひとつのスタイルに対して変数の値が異なる複数のバリアントを用意したい場合は、次のようにスタイル名の後にマイナス記号とバリアント名を加えてください。
 
 ```toml
 [font.material-symbols]
@@ -1014,11 +1014,11 @@ rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
 rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
 ```
 
-異体名には小文字 (`a-z`) と数字 (`0-9`) しか使えないことに注意してください。
+バリアント名には小文字 (`a-z`) と数字 (`0-9`) しか使えないことに注意してください。
 
 #### テンプレートにシンボルを埋め込む方法
 
-マテリアル シンボルは、`<span>` 要素に対して `material-symbols-` で始まる `class` 属性を指定し、その内容としてシンボルの名前またはコードポイントを配置することで、テンプレートに埋め込むことができます。異体名を持つスタイルを `class` 属性に指定する場合は、スタイル名と異体名の間はマイナス記号ではなくスペースとしてください。
+マテリアル シンボルは、`<span>` 要素に対して `material-symbols-` で始まる `class` 属性を指定し、その内容としてシンボルの名前またはコードポイントを配置することで、テンプレートに埋め込むことができます。バリアント名を持つスタイルを `class` 属性に指定する場合は、スタイル名とバリアント名の間はマイナス記号ではなくスペースとしてください。
 
 シンボルの名前は「スネークケース」に変換する必要があります。つまり、名前に含まれるすべてのスペースをアンダースコアに、すべての大文字を小文字に置き換えてください。
 
@@ -1054,7 +1054,7 @@ rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
 <span class="material-symbols-sharp">&#xf1cc;</span>
 ```
 
-「星」アイコン（rounded）の異体「strong」:
+「星」アイコン（rounded）のバリアント「strong」:
 
 ```html
 <span class="material-symbols-rounded strong">star</span>
