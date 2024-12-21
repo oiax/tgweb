@@ -1037,7 +1037,7 @@ URL.
 #### Basic Usage
 
 By setting the value of the `outlined`, `rounded` and `sharp` properties to `true` in the
-"font.material-symbols" section of `sites.toml`,
+"font.material-symbols" section of `sites.toml`, icon called
 [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
 provided by Google will be available on your website.
 
@@ -1096,7 +1096,7 @@ In general, larger values of optical size result in thinner lines, narrower spac
 x-height (the distance between the baseline and the average line of the typeface's lowercase
 letters).
 
-### Variants
+### Icon Variants
 
 If you want to have multiple variants of a single style with different values for the variables,
 add a minus sign and the variant name after the style name, as follows:
