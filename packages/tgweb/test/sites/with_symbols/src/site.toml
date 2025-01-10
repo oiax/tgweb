@@ -1,0 +1,17 @@
+[meta.name]
+viewport = "width=device-width, initial-scale=1.0"
+googlebot = ["index,follow","notranslate"]
+description = "Description"
+
+[meta.property]
+"og:description" = "${meta.name.description}"
+
+[font.google-fonts]
+"Roboto" = true
+
+[font.material-symbols]
+outlined = true
+rounded = { fill = 1, grad = 0, opsz = 24, wght = 200 }
+sharp = { fill = 0, grad = 200, opsz = 40, wght = 300 }
+sharp-strong = { fill = 1, grad = 200, opsz = 48, wght = 700 }
+sharp-very-thin = { fill = 0, grad = 0, opsz = 24, wght = 100 }

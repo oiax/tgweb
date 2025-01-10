@@ -14,7 +14,8 @@
 * [Images](#images)
 * [Animations](#animations)
 * [Audios](#audios)
-* [Fonts and Icons](#fonts-and-icons)
+* [Fonts](#fonts)
+* [Symbols](#symbols)
 * [Layouts](#layouts)
 * [Wrappers](#wrappers)
 * [Segments](#segments)
@@ -1030,142 +1031,7 @@ the absolute path of the audio file in their `src` attribute.
 Note that Teamgenik does not allow the `<audio>` and `<source>` elements to reference an external
 URL.
 
-## Fonts and Icons
-
-### Material Symbols
-
-#### Basic Usage
-
-By setting the value of the `outlined`, `rounded` and `sharp` properties to `true` in the
-"font.material-symbols" section of `sites.toml`, icon called
-[Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
-provided by Google will be available on your website.
-
-```toml
-[font.material-symbols]
-outlined = true
-rounded = true
-sharp = true
-```
-
-By writing in this way, all styles of Material Symbols will be available.
-However, if only some of the styles are used, then the load on the website visitor should be
-reduced by specifying `false` for properties with unused style names.
-
-```toml
-[font.material-symbols]
-outlined = false
-rounded = false
-sharp = true
-```
-
-Alternatively, the property itself with the unused style name may be removed from `site.toml`.
-
-```toml
-[font.material-symbols]
-sharp = true
-```
-
-#### Adjusting variables
-
-Material Symbols provides four _variables_ for adjusting its typeface.
-To specify them, write as following:
-
-```toml
-[font.material-symbols]
-rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
-sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
-```
-
-The `fill` is a variable that controls whether or not fill is applied;
-0 means "no fill" and 1 means "fill". The default value is 0.
-
-The `wght` controls the thickness (_weight_) of icons:
-Possible values are 100, 200, 300, 400, 500, 600, or 700.
-100 is the thinnest and 700 is the thickest.
-The default value is 400.
-
-The `grad` is the variable that determines the _grade_ of icons.
-By changing the value of this variable, the thickness of the icon can be fine-tuned.
-Possible values are -25, 0, or 200. The default value is 0.
-A negative value makes icons thinner, a positive value makes them thicker.
-
-The `opsz` variable determines the _optical size_ of icons, which is their recommended display
-size. Possible values are 20, 24, 40, or 48. The default value is 24.
-In general, larger values of optical size result in thinner lines, narrower spaces, and shorter
-x-height (the distance between the baseline and the average line of the typeface's lowercase
-letters).
-
-### Icon Variants
-
-If you want to have multiple variants of a single style with different values for the variables,
-add a minus sign and the variant name after the style name, as follows:
-
-```toml
-[font.material-symbols]
-outlined = true
-sharp = true
-rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
-rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
-rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
-```
-
-Note that only lowercase letters (`a-z`) and numerals (`0-9`) are allowed in variant names.
-
-#### How to embed symbols in a template
-
-Material Symbols can be embedded in a template by specifying a `class` beginning with
-`material-symbols-` for a `<span>` element and placing the name of the symbol or code point
-as its content.
-When specifying a style with a variant name in the `class` attribute, use a space instead of a minus sign between the style name and variant name.
-
-The name of the symbol must be converted to a _snake case_. That is, replace all spaces in the
-name with underscores and all uppercase letters with lowercase ones.
-
-The code point of a symbol is a four-digit hexadecimal number, such as `e88a`.
-When specified as the content of a `<span>` element, it must be enclosed in `&#x` and `;` like
-`&#xe88a;`
-
-You can find the code point of each symbol on the
-[Material Symbols and Icons](https://fonts.google.com/icons).
-
-Although symbol names are easier to use, code points have one advantage.
-
-Using a symbol name may temporarily disrupt the layout of a web page because a space the width of
-the symbol name is displayed in place of the symbol until the font file is downloaded.
-The use of code points can reduce the disruption to the layout.
-
-#### Examples of Use
-
-The "Home" symbol (outlined):
-
-```html
-<span class="material-symbols-outlined">home</span>
-<span class="material-symbols-outlined">&#xe88a;</span>
-```
-
-The "Delete" symbol (rounded):
-
-```html
-<span class="material-symbols-rounded">delete</span>
-<span class="material-symbols-rounded">&#xe872;</span>
-```
-
-The "Shopping Bag" symbol (sharp):
-
-```html
-<span class="material-symbols-sharp">shopping_bag</span>
-<span class="material-symbols-sharp">&#xf1cc;</span>
-```
-
-The "strong" variant of the "Star" symbol (rounded):
-
-```html
-<span class="material-symbols-rounded strong">star</span>
-<span class="material-symbols-rounded strong">&#xe838;</span>
-```
-
-### Google Fonts
+## Fonts
 
 The Roboto font family from [Google Fonts](https://fonts.google.com/) can be used on your website
 by setting the following in the "font.google-fonts" section of `site.toml`.
@@ -1215,6 +1081,148 @@ The following example uses the italic Pathway Extreme font family with weight 40
 
 ```html
 <p class="font-['Pathway_Extreme'] italic font-[400]">Hello, world!</p>
+```
+
+# Symbols
+
+## Symbol styles
+
+The tgweb provides Google's [Material Symbols](https://developers.google.com/fonts/docs/material_symbols)
+for you to use on your website.
+Material symbols are a type of icon font.
+In this document, material symbols are simply referred to as _symbols_.
+
+The default `site.toml` contains the following description:
+
+```toml
+[font.material-symbols]
+outlined = true
+rounded = true
+sharp = true
+```
+
+When written this way, all three `styles` &mdash; `outlined`, `rounded`, and `sharp` symbols &mdash; are available.
+If you do not use some or all of the styles on your website,
+we recommend that you set the values of the `outlined`, `rounded`, and `sharp` properties of the
+`font.material-symbols` section of `sites.toml` to `false` to reduce the to reduce the load on
+visitors to your web site.
+
+For example, the following will load only `sharp` style symbols:
+
+```toml
+[font.material-symbols]
+outlined = false
+rounded = false
+sharp = true
+```
+
+### Adjusting variables
+
+Symbols provides four _variables_ for adjusting its typeface.
+To specify them, write as following:
+
+```toml
+[font.material-symbols]
+rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
+sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
+```
+
+The `fill` is a variable that controls whether or not fill is applied;
+0 means "no fill" and 1 means "fill". The default value is 0.
+
+The `wght` controls the thickness (_weight_) of symbols:
+Possible values are 100, 200, 300, 400, 500, 600, or 700.
+100 is the thinnest and 700 is the thickest.
+The default value is 400.
+
+The `grad` is the variable that determines the _grade_ of symbols.
+By changing the value of this variable, the thickness of the symbol can be fine-tuned.
+Possible values are -25, 0, or 200. The default value is 0.
+A negative value makes symbols thinner, a positive value makes them thicker.
+
+The `opsz` variable determines the _optical size_ of symbols, which is their recommended display
+size. Possible values are 20, 24, 40, or 48. The default value is 24.
+In general, larger values of optical size result in thinner lines, narrower spaces, and shorter
+x-height (the distance between the baseline and the average line of the typeface's lowercase
+letters).
+
+### Symbol Variants
+
+If you want to have multiple variants of a single style with different values for the variables,
+add a minus sign and the variant name after the style name, as follows:
+
+```toml
+[font.material-symbols]
+outlined = true
+sharp = true
+rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
+rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
+rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
+```
+
+Note that only lowercase letters (`a-z`), numerals (`0-9`) and minus signs (`-`) are allowed in variant names.
+
+#### How to embed symbols in a template
+
+To embed a symbol in a page, article, segment, etc., add a `<tg:symbol>` element at the desired location,
+specifying the symbol name with the `name` attribute and the symbol style with the `symbol-style` attribute.
+If the `symbol-style` attribute is omitted, `“outlined”` is assumed to be specified.
+
+For example, the following example generates the `Home` symbol in the `outlined` style:
+
+```html
+<tg:symbol name="home" symbol-style="outlined"></tg:symbol>
+```
+
+The name of the symbol must be converted to _snake case_.
+That is, replace all spaces in the name with underscores and all uppercase letters with lowercase letters.
+For example, to generate a "Shopping Bag" symbol, specify `"shopping_bag"` in the `name` attribute.
+
+```html
+<tg:symbol name="shopping_bag" symbol-style="sharp"></tg:symbol>
+```
+
+To adjust the typeface of a symbol by specifying variables,
+specify the `fill`, `wght`, `grad` and `opsz` attributes.
+
+```html
+<tg:symbol name="star" symbol-style="rounded" fill="1"></tg:symbol>
+```
+
+To specify the font size, use Tailwind classes such as `text-xs` and `text-lg`.
+
+```html
+<tg:symbol name="favorite" symbol-style="rounded" fill="1" class="text-lg"></tg:symbol>
+```
+
+#### Examples of Use
+
+The "Home" symbol (outlined):
+
+```html
+<span class="material-symbols-outlined">home</span>
+<span class="material-symbols-outlined">&#xe88a;</span>
+```
+
+The "Delete" symbol (rounded):
+
+```html
+<span class="material-symbols-rounded">delete</span>
+<span class="material-symbols-rounded">&#xe872;</span>
+```
+
+The "Shopping Bag" symbol (sharp):
+
+```html
+<span class="material-symbols-sharp">shopping_bag</span>
+<span class="material-symbols-sharp">&#xf1cc;</span>
+```
+
+The "strong" variant of the "Star" symbol (rounded):
+
+```html
+<span class="material-symbols-rounded strong">star</span>
+<span class="material-symbols-rounded strong">&#xe838;</span>
 ```
 
 ## Layouts
@@ -1881,12 +1889,12 @@ The following is an example of a component:
 
 ```html
 <span class="inline-block border-solid border-2 border-black rounded p-2">
-  <span class="material-symbols-outlined">sentiment_satisfied</span>
+  <tg:symbol name="sentiment_satisfied"></tg:symbol>
 </span>
 ```
 
-Note that the property in the `font.material-symbols` section of `sites.toml` (the `outlined` property in this example) must be set to `true` in order to display the smiley icon above.
-See [Material Symbols](#material-symbols) for details.
+Note that the property in the `font.material-symbols` section of `sites.toml` (the `outlined` property in this example) must be set to `true` in order to display the symbol above.
+See [Symbols](#symbols) for details.
 
 When embedding a component into another component, care should be taken to avoid circular
 references. If a circular reference is detected, an error message will be inserted in the
@@ -3789,6 +3797,7 @@ on TeamGenik.
 * `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
 * `<tg:shared-component>`: [Shared components](#shared-components)
 * `<tg:slot>`: [Slots and inserts](#slots-and-inserts)
+* `<tg:symbol>`: [Symbols](#symbols)
 * `<tg:unless-embedded>`: [`<tg:if-embedded> and <tg:unless-embedded>`](#tgif-embedded-and-tgunless-embedded)
 
 ### List of special attributes

@@ -1,0 +1,11 @@
+
+[font.material-symbols]
+outlined = true
+rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
+rounded-bold = { fill = 1, wght = 700, grad = 0, opsz = 24 }
+sharp-very-thin = { fill = 0, wght = 100, grad = 0, opsz = 24 }
+
+[font.google-fonts]
+Roboto = true
+"Noto Sans Japanese" = true
+"Pathway Extreme" = { normal = [400, 800], italic = [400] }
