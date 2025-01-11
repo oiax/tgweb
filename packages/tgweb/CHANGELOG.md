@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.13.0
+
+* 215f8f5 Introduce `<tg:symbol>`
+
 ## 0.12.1
 
 * 50a6f8d Fix `router.mjs` to serve `css/*.css` and `js/*.js`
