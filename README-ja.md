@@ -14,7 +14,8 @@
 * [画像](#画像)
 * [アニメーション](#アニメーション)
 * [音声](#音声)
-* [フォントとアイコン](#フォントとアイコン)
+* [フォント](#フォント)
+* [シンボル](#シンボル)
 * [レイアウト](#レイアウト)
 * [ラッパー](#ラッパー)
 * [セグメント](#セグメント)
@@ -952,116 +953,7 @@ Teamgenikは以下の形式の音声ファイルをサポートしています:
 
 Teamgenikでは、`<audio>` 要素と `<source>` 要素で外部URLを参照することはできません。
 
-## フォントとアイコン
-
-### マテリアル シンボル
-
-`sites.toml` の `font.material-symbols` セクションの `outlined`、`rounded`、`sharp` プロパティの値を `true` に設定することで、Googleが提供する [マテリアル シンボル](https://developers.google.com/fonts/docs/material_symbols) というアイコンがあなたのウェブサイトで利用可能になります。
-
-```toml
-[font.material-symbols]
-outlined = true
-rounded = true
-sharp = true
-```
-
-このように書くことで、すべてのスタイルの マテリアル シンボル が利用できるようになります。
-ただし、一部のスタイルしか使用しない場合は、未使用のスタイル名を持つプロパティに `false` を指定することで、ウェブサイト訪問者の負荷を軽減すべきです。
-
-```toml
-[font.material-symbols]
-outlined = false
-rounded = false
-sharp = true
-```
-
-あるいは、未使用のスタイル名を持つプロパティ自体を `site.toml` から削除しても構いません。
-
-```toml
-[font.material-symbols]
-sharp = true
-```
-
-#### 変数の調整
-
-マテリアル シンボルには書体を調整するための4つの「変数」が用意されています。
-これらを指定するには、次のように記述してください:
-
-```toml
-[font.material-symbols]
-rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
-sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
-```
-
-`fill` は塗りつぶしの有無を制御する変数です。0 なら「なし」、1 なら「あり」を意味します。デフォルト値は0です。
-
-`wght` はアイコンの「太さ（weight）」を決定する変数です。100, 200, 300, 400, 500, 600, 700 のいずれかを指定できます。100が最も細く、700が最も太くなります。デフォルト値は400です。
-
-`grad` はアイコンの「グレード（grade）」を決定する変数です。この変数の値を変更することで、アイコンの太さを微調整できます。指定できる値は -25, 0, 200 のいずれかです。デフォルト値は0です。負の値を指定するとアイコンの線がより細くなり、正の値を指定するとアイコンの線がより太くなります。
-
-`opsz` はアイコンの「光学サイズ（optical size）」を決定する変数です。光学サイズとは、アイコンの推奨表示サイズを示します。20, 24, 40, 48 のいずれかを指定できます。デフォルト値は24です。一般に、光学サイズの値を大きくすると、線がより細く、空間がより狭く、x-height （ベースラインと書体の小文字の平均線との間の距離）がより短くなります。
-
-### アイコンバリアント
-
-ひとつのスタイルに対して変数の値が異なる複数のバリアントを用意したい場合は、次のようにスタイル名の後にマイナス記号とバリアント名を加えてください。
-
-```toml
-[font.material-symbols]
-outlined = true
-sharp = true
-rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
-rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
-rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
-```
-
-バリアント名には小文字 (`a-z`) と数字 (`0-9`) しか使えないことに注意してください。
-
-#### テンプレートにシンボルを埋め込む方法
-
-マテリアル シンボルは、`<span>` 要素に対して `material-symbols-` で始まる `class` 属性を指定し、その内容としてシンボルの名前またはコードポイントを配置することで、テンプレートに埋め込むことができます。バリアント名を持つスタイルを `class` 属性に指定する場合は、スタイル名とバリアント名の間はマイナス記号ではなくスペースとしてください。
-
-シンボルの名前は「スネークケース」に変換する必要があります。つまり、名前に含まれるすべてのスペースをアンダースコアに、すべての大文字を小文字に置き換えてください。
-
-シンボルのコードポイントは、`e88a` のように4桁の16進数です。
-`<span>` 要素の内容として指定する場合は、`&#xe88a;` のように `&#x` と `;` で囲んでください。
-
-各シンボルのコードポイントは[Material Symbols and Icons](https://fonts.google.com/icons)で確認できます。
-
-シンボル名の方が使いやすいが、コードポイントにも利点があります。
-
-シンボル名を使用すると、フォントファイルがダウンロードされるまで、シンボル名の幅のスペースがシンボルの代わりに表示されるため、ウェブページのレイアウトが一時的に崩れることがあります。コードポイントを使用することで、レイアウトの乱れを減らすことができます。
-
-#### 使用例
-
-「ホーム」アイコン（outlined）:
-
-```html
-<span class="material-symbols-outlined">home</span>
-<span class="material-symbols-outlined">&#xe88a;</span>
-```
-
-「削除」アイコン（rounded）:
-
-```html
-<span class="material-symbols-rounded">delete</span>
-<span class="material-symbols-rounded">&#xe872;</span>
-```
-
-「買い物かご」アイコン（sharp）:
-
-```html
-<span class="material-symbols-sharp">shopping_bag</span>
-<span class="material-symbols-sharp">&#xf1cc;</span>
-```
-
-「星」アイコン（rounded）のバリアント「strong」:
-
-```html
-<span class="material-symbols-rounded strong">star</span>
-<span class="material-symbols-rounded strong">&#xe838;</span>
-```
-
-### Google Fonts
+## フォント
 
 [Google Fonts](https://fonts.google.com/) のRobotoフォントファミリーは、`site.toml` の "font.google-fonts" セクションで以下のように設定することで、あなたのウェブサイトで使用することができます。
 
@@ -1087,19 +979,19 @@ Roboto = true
 <p class="font-['Noto_Sans_JP']">こんにちは、世界！</p>
 ```
 
-フォントファイルのサイズを小さくするために、いくつかのフォントウェイト（太さ）を選択するには、`true`の代わりにウェイトを配列で指定します。
+フォントファイルのサイズを小さくするために、いくつかのフォントウェイト（太さ）を選択するには、`true` の代わりにウェイトを配列で指定します。
 
 ```toml
 "Noto Sans JP" = [400, 800]
 ```
 
-次の例では、ウェイトが 800 の Noto Sans JPフォントファミリーを使用しています。
+次の例では、ウェイトが 800 の Noto Sans JP フォントファミリーを使用しています。
 
 ```html
 <p class="font-['Noto_Sans_JP'] font-[800]">こんにちは、世界！</p>
 ```
 
-各スタイルのフォントのウェイトを選択するには、以下のようにインライン・テーブルを使ってウェイトを指定する：
+各スタイルのフォントのウェイトを選択するには、以下のようにインライン・テーブルを使ってウェイトを指定します：
 
 ```toml
 "Pathway Extreme" = { normal = [400, 800], italic = [400] }
@@ -1109,6 +1001,94 @@ Roboto = true
 
 ```html
 <p class="font-['Pathway_Extreme'] italic font-[400]">Hello, world!</p>
+```
+
+## シンボル
+
+### シンボルスタイル
+
+tgweb では、Google が提供する [マテリアルシンボル](https://developers.google.com/fonts/docs/material_symbols) が利用可能です。マテリアルシンボルはアイコンフォントの一種です。この文書ではマテリアル シンボルを単に「シンボル」と呼びます。
+
+初期状態の `site.toml` には次のような記述が含まれています。
+
+```toml
+[font.material-symbols]
+outlined = true
+rounded = true
+sharp = true
+```
+
+このように書かれている場合、3 種類の「スタイル」、すなわち「outlined」、「rounded」、「sharp」のシンボルがすべて利用可能です。あなたのウェブサイトで一部または全部のスタイルを利用しない場合は、`sites.toml` の `font.material-symbols` セクションの `outlined`、`rounded`、`sharp` プロパティの値を `false` に設定し、ウェブサイト訪問者の負荷を軽減することおすすめします
+
+例えば、次のように書けば、「sharp」スタイルのシンボルのみが読み込まれます。
+
+```toml
+[font.material-symbols]
+outlined = false
+rounded = false
+sharp = true
+```
+
+### 変数の調整
+
+シンボルには書体を調整するための4つの「変数」が用意されています。これらを指定するには、次のように記述してください:
+
+```toml
+[font.material-symbols]
+rounded = { fill = 1, wght = 200, grad = 0, opsz = 24 }
+sharp = { fill = 0, wght = 300, grad = 200, opsz = 40 }
+```
+
+`fill` は塗りつぶしの有無を制御する変数です。0 なら「なし」、1 なら「あり」を意味します。デフォルト値は0です。
+
+`wght` はシンボルの「太さ（weight）」を決定する変数です。100, 200, 300, 400, 500, 600, 700 のいずれかを指定できます。100が最も細く、700が最も太くなります。デフォルト値は400です。
+
+`grad` はシンボルの「グレード（grade）」を決定する変数です。この変数の値を変更することで、シンボルの太さを微調整できます。指定できる値は -25, 0, 200 のいずれかです。デフォルト値は0です。負の値を指定するとシンボルの線がより細くなり、正の値を指定するとシンボルの線がより太くなります。
+
+`opsz` はシンボルの「光学サイズ（optical size）」を決定する変数です。光学サイズとは、シンボルの推奨表示サイズを示します。20, 24, 40, 48 のいずれかを指定できます。デフォルト値は24です。一般に、光学サイズの値を大きくすると、線がより細く、空間がより狭く、x-height （ベースラインと書体の小文字の平均線との間の距離）がより短くなります。
+
+### シンボルバリアント
+
+ひとつのスタイルに対して変数の値が異なる複数のバリアントを用意したい場合は、次のようにスタイル名の後にマイナス記号とバリアント名を加えてください。
+
+```toml
+[font.material-symbols]
+outlined = true
+sharp = true
+rounded = { fill = 0, wght = 200, grad = 0, opsz = 24 }
+rounded-strong = { fill = 1, wght = 400, grad = 0, opsz = 24 }
+rounded-bold = { fill = 0, wght = 700, grad = 0, opsz = 24 }
+rounded-very-thin = { fill = 0, wght = 100, grad = 0, opsz = 24 }
+```
+
+バリアント名には小文字 (`a-z`) と数字 (`0-9`) とマイナス記号（`-`）しか使えないことに注意してください。
+
+#### テンプレートにシンボルを埋め込む方法
+
+ページ、アーティクル、セグメント等にシンボルを埋め込むには、配置したい場所に `<tg:symbol>` 要素を追加し、`name` 属性でシンボル名、`symbol-style` 属性でシンボルスタイルを指定します。`symbol-style` 属性が省略された場合、`"outlined"` が指定されたものとみなされます。
+
+例えば、次の例は「outlined」スタイルの「Home」シンボルを生成します。
+
+```html
+<tg:symbol name="home" symbol-style="outlined"></tg:symbol>
+```
+
+シンボルの名前は「スネークケース」に変換する必要があります。つまり、名前に含まれるすべてのスペースをアンダースコアに、すべての大文字を小文字に置き換えてください。例えば、「Shopping Bag」シンボルを生成するには、`name` 属性に `"shopping_bag"` を指定してください。
+
+```html
+<tg:symbol name="shopping_bag" symbol-style="sharp"></tg:symbol>
+```
+
+変数を指定してシンボルの書体を調整するには、`fill` 属性、`wght` 属性、`grad` 属性、`opsz` 属性を指定してください。
+
+```html
+<tg:symbol name="star" symbol-style="rounded" fill="1"></tg:symbol>
+```
+
+フォントのサイズを指定するには、Tailwind の `text-xs` や `text-lg` などのクラスを利用してください。
+
+```html
+<tg:symbol name="favorite" symbol-style="rounded" fill="1" class="text-lg"></tg:symbol>
 ```
 
 ## レイアウト
@@ -1733,11 +1713,11 @@ message = "Hi!"
 
 ```html
 <span class="inline-block border-solid border-2 border-black rounded p-2">
-  <span class="material-symbols-outlined">sentiment_satisfied</span>
+  <tg:symbol name="sentiment_satisfied"></tg:symbol>
 </span>
 ```
 
-上記のスマイル・アイコンを表示するには、`sites.toml` の `font.material-symbols` セクション内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [マテリアル シンボル](#マテリアル-シンボル)を参照してください。
+上記のシンボルを表示するには、`sites.toml` の `font.material-symbols` セクション内のプロパティ（この例では `outlined` プロパティ）を `true` に設定する必要があることに注意してください。詳しくは [シンボル](#シンボル)を参照してください。
 
 部品を別の部品に埋め込む場合は、循環参照を避けるように注意する必要があります。循環参照が検出された場合、生成されたHTMLにエラーメッセージが挿入されます。
 
@@ -3392,6 +3372,7 @@ secondary = false
 * `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
 * `<tg:shared-component>`: [共有部品](#共有部品)
 * `<tg:slot>`: [スロットとインサート](#スロットとインサート)
+* `<tg:symbol>`: [シンボル](#シンボル)
 * `<tg:unless-embedded>`: [`<tg:if-embedded> と <tg:unless-embedded>`](#tgif-embedded-と-tgunless-embedded)
 
 ### 特殊属性のリスト

@@ -6,7 +6,7 @@ import * as PATH from "path"
 import render from "dom-serializer"
 import pretty from "pretty"
 import { inspectDom } from "../../lib/utils/inspect_dom.mjs"
-import { DomUtils } from "htmlparser2"
+import { parseDocument, DomUtils } from "htmlparser2"
 
 // Prevent warnings when function inspectDom is not used.
 if (inspectDom === undefined) { inspectDom() }
@@ -774,8 +774,11 @@ describe("renderWebPage", () => {
       '    .material-symbols-rounded {',
       '      font-variation-settings: "FILL" 1, "wght" 200, "GRAD" 0, "opsz" 24;',
       '    }',
-      '    .material-symbols-rounded.bold {',
+      '    .material-symbols-rounded.material-symbols-rounded-bold {',
       '      font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 24;',
+      '    }',
+      '    .material-symbols-sharp.material-symbols-sharp-very-thin {',
+      '      font-variation-settings: "FILL" 0, "wght" 100, "GRAD" 0, "opsz" 24;',
       '    }',
       '  </style>',
       '  <link rel="stylesheet" href="/css/tailwind.css">',
@@ -1082,6 +1085,37 @@ describe("renderWebPage", () => {
       '  <script src="/reload/reload.js" defer></script>',
       '  <script src="/js/main.js" defer></script>',
       '</head>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
+  it("should render symbols", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_symbols")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const star = parseDocument("&#xe838;").children[0].data
+    const checkBox = parseDocument("&#xe834;").children[0].data
+    const sentimentSatisfied = parseDocument("&#xe813;").children[0].data
+    const home = parseDocument("&#xe88a;").children[0].data
+    const add = parseDocument("&#xe145;").children[0].data
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">',
+      `    <span class="material-symbols-outlined">${star}</span>`,
+      `    <span class="material-symbols-rounded" style="font-variation-settings: \'FILL\' 1">${checkBox}</span>`,
+      `    <span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1, \'wght\' 700">${sentimentSatisfied}</span>`,
+      `    <span class="material-symbols-sharp material-symbols-sharp-very-thin" style="font-variation-settings: \'GRAD\' 200">${home}</span>`,
+      `    <span class="material-symbols-outlined" style="font-variation-settings: \'opsz\' 48">${add}</span>`,
+      '    Hello, world!',
+      '  </h1>',
+      '</body>'
     ]
 
     assert.deepEqual(lines, expected)

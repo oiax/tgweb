@@ -1,3 +1,5 @@
+import * as PATH from "path"
+import fs from "fs"
 import { escape } from "html-escaper"
 import render from "dom-serializer"
 import getType from "./get_type.mjs"
@@ -12,6 +14,16 @@ import { inspectDom } from "../utils/inspect_dom.mjs"
 import { mergeProperties } from "./merge_properties.mjs"
 
 if (inspectDom === undefined) { inspectDom() }
+
+const __dirname = import.meta.dirname
+const dataPath = PATH.resolve(PATH.join(__dirname, "..", "..", "resources", "material_symbols.txt"))
+const symbolsData = fs.readFileSync(dataPath)
+const symbolNameCodepointMapping = {}
+
+symbolsData.toString().split("\n").map(line => {
+  const a = line.split(" ")
+  symbolNameCodepointMapping[a[0]] = a[1]
+})
 
 const renderWebPage = (path, siteData) => {
   const type = getType(path)
@@ -254,6 +266,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     }
     else if (node.name === "tg:animation") {
       return renderAnimation(node)
+    }
+    else if (node.name === "tg:symbol") {
+      return renderSymbol(node)
     }
     else if (node.name === "tg:app") {
       return renderAppPlaceholder(node, siteData)
@@ -801,6 +816,54 @@ const renderAnimation = (node) => {
     if (node.attribs["height"]) canvas.attribs["height"] = node.attribs["height"]
 
     return canvas
+  }
+  else {
+    return err(render(node))
+  }
+}
+
+const renderSymbol = (node) => {
+  const name = node.attribs["name"]
+  const codepoint = symbolNameCodepointMapping[name]
+
+  if (codepoint) {
+    const symbolStyle = node.attribs["symbol-style"] || "outlined"
+
+    const span = parseDocument(`<span>&#x${codepoint};</span>`).children[0]
+    const classTokens = []
+
+    const styleNameParts = symbolStyle.split("-")
+
+    if (styleNameParts.length === 1) {
+      classTokens.push(`material-symbols-${symbolStyle}`)
+    }
+    else {
+      const styleName = styleNameParts[0]
+      const variant = styleNameParts.slice(1).join("-")
+      classTokens.push(`material-symbols-${styleName}`)
+      classTokens.push(`material-symbols-${styleName}-${variant}`)
+    }
+
+    span.attribs["class"] = classTokens.join(" ")
+
+    const settings = []
+
+    if (["0", "1"].includes(node.attribs["fill"])) settings.push(`'FILL' ${node.attribs["fill"]}`)
+
+    if (["100", "200", "300", "400", "500", "600", "700"].includes(node.attribs["wght"]))
+      settings.push(`'wght' ${node.attribs["wght"]}`)
+
+    if (["-25", "0", "200"].includes(node.attribs["grad"]))
+      settings.push(`'GRAD' ${node.attribs["grad"]}`)
+
+    if (["20", "24", "40", "48"].includes(node.attribs["opsz"]))
+      settings.push(`'opsz' ${node.attribs["opsz"]}`)
+
+    if (settings.length > 0) {
+      span.attribs["style"] = `font-variation-settings: ${settings.join(", ")}`
+    }
+
+    return span
   }
   else {
     return err(render(node))
@@ -1607,16 +1670,16 @@ const renderHead = (documentProperties) => {
           if (parts.length === 1) {
             style = key
           }
-          else if (parts.length === 2) {
+          else if (parts.length >= 2) {
             style = parts[0]
-            variant = parts[1]
+            variant = parts.slice(1).join("-")
           }
           else {
             style = undefined
           }
 
           if (style === undefined) return acc
-          if (variant !== undefined && !variant.match(/^[0-9a-z]+$/)) return acc
+          if (variant !== undefined && !variant.match(/^[0-9a-z-]+$/)) return acc
 
           if (value === true) {
             fill = 0
@@ -1641,7 +1704,7 @@ const renderHead = (documentProperties) => {
             }
             else {
               settings = `"FILL" ${fill}, "wght" ${wght}, "GRAD" ${grad}, "opsz" ${opsz}`
-              selector = `.material-symbols-${style}.${variant}`
+              selector = `.material-symbols-${style}.material-symbols-${style}-${variant}`
               declaration = `${selector} { font-variation-settings: ${settings}; }`
               acc.push(declaration)
             }
