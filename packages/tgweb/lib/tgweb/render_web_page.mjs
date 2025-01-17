@@ -1259,6 +1259,21 @@ const addTramHook = (newNode, newState) => {
 }
 
 const addTramSubhooks = (newNode) => {
+  if (newNode.attribs["class"] !== undefined)
+    newNode.attribs["data-tram-base-class"] = newNode.attribs["class"]
+  else
+    newNode.attribs["data-tram-base-class"] = ""
+
+  let classTokens = []
+
+  if (newNode.attribs["class"] !== undefined)
+    classTokens = newNode.attribs["class"].split(" ")
+
+  if (newNode.attribs["tg:init"] !== undefined)
+    classTokens = classTokens.concat(newNode.attribs["tg:init"].split(" "))
+
+  if (classTokens.length > 0) newNode.attribs["class"] = classTokens.join(" ")
+
   const found =
     Object.keys(newNode.attribs).some(attrName =>
       attrName.startsWith("tg:forward-") || attrName.startsWith("tg:backward-")
@@ -1267,9 +1282,6 @@ const addTramSubhooks = (newNode) => {
   if (!found) return
 
   newNode.attribs["data-tram-trigger"] = ""
-
-  if (newNode.attribs["tg:init"] !== undefined)
-    newNode.attribs["data-tram-init"] = newNode.attribs["tg:init"]
 
   Object.keys(newNode.attribs).forEach(attrName => {
     const md = attrName.match(/^tg:(forward|backward)-(\d{1,3})(|%|vh|px)(|\+|-)$/)

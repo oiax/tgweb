@@ -384,11 +384,6 @@ window.tgweb = {
       this.targets = Array.from(this.el.querySelectorAll("[data-tram-trigger]"))
       if (this.el.dataset.tramTrigger !== undefined) this.targets.push(el)
 
-      this.targets.forEach(target => {
-        if (target.dataset.tramBaseClass == undefined)
-          target.dataset.tramBaseClass = target.className
-      })
-
       this.kernel = window.document.getElementById("tg-preview-area-kernel")
 
       if (this.kernel) {
