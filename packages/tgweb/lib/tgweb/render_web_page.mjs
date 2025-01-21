@@ -108,7 +108,7 @@ const renderArticle = (path, siteData) => {
 
 const applyLayout = (page, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties)
+  const head = renderHead(documentProperties, siteData.forDistribution)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -141,7 +141,7 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
 
 const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties)
+  const head = renderHead(documentProperties, siteData.forDistribution)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -187,7 +187,7 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
 
 const doRenderPage = (page, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties)
+  const head = renderHead(documentProperties, siteData.forDistribution)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -1435,7 +1435,7 @@ const removeTgAttribs = (attribs) => {
   keys.forEach(key => delete attribs[key])
 }
 
-const renderHead = (documentProperties) => {
+const renderHead = (documentProperties, forDistribution) => {
   const head = parseDocument("<head></head>")
 
   const children = []
@@ -1746,7 +1746,9 @@ const renderHead = (documentProperties) => {
   children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
   children.push(parseDocument("<script type='module' src='/js/tgweb_lottie_player.js'></script>").children[0])
-  children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
+
+  if (forDistribution !== true)
+    children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 
   if (typeof documentProperties.javascripts === "object") {
     for (const [key, value] of Object.entries(documentProperties.javascripts)) {

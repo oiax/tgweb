@@ -25,6 +25,7 @@ const main = (targetDirPath, options) => {
 
   const siteData = tgweb.getSiteData(process.cwd())
   siteData.options = options
+  siteData.forDistribution = true
 
   installFonts(siteData, workingDir)
   installUtilities(workingDir)
