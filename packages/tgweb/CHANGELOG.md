@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.13.1
+
+* 2ec6728 Consider that there is a time lag between page initialization and tram initialization
+
 ## 0.13.0
 
 * 215f8f5 Introduce `<tg:symbol>`
