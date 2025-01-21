@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.13.2
+
+* daf0a25 Exclude `reload.js` from HTML `<head>` generate by `npx tgweb-dist`
+
 ## 0.13.1
 
 * 2ec6728 Consider that there is a time lag between page initialization and tram initialization
