@@ -617,6 +617,35 @@ describe("renderWebPage", () => {
     assert.deepEqual(lines, expected)
   })
 
+  it("should embed articles recursively", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_articles")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/blog.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <header>Header</header>',
+      '  <div class="my-4 p-2 bg-blue-100">',
+      '    <article>',
+      '      <h1 class=\"text-xl m-2\">D</h1>',
+      '      <p class=\"m-1\">The fourth article.</p>',
+      '    </article>',
+      '    <article>',
+      '      <h1 class=\"text-xl m-2\">C</h1>',
+      '      <p class=\"m-1\">The third article.</p>',
+      '    </article>',
+      '  </div>',
+      '  <footer>Footer</footer>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
+
   it("should render 'index.html' of 'with_link_list' site", () => {
     const wd = PATH.resolve(__dirname, "../sites/with_link_list")
     const siteData = getSiteData(wd)

@@ -1942,7 +1942,9 @@ layout = "home"
 </main>
 ```
 
-上記の例では、`src/articles/proposals` ディレクトリのすべてのアーティクルを `<h1>` 要素の下に埋め込んでいます。
+上記の例では、`src/articles/proposals` ディレクトリの直下にあるすべてのアーティクルを `<h1>` 要素の下に埋め込んでいます。
+
+`src/articles/proposals` ディレクトリよりも下にあるすべてのアーティクルを再帰的に埋め込むには `pattern` 属性に指定する値を `proposals/**` と書き換えてください。
 
 デフォルトでは、アーティクルはファイル名の昇順（アルファベット順）でソートされます。
 
@@ -1976,9 +1978,67 @@ layout = "home"
 </main>
 ```
 
+### アーティクルを作成日時で並べ替える
+
+アーティクルを作成日時で並べ替えるには、各アーティクルの `created-at` プロパティにローカル日時を設定します：
+
+```html
+---
+[main]
+created-at = 2025-01-01T09:30:00
+---
+<article>
+  ...
+</article>
+```
+
+ローカル日時は `2025-01-01T09:30:00` のように、日付と時刻を `T` で連結する必要があります。
+
+そして、`<tg:articles>` 要素の `order-by` 属性を `"created-at:asc"` または `"created-at:desc"` に設定します：
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg:articles pattern="proposals/*" order-by="created-at:asc"></tg:articles>
+</main>
+```
+
+### アーティクルを更新日時で並べ替える
+
+アーティクルを更新日時で並べ替えるには、各アーティクルの `updated-at` プロパティにローカル日時を設定します：
+
+```html
+---
+[main]
+updated-at = 2025-01-01T09:30:00
+---
+<article>
+  ...
+</article>
+```
+
+ローカル日時は `2025-01-01T09:30:00` のように、日付と時刻を `T` で連結する必要があります。
+
+そして、`<tg:articles>` 要素の `order-by` 属性を `"updated-at:asc"` または `"updated-at:desc"` に設定します：
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg:articles pattern="proposals/*" order-by="updated-at:asc"></tg:articles>
+</main>
+```
+
 ### アーティクルを任意の順序で並べ替える
 
-アーティクルを任意の順序で並べ替えるには、各アーティクルに `index` プロパティを整数値に設定します：
+アーティクルを任意の順序で並べ替えるには、各アーティクルの `index` プロパティを整数値に設定します：
 
 ```html
 ---
