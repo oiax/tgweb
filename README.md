@@ -34,6 +34,7 @@
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [Embedding Teamgenik Mini-apps](#embedding-teamgenik-mini-apps)
+* [Plugins](#plugins)
 * [Site Properties and Property Inheritance](#site-properties-and-property-inheritance)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
 * [List of special tags and attributes](#list-of-special-tags-and-attributes)
@@ -3387,6 +3388,34 @@ To learn more about the Tailwind CSS class tokens mentioned here, please visit t
 * https://tailwindcss.com/docs/responsive-design
 * https://tailwindcss.com/docs/display
 
+## Plugins
+
+### HubSpot plugin
+
+You can use the `<tg:plugin>` element to embed a [HubSpot](https://www.hubspot.com/) form into
+your website.
+
+If you register for an account with HubSpot and create a HubSpot form, you will be provided with
+the following code example.
+
+```html
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+<script>
+  hbspt.forms.create({
+    portalId: "01234567",
+    formId: "01234567-89ab-cdef-0123-456789abcdef"
+  });
+</script>
+```
+
+The 8-digit number string to the right of the `portalId:` is the _portal ID_,
+and the string to the right of the `formID:`, which is 36 in length, is the _form ID_.
+You can then embed the HubSpot form by stating the following:
+
+```html
+<tg:plugin name="hubspot" portal-id="01234567" form-id="01234567-89ab-cdef-0123-456789abcdef"></tg:plugin>
+```
+
 ## Site Properties and Property Inheritance
 
 ### Site properties
@@ -3793,6 +3822,7 @@ on TeamGenik.
 * `<tg:label>`: [`<tg:link>, <tg:if-current> and <tg:label>`](#tglink-tgif-current-and-tglabel)
 * `<tg:link>`: [`<tg:link>, <tg:if-current> and <tg:label>`](#tglink-tgif-current-and-tglabel)
 * `<tg:links>`: [Link list](#link-list)
+* `<tg:plugin>`: [Plugins](#plugins)
 * `<tg:prop>`: [Embedding predefined property values in a template](#embedding-predefined-property-values-in-a-template)
 * `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
 * `<tg:shared-component>`: [Shared components](#shared-components)

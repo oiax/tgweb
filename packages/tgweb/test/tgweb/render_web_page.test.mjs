@@ -1120,4 +1120,29 @@ describe("renderWebPage", () => {
 
     assert.deepEqual(lines, expected)
   })
+
+  it("should embed script tags for hubspot form", () => {
+    const wd = PATH.resolve(__dirname, "../sites/hubspot_plugin")
+    const siteData = getSiteData(wd)
+
+    const dom = renderWebPage("src/pages/index.html", siteData)
+    const body = DomUtils.findOne(elem => elem.name === "body", dom.children)
+    const html = pretty(render(body, {encodeEntities: false}), {ocd: true})
+    const lines = html.trim().split("\n")
+
+    const expected = [
+      '<body>',
+      '  <h1 class="text-xl m-2">Contact form</h1>',
+      '  <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>',
+      '  <script>',
+      '    hbspt.forms.create({',
+      '      portalId: "00000000",',
+      '      formId: "0199d409-1786-4b2b-aaae-e3c3d8fcf021"',
+      '    });',
+      '  </script>',
+      '</body>'
+    ]
+
+    assert.deepEqual(lines, expected)
+  })
 })
