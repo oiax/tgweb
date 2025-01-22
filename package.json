@@ -7,7 +7,7 @@
     "packages/tgweb"
   ],
   "dependencies": {
-    "tgweb": "^0.14.1"
+    "tgweb": "^0.14.2"
   },
   "devDependencies": {
     "mocha": "^10.2.0",
