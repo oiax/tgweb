@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.14.1
+
+* b061391 Allow articles sorted by `created-at` or `updated-at` properties
+
 ## 0.14.0
 
 * 7faf4d6 Introduce a new special element `<tg:plugin name="hubspot">`
