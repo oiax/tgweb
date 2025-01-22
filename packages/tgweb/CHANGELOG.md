@@ -1,5 +1,7 @@
 # tgweb CHANGELOG
 
+* cfe5423 Introduce `tgweb-deploy` and `tgweb-preview` commands
+
 ## 0.14.1
 
 * b061391 Allow articles sorted by `created-at` or `updated-at` properties
