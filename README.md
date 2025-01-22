@@ -2148,6 +2148,9 @@ layout = "home"
 The above example embeds all articles in the `src/articles/proposals` directory under the
 `<h1>` element.
 
+To recursively embed all articles below the `src/articles/proposals` directory,
+replace the value of the `pattern` attribute with `proposals/**`.
+
 By default, articles are sorted in ascending (alphabetically) order by filename.
 
 To sort articles in descending order by their filename, set the `order-by` attribute of the
@@ -2179,6 +2182,64 @@ layout = "home"
 <main>
   <h1>Our Proposals</h1>
   <tg:articles pattern="proposals/*" order-by="title:asc"></tg:articles>
+</main>
+```
+
+### Sorting articles by creation date-time
+
+To sort articles by creation date-time, set the `created-at` property of each article to the local date-time:
+
+```html
+---
+[main]
+created-at = 2025-01-01T09:30:00
+---
+<article>
+  ...
+</article>
+```
+
+The local date and time must be concatenated with `T`, as in `2025-01-01T09:30:00`.
+
+Then set the `order-by` attribute of the `<tg:articles>` element to `"created-at:asc"` or `"created-at:desc"`:
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg:articles pattern="proposals/*" order-by="created-at:asc"></tg:articles>
+</main>
+```
+
+### Sorting articles by modification date-time
+
+To sort articles by date of last update, set the `updated-at` property of each article to the local date-time:
+
+```html
+---
+[main]
+updated-at = 2025-01-01T09:30:00
+---
+<article>
+  ...
+</article>
+```
+
+The local date and time must be concatenated with `T`, as in `2025-01-01T09:30:00`.
+
+Then set the `order-by` attribute of the `<tg:articles>` element to `"updated-at:asc"` or `"updated-at:desc"`:
+
+```html
+---
+[main]
+layout = "home"
+---
+<main>
+  <h1>Our Proposals</h1>
+  <tg:articles pattern="proposals/*" order-by="updated-at:asc"></tg:articles>
 </main>
 ```
 
@@ -2232,7 +2293,6 @@ segments | Y | Y | Y | Y
 components | Y | N | N | N
 articles | Y | N | N  | N
 article wrappers  | Y | N | N  | N
-
 
 ## Links
 

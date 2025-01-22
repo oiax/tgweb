@@ -1,7 +1,7 @@
 import { getTitle } from "./get_title.mjs"
 
 const sortArticles = (articles, orderBy) => {
-  const re = /^(title|index|filename):(asc|desc)$/
+  const re = /^(title|index|filename|created-at|updated-at):(asc|desc)$/
   const md = re.exec(orderBy)
 
   if (md === null) return
@@ -25,6 +25,33 @@ const sortArticles = (articles, orderBy) => {
     articles.sort((a, b) => {
       const i = a.frontMatter.main && a.frontMatter.main["index"]
       const j = b.frontMatter.main && b.frontMatter.main["index"]
+
+      if (i !== undefined) {
+        if (j !== undefined) {
+          if (i > j) return 1
+          if (i < j) return -1
+          if (a.path > b.path) return 1
+          if (a.path < b.path) return -1
+          return 0
+        }
+        else {
+          return (direction === "asc" ? -1 : 1)
+        }
+      }
+      else {
+        if (j !== undefined) return (direction === "asc" ? 1 : -1)
+        else {
+          if (a.path > b.path) return (direction === "asc" ? 1 : -1)
+          if (a.path < b.path) return (direction === "asc" ? -1 : 1)
+          return 0
+        }
+      }
+    })
+  }
+  else if (criteria === "created-at" || criteria === "updated-at") {
+    articles.sort((a, b) => {
+      const i = a.frontMatter.main && a.frontMatter.main[criteria]
+      const j = b.frontMatter.main && b.frontMatter.main[criteria]
 
       if (i !== undefined) {
         if (j !== undefined) {
