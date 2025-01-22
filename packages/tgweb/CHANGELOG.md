@@ -1,5 +1,9 @@
 # tgweb CHANGELOG
 
+## 0.14.0
+
+* 7faf4d6 Introduce a new special element `<tg:plugin name="hubspot">`
+
 ## 0.13.2
 
 * daf0a25 Exclude `reload.js` from HTML `<head>` generate by `npx tgweb-dist`

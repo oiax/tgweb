@@ -270,6 +270,9 @@ const renderNode = (node, siteData, documentProperties, state) => {
     else if (node.name === "tg:symbol") {
       return renderSymbol(node)
     }
+    else if (node.name === "tg:plugin") {
+      return node
+    }
     else if (node.name === "tg:app") {
       return renderAppPlaceholder(node, siteData)
     }
@@ -1334,6 +1337,13 @@ const postprocess = (node, state) => {
         removeTgAttribs(node.attribs)
         return node
       }
+    }
+    else if (node.name === "tg:plugin" && node.attribs.name == "hubspot") {
+      const script0 = "<script charset='utf-8' type='text/javascript' src='//js.hsforms.net/forms/embed/v2.js'></script>"
+      const portalId = node.attribs["portal-id"]
+      const formId = node.attribs["form-id"]
+      const scriptBody = `hbspt.forms.create({portalId: "${portalId}", formId: "${formId}"});`
+      return parseDocument(`${script0}<script>${scriptBody}</script>`)
     }
     else {
       node.children = node.children.map(c => postprocess(c, newState)).flat()

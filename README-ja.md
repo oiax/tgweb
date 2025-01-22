@@ -34,6 +34,7 @@
   * [Tram](#tram)
   * [Notes on Alpine.js](#nodes-on-alpinejs)
 * [ミニアプリの埋め込み](#ミニアプリの埋め込み)
+* [プラグイン](#プラグイン)
 * [サイトプロパティとプロパティの継承](#サイトプロパティとプロパティの継承)
 * [head要素の内容の管理](#head要素の内容の管理)
 * [特殊なタグと属性のリスト](#特殊なタグと属性のリスト)
@@ -2982,6 +2983,29 @@ display-name = "Players List"
 * https://tailwindcss.com/docs/responsive-design
 * https://tailwindcss.com/docs/display
 
+## プラグイン
+
+### HubSpot プラグイン
+
+`<tg:plugin>` 要素を用いて [HubSpot](https://www.hubspot.com/) のフォームをあなたのウェブサイトに埋め込むことができます。
+
+HubSpot にアカウント登録して HubSpot フォームを作成すると、次のようなコード例が提供されます。
+
+```html
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+<script>
+  hbspt.forms.create({
+    portalId: "01234567",
+    formId: "01234567-89ab-cdef-0123-456789abcdef"
+  });
+</script>
+```
+
+`portalId:` の右にある 8 桁の数列が**ポータル ID** で、`formID:` の右にある長さ 36 の文字列が**フォーム ID** です。このとき、次のように記載すると HubSpot フォームを埋め込むことができます。
+
+```html
+<tg:plugin name="hubspot" portal-id="01234567" form-id="01234567-89ab-cdef-0123-456789abcdef"></tg:plugin>
+```
 
 ## サイトプロパティとプロパティの継承
 
@@ -3368,6 +3392,7 @@ secondary = false
 * `<tg:label>`: [`<tg:link>、<tg:if-current>、<tg:label>`](#tglinktgif-currenttglabel)
 * `<tg:link>`: [`<tg:link>、<tg:if-current>、<tg:label>`](#tglinktgif-currenttglabel)
 * `<tg:links>`: [リンクリスト](#リンクリスト)
+* `<tg:plugin>`: [プラグイン](#プラグイン)
 * `<tg:prop>`: [Embedding predefined property values in a template](#embedding-predefined-property-values-in-a-template)
 * `<tg:segment>`: [Embedding segments into a page](#embedding-predefined-property-values-in-a-template)
 * `<tg:shared-component>`: [共有部品](#共有部品)
