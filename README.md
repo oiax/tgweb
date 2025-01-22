@@ -37,6 +37,7 @@
 * [Plugins](#plugins)
 * [Site Properties and Property Inheritance](#site-properties-and-property-inheritance)
 * [Managing the Contents of the `<head>` Element](#managing-the-contents-of-the-head-element)
+* [Deployment to Cloudflare Pages](#deployment-to-cloudflare-pages)
 * [List of special tags and attributes](#list-of-special-tags-and-attributes)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -3863,6 +3864,33 @@ the "scripts" section in `site.toml` and frontmatter will be ignored.
 
 This means that you cannot use your own JavaScript files in websites that you manage and publish
 on TeamGenik.
+
+## Deployment to Cloudflare Pages
+
+If you are on [Cloudflare Pages](https://pages.cloudflare.com/),
+you can use the `npx tgweb-deploy` command to upload distribution assets created in the `dist`
+directory to a specific application (aka: project) using the `npx tgweb-deploy` command.
+
+When using the `npx tgweb-deploy` command, a multi-site structure must be employed.
+That is, you must create a directory for each site under the `sites` directory,
+and place the source code in the `src` directory under that directory.
+
+Also, the directory name for each site must match the name of the Cloudflare Pages application.
+For example, if your Cloudflare Pages application is named `my_site`,
+you should place the source code in the `sites/my_site/src` directory.
+
+To deploy to a `my_site` application:
+
+1. Run the command `npx tgweb-dist sites/my_site`.
+2. Run the command `npx tgweb-deploy sites/my_site`.
+
+However, to use the `npx tgweb-deploy` command, you need to login to Cloudflare
+with the `npx wrangler login` command as a preparatory work.
+After executing this command, a browser will automatically open.
+Now click the "Allow" button to make the `npx tgweb-deploy` command available.
+
+The `npx tgweb-preview` command deploys distribution assets to the Cloudflare Pages
+_preview environment_.
 
 ## List of special tags and attributes
 

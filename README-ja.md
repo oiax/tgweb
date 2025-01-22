@@ -37,6 +37,7 @@
 * [プラグイン](#プラグイン)
 * [サイトプロパティとプロパティの継承](#サイトプロパティとプロパティの継承)
 * [head要素の内容の管理](#head要素の内容の管理)
+* [Cloudflare Pagesへのデプロイメント](#cloudflare-pagesへのデプロイメント)
 * [特殊なタグと属性のリスト](#特殊なタグと属性のリスト)
 * [TODO List](#todo-list)
 * [License](#license)
@@ -3433,6 +3434,26 @@ secondary = false
 `npx tgweb-archive` コマンドを用いて作られた `.zip` ファイルを TeamGenik にインポートした場合、`site.toml` およびフロントマターに含まれる "scripts" セクションは無視されます。
 
 すなわち、TeamGenik 上で管理・公開する Web サイトにおいては、独自の JavaScript ファイルを使用することはできません。
+
+## Cloudflare Pagesへのデプロイメント
+
+あなたが [Cloudflare Pages](https://pages.cloudflare.com/) を利用中であれば、`npx tgweb-deploy` コマンドを用いて `dist` ディレクトリに作られた配布用アセットを特定のアプリケーション（別名：プロジェクト）にアップロードできます。
+
+`npx tgweb-deploy` コマンドを利用する場合、複数サイト構造を採用する必要があります。
+すなわち、`sites` ディレクトリの下に各サイトのためのディレクトリを作り、その下にある `src` ディレクトリにソースコードを配置する必要があります。
+
+また、各サイトのためのディレクトリ名と Cloudflare Pages アプリケーションの名前は一致している必要があります。
+例えば、Cloudflare Pages アプリケーションの名前が `my_site` であれば、`sites/my_site/src` ディレクトリに ソースコードを置いてください。
+
+`my_site` アプリケーションにデプロイメントする手順は、次の通りです：
+
+1. `npx tgweb-dist sites/my_site` コマンドを実行。
+2. `npx tgweb-deploy sites/my_site` コマンドを実行。
+
+ただし、`npx tgweb-deploy` コマンドを利用するためには、準備作業として `npx wrangler login` コマンドで Cloudflare にログインする必要があります。このコマンドを実行すると、自動的にブラウザが開きます。
+ここで「Allow」ボタンをクリックすると `npx tgweb-deploy` コマンドが利用可能になります。
+
+`npx tgweb-preview` コマンドを利用すると Cloudflare Pages の**プレビュー環境**に配布用アセットがデプロイされます。
 
 ## 特殊なタグと属性のリスト
 

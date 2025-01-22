@@ -1,7 +1,7 @@
 {
   "name": "tgweb",
   "type": "module",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "keywords": [
     "teamgenik",
     "blog",
@@ -48,7 +48,9 @@
     "tgweb-init": "lib/init.mjs",
     "tgweb-dist": "lib/dist.mjs",
     "tgweb-server": "lib/server.mjs",
-    "tgweb-archive": "lib/archive.mjs"
+    "tgweb-archive": "lib/archive.mjs",
+    "tgweb-deploy": "lib/deploy.mjs",
+    "tgweb-preview": "lib/preview.mjs"
   },
   "files": [
     "lib",
