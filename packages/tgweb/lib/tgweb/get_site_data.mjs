@@ -18,6 +18,7 @@ const getSiteData = directory => {
     articles: [],
     components: [],
     sharedComponents: [],
+    icons: [],
     properties: {
       main: {
         scheme: "http",
@@ -90,6 +91,12 @@ const getSiteData = directory => {
         getTemplate(path, "page", siteData.properties)
       )
   }
+
+  if (fs.existsSync("src/icons/favicon.ico")) siteData.icons.push("favicon.ico")
+  if (fs.existsSync("src/icons/icon.svg")) siteData.icons.push("icon.svg")
+  if (fs.existsSync("src/icons/180.png")) siteData.icons.push("180.png")
+  if (fs.existsSync("src/icons/192.png")) siteData.icons.push("192.png")
+  if (fs.existsSync("src/icons/512.png")) siteData.icons.push("512.png")
 
   process.chdir(cwd)
 

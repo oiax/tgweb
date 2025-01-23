@@ -130,6 +130,17 @@ describe("create", () => {
     assert.equal(fs.existsSync(wd + "a/dist/index.html"), true)
   })
 
+  it("should copy the specified icon file to dist directory", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_icons")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    create("src/icons/favicon.ico", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/favicon.ico"), true)
+  })
+
   it("should not render a draft page", () => {
     const wd = PATH.resolve(__dirname, "../sites/draft")
     process.chdir(wd)

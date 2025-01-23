@@ -46,6 +46,10 @@ const getRouter = () => {
     res.sendFile(path.join(documentRoot, req.path))
   })
 
+  router.get(/^\/.*\.(ico|png|svg)$/, (req, res) => {
+    res.sendFile(path.join(documentRoot, req.path))
+  })
+
   return router
 }
 
