@@ -11,6 +11,7 @@
 * [Color Scheme](#color-scheme)
 * [Stylesheets](#stylesheets)
 * [JavaScript files](#javascript-files)
+* [Favicons](#favicons)
 * [Images](#images)
 * [Animations](#animations)
 * [Audios](#audios)
@@ -862,6 +863,20 @@ the "scripts" section in `site.toml` and frontmatter will be ignored.
 
 This means that you cannot use your own JavaScript files in websites that you manage and publish
 on TeamGenik.
+
+## Favicons
+
+Favicon files are placed in the `src/icons` subdirectory under the working directory.
+
+There are five types of favicon files that should be placed here:
+
+* `favicon.ico` -- an image file in ICO format
+* `icon.svg` -- an image file in SVG format
+* `180.png` -- an image file in PNG format with width 180px and height 180px
+* `198.png` -- an image file in PNG format with width 198px and height 198px
+* `198.png` -- an image file in PNG format with width 512px and height 512px
+
+It is not mandatory to install favicon files.
 
 ## Images
 

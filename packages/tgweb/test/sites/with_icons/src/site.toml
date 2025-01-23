@@ -1,0 +1,7 @@
+[meta.name]
+viewport = "width=device-width, initial-scale=1.0"
+googlebot = ["index,follow","notranslate"]
+description = "Description"
+
+[meta.property]
+"og:description" = "${meta.name.description}"

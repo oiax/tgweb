@@ -25,6 +25,14 @@ const createInitially = (path, siteData) => {
     if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
     fs.copyFileSync(posixPath, targetPath)
   }
+  else if (dirname.startsWith("src/icons")) {
+    const distPath = posixPath.replace(/^src\/icons\//, "dist/")
+    const targetPath = PATH.resolve(distPath)
+    const targetDir = PATH.dirname(targetPath)
+
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+    fs.copyFileSync(posixPath, targetPath)
+  }
   else if (dirname.startsWith("src/shared_css") || dirname.startsWith("src/shared_js")) {
     const assetPath = posixPath.replace(/^src\/shared_/, "src/")
 

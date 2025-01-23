@@ -102,6 +102,17 @@ describe("createInitially", () => {
     assert.equal(fs.existsSync(wd + "/dist/audios/dummy.mp3"), true)
   })
 
+  it("should copy the specified icon file to dist directory", () => {
+    const wd = PATH.resolve(__dirname, "../sites/with_icons")
+    process.chdir(wd)
+    fs.rmSync(wd + "/dist", { force: true, recursive: true })
+    const siteData = getSiteData(wd)
+
+    createInitially("src/icons/favicon.ico", siteData)
+
+    assert.equal(fs.existsSync(wd + "/dist/favicon.ico"), true)
+  })
+
   it("should render a page with Japanese text", () => {
     const wd = PATH.resolve(__dirname, "../sites/site_2")
     process.chdir(wd)

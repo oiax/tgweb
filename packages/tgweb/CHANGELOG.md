@@ -1,5 +1,11 @@
 # tgweb CHANGELOG
 
+## 0.14.3
+
+* 490e410 Add links to `favicon.ico` and other icon files and install them
+
+## 0.14.2
+
 * cfe5423 Introduce `tgweb-deploy` and `tgweb-preview` commands
 
 ## 0.14.1

@@ -108,7 +108,7 @@ const renderArticle = (path, siteData) => {
 
 const applyLayout = (page, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties, siteData.forDistribution)
+  const head = renderHead(documentProperties, siteData)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -141,7 +141,7 @@ const applyLayout = (page, layout, siteData, documentProperties, state) => {
 
 const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties, siteData.forDistribution)
+  const head = renderHead(documentProperties, siteData)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -187,7 +187,7 @@ const applyWrapper = (page, wrapper, layout, siteData, documentProperties, state
 
 const doRenderPage = (page, siteData, documentProperties, state) => {
   const doc = parseDocument("<html><head></head><body></body></html>")
-  const head = renderHead(documentProperties, siteData.forDistribution)
+  const head = renderHead(documentProperties, siteData)
 
   if (documentProperties.main["html-class"] !== undefined) {
     doc.children[0].attribs = {class: documentProperties.main["html-class"]}
@@ -1445,7 +1445,7 @@ const removeTgAttribs = (attribs) => {
   keys.forEach(key => delete attribs[key])
 }
 
-const renderHead = (documentProperties, forDistribution) => {
+const renderHead = (documentProperties, siteData) => {
   const head = parseDocument("<head></head>")
 
   const children = []
@@ -1752,12 +1752,24 @@ const renderHead = (documentProperties, forDistribution) => {
     }
   }
 
+  if (siteData.icons.includes("favicon.ico"))
+    children.push(parseDocument(`<link rel='icon' href='/favicon.ico'>`).children[0])
+
+  if (siteData.icons.includes("icon.svg"))
+    children.push(parseDocument(`<link rel='icon' href='/icon.svg' type='image/svg+xml'>`).children[0])
+
+  if (siteData.icons.includes("180.png"))
+    children.push(parseDocument(`<link rel='apple-touch-icon' href='/180.png'>`).children[0])
+
+  if (siteData.icons.includes("192.png") && siteData.icons.includes("512.png"))
+    children.push(parseDocument(`<link rel='manifest' href='/manifest.webmanifest'>`).children[0])
+
   children.push(parseDocument("<style>[x-cloak] { display: none !important; }</style>").children[0])
   children.push(parseDocument("<script src='/js/tgweb_utilities.js' defer></script>").children[0])
   children.push(parseDocument("<script src='/js/alpine.min.js' defer></script>").children[0])
   children.push(parseDocument("<script type='module' src='/js/tgweb_lottie_player.js'></script>").children[0])
 
-  if (forDistribution !== true)
+  if (siteData.forDistribution !== true)
     children.push(parseDocument("<script src='/reload/reload.js' defer></script>").children[0])
 
   if (typeof documentProperties.javascripts === "object") {
